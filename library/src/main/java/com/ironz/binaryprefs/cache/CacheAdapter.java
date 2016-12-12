@@ -25,6 +25,7 @@ public interface CacheAdapter {
      * @param key   unique key
      * @param value value
      */
+    // TODO: 12/12/16 implement a multiple designs for storing a multiple values into one file table
     void putStringSet(String key, Set<String> value);
 
     /**
