@@ -1,0 +1,28 @@
+.gradle
+*build/
+local.properties
+
+### STS ###
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.ipr
+*.iml
+library/.externalNativeBuild
+library/build
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+*.db
+.DS_Store
