@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConcurrentCacheAdapterImpl implements CacheAdapter {
 
+    //we are define explicit type because invokevirtual faster than invokeinterface
+    //also we are define separate caches instead of <String, Object> because class boxing/unboxing faster than class type cast
     private final ConcurrentHashMap<String, String> stringCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Set<String>> stringSetCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Integer> intCache = new ConcurrentHashMap<>();
