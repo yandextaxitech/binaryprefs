@@ -62,5 +62,5 @@ public interface CacheAdapter {
      * @param key   unique key
      * @param value value
      */
-    void putBoolean(String key, Boolean value);
+    void putBoolean(String key, boolean value);
 }
