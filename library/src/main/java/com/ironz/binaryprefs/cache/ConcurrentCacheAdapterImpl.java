@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Concrete cache adapter which implements concurrent cache operations
  */
+// TODO: 13/12/16 implement tests
 public class ConcurrentCacheAdapterImpl implements CacheAdapter {
 
     //we are define explicit type because invokevirtual faster than invokeinterface
