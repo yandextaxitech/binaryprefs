@@ -7,7 +7,6 @@ import java.util.Set;
  * Adapter abstraction which describes a cache contract.
  * It's used for making unique implementation for concrete cache operations.
  */
-// TODO: 12/12/16 check SharedPreferences allows null or not
 public interface CacheAdapter {
     /**
      * Adds {@link java.lang.String} value by specified key.
