@@ -1,8 +1,8 @@
 package com.ironz.binaryprefs.cache;
 
 
+import java.util.HashMap;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Concrete cache adapter which implements cache operations
@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 public class CacheAdapterImpl implements CacheAdapter {
 
-    private final ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<>();
+    //we are define explicit type because invokevirtual faster than invokeinterface
+    private final HashMap<String, Object> cache = new HashMap<>();
 
     @Override
     public void putString(String key, String value) {
