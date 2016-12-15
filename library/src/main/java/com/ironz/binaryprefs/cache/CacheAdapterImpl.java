@@ -5,11 +5,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Concrete cache adapter which implements concurrent cache operations
+ * Concrete cache adapter which implements cache operations
  */
 // TODO: 13/12/16 implement tests
 @SuppressWarnings("unchecked")
-public class ConcurrentCacheAdapterImpl implements CacheAdapter {
+public class CacheAdapterImpl implements CacheAdapter {
 
     private final ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<>();
 
