@@ -18,18 +18,16 @@ public interface FileAdapter {
      *
      * @param name file name with extension
      * @return byte array of file
-     * @throws Exception while IO operation fails
      */
-    byte[] fetch(String name) throws Exception;
+    byte[] fetch(String name);
 
     /**
      * Save byte array to concrete file, if file exists it will be overwritten
      *
      * @param name  file name with extension
      * @param bytes byte array for saving
-     * @throws Exception while IO operation fails
      */
-    void save(String name, byte[] bytes) throws Exception;
+    void save(String name, byte[] bytes);
 
     /**
      * Delete all files from concrete directory

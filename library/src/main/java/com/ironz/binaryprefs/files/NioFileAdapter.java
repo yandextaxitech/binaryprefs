@@ -26,7 +26,7 @@ public class NioFileAdapter implements FileAdapter {
     }
 
     @Override
-    public byte[] fetch(String name) throws Exception {
+    public byte[] fetch(String name) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
@@ -38,6 +38,8 @@ public class NioFileAdapter implements FileAdapter {
             byte[] bytes = new byte[size];
             buffer.get(bytes);
             return bytes;
+        } catch (Exception e) {
+            // TODO: 16/12/16 implement logger
         } finally {
             try {
                 if (randomAccessFile != null) randomAccessFile.close();
@@ -45,10 +47,12 @@ public class NioFileAdapter implements FileAdapter {
             } catch (IOException ignored) {
             }
         }
+
+        return new byte[0];
     }
 
     @Override
-    public void save(String name, byte[] bytes) throws Exception {
+    public void save(String name, byte[] bytes) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
@@ -58,6 +62,8 @@ public class NioFileAdapter implements FileAdapter {
             MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
             byteBuffer.put(bytes);
             channel.write(byteBuffer);
+        } catch (Exception e) {
+            // TODO: 16/12/16 implement logger
         } finally {
             try {
                 if (randomAccessFile != null) randomAccessFile.close();
@@ -70,18 +76,31 @@ public class NioFileAdapter implements FileAdapter {
     @Override
     public boolean clear() {
         boolean allDeleted = true;
-        for (File file : srcDir.listFiles()) {
-            boolean deleted = file.delete();
-            if (!deleted) {
-                allDeleted = false;
+
+        try {
+            for (File file : srcDir.listFiles()) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    allDeleted = false;
+                }
             }
+        } catch (Exception e) {
+            allDeleted = false;
+            // TODO: 16/12/16 implement logger
         }
+
         return allDeleted;
     }
 
     @Override
     public boolean remove(String name) {
-        File file = new File(srcDir, name);
-        return file.delete();
+        try {
+            File file = new File(srcDir, name);
+            return file.delete();
+        } catch (Exception e) {
+            // TODO: 16/12/16 implement logger
+        }
+
+        return false;
     }
 }
