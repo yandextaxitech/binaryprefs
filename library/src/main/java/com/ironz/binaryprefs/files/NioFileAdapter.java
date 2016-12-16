@@ -20,6 +20,10 @@ public class NioFileAdapter implements FileAdapter {
         this.srcDir = srcDir;
     }
 
+    File getSrcDir() {
+        return srcDir;
+    }
+
     @Override
     public String[] names() {
         return srcDir.list();
@@ -39,6 +43,7 @@ public class NioFileAdapter implements FileAdapter {
             buffer.get(bytes);
             return bytes;
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO: 16/12/16 implement logger
         } finally {
             try {
@@ -63,6 +68,7 @@ public class NioFileAdapter implements FileAdapter {
             byteBuffer.put(bytes);
             channel.write(byteBuffer);
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO: 16/12/16 implement logger
         } finally {
             try {
@@ -85,6 +91,7 @@ public class NioFileAdapter implements FileAdapter {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             allDeleted = false;
             // TODO: 16/12/16 implement logger
         }
@@ -98,6 +105,7 @@ public class NioFileAdapter implements FileAdapter {
             File file = new File(srcDir, name);
             return file.delete();
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO: 16/12/16 implement logger
         }
 
