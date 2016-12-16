@@ -11,7 +11,6 @@ public class BinaryPreferencesEditor implements SharedPreferences.Editor {
     private final Map<String, Object> commitMap = new HashMap<>();
 
 
-
     @Override
     public SharedPreferences.Editor putString(String key, String value) {
         return null;
