@@ -14,7 +14,7 @@ public interface FileAdapter {
     String[] names();
 
     /**
-     * Returns byte array for concrete file by name
+     * Returns byte array for concrete file by name or empty byte array if exception throws
      *
      * @param name file name with extension
      * @return byte array of file
@@ -32,15 +32,15 @@ public interface FileAdapter {
     /**
      * Delete all files from concrete directory
      *
-     * @return all values has been deleted
+     * @return all files has been removed
      */
     boolean clear();
 
     /**
-     * Removes one value by key
+     * Removes file by key
      *
      * @param name file name with extension
-     * @return value has been deleted
+     * @return value has been removed
      */
     boolean remove(String name);
 }
