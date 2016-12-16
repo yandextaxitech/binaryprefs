@@ -27,69 +27,61 @@ public class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) throws Exception {
-        synchronized (NioFileAdapter.class) {
-            FileChannel channel = null;
-            RandomAccessFile randomAccessFile = null;
+        FileChannel channel = null;
+        RandomAccessFile randomAccessFile = null;
+        try {
+            File file = new File(srcDir, name);
+            randomAccessFile = new RandomAccessFile(file, "r");
+            channel = randomAccessFile.getChannel();
+            int size = (int) randomAccessFile.length();
+            MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+            byte[] bytes = new byte[size];
+            buffer.get(bytes);
+            return bytes;
+        } finally {
             try {
-                File file = new File(srcDir, name);
-                randomAccessFile = new RandomAccessFile(file, "r");
-                channel = randomAccessFile.getChannel();
-                int size = (int) randomAccessFile.length();
-                MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
-                byte[] bytes = new byte[size];
-                buffer.get(bytes);
-                return bytes;
-            } finally {
-                try {
-                    if (randomAccessFile != null) randomAccessFile.close();
-                    if (channel != null) channel.close();
-                } catch (IOException ignored) {
-                }
+                if (randomAccessFile != null) randomAccessFile.close();
+                if (channel != null) channel.close();
+            } catch (IOException ignored) {
             }
         }
     }
 
     @Override
     public void save(String name, byte[] bytes) throws Exception {
-        synchronized (NioFileAdapter.class) {
-            FileChannel channel = null;
-            RandomAccessFile randomAccessFile = null;
+        FileChannel channel = null;
+        RandomAccessFile randomAccessFile = null;
+        try {
+            File file = new File(srcDir, name);
+            randomAccessFile = new RandomAccessFile(file, "rw");
+            channel = randomAccessFile.getChannel();
+            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
+            byteBuffer.put(bytes);
+            channel.write(byteBuffer);
+        } finally {
             try {
-                File file = new File(srcDir, name);
-                randomAccessFile = new RandomAccessFile(file, "rw");
-                channel = randomAccessFile.getChannel();
-                MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
-                byteBuffer.put(bytes);
-                channel.write(byteBuffer);
-            } finally {
-                try {
-                    if (randomAccessFile != null) randomAccessFile.close();
-                    if (channel != null) channel.close();
-                } catch (Exception ignored) {
-                }
+                if (randomAccessFile != null) randomAccessFile.close();
+                if (channel != null) channel.close();
+            } catch (Exception ignored) {
             }
         }
     }
 
     @Override
     public boolean clear() {
-        synchronized (NioFileAdapter.class) {
-            boolean allDeleted = true;
-            for (File file : srcDir.listFiles()) {
-                boolean deleted = file.delete();
-                if (!deleted) {
-                    allDeleted = false;
-                }
+        boolean allDeleted = true;
+        for (File file : srcDir.listFiles()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                allDeleted = false;
             }
-            return allDeleted;
         }
+        return allDeleted;
     }
 
     @Override
     public boolean remove(String name) {
-        synchronized (NioFileAdapter.class) {
-            File file = new File(srcDir, name);
-            return file.delete();
-        }
+        File file = new File(srcDir, name);
+        return file.delete();
     }
 }
