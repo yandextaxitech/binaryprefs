@@ -22,10 +22,6 @@ public class NioFileAdapter implements FileAdapter {
         this.srcDir = srcDir;
     }
 
-    File getSrcDir() {
-        return srcDir;
-    }
-
     @Override
     public String[] names() {
         return srcDir.list();

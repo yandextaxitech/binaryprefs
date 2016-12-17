@@ -1,12 +1,12 @@
 package com.ironz.binaryprefs.files;
 
+import com.ironz.binaryprefs.exception.FileOperationException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 public class NioFileAdapterTest {
 
@@ -21,9 +21,14 @@ public class NioFileAdapterTest {
         fileAdapter = new NioFileAdapter(srcDir);
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test(expected = FileOperationException.class)
     public void incorrectDirectory() {
-        ((NioFileAdapter) fileAdapter).getSrcDir().delete(); //trying to remove root directory before starting write operation
+        folder.delete(); //trying to remove root directory before starting write operation
+        fileAdapter.save("file.name", "value".getBytes());
+    }
+
+    @Test
+    public void correctSaving() {
         fileAdapter.save("file.name", "value".getBytes());
     }
 }
