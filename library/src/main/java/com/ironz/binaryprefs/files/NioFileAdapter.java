@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.files;
 
+import com.ironz.binaryprefs.exception.FileOperationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -43,8 +45,7 @@ public class NioFileAdapter implements FileAdapter {
             buffer.get(bytes);
             return bytes;
         } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: 16/12/16 implement logger
+            throw new FileOperationException(e);
         } finally {
             try {
                 if (randomAccessFile != null) randomAccessFile.close();
@@ -52,8 +53,6 @@ public class NioFileAdapter implements FileAdapter {
             } catch (IOException ignored) {
             }
         }
-
-        return new byte[0];
     }
 
     @Override
@@ -68,8 +67,7 @@ public class NioFileAdapter implements FileAdapter {
             byteBuffer.put(bytes);
             channel.write(byteBuffer);
         } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: 16/12/16 implement logger
+            throw new FileOperationException(e);
         } finally {
             try {
                 if (randomAccessFile != null) randomAccessFile.close();
@@ -82,7 +80,6 @@ public class NioFileAdapter implements FileAdapter {
     @Override
     public boolean clear() {
         boolean allDeleted = true;
-
         try {
             for (File file : srcDir.listFiles()) {
                 boolean deleted = file.delete();
@@ -91,9 +88,7 @@ public class NioFileAdapter implements FileAdapter {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            allDeleted = false;
-            // TODO: 16/12/16 implement logger
+            throw new FileOperationException(e);
         }
 
         return allDeleted;
@@ -105,10 +100,7 @@ public class NioFileAdapter implements FileAdapter {
             File file = new File(srcDir, name);
             return file.delete();
         } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: 16/12/16 implement logger
+            throw new FileOperationException(e);
         }
-
-        return false;
     }
 }
