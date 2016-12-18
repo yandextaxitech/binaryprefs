@@ -12,7 +12,8 @@ import static org.junit.Assert.assertEquals;
 
 public class NioFileAdapterTest {
 
-    private final String name = "file.name";
+    private final String fileName = "file.name";
+    private final byte[] bytes = "value".getBytes();
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -27,24 +28,23 @@ public class NioFileAdapterTest {
     @Test(expected = FileOperationException.class)
     public void deletedDirectory() {
         folder.delete(); //trying to remove root directory before starting write operation
-        fileAdapter.save(name, "value".getBytes());
+        fileAdapter.save(fileName, bytes);
     }
 
     @Test
     public void correctSaving() {
-        fileAdapter.save(name, "value".getBytes());
+        fileAdapter.save(fileName, bytes);
     }
 
     @Test(expected = FileOperationException.class)
     public void missingFile() {
-        fileAdapter.fetch(name);
+        fileAdapter.fetch(fileName);
     }
 
     @Test
     public void correctFile() {
-        byte[] bytes = "value".getBytes();
-        fileAdapter.save(name, bytes);
-        byte[] fetch = fileAdapter.fetch(name);
+        fileAdapter.save(fileName, bytes);
+        byte[] fetch = fileAdapter.fetch(fileName);
         assertEquals(new String(bytes), new String(fetch));
     }
 }
