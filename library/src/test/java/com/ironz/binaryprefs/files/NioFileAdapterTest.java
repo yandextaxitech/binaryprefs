@@ -16,7 +16,7 @@ public class NioFileAdapterTest {
     private final byte[] bytes = "value".getBytes();
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public final TemporaryFolder folder = new TemporaryFolder();
     private FileAdapter fileAdapter;
     private File srcDir;
 
@@ -61,4 +61,7 @@ public class NioFileAdapterTest {
 
         assertFalse(file.exists());
     }
+
+
+
 }
