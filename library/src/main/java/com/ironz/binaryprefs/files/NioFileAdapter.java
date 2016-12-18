@@ -13,7 +13,6 @@ import java.nio.channels.FileChannel;
  * Concrete file adapter which implements NIO file operations
  */
 // TODO: 12/12/16 create benchmarks for MappedByteBuffer and plain direct ByteBuffer/ByteChannel
-// TODO: 13/12/16 implement tests
 public class NioFileAdapter implements FileAdapter {
 
     private final File srcDir;
