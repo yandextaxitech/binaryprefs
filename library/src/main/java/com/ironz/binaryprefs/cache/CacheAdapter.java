@@ -11,6 +11,7 @@ public interface CacheAdapter {
     /**
      * Adds {@link java.lang.String} value by specified key.
      * If cache implementation already has the value by this key it will be overwritten.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key   unique key
      * @param value value
@@ -20,6 +21,7 @@ public interface CacheAdapter {
     /**
      * Adds {@link java.util.Set} of {@link java.lang.String} values by specified key.
      * If cache implementation already has the value by this key it will be overwritten.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key    unique key
      * @param values values
@@ -30,6 +32,7 @@ public interface CacheAdapter {
     /**
      * Adds {@link java.lang.Integer} primitive value by specified key.
      * If cache implementation already has the value by this key it will be overwritten.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key   unique key
      * @param value value
@@ -39,6 +42,7 @@ public interface CacheAdapter {
     /**
      * Adds {@link java.lang.Long} primitive value by specified key.
      * If cache implementation already has the value by this key it will be overwritten.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key   unique key
      * @param value value
@@ -48,6 +52,7 @@ public interface CacheAdapter {
     /**
      * Adds {@link java.lang.Float} primitive value by specified key.
      * If cache implementation already has the value by this key it will be overwritten.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key   unique key
      * @param value value
@@ -57,6 +62,7 @@ public interface CacheAdapter {
     /**
      * Adds {@link java.lang.Boolean} primitive value by specified key.
      * If cache implementation already has the value by this key it will be overwritten.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key   unique key
      * @param value value
@@ -66,6 +72,7 @@ public interface CacheAdapter {
     /**
      * Returns {@link java.lang.String} value from cache by specified key.
      * If cache table has not have value by key the "defValue" param will be returned instead.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key      unique key
      * @param defValue def value
@@ -76,6 +83,7 @@ public interface CacheAdapter {
     /**
      * Returns {@link java.util.Set} of {@link java.lang.String} values from cache by specified key.
      * If cache table has not have value by key the "defValues" param will be returned instead.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key       unique key
      * @param defValues def values
@@ -86,6 +94,7 @@ public interface CacheAdapter {
     /**
      * Returns {@link java.lang.Integer} primitive value from cache by specified key.
      * If cache table has not have value by key the "defValue" param will be returned instead.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key      unique key
      * @param defValue def value
@@ -96,6 +105,7 @@ public interface CacheAdapter {
     /**
      * Returns {@link java.lang.Long} primitive value from cache by specified key.
      * If cache table has not have value by key the "defValue" param will be returned instead.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key      unique key
      * @param defValue def value
@@ -106,6 +116,7 @@ public interface CacheAdapter {
     /**
      * Returns {@link java.lang.Float} primitive value from cache by specified key.
      * If cache table has not have value by key the "defValue" param will be returned instead.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key      unique key
      * @param defValue def value
@@ -116,6 +127,7 @@ public interface CacheAdapter {
     /**
      * Returns {@link java.lang.Boolean} primitive value from cache by specified key.
      * If cache table has not have value by key the "defValue" param will be returned instead.
+     * If value have inconsistent type exception will be thrown.
      *
      * @param key      unique key
      * @param defValue def value
