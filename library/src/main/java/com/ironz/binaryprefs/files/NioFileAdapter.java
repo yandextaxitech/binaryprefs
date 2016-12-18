@@ -73,28 +73,26 @@ public class NioFileAdapter implements FileAdapter {
         }
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "ForLoopReplaceableByForEach"})
     @Override
-    public boolean clear() {
-        boolean allDeleted = true;
+    public void clear() {
         try {
-            for (File file : srcDir.listFiles()) {
-                boolean deleted = file.delete();
-                if (!deleted) {
-                    allDeleted = false;
-                }
+            File[] files = srcDir.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                file.delete();
             }
         } catch (Exception e) {
             throw new FileOperationException(e);
         }
-
-        return allDeleted;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    public boolean remove(String name) {
+    public void remove(String name) {
         try {
             File file = new File(srcDir, name);
-            return file.delete();
+            file.delete();
         } catch (Exception e) {
             throw new FileOperationException(e);
         }

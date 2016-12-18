@@ -34,7 +34,7 @@ public interface FileAdapter {
      *
      * @return all files has been removed
      */
-    boolean clear();
+    void clear();
 
     /**
      * Removes file by key
@@ -42,5 +42,5 @@ public interface FileAdapter {
      * @param name file name with extension
      * @return value has been removed
      */
-    boolean remove(String name);
+    void remove(String name);
 }

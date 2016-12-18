@@ -8,7 +8,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class NioFileAdapterTest {
 
@@ -18,10 +18,11 @@ public class NioFileAdapterTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private FileAdapter fileAdapter;
+    private File srcDir;
 
     @Before
     public void setUp() throws Exception {
-        File srcDir = folder.newFolder();
+        srcDir = folder.newFolder();
         fileAdapter = new NioFileAdapter(srcDir);
     }
 
@@ -46,5 +47,18 @@ public class NioFileAdapterTest {
         fileAdapter.save(fileName, bytes);
         byte[] fetch = fileAdapter.fetch(fileName);
         assertEquals(new String(bytes), new String(fetch));
+    }
+
+    @Test
+    public void deleteOne() {
+        File file = new File(srcDir, fileName);
+        fileAdapter.save(fileName, bytes);
+
+        assertTrue(file.exists());
+        assertFalse(file.isDirectory());
+
+        fileAdapter.remove(fileName);
+
+        assertFalse(file.exists());
     }
 }
