@@ -1,11 +1,21 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.cache.CacheAdapter;
+import com.ironz.binaryprefs.files.FileAdapter;
 
 import java.util.Map;
 import java.util.Set;
 
 public class BinaryPreferences implements SharedPreferences {
+
+    private final CacheAdapter cacheAdapter;
+    private final FileAdapter fileAdapter;
+
+    public BinaryPreferences(CacheAdapter cacheAdapter, FileAdapter fileAdapter) {
+        this.cacheAdapter = cacheAdapter;
+        this.fileAdapter = fileAdapter;
+    }
 
     @Override
     public Map<String, ?> getAll() {
@@ -49,7 +59,7 @@ public class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Editor edit() {
-        return null;
+        return new BinaryPreferencesEditor(cacheAdapter, fileAdapter);
     }
 
     @Override

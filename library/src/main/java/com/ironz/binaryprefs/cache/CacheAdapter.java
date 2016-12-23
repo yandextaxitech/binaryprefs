@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.cache;
 
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -134,4 +135,11 @@ public interface CacheAdapter {
      * @throws ClassCastException if value have inconsistent type
      */
     boolean getBoolean(String key, boolean defValue);
+
+    /**
+     * Returns {@link java.util.Map} of all {@link java.lang.Object} values from cache.
+     *
+     * @return all values from cache
+     */
+    Map<String, ?> getAll();
 }

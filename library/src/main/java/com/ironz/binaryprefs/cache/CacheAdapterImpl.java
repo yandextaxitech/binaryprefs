@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.cache;
 
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -90,5 +91,10 @@ public class CacheAdapterImpl implements CacheAdapter {
             return (boolean) cache.get(key);
         }
         return defValue;
+    }
+
+    @Override
+    public Map<String, ?> getAll() {
+        return cache;
     }
 }
