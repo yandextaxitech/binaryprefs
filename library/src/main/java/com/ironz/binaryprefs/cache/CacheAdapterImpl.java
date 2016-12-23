@@ -11,7 +11,7 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class CacheAdapterImpl implements CacheAdapter {
 
-    //we are define explicit type because invokevirtual faster than invokeinterface
+    //we are define explicit HashMap type because invokevirtual faster than invokeinterface
     private final HashMap<String, Object> cache = new HashMap<>();
 
     @Override
