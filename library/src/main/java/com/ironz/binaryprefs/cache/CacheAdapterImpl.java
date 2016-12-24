@@ -95,6 +95,6 @@ public class CacheAdapterImpl implements CacheAdapter {
 
     @Override
     public Map<String, ?> getAll() {
-        return cache;
+        return new HashMap<>(cache);
     }
 }
