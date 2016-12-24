@@ -7,7 +7,7 @@ import com.ironz.binaryprefs.files.FileAdapter;
 import java.util.Map;
 import java.util.Set;
 
-public class BinaryPreferences implements SharedPreferences {
+public final class BinaryPreferences implements SharedPreferences {
 
     private final CacheAdapter cacheAdapter;
     private final FileAdapter fileAdapter;
