@@ -147,7 +147,7 @@ public interface CacheAdapter {
     /**
      * Checks value by specified key
      *
-     * @param key key
+     * @param key unique key
      * @return true if exists, false otherwise
      */
     boolean contains(String key);
