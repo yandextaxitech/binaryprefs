@@ -142,4 +142,13 @@ public interface CacheAdapter {
      * @return all values from cache
      */
     Map<String, ?> getAll();
+
+
+    /**
+     * Checks value by specified key
+     *
+     * @param key key
+     * @return true if exists, false otherwise
+     */
+    boolean contains(String key);
 }

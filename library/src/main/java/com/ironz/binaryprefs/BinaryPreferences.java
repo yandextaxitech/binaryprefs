@@ -19,37 +19,37 @@ public class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Map<String, ?> getAll() {
-        return null;
+        return cacheAdapter.getAll();
     }
 
     @Override
     public String getString(String key, String defValue) {
-        return null;
+        return cacheAdapter.getString(key, defValue);
     }
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
-        return null;
+        return cacheAdapter.getStringSet(key, defValues);
     }
 
     @Override
     public int getInt(String key, int defValue) {
-        return 0;
+        return cacheAdapter.getInt(key, defValue);
     }
 
     @Override
     public long getLong(String key, long defValue) {
-        return 0;
+        return cacheAdapter.getLong(key, defValue);
     }
 
     @Override
     public float getFloat(String key, float defValue) {
-        return 0;
+        return cacheAdapter.getFloat(key, defValue);
     }
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        return false;
+        return cacheAdapter.getBoolean(key, defValue);
     }
 
     @Override

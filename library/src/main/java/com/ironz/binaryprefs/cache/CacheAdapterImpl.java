@@ -97,4 +97,9 @@ public class CacheAdapterImpl implements CacheAdapter {
     public Map<String, ?> getAll() {
         return new HashMap<>(cache);
     }
+
+    @Override
+    public boolean contains(String key) {
+        return cache.containsKey(key);
+    }
 }
