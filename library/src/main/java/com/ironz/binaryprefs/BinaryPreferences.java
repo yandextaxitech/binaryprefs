@@ -54,7 +54,7 @@ public class BinaryPreferences implements SharedPreferences {
 
     @Override
     public boolean contains(String key) {
-        return false;
+        return cacheAdapter.contains(key);
     }
 
     @Override
