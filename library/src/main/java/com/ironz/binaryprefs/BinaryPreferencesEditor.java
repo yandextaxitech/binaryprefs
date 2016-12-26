@@ -4,13 +4,12 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.cache.CacheAdapter;
 import com.ironz.binaryprefs.files.FileAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     private final Map<String, Object> commitMap = new HashMap<>();
+    private final Set<String> removeSet = new HashSet<>();
 
     private final CacheAdapter cacheAdapter;
     private final FileAdapter fileAdapter;
@@ -58,13 +57,12 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public SharedPreferences.Editor remove(String key) {
-        commitMap.remove(key);
+        removeSet.add(key);
         return this;
     }
 
     @Override
     public SharedPreferences.Editor clear() {
-        commitMap.clear();
         return this;
     }
 
