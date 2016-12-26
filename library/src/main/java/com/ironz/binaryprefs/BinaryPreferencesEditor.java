@@ -4,7 +4,10 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.cache.CacheAdapter;
 import com.ironz.binaryprefs.files.FileAdapter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
@@ -13,6 +16,8 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     private final CacheAdapter cacheAdapter;
     private final FileAdapter fileAdapter;
+
+    private boolean clear;
 
     BinaryPreferencesEditor(CacheAdapter cacheAdapter, FileAdapter fileAdapter) {
         this.cacheAdapter = cacheAdapter;
@@ -63,6 +68,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public SharedPreferences.Editor clear() {
+        clear = true;
         return this;
     }
 
