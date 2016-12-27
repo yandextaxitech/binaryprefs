@@ -3,6 +3,7 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.cache.CacheAdapter;
 import com.ironz.binaryprefs.files.FileAdapter;
+import com.ironz.binaryprefs.task.TaskHandler;
 
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +60,7 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Editor edit() {
-        return new BinaryPreferencesEditor(cacheAdapter, fileAdapter);
+        return new BinaryPreferencesEditor(new TaskHandler(cacheAdapter, fileAdapter));
     }
 
     @Override

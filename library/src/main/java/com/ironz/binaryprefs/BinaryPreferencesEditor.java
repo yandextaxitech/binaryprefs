@@ -1,8 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
-import com.ironz.binaryprefs.cache.CacheAdapter;
-import com.ironz.binaryprefs.files.FileAdapter;
+import com.ironz.binaryprefs.task.TaskHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,14 +13,12 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     private final Map<String, Object> commitMap = new HashMap<>();
     private final Set<String> removeSet = new HashSet<>();
 
-    private final CacheAdapter cacheAdapter;
-    private final FileAdapter fileAdapter;
+    private final TaskHandler taskHandler;
 
     private boolean clear;
 
-    BinaryPreferencesEditor(CacheAdapter cacheAdapter, FileAdapter fileAdapter) {
-        this.cacheAdapter = cacheAdapter;
-        this.fileAdapter = fileAdapter;
+    BinaryPreferencesEditor(TaskHandler taskHandler) {
+        this.taskHandler = taskHandler;
     }
 
     @Override
@@ -73,12 +70,12 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public boolean commit() {
-        return false;
+    public void apply() {
+        taskHandler.apply(clear, removeSet, commitMap);
     }
 
     @Override
-    public void apply() {
-
+    public boolean commit() {
+        return taskHandler.commit(clear, removeSet, commitMap);
     }
 }
