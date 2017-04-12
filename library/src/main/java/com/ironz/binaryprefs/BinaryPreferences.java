@@ -5,6 +5,7 @@ import com.ironz.binaryprefs.files.FileAdapter;
 import com.ironz.binaryprefs.task.TaskHandler;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +37,19 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
+        try {
+            final HashSet<String> strings = new HashSet<>();
+            String namePrefix = key + ".ss.";
+            for (String name : fileAdapter.names()) {
+                if (name.startsWith(namePrefix)) {
+                    byte[] bytes = fileAdapter.fetch(name);
+                    strings.add(new String(bytes));
+                }
+            }
+            return strings;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return defValues;
     }
 

@@ -30,7 +30,11 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public SharedPreferences.Editor putStringSet(String key, Set<String> values) {
-//        commitMap.put(key, values);
+        int i = 0;
+        for (String value : values) {
+            commitMap.put(key + ".ss." + i, value.getBytes());
+            i++;
+        }
         return this;
     }
 
