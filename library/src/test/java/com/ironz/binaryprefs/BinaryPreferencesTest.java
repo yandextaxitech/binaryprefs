@@ -23,7 +23,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void name() {
+    public void base() {
 
         BinaryPreferences preferences = new BinaryPreferences(new NioFileAdapter(newFolder));
 
