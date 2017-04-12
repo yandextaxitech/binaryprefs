@@ -1,12 +1,12 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.files.NioFileAdapter;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,11 +15,16 @@ public final class BinaryPreferencesTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
+    private File newFolder;
+
+    @Before
+    public void setUp() throws Exception {
+        newFolder = folder.newFolder();
+    }
 
     @Test
-    public void name() throws IOException {
+    public void name() {
 
-        File newFolder = folder.newFolder();
         BinaryPreferences preferences = new BinaryPreferences(new NioFileAdapter(newFolder));
 
         String bool = "bool";
