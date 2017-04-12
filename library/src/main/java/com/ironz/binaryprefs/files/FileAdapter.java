@@ -43,4 +43,11 @@ public interface FileAdapter {
      * @return value has been removed
      */
     void remove(String name);
+
+    /**
+     * Check file with this name
+     * @param name exact name pattern
+     * @return true if FS contains false if not
+     */
+    boolean contains(String name);
 }

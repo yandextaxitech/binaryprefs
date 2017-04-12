@@ -39,12 +39,14 @@ public final class BinaryPreferences implements SharedPreferences {
     public Set<String> getStringSet(String key, Set<String> defValues) {
         try {
             final HashSet<String> strings = new HashSet<>();
-            String namePrefix = key + ".ss.";
-            for (String name : fileAdapter.names()) {
-                if (name.startsWith(namePrefix)) {
+            for (int i = 0; i < Integer.MAX_VALUE; i++) {
+                String name = key + ".ss." + i;
+                if (fileAdapter.contains(name)) {
                     byte[] bytes = fileAdapter.fetch(name);
                     strings.add(new String(bytes));
+                    continue;
                 }
+                break;
             }
             return strings;
         } catch (Exception e) {

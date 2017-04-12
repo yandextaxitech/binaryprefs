@@ -96,4 +96,9 @@ public class NioFileAdapter implements FileAdapter {
             throw new FileOperationException(e);
         }
     }
+
+    @Override
+    public boolean contains(String name) {
+        return new File(srcDir, name).exists();
+    }
 }
