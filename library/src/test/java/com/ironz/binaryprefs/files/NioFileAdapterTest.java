@@ -78,7 +78,7 @@ public class NioFileAdapterTest {
 
         fileAdapter.clear();
 
-        assertFalse(file.exists());
         assertFalse(fileTwo.exists());
+        assertFalse(file.exists());
     }
 }

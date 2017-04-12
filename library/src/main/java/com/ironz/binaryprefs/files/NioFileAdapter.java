@@ -8,7 +8,6 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-
 /**
  * Concrete file adapter which implements NIO file operations
  */
@@ -76,9 +75,10 @@ public class NioFileAdapter implements FileAdapter {
     @Override
     public void clear() {
         try {
-            File[] files = srcDir.listFiles();
+            String[] list = names();
+            String[] files = list != null ? list : new String[0];
             for (int i = 0; i < files.length; i++) {
-                File file = files[i];
+                File file = new File(srcDir, files[i]);
                 file.delete();
             }
         } catch (Exception e) {
