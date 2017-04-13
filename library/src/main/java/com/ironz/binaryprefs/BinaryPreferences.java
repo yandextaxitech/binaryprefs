@@ -109,7 +109,6 @@ public final class BinaryPreferences implements SharedPreferences {
 
     }
 
-
     private Map<String, ?> getStringMapInternal() {
         Map<String, Object> map = new HashMap<>();
         for (String name : fileAdapter.names()) {
