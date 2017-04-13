@@ -4,56 +4,125 @@ import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.exception.ExceptionHandlerImpl;
 import com.ironz.binaryprefs.files.FileAdapter;
 import com.ironz.binaryprefs.files.NioFileAdapter;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public final class BinaryPreferencesTest {
 
+    private static final String KEY_SUFFIX = "key";
+
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
+    private BinaryPreferences preferences;
 
-    @Test
-    public void base() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        preferences = getBinaryPreferences();
+    }
 
+    private BinaryPreferences getBinaryPreferences() throws IOException {
         ExceptionHandler exceptionHandler = new ExceptionHandlerImpl();
         FileAdapter adapter = new NioFileAdapter(folder.newFolder());
-        BinaryPreferences preferences = new BinaryPreferences(adapter, exceptionHandler);
+        return new BinaryPreferences(adapter, exceptionHandler);
+    }
 
-        String bool = "bool";
-        String str = "str";
-        String ss = "ss";
-
-        HashSet<String> strings = new HashSet<>();
-        strings.add("1one");
-        strings.add("2two");
-        strings.add("3tree");
-
+    @Test
+    public void stringValue() {
+        String key = String.class.getSimpleName() + KEY_SUFFIX;
+        String value = "value";
         preferences.edit()
-                .putBoolean(bool, true)
-                .putString(str, "value123")
-                .putStringSet(ss, strings)
+                .putString(key, value)
                 .apply();
+        String restored = preferences.getString(key, "default");
+        assertEquals(value, restored);
+    }
 
+    @Test
+    public void intValue() {
+        String key = int.class.getSimpleName() + KEY_SUFFIX;
+        int value = Integer.MAX_VALUE;
         preferences.edit()
-                .putString(str, "value")
+                .putInt(key, value)
                 .apply();
+        int restored = preferences.getInt(key, 0);
+        assertEquals(value, restored);
+    }
 
-        System.out.println("\nfirst-----");
-        System.out.println("bool: " + preferences.getBoolean(bool, false));
-        System.out.println("string: " + preferences.getString(str, "default"));
-        System.out.println("strings set: " + Arrays.toString(preferences.getStringSet(ss, new HashSet<String>()).toArray()));
-        System.out.println("all: " + preferences.getAll().toString());
+    @Test
+    public void longValue() {
+        String key = long.class.getSimpleName() + KEY_SUFFIX;
+        long value = Long.MAX_VALUE;
+        preferences.edit()
+                .putLong(key, value)
+                .apply();
+        long restored = preferences.getLong(key, 0L);
+        assertEquals(value, restored);
+    }
 
-        preferences.edit().clear().apply();
+    @Test
+    public void floatValue() {
+        String key = float.class.getSimpleName() + KEY_SUFFIX;
+        float value = Float.MAX_VALUE;
+        preferences.edit()
+                .putFloat(key, value)
+                .apply();
+        float restored = preferences.getFloat(key, .0f);
+        assertEquals(value, restored, .0f);
+    }
 
-        System.out.println("\nsecond-----");
-        System.out.println("bool: " + preferences.getBoolean(bool, false));
-        System.out.println("string: " + preferences.getString(str, "default"));
-        System.out.println("strings set: " + Arrays.toString(preferences.getStringSet(ss, new HashSet<String>()).toArray()));
-        System.out.println("all: " + preferences.getAll().toString());
+    @Test
+    public void booleanValue() {
+        String key = boolean.class.getSimpleName() + KEY_SUFFIX;
+        preferences.edit()
+                .putBoolean(key, true)
+                .apply();
+        boolean restored = preferences.getBoolean(key, false);
+        assertEquals(true, restored);
+    }
+
+    @Test
+    public void stringSetValue() {
+        String key = Set.class.getSimpleName() + KEY_SUFFIX;
+        HashSet<String> value = new HashSet<>();
+        value.add("one");
+        value.add("two");
+        value.add("tree");
+        preferences.edit()
+                .putStringSet(key, value)
+                .apply();
+        Set<String> restored = preferences.getStringSet(key, new HashSet<String>());
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void clearFirst() {
+        String key = "key";
+        String value = "value";
+        preferences.edit()
+                .putString(key, value)
+                .clear()
+                .apply();
+        String restored = preferences.getString(key, value);
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void removeFirst() {
+        String key = "key";
+        String value = "value";
+        preferences.edit()
+                .putString(key, value)
+                .remove(key)
+                .apply();
+        String restored = preferences.getString(key, value);
+        assertEquals(value, restored);
     }
 }
