@@ -49,6 +49,14 @@ public class NioFileAdapterTest {
     }
 
     @Test
+    public void restoreLonger() {
+        fileAdapter.save(fileName, bytes);
+        fileAdapter.save(fileName, bytesTwo);
+        byte[] fetch2 = fileAdapter.fetch(fileName);
+        assertEquals(new String(bytesTwo), new String(fetch2));
+    }
+
+    @Test
     public void deleteOne() {
         File file = new File(srcDir, fileName);
 
