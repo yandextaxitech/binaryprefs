@@ -94,6 +94,22 @@ public final class BinaryPreferences implements SharedPreferences {
         return containsInternal(key);
     }
 
+    @Override
+    public Editor edit() {
+        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler);
+    }
+
+    @Override
+    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+
+    }
+
+    @Override
+    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+
+    }
+
+
     private Map<String, ?> getStringMapInternal() {
         Map<String, Object> map = new HashMap<>();
         for (String name : fileAdapter.names()) {
@@ -175,20 +191,5 @@ public final class BinaryPreferences implements SharedPreferences {
             }
         }
         return false;
-    }
-
-    @Override
-    public Editor edit() {
-        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler);
-    }
-
-    @Override
-    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-
-    }
-
-    @Override
-    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-
     }
 }
