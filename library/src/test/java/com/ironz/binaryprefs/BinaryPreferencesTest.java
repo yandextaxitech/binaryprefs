@@ -9,6 +9,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public final class BinaryPreferencesTest {
@@ -44,10 +45,12 @@ public final class BinaryPreferencesTest {
 
         boolean boo = preferences.getBoolean(bool, false);
         String string = preferences.getString(str, "val2");
-        Set<String> stringSet = preferences.getStringSet(ss, new HashSet<>());
+        Set<String> stringSet = preferences.getStringSet(ss, new HashSet<String>());
+        Map<String, ?> all = preferences.getAll();
 
         System.out.println("bool: " + boo);
         System.out.println("string: " + string);
         System.out.println("strings set: " + Arrays.toString(stringSet.toArray()));
+        System.out.println("all: " + all.toString());
     }
 }

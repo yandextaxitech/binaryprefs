@@ -2,6 +2,14 @@ package com.ironz.binaryprefs;
 
 class Bits {
 
+    static int intFromBytes(byte[] b) {
+        int i = 0xFF;
+        return ((b[3] & i)) +
+                ((b[2] & i) << 8) +
+                ((b[1] & i) << 16) +
+                ((b[0]) << 24);
+    }
+
     static byte[] intToBytes(int value) {
         return new byte[]{
                 (byte) (value >>> 24),
@@ -10,30 +18,14 @@ class Bits {
                 (byte) value};
     }
 
+    static float floatFromBytes(byte[] bytes) {
+        int i = Bits.intFromBytes(bytes);
+        return Float.intBitsToFloat(i);
+    }
+
     static byte[] floatToBytes(float value) {
         int i = Float.floatToIntBits(value);
         return intToBytes(i);
-    }
-
-    static byte[] longToBytes(long value) {
-        byte[] result = new byte[8];
-        for (int i = 7; i >= 0; i--) {
-            result[i] = (byte) (value & 0xFF);
-            value >>= 8;
-        }
-        return result;
-    }
-
-    static byte[] booleanToBytes(boolean value) {
-        return new byte[]{(byte) (value ? 1 : 0)};
-    }
-
-    static int intFromBytes(byte[] b) {
-        int i = 0xFF;
-        return ((b[3] & i)) +
-                ((b[2] & i) << 8) +
-                ((b[1] & i) << 16) +
-                ((b[0]) << 24);
     }
 
     static long longFromBytes(byte[] b) {
@@ -48,7 +40,20 @@ class Bits {
                 (((long) b[0]) << 56);
     }
 
+    static byte[] longToBytes(long value) {
+        byte[] result = new byte[8];
+        for (int i = 7; i >= 0; i--) {
+            result[i] = (byte) (value & 0xFF);
+            value >>= 8;
+        }
+        return result;
+    }
+
     static boolean booleanFromBytes(byte[] bytes) {
         return bytes[0] != 0;
+    }
+
+    static byte[] booleanToBytes(boolean value) {
+        return new byte[]{(byte) (value ? 1 : 0)};
     }
 }

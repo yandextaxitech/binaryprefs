@@ -21,7 +21,42 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Map<String, ?> getAll() {
-        return new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        try {
+            for (String name : fileAdapter.names()) {
+
+                String[] split = name.split("\\.");
+                String suffix = split[split.length - 1];
+                String prefName = split[0];
+
+                if (suffix.equals(Constants.STRING_FILE_POSTFIX_WITHOUT_DOT)) {
+                    map.put(prefName, new String(fileAdapter.fetch(name)));
+                    continue;
+                }
+                if (suffix.equals(Constants.INTEGER_FILE_POSTFIX_WITHOUT_DOT)) {
+                    map.put(prefName, Bits.intFromBytes(fileAdapter.fetch(name)));
+                    continue;
+                }
+                if (suffix.equals(Constants.LONG_FILE_POSTFIX_WITHOUT_DOT)) {
+                    map.put(prefName, Bits.longFromBytes(fileAdapter.fetch(name)));
+                    continue;
+                }
+                if (suffix.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
+                    map.put(prefName, Bits.floatFromBytes(fileAdapter.fetch(name)));
+                    continue;
+                }
+                if (suffix.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
+                    map.put(prefName, Bits.booleanFromBytes(fileAdapter.fetch(name)));
+                    continue;
+                }
+                if (suffix.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
+                    map.put(prefName, getStrings(prefName));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     @Override
@@ -38,21 +73,25 @@ public final class BinaryPreferences implements SharedPreferences {
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
         try {
-            final HashSet<String> strings = new HashSet<>(0);
-            for (int i = 0; i < Integer.MAX_VALUE; i++) {
-                String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
-                if (fileAdapter.contains(name)) {
-                    byte[] bytes = fileAdapter.fetch(name);
-                    strings.add(new String(bytes));
-                    continue;
-                }
-                break;
-            }
-            return strings;
+            return getStrings(key);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return defValues;
+    }
+
+    private Set<String> getStrings(String key) {
+        final HashSet<String> strings = new HashSet<>(0);
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
+            if (fileAdapter.contains(name)) {
+                byte[] bytes = fileAdapter.fetch(name);
+                strings.add(new String(bytes));
+                continue;
+            }
+            break;
+        }
+        return strings;
     }
 
     @Override
@@ -81,8 +120,7 @@ public final class BinaryPreferences implements SharedPreferences {
     public float getFloat(String key, float defValue) {
         try {
             byte[] bytes = fileAdapter.fetch(key + Constants.FLOAT_FILE_POSTFIX);
-            int i = Bits.intFromBytes(bytes);
-            return Float.intBitsToFloat(i);
+            return Bits.floatFromBytes(bytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,7 +141,7 @@ public final class BinaryPreferences implements SharedPreferences {
     @Override
     public boolean contains(String key) {
         for (String s : fileAdapter.names()) {
-            if (s.split("\\.")[0].equals(key)) {
+            if (s.split("\\.", 2)[0].equals(key)) {
                 return true;
             }
         }
