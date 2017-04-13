@@ -21,49 +21,18 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Map<String, ?> getAll() {
-        Map<String, Object> map = new HashMap<>();
         try {
-            for (String name : fileAdapter.names()) {
-
-                String[] split = name.split("\\.");
-                String suffix = split[split.length - 1];
-                String prefName = split[0];
-
-                if (suffix.equals(Constants.STRING_FILE_POSTFIX_WITHOUT_DOT)) {
-                    map.put(prefName, new String(fileAdapter.fetch(name)));
-                    continue;
-                }
-                if (suffix.equals(Constants.INTEGER_FILE_POSTFIX_WITHOUT_DOT)) {
-                    map.put(prefName, Bits.intFromBytes(fileAdapter.fetch(name)));
-                    continue;
-                }
-                if (suffix.equals(Constants.LONG_FILE_POSTFIX_WITHOUT_DOT)) {
-                    map.put(prefName, Bits.longFromBytes(fileAdapter.fetch(name)));
-                    continue;
-                }
-                if (suffix.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
-                    map.put(prefName, Bits.floatFromBytes(fileAdapter.fetch(name)));
-                    continue;
-                }
-                if (suffix.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
-                    map.put(prefName, Bits.booleanFromBytes(fileAdapter.fetch(name)));
-                    continue;
-                }
-                if (suffix.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
-                    map.put(prefName, getStrings(prefName));
-                }
-            }
+            return getStringMapInternal();
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
-        return map;
+        return new HashMap<>();
     }
 
     @Override
     public String getString(String key, String defValue) {
         try {
-            byte[] bytes = fileAdapter.fetch(key + Constants.STRING_FILE_POSTFIX);
-            return new String(bytes);
+            return getStringInternal(key);
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
@@ -73,14 +42,99 @@ public final class BinaryPreferences implements SharedPreferences {
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
         try {
-            return getStrings(key);
+            return getStringsInternal(key);
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
         return defValues;
     }
 
-    private Set<String> getStrings(String key) {
+    @Override
+    public int getInt(String key, int defValue) {
+        try {
+            return getIntInternal(key);
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
+
+    @Override
+    public long getLong(String key, long defValue) {
+        try {
+            return getLongInternal(key);
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
+
+    @Override
+    public float getFloat(String key, float defValue) {
+        try {
+            return getFloatInternal(key);
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
+
+    @Override
+    public boolean getBoolean(String key, boolean defValue) {
+        try {
+            return getBooleanInternal(key);
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return containsInternal(key);
+    }
+
+    private Map<String, ?> getStringMapInternal() {
+        Map<String, Object> map = new HashMap<>();
+        for (String name : fileAdapter.names()) {
+
+            String[] split = name.split("\\.");
+            String suffix = split[split.length - 1];
+            String prefName = split[0];
+
+            if (suffix.equals(Constants.STRING_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getStringInternal(prefName));
+                continue;
+            }
+            if (suffix.equals(Constants.INTEGER_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getIntInternal(prefName));
+                continue;
+            }
+            if (suffix.equals(Constants.LONG_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getLongInternal(prefName));
+                continue;
+            }
+            if (suffix.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getFloatInternal(prefName));
+                continue;
+            }
+            if (suffix.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getBooleanInternal(prefName));
+                continue;
+            }
+            if (suffix.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getStringsInternal(prefName));
+            }
+        }
+        return map;
+    }
+
+    private String getStringInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(key + Constants.STRING_FILE_POSTFIX);
+        return new String(bytes);
+    }
+
+    private Set<String> getStringsInternal(String key) {
         final HashSet<String> strings = new HashSet<>(0);
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
@@ -94,52 +148,27 @@ public final class BinaryPreferences implements SharedPreferences {
         return strings;
     }
 
-    @Override
-    public int getInt(String key, int defValue) {
-        try {
-            byte[] bytes = fileAdapter.fetch(key + Constants.INTEGER_FILE_POSTFIX);
-            return Bits.intFromBytes(bytes);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
+    private int getIntInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(key + Constants.INTEGER_FILE_POSTFIX);
+        return Bits.intFromBytes(bytes);
     }
 
-    @Override
-    public long getLong(String key, long defValue) {
-        try {
-            byte[] bytes = fileAdapter.fetch(key + Constants.LONG_FILE_POSTFIX);
-            return Bits.longFromBytes(bytes);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
+    private long getLongInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(key + Constants.LONG_FILE_POSTFIX);
+        return Bits.longFromBytes(bytes);
     }
 
-    @Override
-    public float getFloat(String key, float defValue) {
-        try {
-            byte[] bytes = fileAdapter.fetch(key + Constants.FLOAT_FILE_POSTFIX);
-            return Bits.floatFromBytes(bytes);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
+    private float getFloatInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(key + Constants.FLOAT_FILE_POSTFIX);
+        return Bits.floatFromBytes(bytes);
     }
 
-    @Override
-    public boolean getBoolean(String key, boolean defValue) {
-        try {
-            byte[] bytes = fileAdapter.fetch(key + Constants.BOOLEAN_FILE_POSTFIX);
-            return Bits.booleanFromBytes(bytes);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
+    private boolean getBooleanInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(key + Constants.BOOLEAN_FILE_POSTFIX);
+        return Bits.booleanFromBytes(bytes);
     }
 
-    @Override
-    public boolean contains(String key) {
+    private boolean containsInternal(String key) {
         for (String s : fileAdapter.names()) {
             if (s.split("\\.", 2)[0].equals(key)) {
                 return true;
