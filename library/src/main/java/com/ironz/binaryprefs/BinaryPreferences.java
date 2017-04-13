@@ -38,7 +38,7 @@ public final class BinaryPreferences implements SharedPreferences {
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
         try {
-            final HashSet<String> strings = new HashSet<>();
+            final HashSet<String> strings = new HashSet<>(0);
             for (int i = 0; i < Integer.MAX_VALUE; i++) {
                 String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
                 if (fileAdapter.contains(name)) {
