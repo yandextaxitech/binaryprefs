@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel;
  * Concrete file adapter which implements NIO file operations
  */
 // TODO: 12/12/16 create benchmarks for MappedByteBuffer and plain direct ByteBuffer/ByteChannel
-public class NioFileAdapter implements FileAdapter {
+public final class NioFileAdapter implements FileAdapter {
 
     private final File srcDir;
 
@@ -71,14 +71,14 @@ public class NioFileAdapter implements FileAdapter {
         }
     }
 
-    @SuppressWarnings({"ResultOfMethodCallIgnored", "ForLoopReplaceableByForEach"})
     @Override
     public void clear() {
         try {
             String[] list = names();
             String[] files = list != null ? list : new String[0];
-            for (int i = 0; i < files.length; i++) {
-                File file = new File(srcDir, files[i]);
+            for (String name : files) {
+                File file = new File(srcDir, name);
+                //noinspection ResultOfMethodCallIgnored
                 file.delete();
             }
         } catch (Exception e) {
@@ -86,11 +86,11 @@ public class NioFileAdapter implements FileAdapter {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void remove(String name) {
         try {
             File file = new File(srcDir, name);
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         } catch (Exception e) {
             throw new FileOperationException(e);
