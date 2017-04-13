@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public final class BinaryPreferencesTest {
 
-    private static final String KEY_SUFFIX = "key";
+    private static final String KEY_SUFFIX = "_key";
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
