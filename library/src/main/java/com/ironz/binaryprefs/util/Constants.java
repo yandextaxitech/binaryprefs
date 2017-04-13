@@ -1,6 +1,10 @@
 package com.ironz.binaryprefs.util;
 
 public class Constants {
+
+    private Constants() {
+    }
+
     public static final String STRING_FILE_POSTFIX_WITHOUT_DOT = "s";
     public static final String INTEGER_FILE_POSTFIX_WITHOUT_DOT = "i";
     public static final String LONG_FILE_POSTFIX_WITHOUT_DOT = "l";

@@ -2,6 +2,9 @@ package com.ironz.binaryprefs.util;
 
 public class Bits {
 
+    private Bits() {
+    }
+
     public static int intFromBytes(byte[] b) {
         int i = 0xFF;
         return ((b[3] & i)) +
