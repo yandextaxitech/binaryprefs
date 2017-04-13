@@ -151,7 +151,7 @@ public final class BinaryPreferencesTest {
         final SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                throw new UnsupportedOperationException("This method should never not be called!");
+                throw new UnsupportedOperationException("This method should not never be called!");
             }
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
