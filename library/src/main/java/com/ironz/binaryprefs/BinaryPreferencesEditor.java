@@ -24,7 +24,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     @Override
     public SharedPreferences.Editor putString(String key, String value) {
         byte[] bytes = value.getBytes();
-        commitMap.put(key + ".s", bytes);
+        commitMap.put(key + Constants.STRING_FILE_POSTFIX, bytes);
         return this;
     }
 
@@ -32,7 +32,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     public SharedPreferences.Editor putStringSet(String key, Set<String> values) {
         int i = 0;
         for (String value : values) {
-            commitMap.put(key + ".ss." + i, value.getBytes());
+            commitMap.put(key + Constants.STRING_SET_FILE_POSTFIX + i, value.getBytes());
             i++;
         }
         return this;
@@ -40,28 +40,28 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public SharedPreferences.Editor putInt(String key, int value) {
-        commitMap.put(key + ".i", intToBytes(value));
+        commitMap.put(key + Constants.INTEGER_FILE_POSTFIX, intToBytes(value));
         return this;
     }
 
     @Override
     public SharedPreferences.Editor putLong(String key, long value) {
         byte[] bytes = longToBytes(value);
-        commitMap.put(key + ".l", bytes);
+        commitMap.put(key + Constants.LONG_FILE_POSTFIX, bytes);
         return this;
     }
 
     @Override
     public SharedPreferences.Editor putFloat(String key, float value) {
         byte[] bytes = floatToBytes(value);
-        commitMap.put(key + ".f", bytes);
+        commitMap.put(key + Constants.FLOAT_FILE_POSTFIX, bytes);
         return this;
     }
 
     @Override
     public SharedPreferences.Editor putBoolean(String key, boolean value) {
         byte[] bytes = booleanToBytes(value);
-        commitMap.put(key + ".b", bytes);
+        commitMap.put(key + Constants.BOOLEAN_FILE_POSTFIX, bytes);
         return this;
     }
 
