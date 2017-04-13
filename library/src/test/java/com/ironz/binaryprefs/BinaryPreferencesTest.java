@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public final class BinaryPreferencesTest {
 
@@ -141,5 +142,29 @@ public final class BinaryPreferencesTest {
         });
         preferences.edit().putString(key, value).apply();
         assertEquals(value, preferences.getString(key, undefined));
+    }
+
+    @Test
+    public void removeListeners() {
+        final String key = "key";
+        final String value = "value";
+        final SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                throw new UnsupportedOperationException("This method shouldn't be called!");
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
+        preferences.unregisterOnSharedPreferenceChangeListener(listener);
+        preferences.edit().putString(key, value).apply();
+    }
+
+    @Test
+    public void commit() {
+        String key = String.class.getSimpleName() + KEY_SUFFIX;
+        String value = "value";
+        assertTrue(preferences.edit()
+                .putString(key, value)
+                .commit());
     }
 }
