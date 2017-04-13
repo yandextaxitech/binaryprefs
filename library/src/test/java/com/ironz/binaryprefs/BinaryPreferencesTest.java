@@ -131,14 +131,15 @@ public final class BinaryPreferencesTest {
     public void listeners() {
         final String key = "key";
         final String value = "value";
+        final String undefined = "undefined";
         preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 assertEquals(key, s);
-                assertEquals(value, sharedPreferences.getString(key, "undefined"));
+                assertEquals(value, sharedPreferences.getString(key, undefined));
             }
         });
         preferences.edit().putString(key, value).apply();
-        assertEquals(value, preferences.getString(key, "undefined"));
+        assertEquals(value, preferences.getString(key, undefined));
     }
 }
