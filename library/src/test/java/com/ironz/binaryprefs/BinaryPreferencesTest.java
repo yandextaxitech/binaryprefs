@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.exception.ExceptionHandlerImpl;
 import com.ironz.binaryprefs.files.FileAdapter;
@@ -124,5 +125,20 @@ public final class BinaryPreferencesTest {
                 .apply();
         String restored = preferences.getString(key, value);
         assertEquals(value, restored);
+    }
+
+    @Test
+    public void listeners() {
+        final String key = "key";
+        final String value = "value";
+        preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                assertEquals(key, s);
+                assertEquals(value, sharedPreferences.getString(key, "undefined"));
+            }
+        });
+        preferences.edit().putString(key, value).apply();
+        assertEquals(value, preferences.getString(key, "undefined"));
     }
 }

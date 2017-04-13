@@ -6,10 +6,7 @@ import com.ironz.binaryprefs.files.FileAdapter;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Constants;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
@@ -17,12 +14,19 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     private final Set<String> removeSet = new HashSet<>();
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
+    private final List<SharedPreferences.OnSharedPreferenceChangeListener> listeners;
+    private final SharedPreferences preferences;
 
     private boolean clear;
 
-    BinaryPreferencesEditor(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
+    BinaryPreferencesEditor(FileAdapter fileAdapter,
+                            ExceptionHandler exceptionHandler,
+                            List<SharedPreferences.OnSharedPreferenceChangeListener> listeners,
+                            SharedPreferences preferences) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
+        this.listeners = listeners;
+        this.preferences = preferences;
     }
 
     @Override
@@ -84,17 +88,17 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public void apply() {
-
         if (clear) {
             fileAdapter.clear();
         }
-
         for (String s : removeSet) {
             fileAdapter.remove(s);
+            notifyListeners(s);
         }
-
         for (Map.Entry<String, byte[]> entry : commitMap.entrySet()) {
-            fileAdapter.save(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            fileAdapter.save(key, entry.getValue());
+            notifyListeners(key);
         }
     }
 
@@ -106,14 +110,23 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
             }
             for (String s : removeSet) {
                 fileAdapter.remove(s);
+                notifyListeners(s);
             }
             for (Map.Entry<String, byte[]> entry : commitMap.entrySet()) {
-                fileAdapter.save(entry.getKey(), entry.getValue());
+                String key = entry.getKey();
+                fileAdapter.save(key, entry.getValue());
+                notifyListeners(key);
             }
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
         return false;
+    }
+
+    private void notifyListeners(String key) {
+        for (SharedPreferences.OnSharedPreferenceChangeListener listener : listeners) {
+            listener.onSharedPreferenceChanged(preferences, key.split("\\.")[0]);
+        }
     }
 }

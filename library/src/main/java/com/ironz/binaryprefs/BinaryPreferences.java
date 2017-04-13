@@ -6,15 +6,13 @@ import com.ironz.binaryprefs.files.FileAdapter;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Constants;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class BinaryPreferences implements SharedPreferences {
 
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
+    private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
 
     BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
         this.fileAdapter = fileAdapter;
@@ -98,17 +96,17 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Editor edit() {
-        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler);
+        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler, listeners, this);
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-
+        listeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-
+        listeners.remove(listener);
     }
 
     private Map<String, ?> getStringMapInternal() {
