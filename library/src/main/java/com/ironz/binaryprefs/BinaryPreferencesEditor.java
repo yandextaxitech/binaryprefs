@@ -3,6 +3,8 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.files.FileAdapter;
+import com.ironz.binaryprefs.util.Bits;
+import com.ironz.binaryprefs.util.Constants;
 
 import java.util.HashMap;
 import java.util.HashSet;
