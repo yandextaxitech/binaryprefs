@@ -1,7 +1,8 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
-import com.ironz.binaryprefs.task.TaskHandler;
+import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.files.FileAdapter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,13 +13,14 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     private final Map<String, byte[]> commitMap = new HashMap<>();
     private final Set<String> removeSet = new HashSet<>();
-
-    private final TaskHandler taskHandler;
+    private final FileAdapter fileAdapter;
+    private final ExceptionHandler exceptionHandler;
 
     private boolean clear;
 
-    BinaryPreferencesEditor(TaskHandler taskHandler) {
-        this.taskHandler = taskHandler;
+    BinaryPreferencesEditor(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
+        this.fileAdapter = fileAdapter;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
@@ -80,11 +82,36 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public void apply() {
-        taskHandler.apply(clear, removeSet, commitMap);
+
+        if (clear) {
+            fileAdapter.clear();
+        }
+
+        for (String s : removeSet) {
+            fileAdapter.remove(s);
+        }
+
+        for (Map.Entry<String, byte[]> entry : commitMap.entrySet()) {
+            fileAdapter.save(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
     public boolean commit() {
-        return taskHandler.commit(clear, removeSet, commitMap);
+        try {
+            if (clear) {
+                fileAdapter.clear();
+            }
+            for (String s : removeSet) {
+                fileAdapter.remove(s);
+            }
+            for (Map.Entry<String, byte[]> entry : commitMap.entrySet()) {
+                fileAdapter.save(entry.getKey(), entry.getValue());
+            }
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return false;
     }
 }

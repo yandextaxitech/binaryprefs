@@ -1,5 +1,8 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.exception.ExceptionHandlerImpl;
+import com.ironz.binaryprefs.files.FileAdapter;
 import com.ironz.binaryprefs.files.NioFileAdapter;
 import org.junit.Before;
 import org.junit.Rule;
@@ -9,8 +12,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public final class BinaryPreferencesTest {
 
@@ -26,16 +27,18 @@ public final class BinaryPreferencesTest {
     @Test
     public void base() {
 
-        BinaryPreferences preferences = new BinaryPreferences(new NioFileAdapter(newFolder));
+        ExceptionHandler exceptionHandler = new ExceptionHandlerImpl();
+        FileAdapter adapter = new NioFileAdapter(newFolder);
+        BinaryPreferences preferences = new BinaryPreferences(adapter, exceptionHandler);
 
         String bool = "bool";
         String str = "str";
         String ss = "ss";
 
         HashSet<String> strings = new HashSet<>();
-        strings.add("one");
-        strings.add("two");
-        strings.add("tree");
+        strings.add("1one");
+        strings.add("2two");
+        strings.add("3tree");
 
         preferences.edit()
                 .putBoolean(bool, true)
@@ -43,14 +46,18 @@ public final class BinaryPreferencesTest {
                 .putStringSet(ss, strings)
                 .apply();
 
-        boolean boo = preferences.getBoolean(bool, false);
-        String string = preferences.getString(str, "val2");
-        Set<String> stringSet = preferences.getStringSet(ss, new HashSet<String>());
-        Map<String, ?> all = preferences.getAll();
+        System.out.println("\nfirst-----");
+        System.out.println("bool: " + preferences.getBoolean(bool, false));
+        System.out.println("string: " + preferences.getString(str, "default"));
+        System.out.println("strings set: " + Arrays.toString(preferences.getStringSet(ss, new HashSet<String>()).toArray()));
+        System.out.println("all: " + preferences.getAll().toString());
 
-        System.out.println("bool: " + boo);
-        System.out.println("string: " + string);
-        System.out.println("strings set: " + Arrays.toString(stringSet.toArray()));
-        System.out.println("all: " + all.toString());
+        preferences.edit().clear().apply();
+
+        System.out.println("\nsecond-----");
+        System.out.println("bool: " + preferences.getBoolean(bool, false));
+        System.out.println("string: " + preferences.getString(str, "default"));
+        System.out.println("strings set: " + Arrays.toString(preferences.getStringSet(ss, new HashSet<String>()).toArray()));
+        System.out.println("all: " + preferences.getAll().toString());
     }
 }

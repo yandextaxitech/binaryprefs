@@ -1,8 +1,8 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.files.FileAdapter;
-import com.ironz.binaryprefs.task.TaskHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,12 +11,12 @@ import java.util.Set;
 
 public final class BinaryPreferences implements SharedPreferences {
 
-    private final TaskHandler taskHandler;
     private final FileAdapter fileAdapter;
+    private final ExceptionHandler exceptionHandler;
 
-    BinaryPreferences(FileAdapter fileAdapter) {
-        taskHandler = new TaskHandler(fileAdapter);
+    BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
         this.fileAdapter = fileAdapter;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class BinaryPreferences implements SharedPreferences {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return map;
     }
@@ -65,7 +65,7 @@ public final class BinaryPreferences implements SharedPreferences {
             byte[] bytes = fileAdapter.fetch(key + Constants.STRING_FILE_POSTFIX);
             return new String(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return defValue;
     }
@@ -75,7 +75,7 @@ public final class BinaryPreferences implements SharedPreferences {
         try {
             return getStrings(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return defValues;
     }
@@ -100,7 +100,7 @@ public final class BinaryPreferences implements SharedPreferences {
             byte[] bytes = fileAdapter.fetch(key + Constants.INTEGER_FILE_POSTFIX);
             return Bits.intFromBytes(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return defValue;
     }
@@ -111,7 +111,7 @@ public final class BinaryPreferences implements SharedPreferences {
             byte[] bytes = fileAdapter.fetch(key + Constants.LONG_FILE_POSTFIX);
             return Bits.longFromBytes(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return defValue;
     }
@@ -122,7 +122,7 @@ public final class BinaryPreferences implements SharedPreferences {
             byte[] bytes = fileAdapter.fetch(key + Constants.FLOAT_FILE_POSTFIX);
             return Bits.floatFromBytes(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return defValue;
     }
@@ -133,7 +133,7 @@ public final class BinaryPreferences implements SharedPreferences {
             byte[] bytes = fileAdapter.fetch(key + Constants.BOOLEAN_FILE_POSTFIX);
             return Bits.booleanFromBytes(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            exceptionHandler.handle(e);
         }
         return defValue;
     }
@@ -150,7 +150,7 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Editor edit() {
-        return new BinaryPreferencesEditor(taskHandler);
+        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler);
     }
 
     @Override
