@@ -126,7 +126,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     private void notifyListeners(String key) {
         for (SharedPreferences.OnSharedPreferenceChangeListener listener : listeners) {
-            listener.onSharedPreferenceChanged(preferences, key.split("\\.")[0]);
+            listener.onSharedPreferenceChanged(preferences, key.split("\\.", 2)[0]);
         }
     }
 }
