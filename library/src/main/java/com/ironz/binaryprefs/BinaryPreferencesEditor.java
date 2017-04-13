@@ -88,6 +88,21 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public void apply() {
+        performStore();
+    }
+
+    @Override
+    public boolean commit() {
+        try {
+            performStore();
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return false;
+    }
+
+    private void performStore() {
         if (clear) {
             fileAdapter.clear();
         }
@@ -95,33 +110,10 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
             fileAdapter.remove(s);
             notifyListeners(s);
         }
-        for (Map.Entry<String, byte[]> entry : commitMap.entrySet()) {
-            String key = entry.getKey();
-            fileAdapter.save(key, entry.getValue());
+        for (String key : commitMap.keySet()) {
+            fileAdapter.save(key, commitMap.get(key));
             notifyListeners(key);
         }
-    }
-
-    @Override
-    public boolean commit() {
-        try {
-            if (clear) {
-                fileAdapter.clear();
-            }
-            for (String s : removeSet) {
-                fileAdapter.remove(s);
-                notifyListeners(s);
-            }
-            for (Map.Entry<String, byte[]> entry : commitMap.entrySet()) {
-                String key = entry.getKey();
-                fileAdapter.save(key, entry.getValue());
-                notifyListeners(key);
-            }
-            return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return false;
     }
 
     private void notifyListeners(String key) {
