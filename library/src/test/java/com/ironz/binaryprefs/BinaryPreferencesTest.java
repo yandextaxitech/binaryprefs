@@ -34,8 +34,12 @@ public final class BinaryPreferencesTest {
 
         preferences.edit()
                 .putBoolean(bool, true)
-                .putString(str, "value")
+                .putString(str, "value123")
                 .putStringSet(ss, strings)
+                .apply();
+
+        preferences.edit()
+                .putString(str, "value")
                 .apply();
 
         System.out.println("\nfirst-----");

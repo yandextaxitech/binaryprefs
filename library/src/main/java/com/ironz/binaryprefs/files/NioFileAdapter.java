@@ -55,7 +55,8 @@ public final class NioFileAdapter implements FileAdapter {
         RandomAccessFile randomAccessFile = null;
         try {
             File file = new File(srcDir, name);
-            randomAccessFile = new RandomAccessFile(file, "rw");
+            randomAccessFile = new RandomAccessFile(file, "rwd");
+            randomAccessFile.setLength(0);
             channel = randomAccessFile.getChannel();
             MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
             byteBuffer.put(bytes);

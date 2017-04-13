@@ -15,6 +15,7 @@ public class NioFileAdapterTest {
     private final String fileName = "file.name";
     private final String fileNameTwo = fileName + 2;
     private final byte[] bytes = "value".getBytes();
+    private final byte[] bytesTwo = "eulav123".getBytes();
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
@@ -28,15 +29,23 @@ public class NioFileAdapterTest {
     }
 
     @Test
-    public void correctSaving() {
+    public void saving() {
         fileAdapter.save(fileName, bytes);
     }
 
     @Test
-    public void correctFile() {
+    public void restore() {
         fileAdapter.save(fileName, bytes);
         byte[] fetch = fileAdapter.fetch(fileName);
         assertEquals(new String(bytes), new String(fetch));
+    }
+
+    @Test
+    public void restoreShorter() {
+        fileAdapter.save(fileName, bytesTwo);
+        fileAdapter.save(fileName, bytes);
+        byte[] fetch2 = fileAdapter.fetch(fileName);
+        assertEquals(new String(bytes), new String(fetch2));
     }
 
     @Test
@@ -45,7 +54,6 @@ public class NioFileAdapterTest {
 
         fileAdapter.save(fileName, bytes);
         assertTrue(file.exists());
-        assertFalse(file.isDirectory());
 
         fileAdapter.remove(fileName);
         assertFalse(file.exists());
@@ -60,9 +68,7 @@ public class NioFileAdapterTest {
         fileAdapter.save(fileNameTwo, bytes);
 
         assertTrue(file.exists());
-        assertFalse(file.isDirectory());
         assertTrue(fileTwo.exists());
-        assertFalse(fileTwo.isDirectory());
 
         fileAdapter.clear();
 
