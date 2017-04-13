@@ -44,7 +44,7 @@ public final class BinaryPreferencesTest {
 
         boolean boo = preferences.getBoolean(bool, false);
         String string = preferences.getString(str, "val2");
-        Set<String> stringSet = preferences.getStringSet(ss, new HashSet<String>());
+        Set<String> stringSet = preferences.getStringSet(ss, new HashSet<>());
 
         System.out.println("bool: " + boo);
         System.out.println("string: " + string);

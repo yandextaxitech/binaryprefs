@@ -40,7 +40,7 @@ public final class BinaryPreferences implements SharedPreferences {
         try {
             final HashSet<String> strings = new HashSet<>();
             for (int i = 0; i < Integer.MAX_VALUE; i++) {
-                String name = key + Constants.STRING_SET_FILE_POSTFIX + i;
+                String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
                 if (fileAdapter.contains(name)) {
                     byte[] bytes = fileAdapter.fetch(name);
                     strings.add(new String(bytes));

@@ -32,7 +32,8 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     public SharedPreferences.Editor putStringSet(String key, Set<String> values) {
         int i = 0;
         for (String value : values) {
-            commitMap.put(key + Constants.STRING_SET_FILE_POSTFIX + i, value.getBytes());
+            String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
+            commitMap.put(name, value.getBytes());
             i++;
         }
         return this;
