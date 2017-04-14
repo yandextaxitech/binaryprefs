@@ -136,7 +136,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     private void tryRemoveByKeys() {
         for (String fileName : fileAdapter.names()) {
-            String key = getKeyFromFileName(fileName.split("\\.", 2)[0]);
+            String key = getKeyFromFileName(fileName);
             if (!removeSet.contains(key)) {
                 continue;
             }
@@ -147,7 +147,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     private void tryStoreByKey() {
         for (String fileName : commitMap.keySet()) {
-            String key = getKeyFromFileName(fileName.split("\\.", 2)[0]);
+            String key = getKeyFromFileName(fileName);
             fileAdapter.save(fileName, commitMap.get(fileName));
             notifyListeners(key);
         }
@@ -159,7 +159,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
         }
     }
 
-    private String getKeyFromFileName(String s) {
-        return s;
+    private String getKeyFromFileName(String fileName) {
+        return fileName.split("\\.", 2)[0];
     }
 }
