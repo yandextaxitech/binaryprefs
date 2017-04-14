@@ -152,12 +152,12 @@ public final class BinaryPreferences implements SharedPreferences {
                 map.put(prefName, getLongInternal(prefName));
                 continue;
             }
-            if (fileExtension.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getFloatInternal(prefName));
-                continue;
-            }
             if (fileExtension.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getBooleanInternal(prefName));
+                continue;
+            }
+            if (fileExtension.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
+                map.put(prefName, getFloatInternal(prefName));
                 continue;
             }
             if (fileExtension.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
@@ -172,6 +172,26 @@ public final class BinaryPreferences implements SharedPreferences {
         return new String(bytes);
     }
 
+    private int getIntInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertIntName(key));
+        return Bits.intFromBytes(bytes);
+    }
+
+    private long getLongInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertLongName(key));
+        return Bits.longFromBytes(bytes);
+    }
+
+    private boolean getBooleanInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertBooleanName(key));
+        return Bits.booleanFromBytes(bytes);
+    }
+
+    private float getFloatInternal(String key) {
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertFloatName(key));
+        return Bits.floatFromBytes(bytes);
+    }
+
     private Set<String> getStringsInternal(String key) {
         final HashSet<String> strings = new HashSet<>(0);
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
@@ -184,26 +204,6 @@ public final class BinaryPreferences implements SharedPreferences {
             break;
         }
         return strings;
-    }
-
-    private int getIntInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertIntName(key));
-        return Bits.intFromBytes(bytes);
-    }
-
-    private long getLongInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertLongName(key));
-        return Bits.longFromBytes(bytes);
-    }
-
-    private float getFloatInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertFloatName(key));
-        return Bits.floatFromBytes(bytes);
-    }
-
-    private boolean getBooleanInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertBooleanName(key));
-        return Bits.booleanFromBytes(bytes);
     }
 
     private boolean containsInternal(String key) {
