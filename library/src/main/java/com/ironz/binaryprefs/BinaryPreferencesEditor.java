@@ -94,13 +94,13 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public void apply() {
-        performStore();
+        performAction();
     }
 
     @Override
     public boolean commit() {
         try {
-            performStore();
+            performAction();
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(e);
@@ -108,7 +108,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
         return false;
     }
 
-    private void performStore() {
+    private void performAction() {
         if (clear) {
             fileAdapter.clear();
         }
