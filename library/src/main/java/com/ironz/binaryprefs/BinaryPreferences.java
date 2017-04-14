@@ -3,6 +3,7 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.files.FileAdapter;
+import com.ironz.binaryprefs.name.KeyNameProvider;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Constants;
 
@@ -12,12 +13,14 @@ public final class BinaryPreferences implements SharedPreferences {
 
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
+    private final KeyNameProvider keyNameProvider;
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
+    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler, KeyNameProvider keyNameProvider) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
+        this.keyNameProvider = keyNameProvider;
     }
 
     @Override
@@ -115,7 +118,7 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Editor edit() {
-        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler, listeners, this);
+        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler, listeners, this, keyNameProvider);
     }
 
     @Override
