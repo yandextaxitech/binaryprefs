@@ -99,6 +99,10 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public boolean commit() {
+        return withCallBack();
+    }
+
+    private boolean withCallBack() {
         try {
             performAction();
             return true;
