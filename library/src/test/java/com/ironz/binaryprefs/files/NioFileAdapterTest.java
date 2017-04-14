@@ -29,6 +29,17 @@ public class NioFileAdapterTest {
     }
 
     @Test
+    public void directoryProvider() {
+        NioFileAdapter nioFileAdapter = new NioFileAdapter(new DirectoryProvider() {
+            @Override
+            public File getBaseDirectory() {
+                return srcDir;
+            }
+        });
+        assertEquals(srcDir, nioFileAdapter.srcDir);
+    }
+
+    @Test
     public void saving() {
         fileAdapter.save(fileName, bytes);
     }

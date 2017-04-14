@@ -13,10 +13,14 @@ import java.nio.channels.FileChannel;
  */
 public final class NioFileAdapter implements FileAdapter {
 
-    private final File srcDir;
+    final File srcDir;
 
     public NioFileAdapter(File srcDir) {
         this.srcDir = srcDir;
+    }
+
+    public NioFileAdapter(DirectoryProvider directoryProvider) {
+        this.srcDir = directoryProvider.getBaseDirectory();
     }
 
     @Override

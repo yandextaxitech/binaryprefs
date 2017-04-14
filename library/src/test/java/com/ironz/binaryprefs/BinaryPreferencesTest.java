@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,13 +26,9 @@ public final class BinaryPreferencesTest {
 
     @Before
     public void setUp() throws Exception {
-        preferences = getBinaryPreferences();
-    }
-
-    private BinaryPreferences getBinaryPreferences() throws IOException {
         ExceptionHandler exceptionHandler = new ExceptionHandlerImpl();
         FileAdapter adapter = new NioFileAdapter(folder.newFolder());
-        return new BinaryPreferences(adapter, exceptionHandler);
+        preferences = new BinaryPreferences(adapter, exceptionHandler);
     }
 
     @Test
