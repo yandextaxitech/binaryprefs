@@ -21,7 +21,11 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public String[] names() {
-        return srcDir.list();
+        String[] list = srcDir.list();
+        if (list != null) {
+            return list;
+        }
+        return new String[0];
     }
 
     @Override

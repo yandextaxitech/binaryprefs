@@ -31,6 +31,9 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public SharedPreferences.Editor putString(String key, String value) {
+        if (value == null) {
+            return remove(key);
+        }
         byte[] bytes = value.getBytes();
         commitMap.put(key + Constants.STRING_FILE_POSTFIX, bytes);
         return this;
@@ -38,6 +41,9 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
 
     @Override
     public SharedPreferences.Editor putStringSet(String key, Set<String> values) {
+        if (values == null) {
+            return remove(key);
+        }
         int i = 0;
         for (String value : values) {
             String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;

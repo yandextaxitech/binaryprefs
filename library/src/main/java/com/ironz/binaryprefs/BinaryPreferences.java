@@ -14,7 +14,8 @@ public final class BinaryPreferences implements SharedPreferences {
     private final ExceptionHandler exceptionHandler;
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
 
-    BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
+    @SuppressWarnings("WeakerAccess")
+    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
     }
