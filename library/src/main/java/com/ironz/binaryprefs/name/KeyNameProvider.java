@@ -29,6 +29,15 @@ public class KeyNameProvider {
     }
 
     public String getKeyFromFileName(String fileName) {
-        return fileName.split("\\.", 2)[0];
+        return splitFileName(fileName)[0];
+    }
+
+    public String getFileExtension(String fileName) {
+        String[] strings = splitFileName(fileName);
+        return strings[strings.length - 1];
+    }
+
+    private String[] splitFileName(String fileName) {
+        return fileName.split("\\.");
     }
 }
