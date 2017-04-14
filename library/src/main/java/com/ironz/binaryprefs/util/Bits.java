@@ -1,5 +1,8 @@
 package com.ironz.binaryprefs.util;
 
+/**
+ * Converts bytes to primitives and backwards
+ */
 public class Bits {
 
     private Bits() {

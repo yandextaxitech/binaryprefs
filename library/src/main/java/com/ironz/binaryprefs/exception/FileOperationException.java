@@ -6,8 +6,6 @@ package com.ironz.binaryprefs.exception;
  */
 public final class FileOperationException extends RuntimeException {
 
-    /**
-     */
     public FileOperationException(Throwable cause) {
         super(cause);
     }
