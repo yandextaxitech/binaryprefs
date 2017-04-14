@@ -2,7 +2,7 @@ package com.ironz.binaryprefs.name;
 
 import com.ironz.binaryprefs.util.Constants;
 
-public class KeyNameProvider {
+public final class KeyNameProvider {
 
     public String convertStringName(String key) {
         return key + Constants.STRING_FILE_POSTFIX;
