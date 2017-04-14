@@ -32,6 +32,9 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public String getString(String key, String defValue) {
+        if (!contains(key)) {
+            return defValue;
+        }
         try {
             return getStringInternal(key);
         } catch (Exception e) {
@@ -42,6 +45,9 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
+        if (!contains(key)) {
+            return defValues;
+        }
         try {
             return getStringsInternal(key);
         } catch (Exception e) {
@@ -52,6 +58,9 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public int getInt(String key, int defValue) {
+        if (!contains(key)) {
+            return defValue;
+        }
         try {
             return getIntInternal(key);
         } catch (Exception e) {
@@ -62,6 +71,9 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public long getLong(String key, long defValue) {
+        if (!contains(key)) {
+            return defValue;
+        }
         try {
             return getLongInternal(key);
         } catch (Exception e) {
@@ -72,6 +84,9 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public float getFloat(String key, float defValue) {
+        if (!contains(key)) {
+            return defValue;
+        }
         try {
             return getFloatInternal(key);
         } catch (Exception e) {
@@ -82,6 +97,9 @@ public final class BinaryPreferences implements SharedPreferences {
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
+        if (!contains(key)) {
+            return defValue;
+        }
         try {
             return getBooleanInternal(key);
         } catch (Exception e) {
