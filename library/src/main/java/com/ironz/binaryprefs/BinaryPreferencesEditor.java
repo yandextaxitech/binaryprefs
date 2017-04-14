@@ -125,7 +125,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     private void performActions() {
         tryClearAll();
         tryRemoveByKeys();
-        tryStoreByKey();
+        tryStoreByKeys();
     }
 
     private void tryClearAll() {
@@ -145,7 +145,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
         }
     }
 
-    private void tryStoreByKey() {
+    private void tryStoreByKeys() {
         for (String fileName : commitMap.keySet()) {
             String key = getKeyFromFileName(fileName);
             fileAdapter.save(fileName, commitMap.get(fileName));
