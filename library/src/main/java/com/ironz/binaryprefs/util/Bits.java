@@ -21,7 +21,8 @@ public class Bits {
                 (byte) (value >>> 24),
                 (byte) (value >>> 16),
                 (byte) (value >>> 8),
-                (byte) value};
+                (byte) value
+        };
     }
 
     public static float floatFromBytes(byte[] bytes) {
@@ -47,12 +48,16 @@ public class Bits {
     }
 
     public static byte[] longToBytes(long value) {
-        byte[] result = new byte[8];
-        for (int i = 7; i >= 0; i--) {
-            result[i] = (byte) (value & 0xFF);
-            value >>= 8;
-        }
-        return result;
+        byte[] bytes = new byte[8];
+        bytes[7] = (byte) (value);
+        bytes[6] = (byte) (value >>> 8);
+        bytes[5] = (byte) (value >>> 16);
+        bytes[4] = (byte) (value >>> 24);
+        bytes[3] = (byte) (value >>> 32);
+        bytes[2] = (byte) (value >>> 40);
+        bytes[1] = (byte) (value >>> 48);
+        bytes[0] = (byte) (value >>> 56);
+        return bytes;
     }
 
     public static boolean booleanFromBytes(byte[] bytes) {
