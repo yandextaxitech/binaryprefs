@@ -135,33 +135,32 @@ public final class BinaryPreferences implements SharedPreferences {
 
         Map<String, Object> map = new HashMap<>();
 
-        for (String name : fileAdapter.names()) {
+        for (String fileName : fileAdapter.names()) {
 
-            String[] split = name.split("\\.");
-            String suffix = split[split.length - 1];
-            String prefName = split[0];
+            String fileExtension = keyNameProvider.getFileExtension(fileName);
+            String prefName = keyNameProvider.getKeyFromFileName(fileName);
 
-            if (suffix.equals(Constants.STRING_FILE_POSTFIX_WITHOUT_DOT)) {
+            if (fileExtension.equals(Constants.STRING_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getStringInternal(prefName));
                 continue;
             }
-            if (suffix.equals(Constants.INTEGER_FILE_POSTFIX_WITHOUT_DOT)) {
+            if (fileExtension.equals(Constants.INTEGER_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getIntInternal(prefName));
                 continue;
             }
-            if (suffix.equals(Constants.LONG_FILE_POSTFIX_WITHOUT_DOT)) {
+            if (fileExtension.equals(Constants.LONG_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getLongInternal(prefName));
                 continue;
             }
-            if (suffix.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
+            if (fileExtension.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getFloatInternal(prefName));
                 continue;
             }
-            if (suffix.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
+            if (fileExtension.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getBooleanInternal(prefName));
                 continue;
             }
-            if (suffix.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
+            if (fileExtension.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
                 map.put(prefName, getStringsInternal(prefName));
             }
         }
