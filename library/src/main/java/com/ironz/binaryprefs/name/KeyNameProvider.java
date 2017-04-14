@@ -27,4 +27,8 @@ public class KeyNameProvider {
     public String convertFloatName(String key) {
         return key + Constants.FLOAT_FILE_POSTFIX;
     }
+
+    public String getKeyFromFileName(String fileName) {
+        return fileName.split("\\.", 2)[0];
+    }
 }

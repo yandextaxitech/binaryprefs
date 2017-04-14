@@ -176,7 +176,7 @@ public final class BinaryPreferences implements SharedPreferences {
     private Set<String> getStringsInternal(String key) {
         final HashSet<String> strings = new HashSet<>(0);
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            String name = key + "." + i + Constants.STRING_SET_FILE_POSTFIX;
+            String name = keyNameProvider.convertStringSetName(key, i);
             if (fileAdapter.contains(name)) {
                 byte[] bytes = fileAdapter.fetch(name);
                 strings.add(new String(bytes));
@@ -188,28 +188,28 @@ public final class BinaryPreferences implements SharedPreferences {
     }
 
     private int getIntInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key + Constants.INTEGER_FILE_POSTFIX);
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertIntName(key));
         return Bits.intFromBytes(bytes);
     }
 
     private long getLongInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key + Constants.LONG_FILE_POSTFIX);
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertLongName(key));
         return Bits.longFromBytes(bytes);
     }
 
     private float getFloatInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key + Constants.FLOAT_FILE_POSTFIX);
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertFloatName(key));
         return Bits.floatFromBytes(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key + Constants.BOOLEAN_FILE_POSTFIX);
+        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertBooleanName(key));
         return Bits.booleanFromBytes(bytes);
     }
 
     private boolean containsInternal(String key) {
-        for (String s : fileAdapter.names()) {
-            if (s.split("\\.", 2)[0].equals(key)) {
+        for (String fileName : fileAdapter.names()) {
+            if (keyNameProvider.getKeyFromFileName(fileName).equals(key)) {
                 return true;
             }
         }
