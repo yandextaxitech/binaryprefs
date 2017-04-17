@@ -1,3 +1,8 @@
+## Binary Preferences
+
+Implementation of SharedPreferences which stores each preference in files
+separately and performs disk IO via NIO2 with memory mapped file.
+
 ## License
 ```
 Copyright 2017 Alexander Efremenkov
