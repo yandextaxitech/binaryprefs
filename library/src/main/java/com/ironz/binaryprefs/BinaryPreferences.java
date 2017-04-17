@@ -168,27 +168,32 @@ public final class BinaryPreferences implements SharedPreferences {
     }
 
     private String getStringInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key + Constants.STRING_FILE_POSTFIX);
+        String fileName = key + Constants.STRING_FILE_POSTFIX;
+        byte[] bytes = fileAdapter.fetch(fileName);
         return new String(bytes);
     }
 
     private int getIntInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertIntName(key));
+        String fileName = keyNameProvider.convertIntName(key);
+        byte[] bytes = fileAdapter.fetch(fileName);
         return Bits.intFromBytes(bytes);
     }
 
     private long getLongInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertLongName(key));
+        String fileName = keyNameProvider.convertLongName(key);
+        byte[] bytes = fileAdapter.fetch(fileName);
         return Bits.longFromBytes(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertBooleanName(key));
+        String fileName = keyNameProvider.convertBooleanName(key);
+        byte[] bytes = fileAdapter.fetch(fileName);
         return Bits.booleanFromBytes(bytes);
     }
 
     private float getFloatInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(keyNameProvider.convertFloatName(key));
+        String fileName = keyNameProvider.convertFloatName(key);
+        byte[] bytes = fileAdapter.fetch(fileName);
         return Bits.floatFromBytes(bytes);
     }
 
