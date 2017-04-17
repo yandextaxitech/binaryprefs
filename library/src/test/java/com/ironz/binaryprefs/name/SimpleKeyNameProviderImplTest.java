@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class KeyNameProviderTest {
+public class SimpleKeyNameProviderImplTest {
 
     private static final String KEY = "key";
-    private final KeyNameProvider nameProvider = new KeyNameProvider();
+    private final KeyNameProvider nameProvider = new SimpleKeyNameProviderImpl();
 
     @Test
     public void stringName() {

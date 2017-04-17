@@ -6,6 +6,7 @@ import com.ironz.binaryprefs.exception.ExceptionHandlerImpl;
 import com.ironz.binaryprefs.files.FileAdapter;
 import com.ironz.binaryprefs.files.NioFileAdapter;
 import com.ironz.binaryprefs.name.KeyNameProvider;
+import com.ironz.binaryprefs.name.SimpleKeyNameProviderImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public final class BinaryPreferencesTest {
     public void setUp() throws Exception {
         ExceptionHandler exceptionHandler = new ExceptionHandlerImpl();
         FileAdapter adapter = new NioFileAdapter(folder.newFolder());
-        KeyNameProvider keyNameProvider = new KeyNameProvider();
+        KeyNameProvider keyNameProvider = new SimpleKeyNameProviderImpl();
         preferences = new BinaryPreferences(adapter, exceptionHandler, keyNameProvider);
     }
 
