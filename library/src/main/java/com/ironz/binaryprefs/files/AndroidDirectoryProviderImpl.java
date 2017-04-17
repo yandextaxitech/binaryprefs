@@ -5,6 +5,7 @@ import android.content.Context;
 import java.io.File;
 
 
+@SuppressWarnings("unused")
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
     private final File prefs;

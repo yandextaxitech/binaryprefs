@@ -19,6 +19,7 @@ public final class NioFileAdapter implements FileAdapter {
         this.srcDir = srcDir;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
         this.srcDir = directoryProvider.getBaseDirectory();
     }
