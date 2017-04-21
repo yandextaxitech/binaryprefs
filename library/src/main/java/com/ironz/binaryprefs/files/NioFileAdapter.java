@@ -35,6 +35,10 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) {
+        return fetchInternal(name);
+    }
+
+    private byte[] fetchInternal(String name) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
@@ -59,6 +63,10 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void save(String name, byte[] bytes) {
+        saveInternal(name, bytes);
+    }
+
+    private void saveInternal(String name, byte[] bytes) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
