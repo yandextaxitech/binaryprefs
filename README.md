@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs)
+
 ## Binary Preferences
 
 Implementation of SharedPreferences which stores each preference in files
