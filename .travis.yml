@@ -10,6 +10,8 @@ cache:
  -$HOME/.gradle/wrapper/
 android:
   components:
+    - tools
+    - platform-tools
     - build-tools-25.0.2
     - android-25
     - extra
@@ -18,3 +20,5 @@ licenses:
  - android-sdk-preview-license-.+
  - android-sdk-license-.+
  - google-gdk-license-.+
+ script:
+ - "./gradlew clean test assemble -PdisablePreDex --stacktrace --info"
