@@ -199,9 +199,10 @@ public final class BinaryPreferences implements SharedPreferences {
 
     private Set<String> getStringsInternal(String key) {
         final HashSet<String> strings = new HashSet<>(0);
+        final List<String> files = Arrays.asList(fileAdapter.names());
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             String name = keyNameProvider.convertStringSetName(key, i);
-            if (fileAdapter.contains(name)) {
+            if (files.contains(name)) {
                 byte[] bytes = fileAdapter.fetch(name);
                 strings.add(new String(bytes));
                 continue;
