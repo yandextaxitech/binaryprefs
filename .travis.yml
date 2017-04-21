@@ -14,4 +14,4 @@ licenses:
  - android-sdk-license-.+
  - google-gdk-license-.+
 script:
-- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+- "./gradlew clean build assemble -PdisablePreDex --stacktrace"
