@@ -46,6 +46,7 @@ public interface FileAdapter {
 
     /**
      * Check file with this name
+     *
      * @param name exact name pattern
      * @return true if FS contains false if not
      */
