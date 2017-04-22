@@ -133,7 +133,7 @@ public final class BinaryPreferences implements SharedPreferences {
 
     private Map<String, ?> getStringMapInternal() {
 
-        Map<String, Object> map = new HashMap<>();
+        final Map<String, Object> map = new HashMap<>();
 
         for (String fileName : fileAdapter.names()) {
 
@@ -199,7 +199,7 @@ public final class BinaryPreferences implements SharedPreferences {
 
     private Set<String> getStringsInternal(String key) {
         final HashSet<String> strings = new HashSet<>(0);
-        final List<String> files = Arrays.asList(fileAdapter.names());
+        final Set<String> files = new HashSet<>(Arrays.asList(fileAdapter.names()));
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             String name = keyNameProvider.convertStringSetName(key, i);
             if (files.contains(name)) {
