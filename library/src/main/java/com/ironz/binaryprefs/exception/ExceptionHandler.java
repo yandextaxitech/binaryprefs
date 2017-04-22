@@ -11,4 +11,11 @@ public interface ExceptionHandler {
      * @param e exception
      */
     void handle(Exception e);
+
+    ExceptionHandler EMPTY = new ExceptionHandler() {
+        @Override
+        public void handle(Exception ignored) {
+
+        }
+    };
 }
