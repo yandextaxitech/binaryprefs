@@ -46,25 +46,31 @@ public class NioFileAdapterTest {
 
     @Test
     public void restore() {
+
         fileAdapter.save(fileName, bytes);
         byte[] fetch = fileAdapter.fetch(fileName);
+
         assertEquals(new String(bytes), new String(fetch));
     }
 
     @Test
     public void restoreShorter() {
+
         fileAdapter.save(fileName, bytesTwo);
         fileAdapter.save(fileName, bytes);
-        byte[] fetch2 = fileAdapter.fetch(fileName);
-        assertEquals(new String(bytes), new String(fetch2));
+        byte[] fetch = fileAdapter.fetch(fileName);
+
+        assertEquals(new String(bytes), new String(fetch));
     }
 
     @Test
     public void restoreLonger() {
+
         fileAdapter.save(fileName, bytes);
         fileAdapter.save(fileName, bytesTwo);
-        byte[] fetch2 = fileAdapter.fetch(fileName);
-        assertEquals(new String(bytesTwo), new String(fetch2));
+        byte[] fetch = fileAdapter.fetch(fileName);
+
+        assertEquals(new String(bytesTwo), new String(fetch));
     }
 
     @Test

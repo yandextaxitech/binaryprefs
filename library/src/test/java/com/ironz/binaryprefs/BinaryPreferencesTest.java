@@ -207,6 +207,7 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void commit() {
+
         String key = String.class.getSimpleName() + KEY_SUFFIX;
         String value = "value";
 
