@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.files;
+package com.ironz.binaryprefs.file;
 
 import com.ironz.binaryprefs.exception.FileOperationException;
 
