@@ -25,7 +25,7 @@ public final class BinaryPreferencesTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
-    private BinaryPreferences preferences;
+    private SharedPreferences preferences;
 
     @Before
     public void setUp() throws Exception {
@@ -40,11 +40,12 @@ public final class BinaryPreferencesTest {
 
         String key = String.class.getSimpleName() + KEY_SUFFIX;
         String value = "value";
+        String undefined = "undefined";
 
         preferences.edit()
                 .putString(key, value)
                 .apply();
-        String restored = preferences.getString(key, "default");
+        String restored = preferences.getString(key, undefined);
 
         assertEquals(value, restored);
     }
