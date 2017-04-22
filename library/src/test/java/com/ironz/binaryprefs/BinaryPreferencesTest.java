@@ -12,11 +12,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public final class BinaryPreferencesTest {
@@ -30,9 +32,9 @@ public final class BinaryPreferencesTest {
     @Before
     public void setUp() throws Exception {
         ExceptionHandler exceptionHandler = new ExceptionHandlerImpl();
-        FileAdapter adapter = new NioFileAdapter(folder.newFolder());
+        FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder());
         KeyNameProvider keyNameProvider = new SimpleKeyNameProviderImpl();
-        preferences = new BinaryPreferences(adapter, exceptionHandler, keyNameProvider);
+        preferences = new BinaryPreferences(fileAdapter, exceptionHandler, keyNameProvider);
     }
 
     @Test
@@ -213,6 +215,10 @@ public final class BinaryPreferencesTest {
         String key = String.class.getSimpleName() + KEY_SUFFIX;
         String value = "value";
         assertTrue(preferences.edit()
+                .putString(key, value)
+                .commit());
+        folder.delete();
+        assertFalse(preferences.edit()
                 .putString(key, value)
                 .commit());
     }
