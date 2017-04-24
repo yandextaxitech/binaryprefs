@@ -173,19 +173,18 @@ public final class BinaryPreferencesTest {
         final String value = "value";
         final String undefined = "undefined";
 
-        final AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+        final AtomicBoolean changed = new AtomicBoolean(false);
 
         preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                atomicBoolean.set(true);
+                changed.set(true);
                 assertEquals(key, s);
                 assertEquals(value, sharedPreferences.getString(key, undefined));
             }
         });
         preferences.edit().putString(key, value).apply();
         assertEquals(value, preferences.getString(key, undefined));
-        assertTrue(atomicBoolean.get());
     }
 
     @Test
