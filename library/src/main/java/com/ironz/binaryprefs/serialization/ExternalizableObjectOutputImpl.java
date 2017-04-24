@@ -6,10 +6,11 @@ import java.io.ObjectOutput;
 
 public final class ExternalizableObjectOutputImpl implements ObjectOutput {
 
+    //32 bits for initial array size, buffer array are resizable to (buffer.length + GROW_ARRAY_CAPACITY) after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 32;
 
     int offset = 0;
-    private byte[] buffer = new byte[GROW_ARRAY_CAPACITY]; //32 bits for initial array size, this array are resizable after reaching limit.
+    private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
     @Override
     public void writeObject(Object obj) throws IOException {
