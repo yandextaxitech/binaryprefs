@@ -3,6 +3,7 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 
 import java.io.Externalizable;
+import java.util.Set;
 
 /**
  * Interface used for modifying values in a {@link Preferences}
@@ -11,6 +12,31 @@ import java.io.Externalizable;
  * or {@link #apply}
  */
 public interface PreferencesEditor extends SharedPreferences.Editor {
+
+    @Override
+    PreferencesEditor putString(String key, String value);
+
+    @Override
+    PreferencesEditor putStringSet(String key, Set<String> values);
+
+    @Override
+    PreferencesEditor putInt(String key, int value);
+
+    @Override
+    PreferencesEditor putLong(String key, long value);
+
+    @Override
+    PreferencesEditor putFloat(String key, float value);
+
+    @Override
+    PreferencesEditor putBoolean(String key, boolean value);
+
+    @Override
+    PreferencesEditor remove(String key);
+
+    @Override
+    PreferencesEditor clear();
+
     /**
      * Set an Object value in the preferences editor, to be written back once
      * {@link #commit} or {@link #apply} are called.

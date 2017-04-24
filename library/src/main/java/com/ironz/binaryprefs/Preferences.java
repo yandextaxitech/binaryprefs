@@ -9,6 +9,9 @@ import java.io.Externalizable;
  */
 public interface Preferences extends SharedPreferences {
 
+    @Override
+    PreferencesEditor edit();
+
     /**
      * Retrieve an object value from the preferences.
      *
