@@ -185,6 +185,7 @@ public final class BinaryPreferencesTest {
         });
         preferences.edit().putString(key, value).apply();
         assertEquals(value, preferences.getString(key, undefined));
+        assertTrue(changed.get());
     }
 
     @Test
