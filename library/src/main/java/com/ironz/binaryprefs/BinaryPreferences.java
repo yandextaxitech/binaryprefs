@@ -1,15 +1,15 @@
 package com.ironz.binaryprefs;
 
-import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.name.KeyNameProvider;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Constants;
 
+import java.io.Externalizable;
 import java.util.*;
 
-public final class BinaryPreferences implements SharedPreferences {
+public final class BinaryPreferences implements Preferences {
 
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
@@ -26,7 +26,7 @@ public final class BinaryPreferences implements SharedPreferences {
     @Override
     public Map<String, ?> getAll() {
         try {
-            return getStringMapInternal();
+            return getAllInternal();
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
@@ -52,7 +52,7 @@ public final class BinaryPreferences implements SharedPreferences {
             return defValues;
         }
         try {
-            return getStringsInternal(key);
+            return getStringSetInternal(key);
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
@@ -112,12 +112,25 @@ public final class BinaryPreferences implements SharedPreferences {
     }
 
     @Override
+    public <T extends Externalizable> T getObject(Class<T> clazz, String key, T defValue) {
+        if (!contains(key)) {
+            return defValue;
+        }
+        try {
+            return getObjectInternal(key);
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
+
+    @Override
     public boolean contains(String key) {
         return containsInternal(key);
     }
 
     @Override
-    public Editor edit() {
+    public PreferencesEditor edit() {
         return new BinaryPreferencesEditor(fileAdapter, exceptionHandler, listeners, this, keyNameProvider);
     }
 
@@ -131,7 +144,7 @@ public final class BinaryPreferences implements SharedPreferences {
         listeners.remove(listener);
     }
 
-    private Map<String, ?> getStringMapInternal() {
+    private Map<String, ?> getAllInternal() {
 
         final Map<String, Object> map = new HashMap<>();
 
@@ -161,7 +174,7 @@ public final class BinaryPreferences implements SharedPreferences {
                 continue;
             }
             if (fileExtension.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getStringsInternal(prefName));
+                map.put(prefName, getStringSetInternal(prefName));
             }
         }
         return map;
@@ -171,6 +184,21 @@ public final class BinaryPreferences implements SharedPreferences {
         String fileName = key + Constants.STRING_FILE_POSTFIX;
         byte[] bytes = fileAdapter.fetch(fileName);
         return new String(bytes);
+    }
+
+    private Set<String> getStringSetInternal(String key) {
+        final HashSet<String> strings = new HashSet<>(0);
+        final Set<String> files = new HashSet<>(Arrays.asList(fileAdapter.names()));
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            String name = keyNameProvider.convertStringSetName(key, i);
+            if (files.contains(name)) {
+                byte[] bytes = fileAdapter.fetch(name);
+                strings.add(new String(bytes));
+                continue;
+            }
+            break;
+        }
+        return strings;
     }
 
     private int getIntInternal(String key) {
@@ -185,31 +213,20 @@ public final class BinaryPreferences implements SharedPreferences {
         return Bits.longFromBytes(bytes);
     }
 
-    private boolean getBooleanInternal(String key) {
-        String fileName = keyNameProvider.convertBooleanName(key);
-        byte[] bytes = fileAdapter.fetch(fileName);
-        return Bits.booleanFromBytes(bytes);
-    }
-
     private float getFloatInternal(String key) {
         String fileName = keyNameProvider.convertFloatName(key);
         byte[] bytes = fileAdapter.fetch(fileName);
         return Bits.floatFromBytes(bytes);
     }
 
-    private Set<String> getStringsInternal(String key) {
-        final HashSet<String> strings = new HashSet<>(0);
-        final Set<String> files = new HashSet<>(Arrays.asList(fileAdapter.names()));
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            String name = keyNameProvider.convertStringSetName(key, i);
-            if (files.contains(name)) {
-                byte[] bytes = fileAdapter.fetch(name);
-                strings.add(new String(bytes));
-                continue;
-            }
-            break;
-        }
-        return strings;
+    private boolean getBooleanInternal(String key) {
+        String fileName = keyNameProvider.convertBooleanName(key);
+        byte[] bytes = fileAdapter.fetch(fileName);
+        return Bits.booleanFromBytes(bytes);
+    }
+
+    private <T extends Externalizable> T getObjectInternal(String key) {
+        return null;
     }
 
     private boolean containsInternal(String key) {

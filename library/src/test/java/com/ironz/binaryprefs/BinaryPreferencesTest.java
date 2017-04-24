@@ -23,7 +23,7 @@ public final class BinaryPreferencesTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
-    private SharedPreferences preferences;
+    private Preferences preferences;
 
     @Before
     public void setUp() throws Exception {

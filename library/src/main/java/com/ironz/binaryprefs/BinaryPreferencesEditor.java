@@ -7,11 +7,12 @@ import com.ironz.binaryprefs.name.KeyNameProvider;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Pair;
 
+import java.io.Externalizable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-final class BinaryPreferencesEditor implements SharedPreferences.Editor {
+final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private final List<Pair<String, byte[]>> commitList = new ArrayList<>(0);
     private final List<String> removeSet = new ArrayList<>(0);
@@ -36,7 +37,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor putString(String key, String value) {
+    public PreferencesEditor putString(String key, String value) {
         if (value == null) {
             return remove(key);
         }
@@ -47,7 +48,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor putStringSet(String key, Set<String> values) {
+    public PreferencesEditor putStringSet(String key, Set<String> values) {
         if (values == null) {
             return remove(key);
         }
@@ -62,7 +63,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor putInt(String key, int value) {
+    public PreferencesEditor putInt(String key, int value) {
         String name = keyNameProvider.convertIntName(key);
         byte[] bytes = Bits.intToBytes(value);
         commitList.add(new Pair<>(name, bytes));
@@ -70,7 +71,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor putLong(String key, long value) {
+    public PreferencesEditor putLong(String key, long value) {
         String name = keyNameProvider.convertLongName(key);
         byte[] bytes = Bits.longToBytes(value);
         commitList.add(new Pair<>(name, bytes));
@@ -78,7 +79,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor putFloat(String key, float value) {
+    public PreferencesEditor putFloat(String key, float value) {
         String name = keyNameProvider.convertFloatName(key);
         byte[] bytes = Bits.floatToBytes(value);
         commitList.add(new Pair<>(name, bytes));
@@ -86,7 +87,7 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor putBoolean(String key, boolean value) {
+    public PreferencesEditor putBoolean(String key, boolean value) {
         String name = keyNameProvider.convertBooleanName(key);
         byte[] bytes = Bits.booleanToBytes(value);
         commitList.add(new Pair<>(name, bytes));
@@ -94,13 +95,18 @@ final class BinaryPreferencesEditor implements SharedPreferences.Editor {
     }
 
     @Override
-    public SharedPreferences.Editor remove(String key) {
+    public <T extends Externalizable> PreferencesEditor putObject(String key, T value) {
+        return this;
+    }
+
+    @Override
+    public PreferencesEditor remove(String key) {
         removeSet.add(key);
         return this;
     }
 
     @Override
-    public SharedPreferences.Editor clear() {
+    public PreferencesEditor clear() {
         clear = true;
         return this;
     }
