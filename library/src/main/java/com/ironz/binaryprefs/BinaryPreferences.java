@@ -39,9 +39,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public String getString(String key, String defValue) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValue;
-            }
             try {
                 return getStringInternal(key);
             } catch (Exception e) {
@@ -54,9 +51,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValues;
-            }
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
@@ -69,9 +63,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public int getInt(String key, int defValue) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValue;
-            }
             try {
                 return getIntInternal(key);
             } catch (Exception e) {
@@ -84,9 +75,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public long getLong(String key, long defValue) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValue;
-            }
             try {
                 return getLongInternal(key);
             } catch (Exception e) {
@@ -99,9 +87,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public float getFloat(String key, float defValue) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValue;
-            }
             try {
                 return getFloatInternal(key);
             } catch (Exception e) {
@@ -114,9 +99,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public boolean getBoolean(String key, boolean defValue) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValue;
-            }
             try {
                 return getBooleanInternal(key);
             } catch (Exception e) {
@@ -129,9 +111,6 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public <T extends Externalizable> T getObject(Class<T> clazz, String key, T defValue) {
         synchronized (lock) {
-            if (!contains(key)) {
-                return defValue;
-            }
             try {
                 return getObjectInternal(key);
             } catch (Exception e) {
@@ -251,7 +230,7 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private <T extends Externalizable> T getObjectInternal(String key) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private boolean containsInternal(String key) {

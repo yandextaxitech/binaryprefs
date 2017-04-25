@@ -112,7 +112,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public <T extends Externalizable> PreferencesEditor putObject(String key, T value) {
-        return this;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
