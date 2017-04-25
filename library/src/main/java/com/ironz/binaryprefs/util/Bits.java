@@ -17,7 +17,7 @@ public class Bits {
     static String stringFromBytes(byte[] b) {
         byte flag = b[0];
         if (flag != FLAG_STRING) {
-            throw new ClassCastException(String.format("int cannot be serialized in '%s' flag type", flag));
+            throw new ClassCastException(String.format("String cannot be serialized in '%s' flag type", flag));
         }
         return new String(b, 1, b.length - 1);
     }
