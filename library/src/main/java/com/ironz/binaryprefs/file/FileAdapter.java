@@ -22,6 +22,15 @@ public interface FileAdapter {
     byte[] fetch(String name);
 
     /**
+     * Returns byte array for concrete file by name or empty byte array if exception throws
+     *
+     * @param parent parent directory
+     * @param name   file name with extension
+     * @return byte array of file
+     */
+    byte[] fetch(String parent, String name);
+
+    /**
      * Save byte array to concrete file, if file exists it will be overwritten
      *
      * @param name  file name with extension

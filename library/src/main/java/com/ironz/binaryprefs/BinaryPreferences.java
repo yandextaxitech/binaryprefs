@@ -185,8 +185,7 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private String getStringInternal(String key) {
-        String fileName = key + Constants.STRING_FILE_POSTFIX;
-        byte[] bytes = fileAdapter.fetch(fileName);
+        byte[] bytes = fileAdapter.fetch(key);
         return new String(bytes);
     }
 
@@ -206,26 +205,22 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private int getIntInternal(String key) {
-        String fileName = keyNameProvider.convertIntName(key);
-        byte[] bytes = fileAdapter.fetch(fileName);
+        byte[] bytes = fileAdapter.fetch(key);
         return Bits.intFromBytes(bytes);
     }
 
     private long getLongInternal(String key) {
-        String fileName = keyNameProvider.convertLongName(key);
-        byte[] bytes = fileAdapter.fetch(fileName);
+        byte[] bytes = fileAdapter.fetch(key);
         return Bits.longFromBytes(bytes);
     }
 
     private float getFloatInternal(String key) {
-        String fileName = keyNameProvider.convertFloatName(key);
-        byte[] bytes = fileAdapter.fetch(fileName);
+        byte[] bytes = fileAdapter.fetch(key);
         return Bits.floatFromBytes(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
-        String fileName = keyNameProvider.convertBooleanName(key);
-        byte[] bytes = fileAdapter.fetch(fileName);
+        byte[] bytes = fileAdapter.fetch(key);
         return Bits.booleanFromBytes(bytes);
     }
 
@@ -235,7 +230,7 @@ public final class BinaryPreferences implements Preferences {
 
     private boolean containsInternal(String key) {
         for (String fileName : fileAdapter.names()) {
-            if (keyNameProvider.getKeyFromFileName(fileName).equals(key)) {
+            if (fileName.equals(key)) {
                 return true;
             }
         }

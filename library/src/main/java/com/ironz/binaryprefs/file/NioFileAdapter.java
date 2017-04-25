@@ -35,14 +35,20 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) {
-        return fetchInternal(name);
+        File file = new File(srcDir, name);
+        return fetchInternal(file);
     }
 
-    private byte[] fetchInternal(String name) {
+    @Override
+    public byte[] fetch(String parent, String name) {
+        File file = new File(new File(srcDir, parent), name);
+        return fetchInternal(file);
+    }
+
+    private byte[] fetchInternal(File file) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            File file = new File(srcDir, name);
             randomAccessFile = new RandomAccessFile(file, "r");
             channel = randomAccessFile.getChannel();
             int size = (int) randomAccessFile.length();
@@ -63,14 +69,14 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void save(String name, byte[] bytes) {
-        saveInternal(name, bytes);
+        File file = new File(srcDir, name);
+        saveInternal(file, bytes);
     }
 
-    private void saveInternal(String name, byte[] bytes) {
+    private void saveInternal(File file, byte[] bytes) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            File file = new File(srcDir, name);
             randomAccessFile = new RandomAccessFile(file, "rwd");
             randomAccessFile.setLength(0);
             channel = randomAccessFile.getChannel();

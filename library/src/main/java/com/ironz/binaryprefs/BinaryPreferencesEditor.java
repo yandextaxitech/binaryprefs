@@ -46,9 +46,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            String name = keyNameProvider.convertStringName(key);
             byte[] bytes = value.getBytes();
-            commitList.add(new Pair<>(name, bytes));
+            commitList.add(new Pair<>(key, bytes));
             return this;
         }
     }
@@ -73,9 +72,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putInt(String key, int value) {
         synchronized (lock) {
-            String name = keyNameProvider.convertIntName(key);
             byte[] bytes = Bits.intToBytes(value);
-            commitList.add(new Pair<>(name, bytes));
+            commitList.add(new Pair<>(key, bytes));
             return this;
         }
     }
@@ -83,9 +81,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putLong(String key, long value) {
         synchronized (lock) {
-            String name = keyNameProvider.convertLongName(key);
             byte[] bytes = Bits.longToBytes(value);
-            commitList.add(new Pair<>(name, bytes));
+            commitList.add(new Pair<>(key, bytes));
             return this;
         }
     }
@@ -93,9 +90,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putFloat(String key, float value) {
         synchronized (lock) {
-            String name = keyNameProvider.convertFloatName(key);
             byte[] bytes = Bits.floatToBytes(value);
-            commitList.add(new Pair<>(name, bytes));
+            commitList.add(new Pair<>(key, bytes));
             return this;
         }
     }
@@ -103,9 +99,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
         synchronized (lock) {
-            String name = keyNameProvider.convertBooleanName(key);
             byte[] bytes = Bits.booleanToBytes(value);
-            commitList.add(new Pair<>(name, bytes));
+            commitList.add(new Pair<>(key, bytes));
             return this;
         }
     }
@@ -169,12 +164,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void tryRemoveByKeys() {
         for (String fileName : fileAdapter.names()) {
-            String key = keyNameProvider.getKeyFromFileName(fileName);
-            if (!removeSet.contains(key)) {
+            if (!removeSet.contains(fileName)) {
                 continue;
             }
             fileAdapter.remove(fileName);
-            notifyListeners(key);
+            notifyListeners(fileName);
         }
     }
 
@@ -182,9 +176,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         for (Pair<String, byte[]> pair : commitList) {
             String name = pair.getFirst();
             byte[] value = pair.getSecond();
-            String key = keyNameProvider.getKeyFromFileName(name);
             fileAdapter.save(name, value);
-            notifyListeners(key);
+            notifyListeners(name);
         }
     }
 
