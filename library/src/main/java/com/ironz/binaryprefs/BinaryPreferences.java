@@ -39,6 +39,9 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public String getString(String key, String defValue) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
             try {
                 return getStringInternal(key);
             } catch (Exception e) {
@@ -51,6 +54,12 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValues;
+            }
+            if (!fileAdapter.isDirectory(key)) {
+                throw new ClassCastException(String.format("Value by %s key contains not Set<String>!", key));
+            }
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
@@ -63,6 +72,9 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public int getInt(String key, int defValue) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
             try {
                 return getIntInternal(key);
             } catch (Exception e) {
@@ -75,6 +87,9 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public long getLong(String key, long defValue) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
             try {
                 return getLongInternal(key);
             } catch (Exception e) {
@@ -87,6 +102,9 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public float getFloat(String key, float defValue) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
             try {
                 return getFloatInternal(key);
             } catch (Exception e) {
@@ -99,6 +117,9 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public boolean getBoolean(String key, boolean defValue) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
             try {
                 return getBooleanInternal(key);
             } catch (Exception e) {
@@ -111,6 +132,9 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public <T extends Externalizable> T getObject(Class<T> clazz, String key, T defValue) {
         synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
             try {
                 return getObjectInternal(key);
             } catch (Exception e) {
@@ -190,17 +214,16 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private Set<String> getStringSetInternal(String key) {
-        final HashSet<String> strings = new HashSet<>(0);
-        final Set<String> files = new HashSet<>(Arrays.asList(fileAdapter.names()));
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            String name = keyNameProvider.convertStringSetName(key, i);
-            if (files.contains(name)) {
-                byte[] bytes = fileAdapter.fetch(name);
-                strings.add(new String(bytes));
-                continue;
-            }
-            break;
+
+        byte[][] all = fileAdapter.fetchAll(key);
+
+        HashSet<String> strings = new HashSet<>(all.length);
+
+        for (byte[] bytes : all) {
+            String s = Bits.stringFromBytes(bytes);
+            strings.add(s);
         }
+
         return strings;
     }
 
@@ -229,11 +252,6 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private boolean containsInternal(String key) {
-        for (String fileName : fileAdapter.names()) {
-            if (fileName.equals(key)) {
-                return true;
-            }
-        }
-        return false;
+        return fileAdapter.contains(key);
     }
 }

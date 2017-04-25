@@ -7,14 +7,14 @@ package com.ironz.binaryprefs.file;
 public interface FileAdapter {
 
     /**
-     * Returns all names for directory
+     * Returns all names for directory.
      *
      * @return file names with extension suffix
      */
     String[] names();
 
     /**
-     * Returns byte array for concrete file by name or empty byte array if exception throws
+     * Returns byte array for concrete file by name or empty byte array if exception throws.
      *
      * @param name file name with extension
      * @return byte array of file
@@ -22,16 +22,15 @@ public interface FileAdapter {
     byte[] fetch(String name);
 
     /**
-     * Returns byte array for concrete file by name or empty byte array if exception throws
+     * Returns byte array for concrete file by name or empty byte array if exception throws.
      *
      * @param parent parent directory
-     * @param name   file name with extension
      * @return byte array of file
      */
-    byte[] fetch(String parent, String name);
+    byte[][] fetchAll(String parent);
 
     /**
-     * Save byte array to concrete file, if file exists it will be overwritten
+     * Saves byte array to concrete file, if file exists it will be overwritten.
      *
      * @param name  file name with extension
      * @param bytes byte array for saving
@@ -39,25 +38,39 @@ public interface FileAdapter {
     void save(String name, byte[] bytes);
 
     /**
-     * Delete all files from concrete directory
+     * Saves byte array to concrete file and concrete directory, if file exists it will be overwritten.
      *
-     * @return all files has been removed
+     * @param parent parent directory for saving
+     * @param name   file name with extension
+     * @param bytes  byte array for saving
+     */
+    void save(String parent, String name, byte[] bytes);
+
+    /**
+     * Deletes all files from concrete directory
      */
     void clear();
 
     /**
-     * Removes file by key
+     * Removes file by key.
      *
      * @param name file name with extension
-     * @return value has been removed
      */
     void remove(String name);
 
     /**
-     * Check file with this name
+     * Returns {@code true} if file exists {@code false} otherwise.
      *
      * @param name exact name pattern
-     * @return true if FS contains false if not
+     * @return true if FS contains false otherwise
      */
     boolean contains(String name);
+
+    /**
+     * Returns {@code true} if current file is directory {@code false} otherwise.
+     *
+     * @param name file name
+     * @return true if file is directory false otherwise
+     */
+    boolean isDirectory(String name);
 }

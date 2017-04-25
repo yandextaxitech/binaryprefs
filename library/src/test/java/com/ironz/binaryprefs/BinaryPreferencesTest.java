@@ -35,7 +35,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void stringValue() {
 
-        String key = String.class.getSimpleName() + KEY_SUFFIX;
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String value = "value";
         String undefined = "undefined";
 
@@ -50,7 +50,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void intValue() {
 
-        String key = int.class.getSimpleName() + KEY_SUFFIX;
+        String key = int.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         int value = Integer.MAX_VALUE;
 
         preferences.edit()
@@ -64,7 +64,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void longValue() {
 
-        String key = long.class.getSimpleName() + KEY_SUFFIX;
+        String key = long.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         long value = Long.MAX_VALUE;
 
         preferences.edit()
@@ -78,7 +78,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void floatValue() {
 
-        String key = float.class.getSimpleName() + KEY_SUFFIX;
+        String key = float.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         float value = Float.MAX_VALUE;
 
         preferences.edit()
@@ -92,7 +92,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void booleanValue() {
 
-        String key = boolean.class.getSimpleName() + KEY_SUFFIX;
+        String key = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
 
         preferences.edit()
                 .putBoolean(key, true)
@@ -105,7 +105,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void stringSetValue() {
 
-        String key = Set.class.getSimpleName() + KEY_SUFFIX;
+        String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         HashSet<String> value = new HashSet<>();
         value.add("one");
         value.add("two");
