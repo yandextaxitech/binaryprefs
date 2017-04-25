@@ -5,14 +5,29 @@ package com.ironz.binaryprefs.util;
  */
 public class Bits {
 
-    public static final byte FLAG_STRING = 1;
-    public static final byte FLAG_STRING_SET = 2;
-    public static final byte FLAG_INT = 3;
-    public static final byte FLAG_LONG = 4;
-    public static final byte FLAG_FLOAT = 5;
-    public static final byte FLAG_BOOLEAN = 6;
+    private static final byte FLAG_STRING = 1;
+    private static final byte FLAG_INT = 2;
+    private static final byte FLAG_LONG = 3;
+    private static final byte FLAG_FLOAT = 4;
+    private static final byte FLAG_BOOLEAN = 5;
 
     private Bits() {
+    }
+
+    public static String stringFromBytes(byte[] b) {
+        byte flag = b[0];
+        if (flag != FLAG_STRING) {
+            throw new ClassCastException(String.format("int cannot be serialized in '%s' flag type", flag));
+        }
+        return new String(b, 1, b.length - 1);
+    }
+
+    public static byte[] stringToBytes(String s) {
+        byte[] bytes = s.getBytes();
+        byte[] b = new byte[bytes.length + 1];
+        b[0] = FLAG_STRING;
+        System.arraycopy(bytes, 0, b, 1, bytes.length);
+        return b;
     }
 
     public static int intFromBytes(byte[] b) {
