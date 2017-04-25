@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
-import com.ironz.binaryprefs.name.KeyNameProvider;
-import com.ironz.binaryprefs.name.SimpleKeyNameProviderImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,8 +26,7 @@ public final class BinaryPreferencesTest {
     @Before
     public void setUp() throws Exception {
         FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder());
-        KeyNameProvider keyNameProvider = new SimpleKeyNameProviderImpl();
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.EMPTY, keyNameProvider);
+        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.EMPTY);
     }
 
     @Test

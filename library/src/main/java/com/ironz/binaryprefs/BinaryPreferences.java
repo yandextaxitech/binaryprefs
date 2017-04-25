@@ -2,9 +2,7 @@ package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.name.KeyNameProvider;
 import com.ironz.binaryprefs.util.Bits;
-import com.ironz.binaryprefs.util.Constants;
 
 import java.io.Externalizable;
 import java.util.*;
@@ -13,15 +11,13 @@ public final class BinaryPreferences implements Preferences {
 
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
-    private final KeyNameProvider keyNameProvider;
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
     private final Class lock = BinaryPreferences.class;
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler, KeyNameProvider keyNameProvider) {
+    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
-        this.keyNameProvider = keyNameProvider;
     }
 
     @Override
@@ -154,7 +150,7 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public PreferencesEditor edit() {
         synchronized (lock) {
-            return new BinaryPreferencesEditor(lock, fileAdapter, exceptionHandler, listeners, this, keyNameProvider);
+            return new BinaryPreferencesEditor(lock, fileAdapter, exceptionHandler, listeners, this);
         }
     }
 
@@ -177,33 +173,8 @@ public final class BinaryPreferences implements Preferences {
         final Map<String, Object> map = new HashMap<>();
 
         for (String fileName : fileAdapter.names()) {
-
-            String fileExtension = keyNameProvider.getFileExtension(fileName);
-            String prefName = keyNameProvider.getKeyFromFileName(fileName);
-
-            if (fileExtension.equals(Constants.STRING_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getStringInternal(prefName));
-                continue;
-            }
-            if (fileExtension.equals(Constants.INTEGER_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getIntInternal(prefName));
-                continue;
-            }
-            if (fileExtension.equals(Constants.LONG_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getLongInternal(prefName));
-                continue;
-            }
-            if (fileExtension.equals(Constants.BOOLEAN_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getBooleanInternal(prefName));
-                continue;
-            }
-            if (fileExtension.equals(Constants.FLOAT_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getFloatInternal(prefName));
-                continue;
-            }
-            if (fileExtension.equals(Constants.STRING_SET_FILE_POSTFIX_WITHOUT_DOT)) {
-                map.put(prefName, getStringSetInternal(prefName));
-            }
+            // TODO: 4/25/17 implement set of all values fetching and tests
+            // TODO: 4/25/17 implement transaction in progress checking tests
         }
         return map;
     }

@@ -3,7 +3,6 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.name.KeyNameProvider;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Pair;
 
@@ -23,7 +22,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final ExceptionHandler exceptionHandler;
     private final List<SharedPreferences.OnSharedPreferenceChangeListener> listeners;
     private final SharedPreferences preferences;
-    private final KeyNameProvider keyNameProvider;
 
     private boolean clear;
 
@@ -31,14 +29,12 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             FileAdapter fileAdapter,
                             ExceptionHandler exceptionHandler,
                             List<SharedPreferences.OnSharedPreferenceChangeListener> listeners,
-                            SharedPreferences preferences,
-                            KeyNameProvider keyNameProvider) {
+                            SharedPreferences preferences) {
         this.lock = lock;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.listeners = listeners;
         this.preferences = preferences;
-        this.keyNameProvider = keyNameProvider;
     }
 
     @Override
