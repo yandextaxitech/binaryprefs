@@ -15,6 +15,7 @@ public final class BinaryPreferences implements Preferences {
     private final ExceptionHandler exceptionHandler;
     private final KeyNameProvider keyNameProvider;
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+    private final Class lock = BinaryPreferences.class;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler, KeyNameProvider keyNameProvider) {
@@ -25,123 +26,147 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public Map<String, ?> getAll() {
-        try {
-            return getAllInternal();
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
+        synchronized (lock) {
+            try {
+                return getAllInternal();
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
+            return new HashMap<>();
         }
-        return new HashMap<>();
     }
 
     @Override
     public String getString(String key, String defValue) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
+            try {
+                return getStringInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValue;
         }
-        try {
-            return getStringInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValues;
+            }
+            try {
+                return getStringSetInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValues;
         }
-        try {
-            return getStringSetInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValues;
     }
 
     @Override
     public int getInt(String key, int defValue) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
+            try {
+                return getIntInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValue;
         }
-        try {
-            return getIntInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 
     @Override
     public long getLong(String key, long defValue) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
+            try {
+                return getLongInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValue;
         }
-        try {
-            return getLongInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 
     @Override
     public float getFloat(String key, float defValue) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
+            try {
+                return getFloatInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValue;
         }
-        try {
-            return getFloatInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
+            try {
+                return getBooleanInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValue;
         }
-        try {
-            return getBooleanInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 
     @Override
     public <T extends Externalizable> T getObject(Class<T> clazz, String key, T defValue) {
-        if (!contains(key)) {
+        synchronized (lock) {
+            if (!contains(key)) {
+                return defValue;
+            }
+            try {
+                return getObjectInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(e);
+            }
             return defValue;
         }
-        try {
-            return getObjectInternal(key);
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 
     @Override
     public boolean contains(String key) {
-        return containsInternal(key);
+        synchronized (lock) {
+            return containsInternal(key);
+        }
     }
 
     @Override
     public PreferencesEditor edit() {
-        return new BinaryPreferencesEditor(fileAdapter, exceptionHandler, listeners, this, keyNameProvider);
+        synchronized (lock) {
+            return new BinaryPreferencesEditor(lock, fileAdapter, exceptionHandler, listeners, this, keyNameProvider);
+        }
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        listeners.add(listener);
+        synchronized (lock) {
+            listeners.add(listener);
+        }
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        listeners.remove(listener);
+        synchronized (lock) {
+            listeners.remove(listener);
+        }
     }
 
     private Map<String, ?> getAllInternal() {
