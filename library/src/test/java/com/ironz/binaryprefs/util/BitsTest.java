@@ -10,6 +10,18 @@ import static org.junit.Assert.assertEquals;
 public class BitsTest {
 
     @Test
+    public void emptyStringSet() {
+        Set<String> strings = new HashSet<>();
+
+        byte[] bytes = Bits.stringSetToBytes(strings);
+        Set<String> restored = Bits.stringSetFromBytes(bytes);
+
+        assertEquals(1, bytes.length);
+        assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
+        assertEquals(strings, restored);
+    }
+
+    @Test
     public void stringSetConvert() {
         Set<String> strings = new HashSet<>();
         strings.add("One");
