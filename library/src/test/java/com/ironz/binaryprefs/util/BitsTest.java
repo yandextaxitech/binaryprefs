@@ -2,9 +2,28 @@ package com.ironz.binaryprefs.util;
 
 import org.junit.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 
 public class BitsTest {
+
+    @Test
+    public void stringSetConvert() {
+
+        Set<String> strings = new HashSet<>();
+
+        strings.add("One");
+        strings.add("Two");
+        strings.add("Three");
+        strings.add("Four");
+
+        byte[] bytes = Bits.stringSetToBytes(strings);
+        Set<String> restored = Bits.stringSetFromBytes(bytes);
+
+        assertEquals(strings, restored);
+    }
 
     @Test
     public void stringConvert() {
@@ -17,7 +36,7 @@ public class BitsTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void StringIncorrectFlag() {
+    public void stringIncorrectFlag() {
         byte[] bytes = Bits.intToBytes(Integer.MAX_VALUE);
 
         bytes[0] = 0;

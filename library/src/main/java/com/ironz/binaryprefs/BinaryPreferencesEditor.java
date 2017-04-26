@@ -128,7 +128,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public void apply() {
         synchronized (lock) {
-            performActions();
+            performWithResult(); //result is ignored
         }
     }
 
@@ -141,18 +141,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private boolean performWithResult() {
         try {
-            performActions();
+            tryClearAll();
+            tryRemoveByKeys();
+            tryStoreByKeys();
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
         return false;
-    }
-
-    private void performActions() {
-        tryClearAll();
-        tryRemoveByKeys();
-        tryStoreByKeys();
     }
 
     private void tryClearAll() {
