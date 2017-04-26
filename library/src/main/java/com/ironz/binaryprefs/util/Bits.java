@@ -9,12 +9,12 @@ import java.util.Set;
 @SuppressWarnings("ConstantConditions")
 public class Bits {
 
-    private static final byte FLAG_STRING_SET = -10;
-    private static final byte FLAG_STRING = -20;
-    private static final byte FLAG_INT = -30;
-    private static final byte FLAG_LONG = -40;
-    private static final byte FLAG_FLOAT = -50;
-    private static final byte FLAG_BOOLEAN = -60;
+    static final byte FLAG_STRING_SET = -10;
+    static final byte FLAG_STRING = -20;
+    static final byte FLAG_INT = -30;
+    static final byte FLAG_LONG = -40;
+    static final byte FLAG_FLOAT = -50;
+    static final byte FLAG_BOOLEAN = -60;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
     private static final int NULL_STRING_SIZE = -1;

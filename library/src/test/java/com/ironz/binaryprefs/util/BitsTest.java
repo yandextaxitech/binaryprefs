@@ -21,6 +21,7 @@ public class BitsTest {
         byte[] bytes = Bits.stringSetToBytes(strings);
         Set<String> restored = Bits.stringSetFromBytes(bytes);
 
+        assertEquals(bytes[0], Bits.FLAG_STRING_SET);
         assertEquals(strings, restored);
     }
 
@@ -45,6 +46,7 @@ public class BitsTest {
         byte[] bytes = Bits.stringToBytes(someString);
         String restored = Bits.stringFromBytes(bytes);
 
+        assertEquals(bytes[0], Bits.FLAG_STRING);
         assertEquals(someString, restored);
     }
 
@@ -63,6 +65,7 @@ public class BitsTest {
 
         int restored = Bits.intFromBytes(bytes);
 
+        assertEquals(bytes[0], Bits.FLAG_INT);
         assertEquals(Integer.MAX_VALUE, restored);
     }
 
@@ -81,6 +84,7 @@ public class BitsTest {
 
         float restored = Bits.floatFromBytes(bytes);
 
+        assertEquals(bytes[0], Bits.FLAG_FLOAT);
         assertEquals(Float.MAX_VALUE, restored, .0);
     }
 
@@ -99,6 +103,7 @@ public class BitsTest {
 
         long restored = Bits.longFromBytes(bytes);
 
+        assertEquals(bytes[0], Bits.FLAG_LONG);
         assertEquals(Long.MAX_VALUE, restored);
     }
 
@@ -117,6 +122,7 @@ public class BitsTest {
 
         boolean restored = Bits.booleanFromBytes(bytes);
 
+        assertEquals(bytes[0], Bits.FLAG_BOOLEAN);
         assertEquals(true, restored);
     }
 

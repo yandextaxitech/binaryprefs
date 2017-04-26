@@ -14,7 +14,6 @@ import java.util.Set;
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private final List<Pair<String, byte[]>> commitList = new ArrayList<>(0);
-    private final List<Pair<Pair<String, String>, byte[]>> setCommitList = new ArrayList<>(0);
     private final List<String> removeSet = new ArrayList<>(0);
 
     private final Class lock;
@@ -43,7 +42,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            byte[] bytes = value.getBytes();
+            byte[] bytes = Bits.stringToBytes(value);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }
@@ -55,15 +54,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (values == null) {
                 return remove(key);
             }
-            int i = 0;
-            for (String value : values) {
-                byte[] bytes = Bits.stringToBytes(value);
-                setCommitList.add(new Pair<>(
-                        new Pair<>(key, String.valueOf(i)),
-                        bytes)
-                );
-                i++;
-            }
+            byte[] bytes = Bits.stringSetToBytes(values);
+            commitList.add(new Pair<>(key, bytes));
             return this;
         }
     }
@@ -173,12 +165,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             byte[] value = pair.getSecond();
             fileAdapter.save(name, value);
             notifyListeners(name);
-        }
-        for (Pair<Pair<String, String>, byte[]> pairPair : setCommitList) {
-            Pair<String, String> name = pairPair.getFirst();
-            byte[] value = pairPair.getSecond();
-            fileAdapter.save(name.getFirst(), name.getSecond(), value);
-            notifyListeners(name.getFirst());
         }
     }
 

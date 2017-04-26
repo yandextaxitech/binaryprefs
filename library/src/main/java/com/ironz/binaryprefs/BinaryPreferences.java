@@ -53,9 +53,6 @@ public final class BinaryPreferences implements Preferences {
             if (!contains(key)) {
                 return defValues;
             }
-            if (!fileAdapter.isDirectory(key)) {
-                throw new ClassCastException(String.format("Value by %s key contains not Set<String>!", key));
-            }
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
@@ -181,21 +178,12 @@ public final class BinaryPreferences implements Preferences {
 
     private String getStringInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return new String(bytes);
+        return Bits.stringFromBytes(bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
-
-        byte[][] all = fileAdapter.fetchAll(key);
-
-        HashSet<String> strings = new HashSet<>(all.length);
-
-        for (byte[] bytes : all) {
-            String s = Bits.stringFromBytes(bytes);
-            strings.add(s);
-        }
-
-        return strings;
+        byte[] bytes = fileAdapter.fetch(key);
+        return Bits.stringSetFromBytes(bytes);
     }
 
     private int getIntInternal(String key) {

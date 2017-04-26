@@ -43,25 +43,6 @@ public final class NioFileAdapter implements FileAdapter {
         return fetchInternal(file);
     }
 
-    @Override
-    public byte[][] fetchAll(String parent) {
-        return fetchAllInternal(parent);
-    }
-
-    private byte[][] fetchAllInternal(String parent) {
-
-        File parentDir = new File(srcDir, parent);
-        String[] namesList = getFileNames(parentDir);
-        byte[][] array = new byte[namesList.length][];
-
-        for (int i = 0; i < array.length; i++) {
-            File subFile = new File(parentDir, namesList[i]);
-            array[i] = fetchInternal(subFile);
-        }
-
-        return array;
-    }
-
     private byte[] fetchInternal(File file) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
@@ -87,15 +68,6 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public void save(String name, byte[] bytes) {
         File file = new File(srcDir, name);
-        saveInternal(file, bytes);
-    }
-
-    @Override
-    public void save(String parent, String name, byte[] bytes) {
-        File parentDir = new File(srcDir, parent);
-        //noinspection ResultOfMethodCallIgnored
-        parentDir.mkdirs();
-        File file = new File(parentDir, name);
         saveInternal(file, bytes);
     }
 
@@ -149,10 +121,5 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public boolean contains(String name) {
         return new File(srcDir, name).exists();
-    }
-
-    @Override
-    public boolean isDirectory(String name) {
-        return new File(srcDir, name).isDirectory();
     }
 }
