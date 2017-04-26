@@ -201,21 +201,4 @@ public final class BinaryPreferencesTest {
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
         preferences.edit().putString(key, value).apply();
     }
-
-    @Test
-    public void commit() {
-
-        String key = String.class.getSimpleName() + KEY_SUFFIX;
-        String value = "value";
-
-        assertTrue(preferences.edit()
-                .putString(key, value)
-                .commit());
-
-        folder.delete();
-
-        assertFalse(preferences.edit()
-                .putString(key, value)
-                .commit());
-    }
 }

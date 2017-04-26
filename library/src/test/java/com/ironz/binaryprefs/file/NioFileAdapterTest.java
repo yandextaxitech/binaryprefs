@@ -75,29 +75,24 @@ public class NioFileAdapterTest {
 
     @Test
     public void deleteOne() {
-        File file = new File(srcDir, fileName);
-
         fileAdapter.save(fileName, bytes);
-        assertTrue(file.exists());
+        assertTrue(fileAdapter.contains(fileName));
 
         fileAdapter.remove(fileName);
-        assertFalse(file.exists());
+        assertFalse(fileAdapter.contains(fileName));
     }
 
     @Test
     public void deleteAll() {
-        File file = new File(srcDir, fileName);
-        File fileTwo = new File(srcDir, fileNameTwo);
-
         fileAdapter.save(fileName, bytes);
         fileAdapter.save(fileNameTwo, bytes);
 
-        assertTrue(file.exists());
-        assertTrue(fileTwo.exists());
+        assertTrue(fileAdapter.contains(fileName));
+        assertTrue(fileAdapter.contains(fileNameTwo));
 
         fileAdapter.clear();
 
-        assertFalse(fileTwo.exists());
-        assertFalse(file.exists());
+        assertFalse(fileAdapter.contains(fileName));
+        assertFalse(fileAdapter.contains(fileNameTwo));
     }
 }

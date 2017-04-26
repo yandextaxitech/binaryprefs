@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Concrete file adapter which implements NIO file operations
@@ -15,6 +19,9 @@ public final class NioFileAdapter implements FileAdapter {
 
     final File srcDir;
 
+    private final Map<String, byte[]> cache = new HashMap<>();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
     public NioFileAdapter(File srcDir) {
         this.srcDir = srcDir;
     }
@@ -22,14 +29,40 @@ public final class NioFileAdapter implements FileAdapter {
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
         this.srcDir = directoryProvider.getBaseDirectory();
+        defineCache();
+    }
+
+    private void defineCache() {
+        for (String name : getFileNamesInternal()) {
+            File file = new File(srcDir, name);
+            byte[] bytes = fetchInternal(file);
+            cache.put(name, bytes);
+        }
     }
 
     @Override
     public String[] names() {
-        return getFileNames(srcDir);
+        return cache.keySet().toArray(new String[0]);
     }
 
-    private String[] getFileNames(File srcDir) {
+    @Override
+    public byte[] fetch(String name) {
+        return cache.get(name);
+    }
+
+    @Override
+    public void save(final String name, final byte[] bytes) {
+        cache.put(name, bytes);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File(srcDir, name);
+                saveInternal(file, bytes);
+            }
+        });
+    }
+
+    private String[] getFileNamesInternal() {
         String[] list = srcDir.list();
         if (list != null) {
             return list;
@@ -37,10 +70,25 @@ public final class NioFileAdapter implements FileAdapter {
         return new String[0];
     }
 
-    @Override
-    public byte[] fetch(String name) {
-        File file = new File(srcDir, name);
-        return fetchInternal(file);
+    private void saveInternal(File file, byte[] bytes) {
+        FileChannel channel = null;
+        RandomAccessFile randomAccessFile = null;
+        try {
+            randomAccessFile = new RandomAccessFile(file, "rwd");
+            randomAccessFile.setLength(0);
+            channel = randomAccessFile.getChannel();
+            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
+            byteBuffer.put(bytes);
+            channel.write(byteBuffer);
+        } catch (Exception e) {
+            throw new FileOperationException(e);
+        } finally {
+            try {
+                if (randomAccessFile != null) randomAccessFile.close();
+                if (channel != null) channel.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     private byte[] fetchInternal(File file) {
@@ -66,34 +114,17 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     @Override
-    public void save(String name, byte[] bytes) {
-        File file = new File(srcDir, name);
-        saveInternal(file, bytes);
-    }
-
-    private void saveInternal(File file, byte[] bytes) {
-        FileChannel channel = null;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "rwd");
-            randomAccessFile.setLength(0);
-            channel = randomAccessFile.getChannel();
-            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
-            byteBuffer.put(bytes);
-            channel.write(byteBuffer);
-        } catch (Exception e) {
-            throw new FileOperationException(e);
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-                if (channel != null) channel.close();
-            } catch (Exception ignored) {
-            }
-        }
-    }
-
-    @Override
     public void clear() {
+        cache.clear();
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                clearInternal();
+            }
+        });
+    }
+
+    private void clearInternal() {
         try {
             String[] list = names();
             String[] files = list != null ? list : new String[0];
@@ -108,7 +139,17 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     @Override
-    public void remove(String name) {
+    public void remove(final String name) {
+        cache.remove(name);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                removeInternal(name);
+            }
+        });
+    }
+
+    private void removeInternal(String name) {
         try {
             File file = new File(srcDir, name);
             //noinspection ResultOfMethodCallIgnored
@@ -120,6 +161,6 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public boolean contains(String name) {
-        return new File(srcDir, name).exists();
+        return cache.containsKey(name);
     }
 }

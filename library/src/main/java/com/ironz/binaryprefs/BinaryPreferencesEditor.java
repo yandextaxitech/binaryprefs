@@ -126,9 +126,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public boolean commit() {
-        synchronized (lock) {
-            return performWithResult();
-        }
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     private boolean performWithResult() {
@@ -150,12 +148,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void tryRemoveByKeys() {
-        for (String fileName : fileAdapter.names()) {
-            if (!removeSet.contains(fileName)) {
-                continue;
-            }
-            fileAdapter.remove(fileName);
-            notifyListeners(fileName);
+        for (String name : removeSet) {
+            fileAdapter.remove(name);
+            notifyListeners(name);
         }
     }
 
