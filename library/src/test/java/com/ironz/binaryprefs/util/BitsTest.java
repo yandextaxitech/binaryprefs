@@ -16,6 +16,7 @@ public class BitsTest {
         strings.add("Two");
         strings.add("Three");
         strings.add("");
+        strings.add(null);
 
         byte[] bytes = Bits.stringSetToBytes(strings);
         Set<String> restored = Bits.stringSetFromBytes(bytes);
@@ -30,6 +31,7 @@ public class BitsTest {
         strings.add("Two");
         strings.add("Three");
         strings.add("");
+        strings.add(null);
 
         byte[] bytes = Bits.stringSetToBytes(strings);
         bytes[0] = 0;

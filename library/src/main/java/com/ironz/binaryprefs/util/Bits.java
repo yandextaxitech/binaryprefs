@@ -9,12 +9,15 @@ import java.util.Set;
 @SuppressWarnings("ConstantConditions")
 public class Bits {
 
-    private static final byte FLAG_STRING_SET = -1;
-    private static final byte FLAG_STRING = -2;
-    private static final byte FLAG_INT = -3;
-    private static final byte FLAG_LONG = -4;
-    private static final byte FLAG_FLOAT = -5;
-    private static final byte FLAG_BOOLEAN = -6;
+    private static final byte FLAG_STRING_SET = -10;
+    private static final byte FLAG_STRING = -20;
+    private static final byte FLAG_INT = -30;
+    private static final byte FLAG_LONG = -40;
+    private static final byte FLAG_FLOAT = -50;
+    private static final byte FLAG_BOOLEAN = -60;
+
+    private static final int INITIAL_INTEGER_LENGTH = 5;
+    private static final int NULL_STRING_SIZE = -1;
 
     private Bits() {
     }
@@ -27,13 +30,8 @@ public class Bits {
         int totalArraySize = 1;
 
         for (String s : set) {
-
-            if (s == null) {
-                continue;
-            }
-
-            byte[] stringBytes = s.getBytes();
-            byte[] stringSizeBytes = intToBytes(stringBytes.length);
+            byte[] stringBytes = s == null ? new byte[0] : s.getBytes();
+            byte[] stringSizeBytes = s == null ? intToBytes(NULL_STRING_SIZE) : intToBytes(stringBytes.length);
 
             byte[] merged = new byte[stringBytes.length + stringSizeBytes.length];
 
@@ -78,21 +76,27 @@ public class Bits {
             byte[] stringSizeBytes = {bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]};
             int stringSize = intFromBytes(stringSizeBytes);
 
+            if (stringSize == NULL_STRING_SIZE) {
+                set.add(null);
+                i += INITIAL_INTEGER_LENGTH;
+                continue;
+            }
+
             if (stringSize == 0) {
                 set.add("");
-                i += 5 + stringSize;
+                i += INITIAL_INTEGER_LENGTH + stringSize;
                 continue;
             }
 
             byte[] stringBytes = new byte[stringSize];
 
             for (int k = 0; k < stringBytes.length; k++) {
-                stringBytes[k] = bytes[i + k + 5];
+                stringBytes[k] = bytes[i + k + INITIAL_INTEGER_LENGTH];
             }
 
             set.add(new String(stringBytes));
 
-            i += 5 + stringSize;
+            i += INITIAL_INTEGER_LENGTH + stringSize;
         }
 
         return set;
