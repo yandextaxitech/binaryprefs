@@ -47,10 +47,10 @@ public class Bits {
         byte[] totalArray = new byte[totalArraySize];
         totalArray[0] = FLAG_STRING_SET;
 
-        int index = 1;
+        int offset = 1;
         for (byte[] b : bytes) {
-            System.arraycopy(b, 0, totalArray, index, b.length);
-            index = index + b.length;
+            System.arraycopy(b, 0, totalArray, offset, b.length);
+            offset = offset + b.length;
         }
 
         return totalArray;
@@ -82,16 +82,11 @@ public class Bits {
                 continue;
             }
 
-            if (stringSize == 0) {
-                set.add("");
-                i += INITIAL_INTEGER_LENGTH + stringSize;
-                continue;
-            }
-
             byte[] stringBytes = new byte[stringSize];
 
             for (int k = 0; k < stringBytes.length; k++) {
-                stringBytes[k] = bytes[i + k + INITIAL_INTEGER_LENGTH];
+                int offset = i + k + INITIAL_INTEGER_LENGTH;
+                stringBytes[k] = bytes[offset];
             }
 
             set.add(new String(stringBytes));
