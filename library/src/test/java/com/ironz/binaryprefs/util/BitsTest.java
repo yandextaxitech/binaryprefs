@@ -21,7 +21,8 @@ public class BitsTest {
         byte[] bytes = Bits.stringSetToBytes(strings);
         Set<String> restored = Bits.stringSetFromBytes(bytes);
 
-        assertEquals(bytes[0], Bits.FLAG_STRING_SET);
+        assertEquals(37, bytes.length);
+        assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
         assertEquals(strings, restored);
     }
 
@@ -46,7 +47,8 @@ public class BitsTest {
         byte[] bytes = Bits.stringToBytes(someString);
         String restored = Bits.stringFromBytes(bytes);
 
-        assertEquals(bytes[0], Bits.FLAG_STRING);
+        assertEquals(12, bytes.length);
+        assertEquals(Bits.FLAG_STRING, bytes[0]);
         assertEquals(someString, restored);
     }
 
@@ -65,7 +67,8 @@ public class BitsTest {
 
         int restored = Bits.intFromBytes(bytes);
 
-        assertEquals(bytes[0], Bits.FLAG_INT);
+        assertEquals(5, bytes.length);
+        assertEquals(Bits.FLAG_INT, bytes[0]);
         assertEquals(Integer.MAX_VALUE, restored);
     }
 
@@ -84,7 +87,8 @@ public class BitsTest {
 
         float restored = Bits.floatFromBytes(bytes);
 
-        assertEquals(bytes[0], Bits.FLAG_FLOAT);
+        assertEquals(5, bytes.length);
+        assertEquals(Bits.FLAG_FLOAT, bytes[0]);
         assertEquals(Float.MAX_VALUE, restored, .0);
     }
 
@@ -103,7 +107,8 @@ public class BitsTest {
 
         long restored = Bits.longFromBytes(bytes);
 
-        assertEquals(bytes[0], Bits.FLAG_LONG);
+        assertEquals(9, bytes.length);
+        assertEquals(Bits.FLAG_LONG, bytes[0]);
         assertEquals(Long.MAX_VALUE, restored);
     }
 
@@ -122,7 +127,8 @@ public class BitsTest {
 
         boolean restored = Bits.booleanFromBytes(bytes);
 
-        assertEquals(bytes[0], Bits.FLAG_BOOLEAN);
+        assertEquals(2, bytes.length);
+        assertEquals(Bits.FLAG_BOOLEAN, bytes[0]);
         assertEquals(true, restored);
     }
 
