@@ -11,18 +11,29 @@ public class BitsTest {
 
     @Test
     public void stringSetConvert() {
-
         Set<String> strings = new HashSet<>();
-
         strings.add("One");
         strings.add("Two");
         strings.add("Three");
-        strings.add("Four");
+        strings.add("");
 
         byte[] bytes = Bits.stringSetToBytes(strings);
         Set<String> restored = Bits.stringSetFromBytes(bytes);
 
         assertEquals(strings, restored);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void stringSetIncorrectFlag() {
+        Set<String> strings = new HashSet<>();
+        strings.add("One");
+        strings.add("Two");
+        strings.add("Three");
+        strings.add("");
+
+        byte[] bytes = Bits.stringSetToBytes(strings);
+        bytes[0] = 0;
+        Bits.stringSetFromBytes(bytes);
     }
 
     @Test

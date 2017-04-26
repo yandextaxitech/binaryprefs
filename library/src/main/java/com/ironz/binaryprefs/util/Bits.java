@@ -1,9 +1,5 @@
 package com.ironz.binaryprefs.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +9,7 @@ import java.util.Set;
 @SuppressWarnings("ConstantConditions")
 public class Bits {
 
+    private static final byte FLAG_STRING_SET = -1;
     private static final byte FLAG_STRING = -2;
     private static final byte FLAG_INT = -3;
     private static final byte FLAG_LONG = -4;
@@ -24,48 +21,78 @@ public class Bits {
 
     public static byte[] stringSetToBytes(Set<String> set) {
 
-        ByteArrayOutputStream bs = null;
-        DataOutputStream out = null;
-        try {
-            bs = new ByteArrayOutputStream();
-            out = new DataOutputStream(bs);
-            for (String element : set) {
-                out.writeUTF(element);
+        byte[][] bytes = new byte[set.size()][];
+
+        int i = 0;
+        int totalArraySize = 1;
+
+        for (String s : set) {
+
+            if (s == null) {
+                continue;
             }
-            return bs.toByteArray();
-        } catch (Exception ignored) {
-        } finally {
-            try {
-                bs.close();
-                out.close();
-            } catch (Exception ignored) {
-            }
+
+            byte[] stringBytes = s.getBytes();
+            byte[] stringSizeBytes = intToBytes(stringBytes.length);
+
+            byte[] merged = new byte[stringBytes.length + stringSizeBytes.length];
+
+            System.arraycopy(stringSizeBytes, 0, merged, 0, stringSizeBytes.length);
+            System.arraycopy(stringBytes, 0, merged, stringSizeBytes.length, stringBytes.length);
+
+            bytes[i] = merged;
+
+            totalArraySize += merged.length;
+            i++;
         }
-        return new byte[0];
+
+        byte[] totalArray = new byte[totalArraySize];
+        totalArray[0] = FLAG_STRING_SET;
+
+        int index = 1;
+        for (byte[] b : bytes) {
+            System.arraycopy(b, 0, totalArray, index, b.length);
+            index = index + b.length;
+        }
+
+        return totalArray;
     }
 
-    public static Set<String> stringSetFromBytes(byte[] b) {
+    public static Set<String> stringSetFromBytes(byte[] bytes) {
+
+        byte flag = bytes[0];
+        if (flag != FLAG_STRING_SET) {
+            throw new ClassCastException(String.format("Set<String> cannot be deserialized in '%s' flag type", flag));
+        }
+
+        if (bytes.length == 1) {
+            return new HashSet<>(0);
+        }
 
         Set<String> set = new HashSet<>();
 
-        ByteArrayInputStream bs = null;
-        DataInputStream in = null;
+        int i = 1;
 
-        try {
-            bs = new ByteArrayInputStream(b);
-            in = new DataInputStream(bs);
-            while (in.available() > 0) {
-                String element = in.readUTF();
-                set.add(element);
-            }
-        } catch (Exception ignored) {
-        } finally {
-            try {
-                bs.close();
-                in.close();
-            } catch (Exception ignored) {
+        while (i < bytes.length) {
 
+            byte[] stringSizeBytes = {bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]};
+            int stringSize = intFromBytes(stringSizeBytes);
+
+            if (stringSize == 0) {
+                set.add("");
+                i += 5 + stringSize;
+                continue;
             }
+
+            byte[] stringBytes = new byte[stringSize];
+
+            for (int k = 0; k < stringBytes.length; k++) {
+                stringBytes[k] = bytes[i + k + 5];
+            }
+
+            set.add(new String(stringBytes));
+
+            i += 5 + stringSize;
         }
 
         return set;
