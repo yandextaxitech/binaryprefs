@@ -136,7 +136,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             tryStoreByKeys();
             return true;
         } catch (Exception e) {
-            exceptionHandler.handle(e);
+            exceptionHandler.handle(e, "apply method");
         }
         return false;
     }

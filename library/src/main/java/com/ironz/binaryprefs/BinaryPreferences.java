@@ -26,7 +26,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getAllInternal();
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, "getAll method");
             }
             return new HashMap<>();
         }
@@ -38,7 +38,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getStringInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValue;
         }
@@ -50,7 +50,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValues;
         }
@@ -62,7 +62,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getIntInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValue;
         }
@@ -74,7 +74,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getLongInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValue;
         }
@@ -86,7 +86,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getFloatInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValue;
         }
@@ -98,7 +98,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getBooleanInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValue;
         }
@@ -110,7 +110,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getObjectInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e);
+                exceptionHandler.handle(e, key);
             }
             return defValue;
         }
