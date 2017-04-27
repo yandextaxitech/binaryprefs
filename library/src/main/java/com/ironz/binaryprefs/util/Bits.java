@@ -98,10 +98,11 @@ public class Bits {
     }
 
     public static byte[] stringToBytes(String s) {
-        byte[] bytes = s.getBytes();
-        byte[] b = new byte[bytes.length + 1];
+        byte[] stringBytes = s.getBytes();
+        int flagSize = 1;
+        byte[] b = new byte[stringBytes.length + flagSize];
         b[0] = FLAG_STRING;
-        System.arraycopy(bytes, 0, b, 1, bytes.length);
+        System.arraycopy(stringBytes, 0, b, flagSize, stringBytes.length);
         return b;
     }
 
@@ -110,7 +111,8 @@ public class Bits {
         if (flag != FLAG_STRING) {
             throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
         }
-        return new String(b, 1, b.length - 1);
+        int lengthWithoutFlag = b.length - 1;
+        return new String(b, 1, lengthWithoutFlag);
     }
 
     public static byte[] intToBytes(int value) {
@@ -155,22 +157,22 @@ public class Bits {
         int value = ((b[4] & i)) +
                 ((b[3] & i) << 8) +
                 ((b[2] & i) << 16) +
-                ((b[1]) << 24);
+                (b[1] << 24);
         return Float.intBitsToFloat(value);
     }
 
     public static byte[] longToBytes(long value) {
-        byte[] bytes = new byte[9];
-        bytes[8] = (byte) (value);
-        bytes[7] = (byte) (value >>> 8);
-        bytes[6] = (byte) (value >>> 16);
-        bytes[5] = (byte) (value >>> 24);
-        bytes[4] = (byte) (value >>> 32);
-        bytes[3] = (byte) (value >>> 40);
-        bytes[2] = (byte) (value >>> 48);
-        bytes[1] = (byte) (value >>> 56);
-        bytes[0] = FLAG_LONG;
-        return bytes;
+        return new byte[]{
+                FLAG_LONG,
+                (byte) (value >>> 56),
+                (byte) (value >>> 48),
+                (byte) (value >>> 40),
+                (byte) (value >>> 32),
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) (value)
+        };
     }
 
     public static long longFromBytes(byte[] b) {
