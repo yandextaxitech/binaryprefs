@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.file;
 
 import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +10,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Concrete file adapter which implements NIO file operations
@@ -18,17 +17,20 @@ import java.util.concurrent.Executors;
 public final class NioFileAdapter implements FileAdapter {
 
     final File srcDir;
+    private final TaskExecutor taskExecutor;
 
     private final Map<String, byte[]> cache = new HashMap<>();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public NioFileAdapter(File srcDir) {
+    public NioFileAdapter(File srcDir, TaskExecutor taskExecutor) {
         this.srcDir = srcDir;
+        this.taskExecutor = taskExecutor;
+        defineCache();
     }
 
     @SuppressWarnings("WeakerAccess")
-    public NioFileAdapter(DirectoryProvider directoryProvider) {
+    public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor) {
         this.srcDir = directoryProvider.getBaseDirectory();
+        this.taskExecutor = taskExecutor;
         defineCache();
     }
 
@@ -53,7 +55,7 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public void save(final String name, final byte[] bytes) {
         cache.put(name, bytes);
-        executor.submit(new Runnable() {
+        taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 File file = new File(srcDir, name);
@@ -116,7 +118,7 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public void clear() {
         cache.clear();
-        executor.submit(new Runnable() {
+        taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 clearInternal();
@@ -141,7 +143,7 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public void remove(final String name) {
         cache.remove(name);
-        executor.submit(new Runnable() {
+        taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 removeInternal(name);

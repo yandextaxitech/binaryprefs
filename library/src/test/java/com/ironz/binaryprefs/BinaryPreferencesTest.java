@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
+import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public final class BinaryPreferencesTest {
 
     @Before
     public void setUp() throws Exception {
-        FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder());
+        FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT);
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.EMPTY);
     }
 
