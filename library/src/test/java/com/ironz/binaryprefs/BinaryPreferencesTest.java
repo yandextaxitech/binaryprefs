@@ -60,6 +60,16 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void defaultIntValue() {
+        String key = int.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        int defaultValue = Integer.MAX_VALUE;
+
+        int restored = preferences.getInt(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
     public void longValue() {
 
         String key = long.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
@@ -71,6 +81,17 @@ public final class BinaryPreferencesTest {
         long restored = preferences.getLong(key, 0L);
 
         assertEquals(value, restored);
+    }
+
+    @Test
+    public void defaultLongValue() {
+
+        String key = long.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        long defaultValue = Long.MAX_VALUE;
+
+        long restored = preferences.getLong(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
     }
 
     @Test
@@ -88,6 +109,17 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void defaultFloatValue() {
+
+        String key = float.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        float defaultValue = Float.MAX_VALUE;
+
+        float restored = preferences.getFloat(key, defaultValue);
+
+        assertEquals(defaultValue, restored, .0f);
+    }
+
+    @Test
     public void booleanValue() {
 
         String key = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
@@ -96,6 +128,16 @@ public final class BinaryPreferencesTest {
                 .putBoolean(key, true)
                 .apply();
         boolean restored = preferences.getBoolean(key, false);
+
+        assertEquals(true, restored);
+    }
+
+    @Test
+    public void defaultBooleanValue() {
+
+        String key = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        boolean restored = preferences.getBoolean(key, true);
 
         assertEquals(true, restored);
     }
@@ -115,6 +157,20 @@ public final class BinaryPreferencesTest {
         Set<String> restored = preferences.getStringSet(key, new HashSet<String>());
 
         assertEquals(value, restored);
+    }
+
+    @Test
+    public void defaultStringSetValue() {
+
+        String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        HashSet<String> defaultValue = new HashSet<>();
+        defaultValue.add("one");
+        defaultValue.add("two");
+        defaultValue.add("tree");
+
+        Set<String> restored = preferences.getStringSet(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
     }
 
     @Test
