@@ -31,6 +31,16 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void stringDefaultValue() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String defaultValue = "default value";
+
+        String restored = preferences.getString(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
     public void stringValue() {
 
         String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
@@ -259,7 +269,7 @@ public final class BinaryPreferencesTest {
         preferences.edit().putString(key, value).apply();
     }
 
-    // TODO: 4/26/17 reimplement and restore annotation
+    // TODO: 4/26/17 reimplement and restore test annotation
 //    @Test
     public void commit() {
 
