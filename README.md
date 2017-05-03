@@ -5,6 +5,13 @@
 Implementation of SharedPreferences which stores each preference in files
 separately and performs disk IO via NIO2 with memory mapped file.
 
+## Roadmap
+
+1. Disk I/O encoding
+2. IPC
+3. Externalizable (acyclic graph)
+
+
 ## License
 ```
 Copyright 2017 Alexander Efremenkov
