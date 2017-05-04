@@ -13,7 +13,10 @@ public interface ExceptionHandler {
      */
     void handle(Exception e, String key);
 
-    ExceptionHandler EMPTY = new ExceptionHandler() {
+    /**
+     * Just ignores any exception
+     */
+    ExceptionHandler IGNORE = new ExceptionHandler() {
         @Override
         public void handle(Exception ignored, String key) {
 

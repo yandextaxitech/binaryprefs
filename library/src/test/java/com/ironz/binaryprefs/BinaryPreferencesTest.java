@@ -28,7 +28,7 @@ public final class BinaryPreferencesTest {
     @Before
     public void setUp() throws Exception {
         FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT, ByteEncryption.DEFAULT);
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.EMPTY);
+        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE);
     }
 
     @Test
