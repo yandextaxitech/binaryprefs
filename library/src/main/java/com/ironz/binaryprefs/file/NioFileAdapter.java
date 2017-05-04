@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.file;
 
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.FileOperationException;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
@@ -18,28 +19,25 @@ public final class NioFileAdapter implements FileAdapter {
 
     final File srcDir;
     private final TaskExecutor taskExecutor;
+    private final ByteEncryption encryption;
 
     private final Map<String, byte[]> cache = new HashMap<>();
 
-    public NioFileAdapter(File srcDir, TaskExecutor taskExecutor) {
-        this.srcDir = srcDir;
-        this.taskExecutor = taskExecutor;
-        defineCache();
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor, ByteEncryption byteEncryption) {
+        this(directoryProvider.getBaseDirectory(), taskExecutor, byteEncryption);
     }
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor) {
-        this.srcDir = directoryProvider.getBaseDirectory();
-        this.taskExecutor = taskExecutor;
-        defineCache();
+        this(directoryProvider.getBaseDirectory(), taskExecutor, ByteEncryption.DEFAULT);
     }
 
-    private void defineCache() {
-        for (String name : getFileNamesInternal()) {
-            File file = new File(srcDir, name);
-            byte[] bytes = fetchInternal(file);
-            cache.put(name, bytes);
-        }
+    @SuppressWarnings("WeakerAccess")
+    public NioFileAdapter(File srcDir, TaskExecutor taskExecutor, ByteEncryption encryption) {
+        this.srcDir = srcDir;
+        this.taskExecutor = taskExecutor;
+        this.encryption = encryption;
     }
 
     @Override
@@ -49,7 +47,14 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) {
-        return cache.get(name);
+        if (cache.containsKey(name)) {
+            return cache.get(name);
+        }
+        File file = new File(srcDir, name);
+        byte[] bytes = fetchInternal(file);
+        byte[] decrypt = encryption.decrypt(bytes);
+        cache.put(name, decrypt);
+        return decrypt;
     }
 
     @Override
@@ -59,17 +64,10 @@ public final class NioFileAdapter implements FileAdapter {
             @Override
             public void run() {
                 File file = new File(srcDir, name);
-                saveInternal(file, bytes);
+                byte[] encrypt = encryption.encrypt(bytes);
+                saveInternal(file, encrypt);
             }
         });
-    }
-
-    private String[] getFileNamesInternal() {
-        String[] list = srcDir.list();
-        if (list != null) {
-            return list;
-        }
-        return new String[0];
     }
 
     private void saveInternal(File file, byte[] bytes) {

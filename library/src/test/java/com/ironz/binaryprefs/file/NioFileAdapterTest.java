@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.file;
 
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,7 +27,7 @@ public class NioFileAdapterTest {
     @Before
     public void setUp() throws Exception {
         srcDir = folder.newFolder();
-        fileAdapter = new NioFileAdapter(srcDir, TaskExecutor.DEFAULT);
+        fileAdapter = new NioFileAdapter(srcDir, TaskExecutor.DEFAULT, ByteEncryption.DEFAULT);
     }
 
     @Test

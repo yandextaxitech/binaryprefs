@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
@@ -26,7 +27,7 @@ public final class BinaryPreferencesTest {
 
     @Before
     public void setUp() throws Exception {
-        FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT);
+        FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT, ByteEncryption.DEFAULT);
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.EMPTY);
     }
 
