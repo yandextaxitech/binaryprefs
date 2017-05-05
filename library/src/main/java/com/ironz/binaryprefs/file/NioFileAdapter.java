@@ -24,18 +24,18 @@ public final class NioFileAdapter implements FileAdapter {
     private final Map<String, byte[]> cache = new HashMap<>();
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor, ByteEncryption byteEncryption) {
-        this(directoryProvider.getBaseDirectory(), taskExecutor, byteEncryption);
+    public NioFileAdapter(DirectoryProvider directoryProvider) {
+        this(directoryProvider, TaskExecutor.DEFAULT);
     }
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor) {
-        this(directoryProvider.getBaseDirectory(), taskExecutor, ByteEncryption.NO_OP);
+        this(directoryProvider, taskExecutor, ByteEncryption.NO_OP);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider.getBaseDirectory(), TaskExecutor.DEFAULT, ByteEncryption.NO_OP);
+    public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor, ByteEncryption byteEncryption) {
+        this(directoryProvider.getBaseDirectory(), taskExecutor, byteEncryption);
     }
 
     @SuppressWarnings("WeakerAccess")
