@@ -43,6 +43,23 @@ public final class NioFileAdapter implements FileAdapter {
         this.srcDir = srcDir;
         this.taskExecutor = taskExecutor;
         this.encryption = encryption;
+        defineCache();
+    }
+
+    private void defineCache() {
+        for (String name : getFileNamesInternal()) {
+            File file = new File(srcDir, name);
+            byte[] bytes = fetchInternal(file);
+            cache.put(name, bytes);
+        }
+    }
+
+    private String[] getFileNamesInternal() {
+        String[] list = srcDir.list();
+        if (list != null) {
+            return list;
+        }
+        return new String[0];
     }
 
     @Override
@@ -52,14 +69,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) {
-        if (cache.containsKey(name)) {
-            return cache.get(name);
-        }
-        File file = new File(srcDir, name);
-        byte[] bytes = fetchInternal(file);
-        byte[] decrypt = encryption.decrypt(bytes);
-        cache.put(name, decrypt);
-        return decrypt;
+        return cache.get(name);
     }
 
     private byte[] fetchInternal(File file) {
@@ -131,9 +141,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     private void clearInternal() {
         try {
-            String[] list = names();
-            String[] files = list != null ? list : new String[0];
-            for (String name : files) {
+            for (String name : names()) {
                 File file = new File(srcDir, name);
                 //noinspection ResultOfMethodCallIgnored
                 file.delete();
@@ -167,10 +175,5 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public boolean contains(String name) {
         return cache.containsKey(name);
-    }
-
-    @Override
-    public void evictCache() {
-        cache.clear();
     }
 }
