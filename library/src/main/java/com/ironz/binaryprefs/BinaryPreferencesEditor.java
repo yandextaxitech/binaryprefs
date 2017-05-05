@@ -129,16 +129,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         throw new UnsupportedOperationException("Not implemented yet!");
     }
 
-    private boolean performWithResult() {
+    private void performWithResult() {
         try {
             tryClearAll();
             tryRemoveByKeys();
             tryStoreByKeys();
-            return true;
         } catch (Exception e) {
             exceptionHandler.handle(e, "apply method");
         }
-        return false;
     }
 
     private void tryClearAll() {
