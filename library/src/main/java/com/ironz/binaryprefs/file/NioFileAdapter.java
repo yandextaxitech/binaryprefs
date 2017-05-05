@@ -33,7 +33,7 @@ public final class NioFileAdapter implements FileAdapter {
         this(directoryProvider, taskExecutor, ByteEncryption.NO_OP);
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
+    @SuppressWarnings({"WeakerAccess"})
     public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor, ByteEncryption byteEncryption) {
         this(directoryProvider.getBaseDirectory(), taskExecutor, byteEncryption);
     }
