@@ -38,21 +38,6 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void cacheRestoring() {
-        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
-        String value = "value";
-        String undefined = "undefined";
-
-        preferences.edit()
-                .putString(key, value)
-                .apply();
-        fileAdapter.evictCache();
-        String restored = preferences.getString(key, undefined);
-
-        assertEquals(value, restored);
-    }
-
-    @Test
     public void stringDefaultValue() {
         String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String defaultValue = "default value";
