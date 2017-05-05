@@ -53,10 +53,8 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public byte[] fetch(String name) {
         if (cache.containsKey(name)) {
-            System.out.println("contains key");
             return cache.get(name);
         }
-        System.out.println("not contains key");
         File file = new File(srcDir, name);
         byte[] bytes = fetchInternal(file);
         byte[] decrypt = encryption.decrypt(bytes);
