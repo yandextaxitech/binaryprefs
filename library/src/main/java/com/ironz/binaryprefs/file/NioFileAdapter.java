@@ -30,12 +30,12 @@ public final class NioFileAdapter implements FileAdapter {
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor) {
-        this(directoryProvider.getBaseDirectory(), taskExecutor, ByteEncryption.DEFAULT);
+        this(directoryProvider.getBaseDirectory(), taskExecutor, ByteEncryption.NO_OP);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
     public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider.getBaseDirectory(), TaskExecutor.DEFAULT, ByteEncryption.DEFAULT);
+        this(directoryProvider.getBaseDirectory(), TaskExecutor.DEFAULT, ByteEncryption.NO_OP);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -53,8 +53,10 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public byte[] fetch(String name) {
         if (cache.containsKey(name)) {
+            System.out.println("contains key");
             return cache.get(name);
         }
+        System.out.println("not contains key");
         File file = new File(srcDir, name);
         byte[] bytes = fetchInternal(file);
         byte[] decrypt = encryption.decrypt(bytes);
@@ -167,5 +169,10 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public boolean contains(String name) {
         return cache.containsKey(name);
+    }
+
+    @Override
+    public void evictCache() {
+        cache.clear();
     }
 }

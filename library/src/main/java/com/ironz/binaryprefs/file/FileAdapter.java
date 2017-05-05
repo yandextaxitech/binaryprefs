@@ -48,4 +48,9 @@ public interface FileAdapter {
      * @return true if FS contains false otherwise
      */
     boolean contains(String name);
+
+    /**
+     * Clears cache for all fetched elements
+     */
+    void evictCache();
 }

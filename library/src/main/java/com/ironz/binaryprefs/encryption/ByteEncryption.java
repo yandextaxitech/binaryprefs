@@ -23,7 +23,7 @@ public interface ByteEncryption {
     /**
      * Returns byte arrays as is.
      */
-    ByteEncryption DEFAULT = new ByteEncryption() {
+    ByteEncryption NO_OP = new ByteEncryption() {
         @Override
         public byte[] encrypt(byte[] bytes) {
             return bytes;

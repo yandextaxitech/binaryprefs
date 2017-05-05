@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -23,12 +24,32 @@ public final class BinaryPreferencesTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
+
     private Preferences preferences;
+    private FileAdapter fileAdapter;
 
     @Before
     public void setUp() throws Exception {
-        FileAdapter fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT, ByteEncryption.DEFAULT);
+        byte[] key = "0000000000000000".getBytes();
+        byte[] iv = "1111111111111111".getBytes();
+        ByteEncryption encryption = new AesByteEncryptionImpl(key, iv);
+        fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT, encryption);
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE);
+    }
+
+    @Test
+    public void cacheRestoring() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+        String undefined = "undefined";
+
+        preferences.edit()
+                .putString(key, value)
+                .apply();
+        fileAdapter.evictCache();
+        String restored = preferences.getString(key, undefined);
+
+        assertEquals(value, restored);
     }
 
     @Test

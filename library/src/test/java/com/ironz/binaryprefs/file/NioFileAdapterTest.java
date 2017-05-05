@@ -27,7 +27,7 @@ public class NioFileAdapterTest {
     @Before
     public void setUp() throws Exception {
         srcDir = folder.newFolder();
-        fileAdapter = new NioFileAdapter(srcDir, TaskExecutor.DEFAULT, ByteEncryption.DEFAULT);
+        fileAdapter = new NioFileAdapter(srcDir, TaskExecutor.DEFAULT, ByteEncryption.NO_OP);
     }
 
     @Test
