@@ -62,6 +62,28 @@ public final class NioFileAdapter implements FileAdapter {
         return decrypt;
     }
 
+    private byte[] fetchInternal(File file) {
+        FileChannel channel = null;
+        RandomAccessFile randomAccessFile = null;
+        try {
+            randomAccessFile = new RandomAccessFile(file, "r");
+            channel = randomAccessFile.getChannel();
+            int size = (int) randomAccessFile.length();
+            MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+            byte[] bytes = new byte[size];
+            buffer.get(bytes);
+            return bytes;
+        } catch (Exception e) {
+            throw new FileOperationException(e);
+        } finally {
+            try {
+                if (randomAccessFile != null) randomAccessFile.close();
+                if (channel != null) channel.close();
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
     @Override
     public void save(final String name, final byte[] bytes) {
         cache.put(name, bytes);
@@ -92,28 +114,6 @@ public final class NioFileAdapter implements FileAdapter {
                 if (randomAccessFile != null) randomAccessFile.close();
                 if (channel != null) channel.close();
             } catch (Exception ignored) {
-            }
-        }
-    }
-
-    private byte[] fetchInternal(File file) {
-        FileChannel channel = null;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "r");
-            channel = randomAccessFile.getChannel();
-            int size = (int) randomAccessFile.length();
-            MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
-            byte[] bytes = new byte[size];
-            buffer.get(bytes);
-            return bytes;
-        } catch (Exception e) {
-            throw new FileOperationException(e);
-        } finally {
-            try {
-                if (randomAccessFile != null) randomAccessFile.close();
-                if (channel != null) channel.close();
-            } catch (IOException ignored) {
             }
         }
     }
