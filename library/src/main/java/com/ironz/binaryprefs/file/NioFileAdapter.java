@@ -50,7 +50,8 @@ public final class NioFileAdapter implements FileAdapter {
         for (String name : getFileNamesInternal()) {
             File file = new File(srcDir, name);
             byte[] bytes = fetchInternal(file);
-            cache.put(name, bytes);
+            byte[] decrypt = encryption.decrypt(bytes);
+            cache.put(name, decrypt);
         }
     }
 
