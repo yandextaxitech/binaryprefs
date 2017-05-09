@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.util;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,57 +12,57 @@ public class BitsTest {
 
     @Test
     public void emptyStringSet() {
-        Set<String> strings = new HashSet<>();
+        Set<String> value = new HashSet<>();
 
-        byte[] bytes = Bits.stringSetToBytes(strings);
+        byte[] bytes = Bits.stringSetToBytes(value);
         Set<String> restored = Bits.stringSetFromBytes(bytes);
 
         assertEquals(1, bytes.length);
         assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
-        assertEquals(strings, restored);
+        assertEquals(value, restored);
     }
 
     @Test
     public void stringSetConvert() {
-        Set<String> strings = new HashSet<>();
-        strings.add("One");
-        strings.add("Two");
-        strings.add("Three");
-        strings.add("");
-        strings.add(null);
+        Set<String> value = new HashSet<>();
+        value.add("One");
+        value.add("Two");
+        value.add("Three");
+        value.add("");
+        value.add(null);
 
-        byte[] bytes = Bits.stringSetToBytes(strings);
+        byte[] bytes = Bits.stringSetToBytes(value);
         Set<String> restored = Bits.stringSetFromBytes(bytes);
 
         assertEquals(37, bytes.length);
         assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
-        assertEquals(strings, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void stringSetIncorrectFlag() {
-        Set<String> strings = new HashSet<>();
-        strings.add("One");
-        strings.add("Two");
-        strings.add("Three");
-        strings.add("");
-        strings.add(null);
+        Set<String> value = new HashSet<>();
+        value.add("One");
+        value.add("Two");
+        value.add("Three");
+        value.add("");
+        value.add(null);
 
-        byte[] bytes = Bits.stringSetToBytes(strings);
+        byte[] bytes = Bits.stringSetToBytes(value);
         bytes[0] = 0;
         Bits.stringSetFromBytes(bytes);
     }
 
     @Test
     public void stringConvert() {
-        String someString = "Some String";
+        String value = "Some String";
 
-        byte[] bytes = Bits.stringToBytes(someString);
+        byte[] bytes = Bits.stringToBytes(value);
         String restored = Bits.stringFromBytes(bytes);
 
         assertEquals(12, bytes.length);
         assertEquals(Bits.FLAG_STRING, bytes[0]);
-        assertEquals(someString, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
@@ -151,5 +152,70 @@ public class BitsTest {
         bytes[0] = 0;
 
         Bits.booleanFromBytes(bytes);
+    }
+
+    @Test(expected = UnsupportedClassVersionError.class)
+    public void tryDeserializeUnsupported() {
+        byte[] bytes = {0};
+        Bits.tryDeserialize(bytes);
+    }
+
+    @Test
+    public void tryDeserializeStringSet() {
+        Set<String> value = Collections.singleton("Some string");
+
+        byte[] bytes = Bits.stringSetToBytes(value);
+        Object o = Bits.tryDeserialize(bytes);
+
+        assertEquals(HashSet.class, o.getClass());
+    }
+
+    @Test
+    public void tryDeserializeString() {
+        String value = "Some string";
+
+        byte[] bytes = Bits.stringToBytes(value);
+        Object o = Bits.tryDeserialize(bytes);
+
+        assertEquals(String.class, o.getClass());
+    }
+
+    @Test
+    public void tryDeserializeInt() {
+        int value = Integer.MAX_VALUE;
+
+        byte[] bytes = Bits.intToBytes(value);
+        Object o = Bits.tryDeserialize(bytes);
+
+        assertEquals(Integer.class, o.getClass());
+    }
+
+    @Test
+    public void tryDeserializeLong() {
+        long value = Long.MAX_VALUE;
+
+        byte[] bytes = Bits.longToBytes(value);
+        Object o = Bits.tryDeserialize(bytes);
+
+        assertEquals(Long.class, o.getClass());
+    }
+
+    @Test
+    public void tryDeserializeFloat() {
+        float value = Float.MAX_VALUE;
+
+        byte[] bytes = Bits.floatToBytes(value);
+        Object o = Bits.tryDeserialize(bytes);
+
+        assertEquals(Float.class, o.getClass());
+    }
+
+    @Test
+    public void tryDeserializeBoolean() {
+
+        byte[] bytes = Bits.booleanToBytes(true);
+        Object o = Bits.tryDeserialize(bytes);
+
+        assertEquals(Boolean.class, o.getClass());
     }
 }

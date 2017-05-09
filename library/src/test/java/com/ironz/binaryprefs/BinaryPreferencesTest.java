@@ -4,14 +4,15 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.file.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
-import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +34,14 @@ public final class BinaryPreferencesTest {
     public void setUp() throws Exception {
         byte[] key = "0000000000000000".getBytes();
         byte[] iv = "1111111111111111".getBytes();
+        final File folder = this.folder.newFolder();
         ByteEncryption encryption = new AesByteEncryptionImpl(key, iv);
-        fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT, encryption);
+        fileAdapter = new NioFileAdapter(new DirectoryProvider() {
+            @Override
+            public File getBaseDirectory() {
+                return folder;
+            }
+        });
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE);
     }
 

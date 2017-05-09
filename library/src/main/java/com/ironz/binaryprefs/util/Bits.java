@@ -206,7 +206,7 @@ public final class Bits {
     public static Object tryDeserialize(byte[] bytes) {
         byte flag = bytes[0];
         if (flag == FLAG_STRING_SET) {
-            return stringFromBytes(bytes);
+            return stringSetFromBytes(bytes);
         }
         if (flag == FLAG_STRING) {
             return stringFromBytes(bytes);

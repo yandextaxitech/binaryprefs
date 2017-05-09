@@ -41,7 +41,7 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public NioFileAdapter(File srcDir, TaskExecutor taskExecutor, ByteEncryption encryption) {
+    private NioFileAdapter(File srcDir, TaskExecutor taskExecutor, ByteEncryption encryption) {
         this.srcDir = new File(srcDir, PREFERENCES_DIR_NAME);
         this.taskExecutor = taskExecutor;
         this.encryption = encryption;
