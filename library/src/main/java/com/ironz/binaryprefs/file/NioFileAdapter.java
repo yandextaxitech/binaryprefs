@@ -17,6 +17,8 @@ import java.util.Map;
  */
 public final class NioFileAdapter implements FileAdapter {
 
+    private static final String PREFERENCES_DIR_NAME = "preferences";
+
     final File srcDir;
     private final TaskExecutor taskExecutor;
     private final ByteEncryption encryption;
@@ -40,7 +42,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(File srcDir, TaskExecutor taskExecutor, ByteEncryption encryption) {
-        this.srcDir = srcDir;
+        this.srcDir = new File(srcDir, PREFERENCES_DIR_NAME);
         this.taskExecutor = taskExecutor;
         this.encryption = encryption;
         defineCache();

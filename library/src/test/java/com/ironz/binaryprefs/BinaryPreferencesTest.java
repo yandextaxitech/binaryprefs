@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,6 +36,29 @@ public final class BinaryPreferencesTest {
         ByteEncryption encryption = new AesByteEncryptionImpl(key, iv);
         fileAdapter = new NioFileAdapter(folder.newFolder(), TaskExecutor.DEFAULT, encryption);
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE);
+    }
+
+    @Test
+    public void getAllDefaultValue() {
+        Map<String, ?> all = preferences.getAll();
+        assertTrue(all.isEmpty());
+    }
+
+    @Test
+    public void getAll() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        Map<String, ?> all = preferences.getAll();
+
+        assertEquals(all.get(stringKey).getClass(), String.class);
+        assertEquals(all.get(booleanKey).getClass(), boolean.class);
     }
 
     @Test

@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Converts bytes to primitives and backwards
  */
-public class Bits {
+public final class Bits {
 
     static final byte FLAG_STRING_SET = -10;
     static final byte FLAG_STRING = -20;
@@ -22,9 +22,7 @@ public class Bits {
     }
 
     public static byte[] stringSetToBytes(Set<String> value) {
-
         byte[][] bytes = new byte[value.size()][];
-
         int i = 0;
         int totalArraySize = 1;
 
@@ -56,44 +54,44 @@ public class Bits {
     }
 
     public static Set<String> stringSetFromBytes(byte[] bytes) {
-
         byte flag = bytes[0];
-        if (flag != FLAG_STRING_SET) {
-            throw new ClassCastException(String.format("Set<String> cannot be deserialized in '%s' flag type", flag));
-        }
+        if (flag == FLAG_STRING_SET) {
 
-        if (bytes.length == 1) {
-            return new HashSet<>(0);
-        }
-
-        Set<String> set = new HashSet<>();
-
-        int i = 1;
-
-        while (i < bytes.length) {
-
-            byte[] stringSizeBytes = {bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]};
-            int stringSize = intFromBytes(stringSizeBytes);
-
-            if (stringSize == NULL_STRING_SIZE) {
-                set.add(null);
-                i += INITIAL_INTEGER_LENGTH;
-                continue;
+            if (bytes.length == 1) {
+                return new HashSet<>(0);
             }
 
-            byte[] stringBytes = new byte[stringSize];
+            Set<String> set = new HashSet<>();
 
-            for (int k = 0; k < stringBytes.length; k++) {
-                int offset = i + k + INITIAL_INTEGER_LENGTH;
-                stringBytes[k] = bytes[offset];
+            int i = 1;
+
+            while (i < bytes.length) {
+
+                byte[] stringSizeBytes = {bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]};
+                int stringSize = intFromBytes(stringSizeBytes);
+
+                if (stringSize == NULL_STRING_SIZE) {
+                    set.add(null);
+                    i += INITIAL_INTEGER_LENGTH;
+                    continue;
+                }
+
+                byte[] stringBytes = new byte[stringSize];
+
+                for (int k = 0; k < stringBytes.length; k++) {
+                    int offset = i + k + INITIAL_INTEGER_LENGTH;
+                    stringBytes[k] = bytes[offset];
+                }
+
+                set.add(new String(stringBytes));
+
+                i += INITIAL_INTEGER_LENGTH + stringSize;
             }
 
-            set.add(new String(stringBytes));
-
-            i += INITIAL_INTEGER_LENGTH + stringSize;
+            return set;
         }
 
-        return set;
+        throw new ClassCastException(String.format("Set<String> cannot be deserialized in '%s' flag type", flag));
     }
 
     public static byte[] stringToBytes(String value) {
@@ -107,11 +105,11 @@ public class Bits {
 
     public static String stringFromBytes(byte[] bytes) {
         byte flag = bytes[0];
-        if (flag != FLAG_STRING) {
-            throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
+        if (flag == FLAG_STRING) {
+            int lengthWithoutFlag = bytes.length - 1;
+            return new String(bytes, 1, lengthWithoutFlag);
         }
-        int lengthWithoutFlag = bytes.length - 1;
-        return new String(bytes, 1, lengthWithoutFlag);
+        throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
     }
 
     public static byte[] intToBytes(int value) {
@@ -127,13 +125,13 @@ public class Bits {
     public static int intFromBytes(byte[] bytes) {
         int i = 0xFF;
         byte flag = bytes[0];
-        if (flag != FLAG_INT) {
-            throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
+        if (flag == FLAG_INT) {
+            return ((bytes[4] & i)) +
+                    ((bytes[3] & i) << 8) +
+                    ((bytes[2] & i) << 16) +
+                    ((bytes[1]) << 24);
         }
-        return ((bytes[4] & i)) +
-                ((bytes[3] & i) << 8) +
-                ((bytes[2] & i) << 16) +
-                ((bytes[1]) << 24);
+        throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
     }
 
     public static byte[] floatToBytes(float value) {
@@ -150,14 +148,14 @@ public class Bits {
     public static float floatFromBytes(byte[] bytes) {
         int i = 0xFF;
         byte flag = bytes[0];
-        if (flag != FLAG_FLOAT) {
-            throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
+        if (flag == FLAG_FLOAT) {
+            int value = ((bytes[4] & i)) +
+                    ((bytes[3] & i) << 8) +
+                    ((bytes[2] & i) << 16) +
+                    (bytes[1] << 24);
+            return Float.intBitsToFloat(value);
         }
-        int value = ((bytes[4] & i)) +
-                ((bytes[3] & i) << 8) +
-                ((bytes[2] & i) << 16) +
-                (bytes[1] << 24);
-        return Float.intBitsToFloat(value);
+        throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
     }
 
     public static byte[] longToBytes(long value) {
@@ -177,17 +175,17 @@ public class Bits {
     public static long longFromBytes(byte[] bytes) {
         long l = 0xFFL;
         byte flag = bytes[0];
-        if (flag != FLAG_LONG) {
-            throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
+        if (flag == FLAG_LONG) {
+            return ((bytes[8] & l)) +
+                    ((bytes[7] & l) << 8) +
+                    ((bytes[6] & l) << 16) +
+                    ((bytes[5] & l) << 24) +
+                    ((bytes[4] & l) << 32) +
+                    ((bytes[3] & l) << 40) +
+                    ((bytes[2] & l) << 48) +
+                    (((long) bytes[1]) << 56);
         }
-        return ((bytes[8] & l)) +
-                ((bytes[7] & l) << 8) +
-                ((bytes[6] & l) << 16) +
-                ((bytes[5] & l) << 24) +
-                ((bytes[4] & l) << 32) +
-                ((bytes[3] & l) << 40) +
-                ((bytes[2] & l) << 48) +
-                (((long) bytes[1]) << 56);
+        throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
     }
 
     public static byte[] booleanToBytes(boolean value) {
@@ -199,9 +197,32 @@ public class Bits {
 
     public static boolean booleanFromBytes(byte[] bytes) {
         byte flag = bytes[0];
-        if (flag != FLAG_BOOLEAN) {
-            throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
+        if (flag == FLAG_BOOLEAN) {
+            return bytes[1] != 0;
         }
-        return bytes[1] != 0;
+        throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
+    }
+
+    public static Object tryDeserialize(byte[] bytes) {
+        byte flag = bytes[0];
+        if (flag == FLAG_STRING_SET) {
+            return stringFromBytes(bytes);
+        }
+        if (flag == FLAG_STRING) {
+            return stringFromBytes(bytes);
+        }
+        if (flag == FLAG_INT) {
+            return intFromBytes(bytes);
+        }
+        if (flag == FLAG_LONG) {
+            return longFromBytes(bytes);
+        }
+        if (flag == FLAG_FLOAT) {
+            return floatFromBytes(bytes);
+        }
+        if (flag == FLAG_BOOLEAN) {
+            return booleanFromBytes(bytes);
+        }
+        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect type '%s'", flag));
     }
 }

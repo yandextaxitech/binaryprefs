@@ -145,7 +145,12 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private Map<String, ?> getAllInternal() {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        Map<String, Object> map = new HashMap<>();
+        for (String name : fileAdapter.names()) {
+            byte[] bytes = fileAdapter.fetch(name);
+            map.put(name, Bits.tryDeserialize(bytes));
+        }
+        return map;
     }
 
     private String getStringInternal(String key) {
