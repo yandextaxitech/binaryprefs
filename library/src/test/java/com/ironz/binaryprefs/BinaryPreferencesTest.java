@@ -53,6 +53,7 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void getAll() {
+
         String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String stringValue = "value";
         String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
@@ -70,6 +71,7 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void stringDefaultValue() {
+
         String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String defaultValue = "default value";
 
@@ -109,6 +111,7 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void defaultIntValue() {
+
         String key = int.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         int defaultValue = Integer.MAX_VALUE;
 
@@ -222,16 +225,39 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void clear() {
+
+        String key = "key";
+        String value = "value";
+        String undefined = "undefined value";
+
+        preferences.edit()
+                .putString(key, value)
+                .apply();
+        String restored = preferences.getString(key, undefined);
+
+        assertEquals(value, restored);
+
+        preferences.edit()
+                .clear()
+                .apply();
+
+        String restored2 = preferences.getString(key, undefined);
+        assertFalse(preferences.contains(restored2));
+    }
+
+    @Test
     public void clearFirst() {
 
         String key = "key";
         String value = "value";
+        String undefined = "undefined value";
 
         preferences.edit()
                 .putString(key, value)
                 .clear()
                 .apply();
-        String restored = preferences.getString(key, value);
+        String restored = preferences.getString(key, undefined);
 
         assertEquals(value, restored);
     }
@@ -258,12 +284,13 @@ public final class BinaryPreferencesTest {
 
         String key = "key";
         String value = "value";
+        String undefined = "undefined";
 
         preferences.edit()
                 .putString(key, value)
                 .remove(key)
                 .apply();
-        String restored = preferences.getString(key, value);
+        String restored = preferences.getString(key, undefined);
 
         assertEquals(value, restored);
     }
@@ -305,23 +332,5 @@ public final class BinaryPreferencesTest {
         preferences.registerOnSharedPreferenceChangeListener(listener);
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
         preferences.edit().putString(key, value).apply();
-    }
-
-    // TODO: 4/26/17 reimplement and restore test annotation
-//    @Test
-    public void commit() {
-
-        String key = String.class.getSimpleName() + KEY_SUFFIX;
-        String value = "value";
-
-        assertTrue(preferences.edit()
-                .putString(key, value)
-                .commit());
-
-        folder.delete();
-
-        assertFalse(preferences.edit()
-                .putString(key, value)
-                .commit());
     }
 }
