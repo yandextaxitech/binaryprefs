@@ -1,8 +1,6 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
-import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -28,15 +26,11 @@ public final class BinaryPreferencesTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private Preferences preferences;
-    private FileAdapter fileAdapter;
 
     @Before
     public void setUp() throws Exception {
-        byte[] key = "0000000000000000".getBytes();
-        byte[] iv = "1111111111111111".getBytes();
         final File folder = this.folder.newFolder();
-        ByteEncryption encryption = new AesByteEncryptionImpl(key, iv);
-        fileAdapter = new NioFileAdapter(new DirectoryProvider() {
+        FileAdapter fileAdapter = new NioFileAdapter(new DirectoryProvider() {
             @Override
             public File getBaseDirectory() {
                 return folder;
