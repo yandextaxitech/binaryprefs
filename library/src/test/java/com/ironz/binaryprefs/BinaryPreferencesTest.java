@@ -47,7 +47,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void getAll() {
-
         String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String stringValue = "value";
         String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
@@ -65,7 +64,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void stringDefaultValue() {
-
         String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String defaultValue = "default value";
 
@@ -76,7 +74,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void stringValue() {
-
         String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String value = "value";
         String undefined = "undefined";
@@ -91,7 +88,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void intValue() {
-
         String key = int.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         int value = Integer.MAX_VALUE;
 
@@ -104,8 +100,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void defaultIntValue() {
-
+    public void intDefaultValue() {
         String key = int.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         int defaultValue = Integer.MAX_VALUE;
 
@@ -116,7 +111,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void longValue() {
-
         String key = long.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         long value = Long.MAX_VALUE;
 
@@ -129,8 +123,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void defaultLongValue() {
-
+    public void longDefaultValue() {
         String key = long.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         long defaultValue = Long.MAX_VALUE;
 
@@ -141,7 +134,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void floatValue() {
-
         String key = float.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         float value = Float.MAX_VALUE;
 
@@ -154,8 +146,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void defaultFloatValue() {
-
+    public void floatDefaultValue() {
         String key = float.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         float defaultValue = Float.MAX_VALUE;
 
@@ -166,7 +157,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void booleanValue() {
-
         String key = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
 
         preferences.edit()
@@ -178,8 +168,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void defaultBooleanValue() {
-
+    public void booleanDefaultValue() {
         String key = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
 
         boolean restored = preferences.getBoolean(key, true);
@@ -189,7 +178,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void stringSetValue() {
-
         String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         HashSet<String> value = new HashSet<>();
         value.add("one");
@@ -205,8 +193,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void defaultStringSetValue() {
-
+    public void stringSetDefaultValue() {
         String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         HashSet<String> defaultValue = new HashSet<>();
         defaultValue.add("one");
@@ -220,7 +207,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void clear() {
-
         String key = "key";
         String value = "value";
         String undefined = "undefined value";
@@ -235,14 +221,13 @@ public final class BinaryPreferencesTest {
         preferences.edit()
                 .clear()
                 .apply();
-
         String restored2 = preferences.getString(key, undefined);
+
         assertFalse(preferences.contains(restored2));
     }
 
     @Test
     public void clearFirst() {
-
         String key = "key";
         String value = "value";
         String undefined = "undefined value";
@@ -258,7 +243,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void remove() {
-
         String key = "key";
         String value = "value";
         String undefined = "undefined";
@@ -275,7 +259,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void removeFirst() {
-
         String key = "key";
         String value = "value";
         String undefined = "undefined";
@@ -291,7 +274,6 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void listeners() {
-
         final String key = "key";
         final String value = "value";
         final String undefined = "undefined";
@@ -307,13 +289,13 @@ public final class BinaryPreferencesTest {
             }
         });
         preferences.edit().putString(key, value).apply();
+
         assertEquals(value, preferences.getString(key, undefined));
         assertTrue(changed.get());
     }
 
     @Test
     public void removeListeners() {
-
         String key = "key";
         String value = "value";
 
