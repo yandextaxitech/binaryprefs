@@ -65,7 +65,7 @@ public final class BinaryPreferencesTest {
         Map<String, ?> all = preferences.getAll();
 
         assertEquals(all.get(stringKey).getClass(), String.class);
-        assertEquals(all.get(booleanKey).getClass(), boolean.class);
+        assertEquals(all.get(booleanKey).getClass(), Boolean.class);
     }
 
     @Test
