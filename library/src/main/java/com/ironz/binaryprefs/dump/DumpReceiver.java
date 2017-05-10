@@ -20,16 +20,19 @@ public final class DumpReceiver extends BroadcastReceiver {
         String prefName = intent.getStringExtra(PREF_NAME);
 
         if (!BINARY_PREFERENCES_HASH_MAP.containsKey(prefName)) {
-            throw new NullPointerException("Cannot find '%s' preference for dumping!");
+            Log.e(DumpReceiver.class.getName(), String.format("Cannot find '%s' preference for dumping!", prefName));
         }
 
         BinaryPreferences preferences = BINARY_PREFERENCES_HASH_MAP.get(prefName);
         Map<String, ?> all = preferences.getAll();
-        Log.d(DumpReceiver.class.getName(), all.toString());
+        for (String key : all.keySet()) {
+            Object o = all.get(key);
+            Log.d(DumpReceiver.class.getName(), key + ": " + o + "\n");
+        }
     }
 
     @SuppressWarnings("unused")
-    public void appendPreference(String name, BinaryPreferences preferences) {
+    public static void appendPreference(String name, BinaryPreferences preferences) {
         BINARY_PREFERENCES_HASH_MAP.put(name, preferences);
     }
 }
