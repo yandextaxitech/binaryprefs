@@ -10,7 +10,8 @@ separately and performs disk IO via NIO2 with memory mapped file.
 1. ~~Disk I/O encrypt~~ completed
 2. IPC
 3. Externalizable (acyclic graph)
-4. ~~Preferences tooling (key set reading)~~ completed
+4. ~~Preferences tooling (key set reading)~~ completed:
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" -t "text/plain"`
 
 ## License
 ```
