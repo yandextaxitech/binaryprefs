@@ -42,6 +42,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void getAllDefaultValue() {
         Map<String, ?> all = preferences.getAll();
+
         assertTrue(all.isEmpty());
     }
 

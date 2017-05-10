@@ -12,6 +12,8 @@ import java.util.Map;
 public final class DumpReceiver extends BroadcastReceiver {
 
     private static final String PREF_NAME = "pref_name";
+    private static final String PREF_KEY = "pref_key";
+
     private static final Map<String, BinaryPreferences> BINARY_PREFERENCES_HASH_MAP = new HashMap<>();
 
     @Override
@@ -25,6 +27,13 @@ public final class DumpReceiver extends BroadcastReceiver {
 
         BinaryPreferences preferences = BINARY_PREFERENCES_HASH_MAP.get(prefName);
         Map<String, ?> all = preferences.getAll();
+
+        if (intent.hasExtra(PREF_KEY)) {
+            String key = intent.getStringExtra(PREF_KEY);
+            Log.d(DumpReceiver.class.getName(), key + ": " + all.get(key) + "\n");
+            return;
+        }
+
         for (String key : all.keySet()) {
             Object o = all.get(key);
             Log.d(DumpReceiver.class.getName(), key + ": " + o + "\n");
