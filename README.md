@@ -10,7 +10,7 @@ separately and performs disk IO via NIO2 with memory mapped file.
 1. ~~Disk I/O encrypt~~ completed
 2. IPC
 3. Externalizable (acyclic graph)
-4. Preferences tooling (key set reading)
+4. ~~Preferences tooling (key set reading)~~ completed
 
 ## License
 ```
