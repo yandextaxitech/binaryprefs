@@ -148,39 +148,39 @@ public final class BinaryPreferences implements Preferences {
         Map<String, Object> map = new HashMap<>();
         for (String name : fileAdapter.names()) {
             byte[] bytes = fileAdapter.fetch(name);
-            map.put(name, Bits.tryDeserialize(bytes));
+            map.put(name, Bits.tryDeserializeByFlag(bytes));
         }
         return map;
     }
 
     private String getStringInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return Bits.stringFromBytes(bytes);
+        return Bits.stringFromBytesWithFlag(bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return Bits.stringSetFromBytes(bytes);
+        return Bits.stringSetFromBytesWithFlag(bytes);
     }
 
     private int getIntInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return Bits.intFromBytes(bytes);
+        return Bits.intFromBytesWithFlag(bytes);
     }
 
     private long getLongInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return Bits.longFromBytes(bytes);
+        return Bits.longFromBytesWithFlag(bytes);
     }
 
     private float getFloatInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return Bits.floatFromBytes(bytes);
+        return Bits.floatFromBytesWithFlag(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return Bits.booleanFromBytes(bytes);
+        return Bits.booleanFromBytesWithFlag(bytes);
     }
 
     private <T extends Externalizable> T getObjectInternal(String key) {

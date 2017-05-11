@@ -42,7 +42,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            byte[] bytes = Bits.stringToBytes(value);
+            byte[] bytes = Bits.stringToBytesWithFlag(value);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }
@@ -54,7 +54,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (values == null) {
                 return remove(key);
             }
-            byte[] bytes = Bits.stringSetToBytes(values);
+            byte[] bytes = Bits.stringSetToBytesWithFlag(values);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }
@@ -63,7 +63,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putInt(String key, int value) {
         synchronized (lock) {
-            byte[] bytes = Bits.intToBytes(value);
+            byte[] bytes = Bits.intToBytesWithFlag(value);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }
@@ -72,7 +72,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putLong(String key, long value) {
         synchronized (lock) {
-            byte[] bytes = Bits.longToBytes(value);
+            byte[] bytes = Bits.longToBytesWithFlag(value);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }
@@ -81,7 +81,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putFloat(String key, float value) {
         synchronized (lock) {
-            byte[] bytes = Bits.floatToBytes(value);
+            byte[] bytes = Bits.floatToBytesWithFlag(value);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }
@@ -90,7 +90,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
         synchronized (lock) {
-            byte[] bytes = Bits.booleanToBytes(value);
+            byte[] bytes = Bits.booleanToBytesWithFlag(value);
             commitList.add(new Pair<>(key, bytes));
             return this;
         }

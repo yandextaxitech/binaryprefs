@@ -14,8 +14,8 @@ public class BitsTest {
     public void emptyStringSet() {
         Set<String> value = new HashSet<>();
 
-        byte[] bytes = Bits.stringSetToBytes(value);
-        Set<String> restored = Bits.stringSetFromBytes(bytes);
+        byte[] bytes = Bits.stringSetToBytesWithFlag(value);
+        Set<String> restored = Bits.stringSetFromBytesWithFlag(bytes);
 
         assertEquals(1, bytes.length);
         assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
@@ -31,8 +31,8 @@ public class BitsTest {
         value.add("");
         value.add(null);
 
-        byte[] bytes = Bits.stringSetToBytes(value);
-        Set<String> restored = Bits.stringSetFromBytes(bytes);
+        byte[] bytes = Bits.stringSetToBytesWithFlag(value);
+        Set<String> restored = Bits.stringSetFromBytesWithFlag(bytes);
 
         assertEquals(37, bytes.length);
         assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
@@ -48,17 +48,17 @@ public class BitsTest {
         value.add("");
         value.add(null);
 
-        byte[] bytes = Bits.stringSetToBytes(value);
+        byte[] bytes = Bits.stringSetToBytesWithFlag(value);
         bytes[0] = 0;
-        Bits.stringSetFromBytes(bytes);
+        Bits.stringSetFromBytesWithFlag(bytes);
     }
 
     @Test
     public void stringConvert() {
         String value = "Some String";
 
-        byte[] bytes = Bits.stringToBytes(value);
-        String restored = Bits.stringFromBytes(bytes);
+        byte[] bytes = Bits.stringToBytesWithFlag(value);
+        String restored = Bits.stringFromBytesWithFlag(bytes);
 
         assertEquals(12, bytes.length);
         assertEquals(Bits.FLAG_STRING, bytes[0]);
@@ -67,18 +67,18 @@ public class BitsTest {
 
     @Test(expected = ClassCastException.class)
     public void stringIncorrectFlag() {
-        byte[] bytes = Bits.intToBytes(Integer.MAX_VALUE);
+        byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
 
         bytes[0] = 0;
 
-        Bits.intFromBytes(bytes);
+        Bits.intFromBytesWithFlag(bytes);
     }
 
     @Test
     public void integerConvert() {
-        byte[] bytes = Bits.intToBytes(Integer.MAX_VALUE);
+        byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
 
-        int restored = Bits.intFromBytes(bytes);
+        int restored = Bits.intFromBytesWithFlag(bytes);
 
         assertEquals(5, bytes.length);
         assertEquals(Bits.FLAG_INT, bytes[0]);
@@ -87,18 +87,18 @@ public class BitsTest {
 
     @Test(expected = ClassCastException.class)
     public void integerIncorrectFlag() {
-        byte[] bytes = Bits.intToBytes(Integer.MAX_VALUE);
+        byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
 
         bytes[0] = 0;
 
-        Bits.intFromBytes(bytes);
+        Bits.intFromBytesWithFlag(bytes);
     }
 
     @Test
     public void floatConvert() {
-        byte[] bytes = Bits.floatToBytes(Float.MAX_VALUE);
+        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
 
-        float restored = Bits.floatFromBytes(bytes);
+        float restored = Bits.floatFromBytesWithFlag(bytes);
 
         assertEquals(5, bytes.length);
         assertEquals(Bits.FLAG_FLOAT, bytes[0]);
@@ -107,18 +107,18 @@ public class BitsTest {
 
     @Test(expected = ClassCastException.class)
     public void floatIncorrectFlag() {
-        byte[] bytes = Bits.floatToBytes(Float.MAX_VALUE);
+        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
 
         bytes[0] = 0;
 
-        Bits.floatFromBytes(bytes);
+        Bits.floatFromBytesWithFlag(bytes);
     }
 
     @Test
     public void longConvert() {
-        byte[] bytes = Bits.longToBytes(Long.MAX_VALUE);
+        byte[] bytes = Bits.longToBytesWithFlag(Long.MAX_VALUE);
 
-        long restored = Bits.longFromBytes(bytes);
+        long restored = Bits.longFromBytesWithFlag(bytes);
 
         assertEquals(9, bytes.length);
         assertEquals(Bits.FLAG_LONG, bytes[0]);
@@ -127,18 +127,18 @@ public class BitsTest {
 
     @Test(expected = ClassCastException.class)
     public void longIncorrectFlag() {
-        byte[] bytes = Bits.longToBytes(Long.MAX_VALUE);
+        byte[] bytes = Bits.longToBytesWithFlag(Long.MAX_VALUE);
 
         bytes[0] = 0;
 
-        Bits.longFromBytes(bytes);
+        Bits.longFromBytesWithFlag(bytes);
     }
 
     @Test
     public void booleanConvert() {
-        byte[] bytes = Bits.booleanToBytes(true);
+        byte[] bytes = Bits.booleanToBytesWithFlag(true);
 
-        boolean restored = Bits.booleanFromBytes(bytes);
+        boolean restored = Bits.booleanFromBytesWithFlag(bytes);
 
         assertEquals(2, bytes.length);
         assertEquals(Bits.FLAG_BOOLEAN, bytes[0]);
@@ -147,25 +147,25 @@ public class BitsTest {
 
     @Test(expected = ClassCastException.class)
     public void booleanIncorrectFlag() {
-        byte[] bytes = Bits.booleanToBytes(true);
+        byte[] bytes = Bits.booleanToBytesWithFlag(true);
 
         bytes[0] = 0;
 
-        Bits.booleanFromBytes(bytes);
+        Bits.booleanFromBytesWithFlag(bytes);
     }
 
     @Test(expected = UnsupportedClassVersionError.class)
     public void tryDeserializeUnsupported() {
         byte[] bytes = {0};
-        Bits.tryDeserialize(bytes);
+        Bits.tryDeserializeByFlag(bytes);
     }
 
     @Test
     public void tryDeserializeStringSet() {
         Set<String> value = Collections.singleton("Some string");
 
-        byte[] bytes = Bits.stringSetToBytes(value);
-        Object o = Bits.tryDeserialize(bytes);
+        byte[] bytes = Bits.stringSetToBytesWithFlag(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
 
         assertEquals(HashSet.class, o.getClass());
     }
@@ -174,8 +174,8 @@ public class BitsTest {
     public void tryDeserializeString() {
         String value = "Some string";
 
-        byte[] bytes = Bits.stringToBytes(value);
-        Object o = Bits.tryDeserialize(bytes);
+        byte[] bytes = Bits.stringToBytesWithFlag(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
 
         assertEquals(String.class, o.getClass());
     }
@@ -184,8 +184,8 @@ public class BitsTest {
     public void tryDeserializeInt() {
         int value = Integer.MAX_VALUE;
 
-        byte[] bytes = Bits.intToBytes(value);
-        Object o = Bits.tryDeserialize(bytes);
+        byte[] bytes = Bits.intToBytesWithFlag(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
 
         assertEquals(Integer.class, o.getClass());
     }
@@ -194,8 +194,8 @@ public class BitsTest {
     public void tryDeserializeLong() {
         long value = Long.MAX_VALUE;
 
-        byte[] bytes = Bits.longToBytes(value);
-        Object o = Bits.tryDeserialize(bytes);
+        byte[] bytes = Bits.longToBytesWithFlag(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
 
         assertEquals(Long.class, o.getClass());
     }
@@ -204,8 +204,8 @@ public class BitsTest {
     public void tryDeserializeFloat() {
         float value = Float.MAX_VALUE;
 
-        byte[] bytes = Bits.floatToBytes(value);
-        Object o = Bits.tryDeserialize(bytes);
+        byte[] bytes = Bits.floatToBytesWithFlag(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
 
         assertEquals(Float.class, o.getClass());
     }
@@ -213,8 +213,8 @@ public class BitsTest {
     @Test
     public void tryDeserializeBoolean() {
 
-        byte[] bytes = Bits.booleanToBytes(true);
-        Object o = Bits.tryDeserialize(bytes);
+        byte[] bytes = Bits.booleanToBytesWithFlag(true);
+        Object o = Bits.tryDeserializeByFlag(bytes);
 
         assertEquals(Boolean.class, o.getClass());
     }
