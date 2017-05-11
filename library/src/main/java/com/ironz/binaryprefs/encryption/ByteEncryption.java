@@ -5,7 +5,7 @@ package com.ironz.binaryprefs.encryption;
  */
 public interface ByteEncryption {
     /**
-     * Encrypts bytes from original to decrypted
+     * Encrypts bytes from original to encrypted
      *
      * @param bytes original bytes
      * @return encrypted bytes
@@ -13,7 +13,7 @@ public interface ByteEncryption {
     byte[] encrypt(byte[] bytes);
 
     /**
-     * Decrypts bytes from decrypted to original
+     * Decrypts bytes from encrypted to original
      *
      * @param bytes decrypted bytes
      * @return original bytes
