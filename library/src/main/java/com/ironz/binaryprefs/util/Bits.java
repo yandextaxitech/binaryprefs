@@ -4,15 +4,36 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Converts bytes to primitives and backwards
+ * Converts bytes to primitives and backwards. For type detecting uses prefix flag which stores at start of byte arrays.
  */
 public final class Bits {
 
+    /**
+     * Uses for detecting byte array type of String Set
+     */
     static final byte FLAG_STRING_SET = -10;
+    /**
+     * Uses for detecting byte array type of String
+     */
     static final byte FLAG_STRING = -20;
+
+    /**
+     * Uses for detecting byte array type of int
+     */
     static final byte FLAG_INT = -30;
+    /**
+     * Uses for detecting byte array type of long
+     */
     static final byte FLAG_LONG = -40;
+
+    /**
+     * Uses for detecting byte array type of float
+     */
     static final byte FLAG_FLOAT = -50;
+
+    /**
+     * Uses for detecting byte array type of boolean
+     */
     static final byte FLAG_BOOLEAN = -60;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
@@ -21,6 +42,13 @@ public final class Bits {
     private Bits() {
     }
 
+    /**
+     * Serialize {@code Set<String>} into byte array with following scheme:
+     * [{@link #FLAG_STRING_SET}] + (([string_size] + [string_byte_array]) * n).
+     *
+     * @param value target Set to serialize.
+     * @return specific byte array with scheme.
+     */
     public static byte[] stringSetToBytesWithFlag(Set<String> value) {
         byte[][] bytes = new byte[value.size()][];
         int i = 0;
@@ -53,6 +81,12 @@ public final class Bits {
         return totalArray;
     }
 
+    /**
+     * Deserialize byte by {@link #stringSetToBytesWithFlag(Set)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized String Set
+     */
     public static Set<String> stringSetFromBytesWithFlag(byte[] bytes) {
         byte flag = bytes[0];
         if (flag == FLAG_STRING_SET) {
@@ -94,6 +128,13 @@ public final class Bits {
         throw new ClassCastException(String.format("Set<String> cannot be deserialized in '%s' flag type", flag));
     }
 
+    /**
+     * Serialize {@code String} into byte array with following scheme:
+     * [{@link #FLAG_STRING}] + [string_byte_array].
+     *
+     * @param value target String to serialize.
+     * @return specific byte array with scheme.
+     */
     public static byte[] stringToBytesWithFlag(String value) {
         byte[] stringBytes = value.getBytes();
         int flagSize = 1;
@@ -103,6 +144,12 @@ public final class Bits {
         return b;
     }
 
+    /**
+     * Deserialize byte by {@link #stringToBytesWithFlag(String)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized String
+     */
     public static String stringFromBytesWithFlag(byte[] bytes) {
         byte flag = bytes[0];
         if (flag == FLAG_STRING) {
@@ -112,6 +159,13 @@ public final class Bits {
         throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
     }
 
+    /**
+     * Serialize {@code int} into byte array with following scheme:
+     * [{@link #FLAG_INT}] + [int_bytes].
+     *
+     * @param value target int to serialize.
+     * @return specific byte array with scheme.
+     */
     public static byte[] intToBytesWithFlag(int value) {
         return new byte[]{
                 FLAG_INT,
@@ -122,6 +176,12 @@ public final class Bits {
         };
     }
 
+    /**
+     * Deserialize byte by {@link #intToBytesWithFlag(int)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized int
+     */
     public static int intFromBytesWithFlag(byte[] bytes) {
         int i = 0xFF;
         byte flag = bytes[0];
@@ -134,6 +194,13 @@ public final class Bits {
         throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
     }
 
+    /**
+     * Serialize {@code float} into byte array with following scheme:
+     * [{@link #FLAG_FLOAT}] + [float_bytes].
+     *
+     * @param value target float to serialize.
+     * @return specific byte array with scheme.
+     */
     public static byte[] floatToBytesWithFlag(float value) {
         int i = Float.floatToIntBits(value);
         return new byte[]{
@@ -145,6 +212,12 @@ public final class Bits {
         };
     }
 
+    /**
+     * Deserialize byte by {@link #floatToBytesWithFlag(float)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized float
+     */
     public static float floatFromBytesWithFlag(byte[] bytes) {
         int i = 0xFF;
         byte flag = bytes[0];
@@ -158,6 +231,13 @@ public final class Bits {
         throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
     }
 
+    /**
+     * Serialize {@code long} into byte array with following scheme:
+     * [{@link #FLAG_LONG}] + [long_bytes].
+     *
+     * @param value target long to serialize.
+     * @return specific byte array with scheme.
+     */
     public static byte[] longToBytesWithFlag(long value) {
         return new byte[]{
                 FLAG_LONG,
@@ -172,6 +252,12 @@ public final class Bits {
         };
     }
 
+    /**
+     * Deserialize byte by {@link #longToBytesWithFlag(long)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized long
+     */
     public static long longFromBytesWithFlag(byte[] bytes) {
         long l = 0xFFL;
         byte flag = bytes[0];
@@ -188,6 +274,13 @@ public final class Bits {
         throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
     }
 
+    /**
+     * Serialize {@code boolean} into byte array with following scheme:
+     * [{@link #FLAG_BOOLEAN}] + [boolean_bytes].
+     *
+     * @param value target boolean to serialize.
+     * @return specific byte array with scheme.
+     */
     public static byte[] booleanToBytesWithFlag(boolean value) {
         return new byte[]{
                 FLAG_BOOLEAN,
@@ -195,6 +288,12 @@ public final class Bits {
         };
     }
 
+    /**
+     * Deserialize byte by {@link #booleanToBytesWithFlag(boolean)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized boolean
+     */
     public static boolean booleanFromBytesWithFlag(byte[] bytes) {
         byte flag = bytes[0];
         if (flag == FLAG_BOOLEAN) {
@@ -203,6 +302,12 @@ public final class Bits {
         throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
     }
 
+    /**
+     * Tries to deserialize byte array by all flags and returns object if deserialized or throws exception if target flag is unexpected.
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized object
+     */
     public static Object tryDeserializeByFlag(byte[] bytes) {
         byte flag = bytes[0];
         if (flag == FLAG_STRING_SET) {
