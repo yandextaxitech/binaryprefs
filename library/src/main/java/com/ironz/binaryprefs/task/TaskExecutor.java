@@ -5,7 +5,7 @@ package com.ironz.binaryprefs.task;
  */
 public interface TaskExecutor {
     /**
-     * After submitting executor add this task in queue
+     * After submitting executor adds this task in queue and runs later
      *
      * @param runnable instance for task execution
      */
