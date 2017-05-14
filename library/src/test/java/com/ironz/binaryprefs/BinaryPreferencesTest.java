@@ -1,6 +1,8 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.events.PreferenceEventBridge;
+import com.ironz.binaryprefs.events.SimplePreferenceEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -36,7 +38,8 @@ public final class BinaryPreferencesTest {
                 return folder;
             }
         });
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE);
+        PreferenceEventBridge eventsBridge = new SimplePreferenceEventBridgeImpl();
+        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs;
 
-import android.content.SharedPreferences;
+import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.util.Bits;
@@ -16,24 +16,24 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final List<Pair<String, byte[]>> commitList = new ArrayList<>(0);
     private final List<String> removeSet = new ArrayList<>(0);
 
-    private final Class lock;
-    private final FileAdapter fileAdapter;
+    private final Preferences preferences;
     private final ExceptionHandler exceptionHandler;
-    private final List<SharedPreferences.OnSharedPreferenceChangeListener> listeners;
-    private final SharedPreferences preferences;
+    private final FileAdapter fileAdapter;
+    private final PreferenceEventBridge bridge;
+    private final Class lock;
 
     private boolean clear;
 
-    BinaryPreferencesEditor(Class lock,
+    BinaryPreferencesEditor(Preferences preferences,
                             FileAdapter fileAdapter,
                             ExceptionHandler exceptionHandler,
-                            List<SharedPreferences.OnSharedPreferenceChangeListener> listeners,
-                            SharedPreferences preferences) {
+                            PreferenceEventBridge bridge,
+                            Class lock) {
         this.lock = lock;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
-        this.listeners = listeners;
         this.preferences = preferences;
+        this.bridge = bridge;
     }
 
     @Override
@@ -162,8 +162,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void notifyListeners(String key) {
-        for (SharedPreferences.OnSharedPreferenceChangeListener listener : listeners) {
-            listener.onSharedPreferenceChanged(preferences, key);
-        }
+        bridge.notifyListeners(preferences, key);
     }
 }

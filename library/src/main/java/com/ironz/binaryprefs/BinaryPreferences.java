@@ -1,23 +1,27 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.util.Bits;
 
 import java.io.Externalizable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public final class BinaryPreferences implements Preferences {
 
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
-    private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+    private final PreferenceEventBridge eventsBridge;
     private final Class lock = BinaryPreferences.class;
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
+    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler, PreferenceEventBridge eventsBridge) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
+        this.eventsBridge = eventsBridge;
     }
 
     @Override
@@ -126,21 +130,21 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public PreferencesEditor edit() {
         synchronized (lock) {
-            return new BinaryPreferencesEditor(lock, fileAdapter, exceptionHandler, listeners, this);
+            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, lock);
         }
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         synchronized (lock) {
-            listeners.add(listener);
+            eventsBridge.registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         synchronized (lock) {
-            listeners.remove(listener);
+            eventsBridge.unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 
