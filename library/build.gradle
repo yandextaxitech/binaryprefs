@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = "com.ironz.binaryprefs"
-version = "0.3.2"
+version = "0.4"
 
 android {
 
@@ -12,13 +12,13 @@ android {
     }
 
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
-        versionName "0.1.13"
+        versionName version
     }
     lintOptions {
         abortOnError false
