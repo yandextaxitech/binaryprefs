@@ -8,7 +8,7 @@ separately and performs disk IO via NIO2 with memory mapped file.
 ## Roadmap
 
 1. ~~Disk I/O encrypt~~ completed
-2. IPC
+2. ~~IPC~~ completed
 3. Externalizable (acyclic graph)
 4. ~~Preferences tooling (key set reading)~~ completed:
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
