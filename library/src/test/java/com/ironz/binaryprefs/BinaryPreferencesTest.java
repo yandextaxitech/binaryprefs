@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.events.SimplePreferenceEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
@@ -39,7 +40,7 @@ public final class BinaryPreferencesTest {
             }
         });
         PreferenceEventBridge eventsBridge = new SimplePreferenceEventBridgeImpl();
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge);
+        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, new ConcurrentCacheProviderImpl());
     }
 
     @Test

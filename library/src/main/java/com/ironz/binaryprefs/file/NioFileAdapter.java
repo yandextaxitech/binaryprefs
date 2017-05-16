@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Concrete file adapter which implements NIO file operations
@@ -19,12 +17,9 @@ public final class NioFileAdapter implements FileAdapter {
 
     private static final String BACKUP_EXTENSION = ".bak";
 
-    private final Map<String, byte[]> cache = new HashMap<>();
-
     final File srcDir;
     private final TaskExecutor taskExecutor;
     private final ByteEncryption encryption;
-
 
     @SuppressWarnings({"WeakerAccess", "unused"})
     public NioFileAdapter(DirectoryProvider directoryProvider) {
@@ -46,22 +41,9 @@ public final class NioFileAdapter implements FileAdapter {
         this.srcDir = srcDir;
         this.taskExecutor = taskExecutor;
         this.encryption = encryption;
-        defineCache();
     }
 
-    private void defineCache() {
-        for (String name : getFileNamesInternal()) {
-            try {
-                byte[] bytes = fetchBackupOrOriginal(name);
-                byte[] decrypt = encryption.decrypt(bytes);
-                cache.put(name, decrypt);
-            } catch (Exception ignore) {
-                //don't care, just ignore
-            }
-        }
-    }
-
-    private String[] getFileNamesInternal() {
+    private String[] namesInternal() {
         String[] list = srcDir.list();
         if (list != null) {
             return list;
@@ -71,12 +53,12 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public String[] names() {
-        return cache.keySet().toArray(new String[0]);
+        return namesInternal();
     }
 
     @Override
     public byte[] fetch(String name) {
-        return cache.get(name);
+        return fetchBackupOrOriginal(name);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -119,7 +101,6 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void save(final String name, final byte[] bytes) {
-        cache.put(name, bytes);
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -136,6 +117,7 @@ public final class NioFileAdapter implements FileAdapter {
         saveInternal(file, encryption.encrypt(bytes));
         deleteBackup(backupFile);
     }
+
     private void deleteBackup(File backupFile) {
         //noinspection ResultOfMethodCallIgnored
         backupFile.delete();
@@ -170,7 +152,6 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void clear() {
-        cache.clear();
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -181,7 +162,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     private void clearInternal() {
         try {
-            for (String name : names()) {
+            for (String name : namesInternal()) {
                 File file = new File(srcDir, name);
                 //noinspection ResultOfMethodCallIgnored
                 file.delete();
@@ -193,7 +174,6 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void remove(final String name) {
-        cache.remove(name);
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -214,6 +194,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public boolean contains(String name) {
-        return cache.containsKey(name);
+        File file = new File(srcDir, name);
+        return file.exists();
     }
 }

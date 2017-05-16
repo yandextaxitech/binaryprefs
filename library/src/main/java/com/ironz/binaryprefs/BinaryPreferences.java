@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -15,13 +16,31 @@ public final class BinaryPreferences implements Preferences {
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
     private final PreferenceEventBridge eventsBridge;
+    private final CacheProvider cacheProvider;
+
     private final Class lock = BinaryPreferences.class;
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileAdapter fileAdapter, ExceptionHandler exceptionHandler, PreferenceEventBridge eventsBridge) {
+    public BinaryPreferences(FileAdapter fileAdapter,
+                             ExceptionHandler exceptionHandler,
+                             PreferenceEventBridge eventsBridge,
+                             CacheProvider cacheProvider) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.eventsBridge = eventsBridge;
+        this.cacheProvider = cacheProvider;
+        defineCache();
+    }
+
+    private void defineCache() {
+        for (String name : fileAdapter.names()) {
+            try {
+                byte[] bytes = fileAdapter.fetch(name);
+                cacheProvider.put(name, bytes);
+            } catch (Exception ignore) {
+                //don't care, just ignore
+            }
+        }
     }
 
     @Override
@@ -130,7 +149,7 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public PreferencesEditor edit() {
         synchronized (lock) {
-            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, lock);
+            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, cacheProvider, lock);
         }
     }
 
@@ -150,40 +169,40 @@ public final class BinaryPreferences implements Preferences {
 
     private Map<String, ?> getAllInternal() {
         Map<String, Object> map = new HashMap<>();
-        for (String name : fileAdapter.names()) {
-            byte[] bytes = fileAdapter.fetch(name);
-            map.put(name, Bits.tryDeserializeByFlag(bytes));
+        for (String key : cacheProvider.keys()) {
+            byte[] bytes = cacheProvider.get(key);
+            map.put(key, Bits.tryDeserializeByFlag(bytes));
         }
         return map;
     }
 
     private String getStringInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key);
+        byte[] bytes = cacheProvider.get(key);
         return Bits.stringFromBytesWithFlag(bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key);
+        byte[] bytes = cacheProvider.get(key);
         return Bits.stringSetFromBytesWithFlag(bytes);
     }
 
     private int getIntInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key);
+        byte[] bytes = cacheProvider.get(key);
         return Bits.intFromBytesWithFlag(bytes);
     }
 
     private long getLongInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key);
+        byte[] bytes = cacheProvider.get(key);
         return Bits.longFromBytesWithFlag(bytes);
     }
 
     private float getFloatInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key);
+        byte[] bytes = cacheProvider.get(key);
         return Bits.floatFromBytesWithFlag(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
-        byte[] bytes = fileAdapter.fetch(key);
+        byte[] bytes = cacheProvider.get(key);
         return Bits.booleanFromBytesWithFlag(bytes);
     }
 
@@ -192,6 +211,6 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private boolean containsInternal(String key) {
-        return fileAdapter.contains(key);
+        return cacheProvider.contains(key);
     }
 }

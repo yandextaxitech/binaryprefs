@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -20,6 +21,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final ExceptionHandler exceptionHandler;
     private final FileAdapter fileAdapter;
     private final PreferenceEventBridge bridge;
+    private final CacheProvider cacheProvider;
     private final Class lock;
 
     private boolean clear;
@@ -28,7 +30,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             FileAdapter fileAdapter,
                             ExceptionHandler exceptionHandler,
                             PreferenceEventBridge bridge,
+                            CacheProvider cacheProvider,
                             Class lock) {
+        this.cacheProvider = cacheProvider;
         this.lock = lock;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -142,12 +146,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void tryClearAll() {
         if (clear) {
             fileAdapter.clear();
+            cacheProvider.clear();
         }
     }
 
     private void tryRemoveByKeys() {
         for (String name : removeSet) {
             fileAdapter.remove(name);
+            cacheProvider.remove(name);
             notifyListeners(name);
         }
     }
@@ -157,6 +163,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             String name = pair.getFirst();
             byte[] value = pair.getSecond();
             fileAdapter.save(name, value);
+            cacheProvider.put(name, value);
             notifyListeners(name);
         }
     }
