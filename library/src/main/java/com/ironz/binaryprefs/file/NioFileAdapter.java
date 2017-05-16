@@ -17,11 +17,14 @@ import java.util.Map;
  */
 public final class NioFileAdapter implements FileAdapter {
 
+    private static final String BACKUP_EXTENSION = ".bak";
+
+    private final Map<String, byte[]> cache = new HashMap<>();
+
     final File srcDir;
     private final TaskExecutor taskExecutor;
     private final ByteEncryption encryption;
 
-    private final Map<String, byte[]> cache = new HashMap<>();
 
     @SuppressWarnings({"WeakerAccess", "unused"})
     public NioFileAdapter(DirectoryProvider directoryProvider) {
@@ -48,10 +51,13 @@ public final class NioFileAdapter implements FileAdapter {
 
     private void defineCache() {
         for (String name : getFileNamesInternal()) {
-            File file = new File(srcDir, name);
-            byte[] bytes = fetchInternal(file);
-            byte[] decrypt = encryption.decrypt(bytes);
-            cache.put(name, decrypt);
+            try {
+                byte[] bytes = fetchBackupOrOriginal(name);
+                byte[] decrypt = encryption.decrypt(bytes);
+                cache.put(name, decrypt);
+            } catch (Exception ignore) {
+                //don't care, just ignore
+            }
         }
     }
 
@@ -71,6 +77,19 @@ public final class NioFileAdapter implements FileAdapter {
     @Override
     public byte[] fetch(String name) {
         return cache.get(name);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private byte[] fetchBackupOrOriginal(String name) {
+        File backupFile = new File(srcDir, name + BACKUP_EXTENSION);
+        File file = new File(srcDir, name);
+        if (backupFile.exists()) {
+            byte[] bytes = fetchInternal(backupFile);
+            file.delete();
+            backupFile.renameTo(file);
+            return bytes;
+        }
+        return fetchInternal(file);
     }
 
     private byte[] fetchInternal(File file) {
@@ -101,11 +120,19 @@ public final class NioFileAdapter implements FileAdapter {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                File file = new File(srcDir, name);
                 byte[] encrypt = encryption.encrypt(bytes);
-                saveInternal(file, encrypt);
+                backupAndSave(name, encrypt);
             }
         });
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void backupAndSave(String name, byte[] bytes) {
+        File file = new File(srcDir, name);
+        File backupFile = new File(srcDir, file.getName() + BACKUP_EXTENSION);
+        file.renameTo(backupFile);
+        saveInternal(file, bytes);
+        backupFile.delete();
     }
 
     private void saveInternal(File file, byte[] bytes) {
@@ -118,6 +145,7 @@ public final class NioFileAdapter implements FileAdapter {
             MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
             byteBuffer.put(bytes);
             channel.write(byteBuffer);
+            byteBuffer.force();
         } catch (Exception e) {
             throw new FileOperationException(e);
         } finally {

@@ -9,7 +9,7 @@ import com.ironz.binaryprefs.Preferences;
 public interface PreferenceEventBridge {
 
     /**
-     * Behavior exact like in
+     * Behaves exactly like in
      * {@link android.content.SharedPreferences#registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener)}
      * method.
      *
@@ -18,7 +18,7 @@ public interface PreferenceEventBridge {
     void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener);
 
     /**
-     * Behavior exact like in
+     * Behaves exactly like in
      * {@link android.content.SharedPreferences#unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener)}}
      * method.
      *
