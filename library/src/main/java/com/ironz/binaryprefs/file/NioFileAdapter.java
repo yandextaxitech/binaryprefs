@@ -84,12 +84,15 @@ public final class NioFileAdapter implements FileAdapter {
         File backupFile = new File(srcDir, name + BACKUP_EXTENSION);
         File file = new File(srcDir, name);
         if (backupFile.exists()) {
-            byte[] bytes = fetchInternal(backupFile);
-            file.delete();
-            backupFile.renameTo(file);
-            return bytes;
+            deleteOriginal(file);
+            swapFiles(backupFile, file);
         }
         return fetchInternal(file);
+    }
+
+    private void deleteOriginal(File file) {
+        //noinspection ResultOfMethodCallIgnored
+        file.delete();
     }
 
     private byte[] fetchInternal(File file) {
@@ -120,8 +123,7 @@ public final class NioFileAdapter implements FileAdapter {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                byte[] encrypt = encryption.encrypt(bytes);
-                backupAndSave(name, encrypt);
+                backupAndSave(name, bytes);
             }
         });
     }
@@ -130,9 +132,18 @@ public final class NioFileAdapter implements FileAdapter {
     private void backupAndSave(String name, byte[] bytes) {
         File file = new File(srcDir, name);
         File backupFile = new File(srcDir, file.getName() + BACKUP_EXTENSION);
-        file.renameTo(backupFile);
-        saveInternal(file, bytes);
+        swapFiles(file, backupFile);
+        saveInternal(file, encryption.encrypt(bytes));
+        deleteBackup(backupFile);
+    }
+    private void deleteBackup(File backupFile) {
+        //noinspection ResultOfMethodCallIgnored
         backupFile.delete();
+    }
+
+    private void swapFiles(File from, File to) {
+        //noinspection ResultOfMethodCallIgnored
+        from.renameTo(to);
     }
 
     private void saveInternal(File file, byte[] bytes) {
