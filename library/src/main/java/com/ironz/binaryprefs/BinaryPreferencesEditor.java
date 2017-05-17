@@ -154,7 +154,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         for (String name : removeSet) {
             fileAdapter.remove(name);
             cacheProvider.remove(name);
-            notifyListeners(name);
+            bridge.notifyListenersRemove(preferences, name);
         }
     }
 
@@ -164,11 +164,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             byte[] value = pair.getSecond();
             fileAdapter.save(name, value);
             cacheProvider.put(name, value);
-            notifyListeners(name);
+            bridge.notifyListenersUpdate(preferences, name, value);
         }
     }
 
-    private void notifyListeners(String key) {
-        bridge.notifyListeners(preferences, key);
-    }
 }

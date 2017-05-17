@@ -27,10 +27,19 @@ public interface PreferenceEventBridge {
     void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener);
 
     /**
-     * Notifies all listeners which has been subscribed on preferences changes
+     * Notifies all listeners which has been subscribed on preferences changes about preference update
      *
-     * @param preferences might be null (ipc)
+     * @param preferences preferences, might be null (ipc)
+     * @param key         target key
+     * @param value       value for cache update (ipc)
+     */
+    void notifyListenersUpdate(Preferences preferences, String key, byte[] value);
+
+    /**
+     * Notifies all listeners which has been subscribed on preferences changes about preference remove
+     *
+     * @param preferences preferences, might be null (ipc)
      * @param key         target key
      */
-    void notifyListeners(Preferences preferences, String key);
+    void notifyListenersRemove(Preferences preferences, String key);
 }

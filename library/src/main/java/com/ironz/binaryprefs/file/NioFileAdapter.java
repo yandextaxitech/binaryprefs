@@ -113,8 +113,9 @@ public final class NioFileAdapter implements FileAdapter {
     private void backupAndSave(String name, byte[] bytes) {
         File file = new File(srcDir, name);
         File backupFile = new File(srcDir, file.getName() + BACKUP_EXTENSION);
+        byte[] encrypt = encryption.encrypt(bytes);
         swapFiles(file, backupFile);
-        saveInternal(file, encryption.encrypt(bytes));
+        saveInternal(file, encrypt);
         deleteBackup(backupFile);
     }
 
