@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +47,16 @@ public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEvent
     private final Context context;
     private final String prefName;
     private final CacheProvider cacheProvider;
+    private final ByteEncryption byteEncryption;
 
-    public BroadcastPreferenceEventBridgeImpl(Context context, String prefName, CacheProvider cacheProvider) {
+    public BroadcastPreferenceEventBridgeImpl(Context context,
+                                              String prefName,
+                                              CacheProvider cacheProvider,
+                                              ByteEncryption byteEncryption) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
+        this.byteEncryption = byteEncryption;
     }
 
     private void notifyUpdate(Intent intent) {
@@ -58,7 +64,7 @@ public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEvent
             return;
         }
         String key = intent.getStringExtra(PREFERENCE_KEY);
-        byte[] bytes = intent.getByteArrayExtra(PREFERENCE_VALUE);
+        byte[] bytes = byteEncryption.decrypt(intent.getByteArrayExtra(PREFERENCE_VALUE));
         cacheProvider.put(key, bytes);
         notifyListeners(key);
     }
@@ -101,7 +107,7 @@ public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEvent
         Intent intent = new Intent(ACTION_PREFERENCE_UPDATED);
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
-        intent.putExtra(PREFERENCE_VALUE, value);
+        intent.putExtra(PREFERENCE_VALUE, byteEncryption.encrypt(value));
         context.sendBroadcast(intent);
     }
 
