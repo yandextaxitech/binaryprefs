@@ -145,15 +145,15 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void tryClearAll() {
         if (clear) {
-            fileAdapter.clear();
             cacheProvider.clear();
+            fileAdapter.clear();
         }
     }
 
     private void tryRemoveByKeys() {
         for (String name : removeSet) {
-            fileAdapter.remove(name);
             cacheProvider.remove(name);
+            fileAdapter.remove(name);
             bridge.notifyListenersRemove(preferences, name);
         }
     }
@@ -162,10 +162,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         for (Pair<String, byte[]> pair : commitList) {
             String name = pair.getFirst();
             byte[] value = pair.getSecond();
-            fileAdapter.save(name, value);
             cacheProvider.put(name, value);
+            fileAdapter.save(name, value);
             bridge.notifyListenersUpdate(preferences, name, value);
         }
     }
-
 }

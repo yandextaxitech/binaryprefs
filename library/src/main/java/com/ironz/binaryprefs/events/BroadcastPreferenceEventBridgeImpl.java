@@ -17,7 +17,7 @@ import java.util.List;
  * Main propose for using this implementation is IPC mechanism.
  */
 @SuppressWarnings("unused")
-public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEventBridge {
+public class BroadcastPreferenceEventBridgeImpl implements PreferenceEventBridge {
 
     private static final String ACTION_PREFERENCE_UPDATED = "com.ironz.binaryprefs.ACTION_PREFERENCE_UPDATED";
     private static final String ACTION_PREFERENCE_REMOVED = "com.ironz.binaryprefs.ACTION_PREFERENCE_REMOVED";
@@ -64,8 +64,13 @@ public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEvent
             return;
         }
         String key = intent.getStringExtra(PREFERENCE_KEY);
-        byte[] bytes = byteEncryption.decrypt(intent.getByteArrayExtra(PREFERENCE_VALUE));
-        cacheProvider.put(key, bytes);
+        byte[] bytes = intent.getByteArrayExtra(PREFERENCE_VALUE);
+        notify(key, bytes);
+    }
+
+    public void notify(String key, byte[] bytes) {
+        byte[] decrypt = byteEncryption.decrypt(bytes);
+        cacheProvider.put(key, decrypt);
         notifyListeners(key);
     }
 
@@ -104,10 +109,11 @@ public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEvent
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, byte[] value) {
+        byte[] encrypt = byteEncryption.encrypt(value);
         Intent intent = new Intent(ACTION_PREFERENCE_UPDATED);
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
-        intent.putExtra(PREFERENCE_VALUE, byteEncryption.encrypt(value));
+        intent.putExtra(PREFERENCE_VALUE, encrypt);
         context.sendBroadcast(intent);
     }
 

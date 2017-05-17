@@ -33,12 +33,14 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private void defineCache() {
-        for (String name : fileAdapter.names()) {
-            try {
-                byte[] bytes = fileAdapter.fetch(name);
-                cacheProvider.put(name, bytes);
-            } catch (Exception ignore) {
-                //don't care, just ignore
+        synchronized (lock) {
+            for (String name : fileAdapter.names()) {
+                try {
+                    byte[] bytes = fileAdapter.fetch(name);
+                    cacheProvider.put(name, bytes);
+                } catch (Exception e) {
+                    exceptionHandler.handle(e, name);
+                }
             }
         }
     }

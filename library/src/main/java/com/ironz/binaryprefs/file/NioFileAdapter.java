@@ -58,7 +58,8 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) {
-        return fetchBackupOrOriginal(name);
+        byte[] bytes = fetchBackupOrOriginal(name);
+        return encryption.decrypt(bytes);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

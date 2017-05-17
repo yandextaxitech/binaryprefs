@@ -2,12 +2,15 @@ package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
+import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.events.SimplePreferenceEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
+import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,12 +36,14 @@ public final class BinaryPreferencesTest {
     @Before
     public void setUp() throws Exception {
         final File folder = this.folder.newFolder();
-        FileAdapter fileAdapter = new NioFileAdapter(new DirectoryProvider() {
+        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+        DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
             public File getBaseDirectory() {
                 return folder;
             }
-        });
+        };
+        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, TaskExecutor.DEFAULT, byteEncryption);
         PreferenceEventBridge eventsBridge = new SimplePreferenceEventBridgeImpl();
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, new ConcurrentCacheProviderImpl());
     }
