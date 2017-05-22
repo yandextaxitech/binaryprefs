@@ -2,8 +2,7 @@
 
 ## Binary Preferences
 
-Implementation of SharedPreferences which stores each preference in files
-separately and performs disk IO via NIO2 with memory mapped file.
+Implementation of SharedPreferences which stores each preference in files separately, performs disk IO via NIO2 with memory mapped file and works IPC (between processes).
 
 ## Roadmap
 
