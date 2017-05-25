@@ -12,6 +12,7 @@ import java.io.Externalizable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
@@ -150,10 +151,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void tryClearAll() {
         if (clear) {
             cacheProvider.clear();
-            taskExecutor.submit(new Runnable() {
+            taskExecutor.submit(new Callable<Boolean>() {
                 @Override
-                public void run() {
+                public Boolean call() throws Exception {
                     fileAdapter.clear();
+                    return true;
                 }
             });
         }
@@ -162,10 +164,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void tryRemoveByKeys() {
         for (final String name : removeSet) {
             cacheProvider.remove(name);
-            taskExecutor.submit(new Runnable() {
+            taskExecutor.submit(new Callable<Boolean>() {
                 @Override
-                public void run() {
+                public Boolean call() throws Exception {
                     fileAdapter.remove(name);
+                    return true;
                 }
             });
             bridge.notifyListenersRemove(preferences, name);
@@ -177,10 +180,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             final String name = pair.getFirst();
             final byte[] value = pair.getSecond();
             cacheProvider.put(name, value);
-            taskExecutor.submit(new Runnable() {
+            taskExecutor.submit(new Callable<Boolean>() {
                 @Override
-                public void run() {
+                public Boolean call() throws Exception {
                     fileAdapter.save(name, value);
+                    return true;
                 }
             });
             bridge.notifyListenersUpdate(preferences, name, value);

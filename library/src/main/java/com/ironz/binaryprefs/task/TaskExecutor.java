@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.task;
 
+import java.util.concurrent.Callable;
+
 /**
  * Abstraction for task running
  */
@@ -7,17 +9,21 @@ public interface TaskExecutor {
     /**
      * After submitting executor adds this task in queue and runs later
      *
-     * @param runnable instance for task execution
+     * @param callable instance for task execution
      */
-    void submit(Runnable runnable);
+    <T> void submit(Callable<T> callable);
 
     /**
-     * Performs task in current thread
+     * Performs task in current thread and re-throws checked exception
      */
     TaskExecutor DEFAULT = new TaskExecutor() {
         @Override
-        public void submit(Runnable runnable) {
-            runnable.run();
+        public <T> void submit(Callable<T> callable) {
+            try {
+                callable.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     };
 }
