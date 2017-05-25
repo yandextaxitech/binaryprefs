@@ -5,10 +5,10 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
-import com.ironz.binaryprefs.events.PreferenceEventBridge;
-import com.ironz.binaryprefs.events.SimplePreferenceEventBridgeImpl;
+import com.ironz.binaryprefs.events.EventBridge;
+import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.DirectoryProvider;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
 import com.ironz.binaryprefs.task.TaskExecutor;
@@ -45,7 +45,7 @@ public final class BinaryPreferencesTest {
             }
         };
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-        PreferenceEventBridge eventsBridge = new SimplePreferenceEventBridgeImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl();
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, cacheProvider, TaskExecutor.DEFAULT);
     }

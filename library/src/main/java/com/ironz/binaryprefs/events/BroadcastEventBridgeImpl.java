@@ -17,7 +17,7 @@ import java.util.List;
  * Main propose for using this implementation is IPC mechanism.
  */
 @SuppressWarnings("unused")
-public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEventBridge {
+public final class BroadcastEventBridgeImpl implements EventBridge {
 
     private static final String ACTION_PREFERENCE_UPDATED = "com.ironz.binaryprefs.ACTION_PREFERENCE_UPDATED";
     private static final String ACTION_PREFERENCE_REMOVED = "com.ironz.binaryprefs.ACTION_PREFERENCE_REMOVED";
@@ -49,10 +49,10 @@ public final class BroadcastPreferenceEventBridgeImpl implements PreferenceEvent
     private final CacheProvider cacheProvider;
     private final ByteEncryption byteEncryption;
 
-    public BroadcastPreferenceEventBridgeImpl(Context context,
-                                              String prefName,
-                                              CacheProvider cacheProvider,
-                                              ByteEncryption byteEncryption) {
+    public BroadcastEventBridgeImpl(Context context,
+                                    String prefName,
+                                    CacheProvider cacheProvider,
+                                    ByteEncryption byteEncryption) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;

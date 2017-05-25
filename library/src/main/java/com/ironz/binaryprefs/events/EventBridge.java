@@ -6,7 +6,7 @@ import com.ironz.binaryprefs.Preferences;
 /**
  * Describes contract for preferences change events
  */
-public interface PreferenceEventBridge {
+public interface EventBridge {
 
     /**
      * Behaves exactly like in

@@ -1,9 +1,8 @@
-package com.ironz.binaryprefs.file;
+package com.ironz.binaryprefs.file.directory;
 
 import android.content.Context;
 
 import java.io.File;
-
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {

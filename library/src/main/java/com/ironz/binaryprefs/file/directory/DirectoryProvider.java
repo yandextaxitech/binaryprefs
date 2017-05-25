@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.file;
+package com.ironz.binaryprefs.file.directory;
 
 import java.io.File;
 

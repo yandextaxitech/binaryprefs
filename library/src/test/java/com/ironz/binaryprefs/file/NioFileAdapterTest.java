@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.file;
 
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.events.PreferenceEventBridge;
+import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.task.TaskExecutor;
@@ -16,7 +16,7 @@ public final class BinaryPreferences implements Preferences {
 
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
-    private final PreferenceEventBridge eventsBridge;
+    private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
 
@@ -25,7 +25,7 @@ public final class BinaryPreferences implements Preferences {
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(FileAdapter fileAdapter,
                              ExceptionHandler exceptionHandler,
-                             PreferenceEventBridge eventsBridge,
+                             EventBridge eventsBridge,
                              CacheProvider cacheProvider,
                              TaskExecutor taskExecutor) {
         this.fileAdapter = fileAdapter;

@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.file;
 
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
 import java.io.File;
 import java.io.IOException;

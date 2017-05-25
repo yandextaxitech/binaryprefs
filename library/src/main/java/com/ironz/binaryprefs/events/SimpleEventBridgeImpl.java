@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Simple preference change listener bridge
  */
-public final class SimplePreferenceEventBridgeImpl implements PreferenceEventBridge {
+public final class SimpleEventBridgeImpl implements EventBridge {
 
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
 
