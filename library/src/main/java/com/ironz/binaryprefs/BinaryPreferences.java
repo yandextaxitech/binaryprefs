@@ -4,6 +4,7 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.util.Bits;
 
 import java.io.Externalizable;
@@ -17,6 +18,7 @@ public final class BinaryPreferences implements Preferences {
     private final ExceptionHandler exceptionHandler;
     private final PreferenceEventBridge eventsBridge;
     private final CacheProvider cacheProvider;
+    private final TaskExecutor taskExecutor;
 
     private final Class lock = BinaryPreferences.class;
 
@@ -24,11 +26,13 @@ public final class BinaryPreferences implements Preferences {
     public BinaryPreferences(FileAdapter fileAdapter,
                              ExceptionHandler exceptionHandler,
                              PreferenceEventBridge eventsBridge,
-                             CacheProvider cacheProvider) {
+                             CacheProvider cacheProvider,
+                             TaskExecutor taskExecutor) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.eventsBridge = eventsBridge;
         this.cacheProvider = cacheProvider;
+        this.taskExecutor = taskExecutor;
         defineCache();
     }
 
@@ -151,7 +155,7 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public PreferencesEditor edit() {
         synchronized (lock) {
-            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, cacheProvider, lock);
+            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, cacheProvider, taskExecutor, lock);
         }
     }
 

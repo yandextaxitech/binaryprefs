@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
@@ -43,9 +44,10 @@ public final class BinaryPreferencesTest {
                 return folder;
             }
         };
-        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, TaskExecutor.DEFAULT, byteEncryption);
+        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
         PreferenceEventBridge eventsBridge = new SimplePreferenceEventBridgeImpl();
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, new ConcurrentCacheProviderImpl());
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, cacheProvider, TaskExecutor.DEFAULT);
     }
 
     @Test

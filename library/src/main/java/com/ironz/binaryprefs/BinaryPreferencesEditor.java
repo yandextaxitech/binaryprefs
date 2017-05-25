@@ -4,6 +4,7 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.PreferenceEventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.util.Bits;
 import com.ironz.binaryprefs.util.Pair;
 
@@ -22,6 +23,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final FileAdapter fileAdapter;
     private final PreferenceEventBridge bridge;
     private final CacheProvider cacheProvider;
+    private final TaskExecutor taskExecutor;
     private final Class lock;
 
     private boolean clear;
@@ -31,8 +33,10 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             ExceptionHandler exceptionHandler,
                             PreferenceEventBridge bridge,
                             CacheProvider cacheProvider,
+                            TaskExecutor taskExecutor,
                             Class lock) {
         this.cacheProvider = cacheProvider;
+        this.taskExecutor = taskExecutor;
         this.lock = lock;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -146,24 +150,39 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void tryClearAll() {
         if (clear) {
             cacheProvider.clear();
-            fileAdapter.clear();
+            taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    fileAdapter.clear();
+                }
+            });
         }
     }
 
     private void tryRemoveByKeys() {
-        for (String name : removeSet) {
+        for (final String name : removeSet) {
             cacheProvider.remove(name);
-            fileAdapter.remove(name);
+            taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    fileAdapter.remove(name);
+                }
+            });
             bridge.notifyListenersRemove(preferences, name);
         }
     }
 
     private void tryStoreByKeys() {
-        for (Pair<String, byte[]> pair : commitList) {
-            String name = pair.getFirst();
-            byte[] value = pair.getSecond();
+        for (final Pair<String, byte[]> pair : commitList) {
+            final String name = pair.getFirst();
+            final byte[] value = pair.getSecond();
             cacheProvider.put(name, value);
-            fileAdapter.save(name, value);
+            taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    fileAdapter.save(name, value);
+                }
+            });
             bridge.notifyListenersUpdate(preferences, name, value);
         }
     }

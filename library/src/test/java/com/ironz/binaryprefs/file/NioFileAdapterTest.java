@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.file;
 
-import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,13 +35,7 @@ public class NioFileAdapterTest {
 
     @Test
     public void directoryProvider() {
-        NioFileAdapter nioFileAdapter = new NioFileAdapter(new DirectoryProvider() {
-            @Override
-            public File getBaseDirectory() {
-                return srcDir;
-            }
-        }, TaskExecutor.DEFAULT);
-        assertEquals(srcDir, nioFileAdapter.srcDir);
+        assertEquals(srcDir, ((NioFileAdapter) fileAdapter).srcDir);
     }
 
     @Test

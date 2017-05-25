@@ -2,7 +2,6 @@ package com.ironz.binaryprefs.file;
 
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.FileOperationException;
-import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,28 +17,21 @@ public final class NioFileAdapter implements FileAdapter {
     private static final String BACKUP_EXTENSION = ".bak";
 
     final File srcDir;
-    private final TaskExecutor taskExecutor;
     private final ByteEncryption encryption;
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
+    @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider, TaskExecutor.DEFAULT);
+        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor) {
-        this(directoryProvider, taskExecutor, ByteEncryption.NO_OP);
-    }
-
-    @SuppressWarnings({"WeakerAccess"})
-    public NioFileAdapter(DirectoryProvider directoryProvider, TaskExecutor taskExecutor, ByteEncryption byteEncryption) {
-        this(directoryProvider.getBaseDirectory(), taskExecutor, byteEncryption);
+    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption) {
+        this(directoryProvider.getBaseDirectory(), encryption);
     }
 
     @SuppressWarnings("WeakerAccess")
-    private NioFileAdapter(File srcDir, TaskExecutor taskExecutor, ByteEncryption encryption) {
+    private NioFileAdapter(File srcDir, ByteEncryption encryption) {
         this.srcDir = srcDir;
-        this.taskExecutor = taskExecutor;
         this.encryption = encryption;
     }
 
@@ -102,12 +94,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void save(final String name, final byte[] bytes) {
-        taskExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                backupAndSave(name, bytes);
-            }
-        });
+        backupAndSave(name, bytes);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -154,12 +141,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void clear() {
-        taskExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                clearInternal();
-            }
-        });
+        clearInternal();
     }
 
     private void clearInternal() {
@@ -176,12 +158,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public void remove(final String name) {
-        taskExecutor.submit(new Runnable() {
-            @Override
-            public void run() {
-                removeInternal(name);
-            }
-        });
+        removeInternal(name);
     }
 
     private void removeInternal(String name) {
