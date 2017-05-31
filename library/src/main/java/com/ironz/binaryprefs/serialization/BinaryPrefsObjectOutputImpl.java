@@ -4,17 +4,16 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectOutput;
 
-public final class ExternalizableObjectOutputImpl implements ObjectOutput {
+public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
 
-    //32 bits for initial array size, buffer array are resizable to (buffer.length + GROW_ARRAY_CAPACITY) after reaching limit.
-    private static final int GROW_ARRAY_CAPACITY = 32;
+    //bytes for initial array size, buffer array are resizable to (buffer.length + GROW_ARRAY_CAPACITY) after reaching limit.
+    private static final int GROW_ARRAY_CAPACITY = 128;
 
     int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
     @Override
     public void writeObject(Object obj) throws IOException {
-
         if (!(obj instanceof Externalizable)) {
             throw new UnsupportedOperationException("Can't serialize object '%s' because it's not  ");
         }
@@ -24,17 +23,13 @@ public final class ExternalizableObjectOutputImpl implements ObjectOutput {
 
     @Override
     public void write(int b) throws IOException {
-        offset++;
+        byte[] bytes = {((byte) b)};
+        write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void write(byte[] b) throws IOException {
-
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-
+    public void write(byte[] bytes) throws IOException {
+        write(bytes, 0, bytes.length);
     }
 
     @Override
@@ -79,17 +74,31 @@ public final class ExternalizableObjectOutputImpl implements ObjectOutput {
 
     @Override
     public void writeBytes(String s) throws IOException {
-
+        byte[] bytes = s.getBytes();
     }
 
     @Override
     public void writeChars(String s) throws IOException {
-
+        byte[] bytes = s.getBytes();
     }
 
     @Override
     public void writeUTF(String s) throws IOException {
+        byte[] bytes = s.getBytes("UTF-8");
+    }
 
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        if (offset <= buffer.length) {
+            drain();
+        }
+        offset += len;
+    }
+
+    private void drain() {
+        byte[] bytes = new byte[buffer.length + GROW_ARRAY_CAPACITY];
+        System.arraycopy(buffer, 0, bytes, 0, buffer.length);
+        buffer = bytes;
     }
 
     @Override

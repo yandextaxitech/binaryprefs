@@ -11,30 +11,51 @@ public final class Bits {
     /**
      * Uses for detecting byte array type of String Set
      */
-    static final byte FLAG_STRING_SET = -10;
+    static final byte FLAG_STRING_SET = -1;
     /**
      * Uses for detecting byte array type of String
      */
-    static final byte FLAG_STRING = -20;
+    static final byte FLAG_STRING = -2;
 
     /**
      * Uses for detecting byte array type of int
      */
-    static final byte FLAG_INT = -30;
+    static final byte FLAG_INT = -3;
     /**
      * Uses for detecting byte array type of long
      */
-    static final byte FLAG_LONG = -40;
+    static final byte FLAG_LONG = -4;
 
     /**
      * Uses for detecting byte array type of float
      */
-    static final byte FLAG_FLOAT = -50;
+    static final byte FLAG_FLOAT = -5;
 
     /**
      * Uses for detecting byte array type of boolean
      */
-    static final byte FLAG_BOOLEAN = -60;
+    static final byte FLAG_BOOLEAN = -6;
+
+    /**
+     * Uses for detecting byte array type of byte
+     */
+    static final byte FLAG_BYTE = -7;
+
+    /**
+     * Uses for detecting byte array type of short
+     */
+    static final byte FLAG_SHORT = -8;
+
+    /**
+     * Uses for detecting byte array type of char
+     */
+    static final byte FLAG_CHAR = -9;
+
+    /**
+     * Uses for detecting byte array type of double
+     */
+    static final byte FLAG_DOUBLE = -10;
+
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
     private static final int NULL_STRING_SIZE = -1;
