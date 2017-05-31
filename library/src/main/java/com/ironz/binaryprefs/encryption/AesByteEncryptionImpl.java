@@ -9,31 +9,25 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private static final String AES = "AES";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5PADDING";
 
-    private final Cipher encryptCipher;
-    private final Cipher decryptCipher;
     private final Class lock = ByteEncryption.class;
+    private final byte[] secretKeyBytes;
+    private final byte[] initialVector;
 
     @SuppressWarnings("WeakerAccess")
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
-        synchronized (lock) {
-            try {
-                SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-                IvParameterSpec iv = new IvParameterSpec(initialVector);
-                encryptCipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-                encryptCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
-                decryptCipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-                decryptCipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+        this.secretKeyBytes = secretKeyBytes;
+        this.initialVector = initialVector;
     }
 
     @Override
     public byte[] encrypt(byte[] bytes) {
         synchronized (lock) {
             try {
-                return encryptCipher.doFinal(bytes);
+                SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
+                IvParameterSpec iv = new IvParameterSpec(initialVector);
+                Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+                cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
+                return cipher.doFinal(bytes);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -44,7 +38,11 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     public byte[] decrypt(byte[] bytes) {
         synchronized (lock) {
             try {
-                return decryptCipher.doFinal(bytes);
+                SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
+                IvParameterSpec iv = new IvParameterSpec(initialVector);
+                Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+                cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
+                return cipher.doFinal(bytes);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
