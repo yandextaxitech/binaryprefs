@@ -56,7 +56,6 @@ public final class Bits {
      */
     static final byte FLAG_DOUBLE = -10;
 
-
     private static final int INITIAL_INTEGER_LENGTH = 5;
     private static final int NULL_STRING_SIZE = -1;
 
