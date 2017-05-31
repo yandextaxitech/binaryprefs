@@ -10,7 +10,7 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
-    public <T> void submit(Callable<T> callable) {
+    public void submit(Callable<String> callable) {
         executor.submit(callable);
     }
 }

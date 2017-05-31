@@ -90,7 +90,8 @@ public class NioFileAdapterTest {
         assertTrue(fileAdapter.contains(fileName));
         assertTrue(fileAdapter.contains(fileNameTwo));
 
-        fileAdapter.clear();
+        fileAdapter.remove(fileName);
+        fileAdapter.remove(fileNameTwo);
 
         assertFalse(fileAdapter.contains(fileName));
         assertFalse(fileAdapter.contains(fileNameTwo));

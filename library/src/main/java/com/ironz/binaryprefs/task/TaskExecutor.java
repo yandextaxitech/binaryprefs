@@ -9,16 +9,16 @@ public interface TaskExecutor {
     /**
      * After submitting executor adds this task in queue and runs later
      *
-     * @param callable instance for task execution
+     * @param callable parametrized instance for task execution which returns key of which task been executed
      */
-    <T> void submit(Callable<T> callable);
+    void submit(Callable<String> callable);
 
     /**
      * Performs task in current thread and re-throws checked exception
      */
     TaskExecutor DEFAULT = new TaskExecutor() {
         @Override
-        public <T> void submit(Callable<T> callable) {
+        public void submit(Callable<String> callable) {
             try {
                 callable.call();
             } catch (Exception e) {

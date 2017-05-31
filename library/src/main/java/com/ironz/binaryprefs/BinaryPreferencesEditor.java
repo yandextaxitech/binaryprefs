@@ -151,24 +151,26 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void tryClearAll() {
         if (clear) {
             cacheProvider.clear();
-            taskExecutor.submit(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    fileAdapter.clear();
-                    return true;
-                }
-            });
+            for (final String name : fileAdapter.names()) {
+                taskExecutor.submit(new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        fileAdapter.remove(name);
+                        return name;
+                    }
+                });
+            }
         }
     }
 
     private void tryRemoveByKeys() {
         for (final String name : removeSet) {
             cacheProvider.remove(name);
-            taskExecutor.submit(new Callable<Boolean>() {
+            taskExecutor.submit(new Callable<String>() {
                 @Override
-                public Boolean call() throws Exception {
+                public String call() throws Exception {
                     fileAdapter.remove(name);
-                    return true;
+                    return name;
                 }
             });
             bridge.notifyListenersRemove(preferences, name);
@@ -180,11 +182,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             final String name = pair.getFirst();
             final byte[] value = pair.getSecond();
             cacheProvider.put(name, value);
-            taskExecutor.submit(new Callable<Boolean>() {
+            taskExecutor.submit(new Callable<String>() {
                 @Override
-                public Boolean call() throws Exception {
+                public String call() throws Exception {
                     fileAdapter.save(name, value);
-                    return true;
+                    return name;
                 }
             });
             bridge.notifyListenersUpdate(preferences, name, value);
