@@ -30,11 +30,6 @@ public interface FileAdapter {
     void save(String name, byte[] bytes);
 
     /**
-     * Deletes all files from concrete directory
-     */
-    void clear();
-
-    /**
      * Removes file by key.
      *
      * @param name file name with extension

@@ -141,23 +141,6 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     @Override
-    public void clear() {
-        clearInternal();
-    }
-
-    private void clearInternal() {
-        try {
-            for (String name : namesInternal()) {
-                File file = new File(srcDir, name);
-                //noinspection ResultOfMethodCallIgnored
-                file.delete();
-            }
-        } catch (Exception e) {
-            throw new FileOperationException(e);
-        }
-    }
-
-    @Override
     public void remove(final String name) {
         removeInternal(name);
     }
