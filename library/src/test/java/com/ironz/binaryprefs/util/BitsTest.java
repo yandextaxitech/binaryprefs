@@ -154,6 +154,26 @@ public class BitsTest {
         Bits.booleanFromBytesWithFlag(bytes);
     }
 
+    @Test
+    public void byteConvert() {
+        byte[] bytes = Bits.byteToBytesWithFlag(Byte.MAX_VALUE);
+
+        byte restored = Bits.byteFromBytesWithFlag(bytes);
+
+        assertEquals(2, bytes.length);
+        assertEquals(Bits.FLAG_BYTE, bytes[0]);
+        assertEquals(Byte.MAX_VALUE, restored);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void byteIncorrectFlag() {
+        byte[] bytes = Bits.byteToBytesWithFlag(Byte.MAX_VALUE);
+
+        bytes[0] = 0;
+
+        Bits.byteFromBytesWithFlag(bytes);
+    }
+
     @Test(expected = UnsupportedClassVersionError.class)
     public void tryDeserializeUnsupported() {
         byte[] bytes = {0};

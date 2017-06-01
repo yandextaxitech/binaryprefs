@@ -322,6 +322,35 @@ public final class Bits {
         throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
     }
 
+
+    /**
+     * Serialize {@code byte} into byte array with following scheme:
+     * [{@link #FLAG_BYTE}] + [boolean_bytes].
+     *
+     * @param value target byte to serialize.
+     * @return specific byte array with scheme.
+     */
+    public static byte[] byteToBytesWithFlag(byte value) {
+        return new byte[]{
+                FLAG_BYTE,
+                value
+        };
+    }
+
+    /**
+     * Deserialize byte by {@link #byteToBytesWithFlag(byte)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized byte
+     */
+    public static byte byteFromBytesWithFlag(byte[] bytes) {
+        byte flag = bytes[0];
+        if (flag == FLAG_BYTE) {
+            return bytes[1];
+        }
+        throw new ClassCastException(String.format("byte cannot be deserialized in '%s' flag type", flag));
+    }
+
     /**
      * Tries to deserialize byte array by all flags and returns object if deserialized or throws exception if target flag is unexpected.
      *
