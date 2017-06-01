@@ -11,6 +11,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 3. Externalizable (acyclic graph)
 4. ~~Preferences tooling (key set reading)~~ completed:
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
+5. Store all primitives (like byte, short, char, double)
 
 ## License
 ```
