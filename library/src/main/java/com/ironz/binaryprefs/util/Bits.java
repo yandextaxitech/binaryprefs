@@ -9,50 +9,50 @@ import java.util.Set;
 public final class Bits {
 
     /**
-     * Uses for detecting byte array type of String Set
+     * Uses for detecting byte array type of {@link Set} of {@link String}
      */
     static final byte FLAG_STRING_SET = -1;
     /**
-     * Uses for detecting byte array type of String
+     * Uses for detecting byte array type of {@link String}
      */
     static final byte FLAG_STRING = -2;
 
     /**
-     * Uses for detecting byte array type of int
+     * Uses for detecting byte array primitive type of {@link Integer}
      */
     static final byte FLAG_INT = -3;
     /**
-     * Uses for detecting byte array type of long
+     * Uses for detecting byte array primitive type of {@link Long}
      */
     static final byte FLAG_LONG = -4;
 
     /**
-     * Uses for detecting byte array type of float
+     * Uses for detecting byte array primitive type of {@link Float}
      */
     static final byte FLAG_FLOAT = -5;
 
     /**
-     * Uses for detecting byte array type of boolean
+     * Uses for detecting byte array primitive type of {@link Boolean}
      */
     static final byte FLAG_BOOLEAN = -6;
 
     /**
-     * Uses for detecting byte array type of byte
+     * Uses for detecting byte array primitive type of {@link Byte}
      */
     static final byte FLAG_BYTE = -7;
 
     /**
-     * Uses for detecting byte array type of short
+     * Uses for detecting byte array primitive type of {@link Short}
      */
     static final byte FLAG_SHORT = -8;
 
     /**
-     * Uses for detecting byte array type of char
+     * Uses for detecting byte array primitive type of {@link Character}
      */
     static final byte FLAG_CHAR = -9;
 
     /**
-     * Uses for detecting byte array type of double
+     * Uses for detecting byte array primitive type of {@link Double}
      */
     static final byte FLAG_DOUBLE = -10;
 
