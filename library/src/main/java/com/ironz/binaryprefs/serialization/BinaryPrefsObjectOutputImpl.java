@@ -17,7 +17,11 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     @Override
     public void writeObject(Object obj) throws IOException {
         if (!(obj instanceof Externalizable)) {
-            throw new UnsupportedOperationException("Can't serialize object '%s' because it's not  ");
+            throw new UnsupportedOperationException(
+                    String.format("Can't serialize object '%s' which are not implements '%s' interface",
+                            obj.getClass().getSimpleName(),
+                            Externalizable.class.getName())
+            );
         }
         Externalizable externalizable = (Externalizable) obj;
         externalizable.writeExternal(this);
