@@ -380,6 +380,38 @@ public final class Bits {
         throw new ClassCastException(String.format("short cannot be deserialized in '%s' flag type", flag));
     }
 
+
+    /**
+     * Serialize {@code char} into byte array with following scheme:
+     * [{@link #FLAG_CHAR}] + [char].
+     *
+     * @param value target char to serialize.
+     * @return specific byte array with scheme.
+     */
+    public static byte[] charToBytesWithFlag(char value) {
+        return new byte[]{
+                FLAG_CHAR,
+                (byte) (value >>> 8),
+                ((byte) value)
+        };
+    }
+
+    /**
+     * Deserialize char by {@link #charToBytesWithFlag(char)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized char
+     */
+    public static char charFromBytesWithFlag(byte[] bytes) {
+        byte flag = bytes[0];
+        if (flag == FLAG_CHAR) {
+            return (char) ((bytes[1] << 8) +
+                    (bytes[2] & 0xFF));
+        }
+        throw new ClassCastException(String.format("char cannot be deserialized in '%s' flag type", flag));
+    }
+
+
     /**
      * Tries to deserialize byte array by all flags and returns object if deserialized or throws exception if target flag is unexpected.
      *

@@ -194,6 +194,25 @@ public class BitsTest {
         Bits.shortFromBytesWithFlag(bytes);
     }
 
+    @Test
+    public void charConvert() {
+        byte[] bytes = Bits.charToBytesWithFlag(Character.MAX_VALUE);
+
+        char restored = Bits.charFromBytesWithFlag(bytes);
+
+        assertEquals(3, bytes.length);
+        assertEquals(Bits.FLAG_CHAR, bytes[0]);
+        assertEquals(Character.MAX_VALUE, restored);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void charIncorrectFlag() {
+        byte[] bytes = Bits.charToBytesWithFlag(Character.MAX_VALUE);
+
+        bytes[0] = 0;
+
+        Bits.charFromBytesWithFlag(bytes);
+    }
 
     @Test(expected = UnsupportedClassVersionError.class)
     public void tryDeserializeUnsupported() {
