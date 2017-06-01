@@ -397,7 +397,7 @@ public final class Bits {
 
     /**
      * Serialize {@code short} into byte array with following scheme:
-     * [{@link #FLAG_SHORT}] + [short].
+     * [{@link #FLAG_SHORT}] + [short_bytes].
      *
      * @param value target short to serialize.
      * @return specific byte array with scheme.
@@ -427,7 +427,7 @@ public final class Bits {
 
     /**
      * Serialize {@code char} into byte array with following scheme:
-     * [{@link #FLAG_CHAR}] + [char].
+     * [{@link #FLAG_CHAR}] + [char_bytes].
      *
      * @param value target char to serialize.
      * @return specific byte array with scheme.
