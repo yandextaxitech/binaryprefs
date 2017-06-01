@@ -325,7 +325,7 @@ public final class Bits {
 
     /**
      * Serialize {@code byte} into byte array with following scheme:
-     * [{@link #FLAG_BYTE}] + [boolean_bytes].
+     * [{@link #FLAG_BYTE}] + [byte].
      *
      * @param value target byte to serialize.
      * @return specific byte array with scheme.
