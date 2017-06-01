@@ -403,10 +403,10 @@ public final class Bits {
     }
 
     /**
-     * Deserialize byte by {@link #byteToBytesWithFlag(byte)} convention
+     * Deserialize byte array by {@link #byteToBytesWithFlag(byte)} convention
      *
      * @param bytes target byte array for deserialization
-     * @return deserialized byte
+     * @return deserialized byte array
      */
     public static byte[] byteArrayFromBytesWithFlag(byte[] bytes) {
         byte flag = bytes[0];
