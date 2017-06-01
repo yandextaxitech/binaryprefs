@@ -174,6 +174,27 @@ public class BitsTest {
         Bits.byteFromBytesWithFlag(bytes);
     }
 
+    @Test
+    public void shortConvert() {
+        byte[] bytes = Bits.shortToBytesWithFlag(Short.MAX_VALUE);
+
+        short restored = Bits.shortFromBytesWithFlag(bytes);
+
+        assertEquals(3, bytes.length);
+        assertEquals(Bits.FLAG_SHORT, bytes[0]);
+        assertEquals(Short.MAX_VALUE, restored);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void shortIncorrectFlag() {
+        byte[] bytes = Bits.shortToBytesWithFlag(Short.MAX_VALUE);
+
+        bytes[0] = 0;
+
+        Bits.shortFromBytesWithFlag(bytes);
+    }
+
+
     @Test(expected = UnsupportedClassVersionError.class)
     public void tryDeserializeUnsupported() {
         byte[] bytes = {0};
