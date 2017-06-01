@@ -251,7 +251,6 @@ public final class Bits {
         throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
     }
 
-
     /**
      * Serialize {@code double} into byte array with following scheme:
      * [{@link #FLAG_DOUBLE}] + [double_bytes].
