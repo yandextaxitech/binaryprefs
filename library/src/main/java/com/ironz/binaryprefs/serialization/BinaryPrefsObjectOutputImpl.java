@@ -24,67 +24,68 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     }
 
     @Override
-    public void write(int b) throws IOException {
-        byte[] bytes = Bits.byteToBytesWithFlag((byte) b);
+    public void write(int value) throws IOException {
+        byte[] bytes = Bits.byteToBytesWithFlag((byte) value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void write(byte[] bytes) throws IOException {
+    public void write(byte[] value) throws IOException {
+        byte[] bytes = Bits.byteArrayToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeBoolean(boolean v) throws IOException {
-        byte[] bytes = Bits.booleanToBytesWithFlag(v);
+    public void writeBoolean(boolean value) throws IOException {
+        byte[] bytes = Bits.booleanToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeByte(int v) throws IOException {
-        byte[] bytes = Bits.byteToBytesWithFlag((byte) v);
+    public void writeByte(int value) throws IOException {
+        byte[] bytes = Bits.byteToBytesWithFlag((byte) value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeShort(int v) throws IOException {
-        byte[] bytes = Bits.shortToBytesWithFlag((short) v);
+    public void writeShort(int value) throws IOException {
+        byte[] bytes = Bits.shortToBytesWithFlag((short) value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeChar(int v) throws IOException {
-        byte[] bytes = Bits.charToBytesWithFlag((char) v);
+    public void writeChar(int value) throws IOException {
+        byte[] bytes = Bits.charToBytesWithFlag((char) value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeInt(int v) throws IOException {
-        byte[] bytes = Bits.intToBytesWithFlag(v);
+    public void writeInt(int value) throws IOException {
+        byte[] bytes = Bits.intToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeLong(long v) throws IOException {
-        byte[] bytes = Bits.longToBytesWithFlag(v);
+    public void writeLong(long value) throws IOException {
+        byte[] bytes = Bits.longToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeFloat(float v) throws IOException {
-        byte[] bytes = Bits.floatToBytesWithFlag(v);
+    public void writeFloat(float value) throws IOException {
+        byte[] bytes = Bits.floatToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeDouble(double v) throws IOException {
-        byte[] bytes = Bits.doubleToBytesWithFlag(v);
+    public void writeDouble(double value) throws IOException {
+        byte[] bytes = Bits.doubleToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void writeBytes(String s) throws IOException {
-        byte[] trim = s.getBytes();
+    public void writeBytes(String value) throws IOException {
+        byte[] trim = value.getBytes();
         for (byte b : trim) {
             byte[] bytes = Bits.byteToBytesWithFlag(b);
             write(bytes, 0, bytes.length);
@@ -92,8 +93,8 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     }
 
     @Override
-    public void writeChars(String s) throws IOException {
-        char[] trim = s.toCharArray();
+    public void writeChars(String value) throws IOException {
+        char[] trim = value.toCharArray();
         for (char c : trim) {
             byte[] bytes = Bits.charToBytesWithFlag(c);
             write(bytes, 0, bytes.length);
@@ -101,13 +102,13 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     }
 
     @Override
-    public void writeUTF(String s) throws IOException {
-        byte[] bytes = s.getBytes("UTF-8");
+    public void writeUTF(String value) throws IOException {
+        byte[] bytes = value.getBytes("UTF-8");
         write(bytes, 0, bytes.length);
     }
 
     @Override
-    public void write(byte[] b, int off, int len) throws IOException {
+    public void write(byte[] value, int off, int len) throws IOException {
         if (offset <= buffer.length) {
             drainArray();
         }
