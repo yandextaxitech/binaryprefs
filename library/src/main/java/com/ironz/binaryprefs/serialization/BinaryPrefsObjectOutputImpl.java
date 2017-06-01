@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.util.Bits;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectOutput;
@@ -23,7 +25,7 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
 
     @Override
     public void write(int b) throws IOException {
-        byte[] bytes = {((byte) b)};
+        byte[] bytes = Bits.byteToBytesWithFlag((byte) b);
         write(bytes, 0, bytes.length);
     }
 
@@ -34,57 +36,74 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
 
     @Override
     public void writeBoolean(boolean v) throws IOException {
-
+        byte[] bytes = Bits.booleanToBytesWithFlag(v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeByte(int v) throws IOException {
-
+        byte[] bytes = Bits.byteToBytesWithFlag((byte) v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeShort(int v) throws IOException {
-
+        byte[] bytes = Bits.shortToBytesWithFlag((short) v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeChar(int v) throws IOException {
-
+        byte[] bytes = Bits.charToBytesWithFlag((char) v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeInt(int v) throws IOException {
-
+        byte[] bytes = Bits.intToBytesWithFlag(v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeLong(long v) throws IOException {
-
+        byte[] bytes = Bits.longToBytesWithFlag(v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeFloat(float v) throws IOException {
-
+        byte[] bytes = Bits.floatToBytesWithFlag(v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeDouble(double v) throws IOException {
-
+        byte[] bytes = Bits.doubleToBytesWithFlag(v);
+        write(bytes, 0, bytes.length);
     }
 
     @Override
     public void writeBytes(String s) throws IOException {
-        byte[] bytes = s.getBytes();
+        byte[] trim = s.getBytes();
+        for (byte b : trim) {
+            byte[] bytes = Bits.byteToBytesWithFlag(b);
+            write(bytes, 0, bytes.length);
+        }
     }
 
     @Override
     public void writeChars(String s) throws IOException {
-        byte[] bytes = s.getBytes();
+        char[] trim = s.toCharArray();
+        for (char c : trim) {
+            byte[] bytes = Bits.charToBytesWithFlag(c);
+            write(bytes, 0, bytes.length);
+        }
     }
 
     @Override
     public void writeUTF(String s) throws IOException {
         byte[] bytes = s.getBytes("UTF-8");
+        write(bytes, 0, bytes.length);
     }
 
     @Override
