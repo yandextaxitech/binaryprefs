@@ -115,6 +115,26 @@ public class BitsTest {
     }
 
     @Test
+    public void doubleConvert() {
+        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
+
+        double restored = Bits.doubleFromBytesWithFlag(bytes);
+
+        assertEquals(9, bytes.length);
+        assertEquals(Bits.FLAG_DOUBLE, bytes[0]);
+        assertEquals(Double.MAX_VALUE, restored, .0);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void doubleIncorrectFlag() {
+        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
+
+        bytes[0] = 0;
+
+        Bits.doubleFromBytesWithFlag(bytes);
+    }
+
+    @Test
     public void longConvert() {
         byte[] bytes = Bits.longToBytesWithFlag(Long.MAX_VALUE);
 

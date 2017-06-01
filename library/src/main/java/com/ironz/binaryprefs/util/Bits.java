@@ -251,6 +251,52 @@ public final class Bits {
         throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
     }
 
+
+    /**
+     * Serialize {@code double} into byte array with following scheme:
+     * [{@link #FLAG_DOUBLE}] + [double_bytes].
+     *
+     * @param value target double to serialize.
+     * @return specific byte array with scheme.
+     */
+    public static byte[] doubleToBytesWithFlag(double value) {
+        long l = Double.doubleToLongBits(value);
+        return new byte[]{
+                FLAG_DOUBLE,
+                (byte) (l >>> 56),
+                (byte) (l >>> 48),
+                (byte) (l >>> 40),
+                (byte) (l >>> 32),
+                (byte) (l >>> 24),
+                (byte) (l >>> 16),
+                (byte) (l >>> 8),
+                (byte) (value)
+        };
+    }
+
+    /**
+     * Deserialize byte by {@link #doubleToBytesWithFlag(double)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized double
+     */
+    public static double doubleFromBytesWithFlag(byte[] bytes) {
+        long l = 0xFFL;
+        byte flag = bytes[0];
+        if (flag == FLAG_DOUBLE) {
+            long value = ((bytes[8] & l)) +
+                    ((bytes[7] & l) << 8) +
+                    ((bytes[6] & l) << 16) +
+                    ((bytes[5] & l) << 24) +
+                    ((bytes[4] & l) << 32) +
+                    ((bytes[3] & l) << 40) +
+                    ((bytes[2] & l) << 48) +
+                    (((long) bytes[1]) << 56);
+            return Double.longBitsToDouble(value);
+        }
+        throw new ClassCastException(String.format("double cannot be deserialized in '%s' flag type", flag));
+    }
+
     /**
      * Serialize {@code long} into byte array with following scheme:
      * [{@link #FLAG_LONG}] + [long_bytes].
@@ -380,7 +426,6 @@ public final class Bits {
         throw new ClassCastException(String.format("short cannot be deserialized in '%s' flag type", flag));
     }
 
-
     /**
      * Serialize {@code char} into byte array with following scheme:
      * [{@link #FLAG_CHAR}] + [char].
@@ -410,7 +455,6 @@ public final class Bits {
         }
         throw new ClassCastException(String.format("char cannot be deserialized in '%s' flag type", flag));
     }
-
 
     /**
      * Tries to deserialize byte array by all flags and returns object if deserialized or throws exception if target flag is unexpected.
