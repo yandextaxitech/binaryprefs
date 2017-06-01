@@ -10,6 +10,8 @@ import static org.junit.Assert.assertEquals;
 
 public class BitsTest {
 
+    private static final byte INCORRECT_FLAG = 0;
+
     @Test
     public void emptyStringSet() {
         Set<String> value = new HashSet<>();
@@ -49,7 +51,9 @@ public class BitsTest {
         value.add(null);
 
         byte[] bytes = Bits.stringSetToBytesWithFlag(value);
-        bytes[0] = 0;
+
+        bytes[0] = INCORRECT_FLAG;
+
         Bits.stringSetFromBytesWithFlag(bytes);
     }
 
@@ -69,7 +73,7 @@ public class BitsTest {
     public void stringIncorrectFlag() {
         byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.intFromBytesWithFlag(bytes);
     }
@@ -89,49 +93,9 @@ public class BitsTest {
     public void integerIncorrectFlag() {
         byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.intFromBytesWithFlag(bytes);
-    }
-
-    @Test
-    public void floatConvert() {
-        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
-
-        float restored = Bits.floatFromBytesWithFlag(bytes);
-
-        assertEquals(5, bytes.length);
-        assertEquals(Bits.FLAG_FLOAT, bytes[0]);
-        assertEquals(Float.MAX_VALUE, restored, .0);
-    }
-
-    @Test(expected = ClassCastException.class)
-    public void floatIncorrectFlag() {
-        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
-
-        bytes[0] = 0;
-
-        Bits.floatFromBytesWithFlag(bytes);
-    }
-
-    @Test
-    public void doubleConvert() {
-        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
-
-        double restored = Bits.doubleFromBytesWithFlag(bytes);
-
-        assertEquals(9, bytes.length);
-        assertEquals(Bits.FLAG_DOUBLE, bytes[0]);
-        assertEquals(Double.MAX_VALUE, restored, .0);
-    }
-
-    @Test(expected = ClassCastException.class)
-    public void doubleIncorrectFlag() {
-        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
-
-        bytes[0] = 0;
-
-        Bits.doubleFromBytesWithFlag(bytes);
     }
 
     @Test
@@ -149,9 +113,49 @@ public class BitsTest {
     public void longIncorrectFlag() {
         byte[] bytes = Bits.longToBytesWithFlag(Long.MAX_VALUE);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.longFromBytesWithFlag(bytes);
+    }
+
+    @Test
+    public void doubleConvert() {
+        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
+
+        double restored = Bits.doubleFromBytesWithFlag(bytes);
+
+        assertEquals(9, bytes.length);
+        assertEquals(Bits.FLAG_DOUBLE, bytes[0]);
+        assertEquals(Double.MAX_VALUE, restored, .0);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void doubleIncorrectFlag() {
+        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
+
+        bytes[0] = INCORRECT_FLAG;
+
+        Bits.doubleFromBytesWithFlag(bytes);
+    }
+
+    @Test
+    public void floatConvert() {
+        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
+
+        float restored = Bits.floatFromBytesWithFlag(bytes);
+
+        assertEquals(5, bytes.length);
+        assertEquals(Bits.FLAG_FLOAT, bytes[0]);
+        assertEquals(Float.MAX_VALUE, restored, .0);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void floatIncorrectFlag() {
+        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
+
+        bytes[0] = INCORRECT_FLAG;
+
+        Bits.floatFromBytesWithFlag(bytes);
     }
 
     @Test
@@ -169,7 +173,7 @@ public class BitsTest {
     public void booleanIncorrectFlag() {
         byte[] bytes = Bits.booleanToBytesWithFlag(true);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.booleanFromBytesWithFlag(bytes);
     }
@@ -189,7 +193,7 @@ public class BitsTest {
     public void byteIncorrectFlag() {
         byte[] bytes = Bits.byteToBytesWithFlag(Byte.MAX_VALUE);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.byteFromBytesWithFlag(bytes);
     }
@@ -209,7 +213,7 @@ public class BitsTest {
     public void shortIncorrectFlag() {
         byte[] bytes = Bits.shortToBytesWithFlag(Short.MAX_VALUE);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.shortFromBytesWithFlag(bytes);
     }
@@ -229,7 +233,7 @@ public class BitsTest {
     public void charIncorrectFlag() {
         byte[] bytes = Bits.charToBytesWithFlag(Character.MAX_VALUE);
 
-        bytes[0] = 0;
+        bytes[0] = INCORRECT_FLAG;
 
         Bits.charFromBytesWithFlag(bytes);
     }

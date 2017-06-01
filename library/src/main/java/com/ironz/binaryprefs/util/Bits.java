@@ -21,40 +21,41 @@ public final class Bits {
      * Uses for detecting byte array primitive type of {@link Integer}
      */
     static final byte FLAG_INT = -3;
+
     /**
      * Uses for detecting byte array primitive type of {@link Long}
      */
     static final byte FLAG_LONG = -4;
 
     /**
+     * Uses for detecting byte array primitive type of {@link Double}
+     */
+    static final byte FLAG_DOUBLE = -5;
+
+    /**
      * Uses for detecting byte array primitive type of {@link Float}
      */
-    static final byte FLAG_FLOAT = -5;
+    static final byte FLAG_FLOAT = -6;
 
     /**
      * Uses for detecting byte array primitive type of {@link Boolean}
      */
-    static final byte FLAG_BOOLEAN = -6;
+    static final byte FLAG_BOOLEAN = -7;
 
     /**
      * Uses for detecting byte array primitive type of {@link Byte}
      */
-    static final byte FLAG_BYTE = -7;
+    static final byte FLAG_BYTE = -8;
 
     /**
      * Uses for detecting byte array primitive type of {@link Short}
      */
-    static final byte FLAG_SHORT = -8;
+    static final byte FLAG_SHORT = -9;
 
     /**
      * Uses for detecting byte array primitive type of {@link Character}
      */
-    static final byte FLAG_CHAR = -9;
-
-    /**
-     * Uses for detecting byte array primitive type of {@link Double}
-     */
-    static final byte FLAG_DOUBLE = -10;
+    static final byte FLAG_CHAR = -10;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
     private static final int NULL_STRING_SIZE = -1;
@@ -215,40 +216,46 @@ public final class Bits {
     }
 
     /**
-     * Serialize {@code float} into byte array with following scheme:
-     * [{@link #FLAG_FLOAT}] + [float_bytes].
+     * Serialize {@code long} into byte array with following scheme:
+     * [{@link #FLAG_LONG}] + [long_bytes].
      *
-     * @param value target float to serialize.
+     * @param value target long to serialize.
      * @return specific byte array with scheme.
      */
-    public static byte[] floatToBytesWithFlag(float value) {
-        int i = Float.floatToIntBits(value);
+    public static byte[] longToBytesWithFlag(long value) {
         return new byte[]{
-                FLAG_FLOAT,
-                (byte) (i >>> 24),
-                (byte) (i >>> 16),
-                (byte) (i >>> 8),
-                (byte) value
+                FLAG_LONG,
+                (byte) (value >>> 56),
+                (byte) (value >>> 48),
+                (byte) (value >>> 40),
+                (byte) (value >>> 32),
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) (value)
         };
     }
 
     /**
-     * Deserialize byte by {@link #floatToBytesWithFlag(float)} convention
+     * Deserialize byte by {@link #longToBytesWithFlag(long)} convention
      *
      * @param bytes target byte array for deserialization
-     * @return deserialized float
+     * @return deserialized long
      */
-    public static float floatFromBytesWithFlag(byte[] bytes) {
-        int i = 0xFF;
+    public static long longFromBytesWithFlag(byte[] bytes) {
+        long l = 0xFFL;
         byte flag = bytes[0];
-        if (flag == FLAG_FLOAT) {
-            int value = ((bytes[4] & i)) +
-                    ((bytes[3] & i) << 8) +
-                    ((bytes[2] & i) << 16) +
-                    (bytes[1] << 24);
-            return Float.intBitsToFloat(value);
+        if (flag == FLAG_LONG) {
+            return ((bytes[8] & l)) +
+                    ((bytes[7] & l) << 8) +
+                    ((bytes[6] & l) << 16) +
+                    ((bytes[5] & l) << 24) +
+                    ((bytes[4] & l) << 32) +
+                    ((bytes[3] & l) << 40) +
+                    ((bytes[2] & l) << 48) +
+                    (((long) bytes[1]) << 56);
         }
-        throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
+        throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
     }
 
     /**
@@ -297,46 +304,40 @@ public final class Bits {
     }
 
     /**
-     * Serialize {@code long} into byte array with following scheme:
-     * [{@link #FLAG_LONG}] + [long_bytes].
+     * Serialize {@code float} into byte array with following scheme:
+     * [{@link #FLAG_FLOAT}] + [float_bytes].
      *
-     * @param value target long to serialize.
+     * @param value target float to serialize.
      * @return specific byte array with scheme.
      */
-    public static byte[] longToBytesWithFlag(long value) {
+    public static byte[] floatToBytesWithFlag(float value) {
+        int i = Float.floatToIntBits(value);
         return new byte[]{
-                FLAG_LONG,
-                (byte) (value >>> 56),
-                (byte) (value >>> 48),
-                (byte) (value >>> 40),
-                (byte) (value >>> 32),
-                (byte) (value >>> 24),
-                (byte) (value >>> 16),
-                (byte) (value >>> 8),
-                (byte) (value)
+                FLAG_FLOAT,
+                (byte) (i >>> 24),
+                (byte) (i >>> 16),
+                (byte) (i >>> 8),
+                (byte) value
         };
     }
 
     /**
-     * Deserialize byte by {@link #longToBytesWithFlag(long)} convention
+     * Deserialize byte by {@link #floatToBytesWithFlag(float)} convention
      *
      * @param bytes target byte array for deserialization
-     * @return deserialized long
+     * @return deserialized float
      */
-    public static long longFromBytesWithFlag(byte[] bytes) {
-        long l = 0xFFL;
+    public static float floatFromBytesWithFlag(byte[] bytes) {
+        int i = 0xFF;
         byte flag = bytes[0];
-        if (flag == FLAG_LONG) {
-            return ((bytes[8] & l)) +
-                    ((bytes[7] & l) << 8) +
-                    ((bytes[6] & l) << 16) +
-                    ((bytes[5] & l) << 24) +
-                    ((bytes[4] & l) << 32) +
-                    ((bytes[3] & l) << 40) +
-                    ((bytes[2] & l) << 48) +
-                    (((long) bytes[1]) << 56);
+        if (flag == FLAG_FLOAT) {
+            int value = ((bytes[4] & i)) +
+                    ((bytes[3] & i) << 8) +
+                    ((bytes[2] & i) << 16) +
+                    (bytes[1] << 24);
+            return Float.intBitsToFloat(value);
         }
-        throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
+        throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
     }
 
     /**
