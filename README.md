@@ -14,7 +14,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 5. Store all primitives (like byte, short, char, double)
 6. Store cache in object map (not `byte[]`)
 7. Custom serializers
-
+8. Lock free (stamped lock)
 
 ## License
 ```
