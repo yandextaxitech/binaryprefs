@@ -165,9 +165,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void tryStoreByKeys() {
         for (final Pair<String, byte[]> pair : commitList) {
-            final String name = pair.getFirst();
-            final byte[] value = pair.getSecond();
-            storeOne(name, value);
+            storeOne(pair.getFirst(), pair.getSecond());
         }
     }
 
