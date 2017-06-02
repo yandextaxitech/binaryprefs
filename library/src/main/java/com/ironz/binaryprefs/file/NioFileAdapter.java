@@ -36,17 +36,17 @@ public final class NioFileAdapter implements FileAdapter {
         this.encryption = encryption;
     }
 
+    @Override
+    public String[] names() {
+        return namesInternal();
+    }
+
     private String[] namesInternal() {
         String[] list = srcDir.list();
         if (list != null) {
             return list;
         }
         return new String[0];
-    }
-
-    @Override
-    public String[] names() {
-        return namesInternal();
     }
 
     @Override
