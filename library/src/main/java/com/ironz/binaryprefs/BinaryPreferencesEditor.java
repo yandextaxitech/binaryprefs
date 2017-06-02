@@ -27,7 +27,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final TaskExecutor taskExecutor;
     private final Class lock;
 
-    private boolean clear;
+    private boolean clearFlag;
 
     BinaryPreferencesEditor(Preferences preferences,
                             FileAdapter fileAdapter,
@@ -121,7 +121,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor clear() {
         synchronized (lock) {
-            clear = true;
+            clearFlag = true;
             return this;
         }
     }
@@ -149,10 +149,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void tryClearAll() {
-        if (clear) {
-            for (final String name : fileAdapter.names()) {
-                removeOne(name);
-            }
+        if (!clearFlag) {
+            return;
+        }
+        for (final String name : fileAdapter.names()) {
+            removeOne(name);
         }
     }
 
