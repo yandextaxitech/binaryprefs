@@ -173,10 +173,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         taskExecutor.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                fileAdapter.remove(name);
-                cacheProvider.remove(name);
-                bridge.notifyListenersRemove(preferences, name);
-                return name;
+                return removeAndReturnName(name);
             }
         });
     }
@@ -185,11 +182,22 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         taskExecutor.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                fileAdapter.save(name, value);
-                cacheProvider.put(name, value);
-                bridge.notifyListenersUpdate(preferences, name, value);
-                return name;
+                return saveAndReturnName(name, value);
             }
         });
+    }
+
+    private String removeAndReturnName(String name) {
+        fileAdapter.remove(name);
+        cacheProvider.remove(name);
+        bridge.notifyListenersRemove(preferences, name);
+        return name;
+    }
+
+    private String saveAndReturnName(String name, byte[] value) {
+        fileAdapter.save(name, value);
+        cacheProvider.put(name, value);
+        bridge.notifyListenersUpdate(preferences, name, value);
+        return name;
     }
 }
