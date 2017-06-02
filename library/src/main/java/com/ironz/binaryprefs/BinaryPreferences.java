@@ -5,7 +5,7 @@ import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.task.TaskExecutor;
-import com.ironz.binaryprefs.util.Bits;
+import com.ironz.binaryprefs.serialization.Bits;
 
 import java.io.Externalizable;
 import java.util.HashMap;

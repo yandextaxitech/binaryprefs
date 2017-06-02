@@ -23,12 +23,12 @@ public class BinaryPrefsObjectOutputImplTest {
 
     @Test
     public void writeObjectExternalizable() throws Exception {
-        SomeClass someClass = new SomeClass();
-        someClass.setB(Byte.MAX_VALUE);
-        objectOutput.writeObject(someClass);
+        DataClass dataClass = new DataClass();
+        dataClass.setB(Byte.MAX_VALUE);
+        objectOutput.writeObject(dataClass);
     }
 
-    private static class SomeClass implements Externalizable {
+    private static class DataClass implements Externalizable {
 
         private byte b;
 

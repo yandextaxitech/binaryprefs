@@ -1,7 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.util.Bits;
-
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectOutput;
@@ -26,6 +24,11 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
                             Externalizable.class.getName())
             );
         }
+
+        byte[] bytes = {Bits.FLAG_EXTERNALIZABLE};
+        write(bytes, 0, bytes.length);
+        String name = value.getClass().getName();
+        writeUTF(name);
         Externalizable externalizable = (Externalizable) value;
         externalizable.writeExternal(this);
     }
@@ -119,7 +122,7 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
         if (value == null) {
             throw new NullPointerException("Can't serialize null object");
         }
-        byte[] bytes = value.getBytes("UTF-8");
+        byte[] bytes = Bits.stringToBytesWithFlag(value);
         write(bytes, 0, bytes.length);
     }
 
@@ -127,6 +130,12 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     public void write(byte[] value, int off, int len) throws IOException {
         if (offset + len <= buffer.length) {
             growArray();
+        }
+        if (off > value.length || len > value.length) {
+            throw new ArrayIndexOutOfBoundsException("Can't write out of bounds array");
+        }
+        for (int i = 0; i < len; i++) {
+            buffer[offset + i] = value[off + i];
         }
         offset += len;
     }

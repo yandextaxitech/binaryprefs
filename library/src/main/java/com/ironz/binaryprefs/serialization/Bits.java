@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.util;
+package com.ironz.binaryprefs.serialization;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +12,7 @@ public final class Bits {
      * Uses for detecting byte array type of {@link Set} of {@link String}
      */
     static final byte FLAG_STRING_SET = -1;
+
     /**
      * Uses for detecting byte array type of {@link String}
      */
@@ -61,6 +62,11 @@ public final class Bits {
      * Uses for detecting byte array primitive type of {@link Character}
      */
     static final byte FLAG_CHAR = -11;
+
+    /**
+     * Uses for detecting byte array primitive type of {@link java.io.Externalizable}
+     */
+    static final byte FLAG_EXTERNALIZABLE = -12;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
     private static final int NULL_STRING_SIZE = -1;
