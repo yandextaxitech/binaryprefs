@@ -188,15 +188,15 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private String removeAndReturnName(String name) {
-        fileAdapter.remove(name);
         cacheProvider.remove(name);
+        fileAdapter.remove(name);
         bridge.notifyListenersRemove(preferences, name);
         return name;
     }
 
     private String saveAndReturnName(String name, byte[] value) {
-        fileAdapter.save(name, value);
         cacheProvider.put(name, value);
+        fileAdapter.save(name, value);
         bridge.notifyListenersUpdate(preferences, name, value);
         return name;
     }
