@@ -129,7 +129,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public void apply() {
         synchronized (lock) {
-            performWithResult(); //result is ignored
+            performTransactions();
         }
     }
 
@@ -138,7 +138,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         throw new UnsupportedOperationException("Not implemented yet!");
     }
 
-    private void performWithResult() {
+    private void performTransactions() {
         try {
             tryClearAll();
             tryRemoveByKeys();
@@ -163,6 +163,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
+    private void tryStoreByKeys() {
+        for (final Pair<String, byte[]> pair : commitList) {
+            final String name = pair.getFirst();
+            final byte[] value = pair.getSecond();
+            storeOne(name, value);
+        }
+    }
+
     private void removeOne(final String name) {
         taskExecutor.submit(new Callable<String>() {
             @Override
@@ -175,19 +183,15 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         });
     }
 
-    private void tryStoreByKeys() {
-        for (final Pair<String, byte[]> pair : commitList) {
-            final String name = pair.getFirst();
-            final byte[] value = pair.getSecond();
-            taskExecutor.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    fileAdapter.save(name, value);
-                    cacheProvider.put(name, value);
-                    bridge.notifyListenersUpdate(preferences, name, value);
-                    return name;
-                }
-            });
-        }
+    private void storeOne(final String name, final byte[] value) {
+        taskExecutor.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                fileAdapter.save(name, value);
+                cacheProvider.put(name, value);
+                bridge.notifyListenersUpdate(preferences, name, value);
+                return name;
+            }
+        });
     }
 }
