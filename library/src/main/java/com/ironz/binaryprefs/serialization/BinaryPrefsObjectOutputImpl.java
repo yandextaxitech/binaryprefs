@@ -125,7 +125,7 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
 
     @Override
     public void write(byte[] value, int off, int len) throws IOException {
-        if (offset <= buffer.length) {
+        if (offset + len <= buffer.length) {
             growArray();
         }
         offset += len;

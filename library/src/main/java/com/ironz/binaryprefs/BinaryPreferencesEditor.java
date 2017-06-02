@@ -150,46 +150,43 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void tryClearAll() {
         if (clear) {
-            cacheProvider.clear();
             for (final String name : fileAdapter.names()) {
-                taskExecutor.submit(new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-                        fileAdapter.remove(name);
-                        return name;
-                    }
-                });
+                removeOne(name);
             }
         }
     }
 
     private void tryRemoveByKeys() {
         for (final String name : removeSet) {
-            cacheProvider.remove(name);
-            taskExecutor.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    fileAdapter.remove(name);
-                    return name;
-                }
-            });
-            bridge.notifyListenersRemove(preferences, name);
+            removeOne(name);
         }
+    }
+
+    private void removeOne(final String name) {
+        taskExecutor.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                fileAdapter.remove(name);
+                cacheProvider.remove(name);
+                bridge.notifyListenersRemove(preferences, name);
+                return name;
+            }
+        });
     }
 
     private void tryStoreByKeys() {
         for (final Pair<String, byte[]> pair : commitList) {
             final String name = pair.getFirst();
             final byte[] value = pair.getSecond();
-            cacheProvider.put(name, value);
             taskExecutor.submit(new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     fileAdapter.save(name, value);
+                    cacheProvider.put(name, value);
+                    bridge.notifyListenersUpdate(preferences, name, value);
                     return name;
                 }
             });
-            bridge.notifyListenersUpdate(preferences, name, value);
         }
     }
 }
