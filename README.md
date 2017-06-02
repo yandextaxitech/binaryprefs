@@ -15,6 +15,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 6. Store cache in object map (not `byte[]`)
 7. Custom serializers
 8. Lock free (stamped lock)
+9. Synchronous commits
 
 ## License
 ```
