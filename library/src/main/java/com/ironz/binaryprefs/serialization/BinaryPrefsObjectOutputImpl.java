@@ -146,4 +146,10 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     public void close() throws IOException {
 
     }
+
+    public byte[] getBytes() {
+        byte[] bytes = new byte[offset];
+        System.arraycopy(buffer, 0, bytes, 0, offset);
+        return bytes;
+    }
 }
