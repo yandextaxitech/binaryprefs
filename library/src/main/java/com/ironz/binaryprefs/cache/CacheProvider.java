@@ -37,11 +37,6 @@ public interface CacheProvider {
     byte[] get(String key);
 
     /**
-     * Clears cache table
-     */
-    void clear();
-
-    /**
      * Removes specific value from cache by given key
      *
      * @param name target key for remove

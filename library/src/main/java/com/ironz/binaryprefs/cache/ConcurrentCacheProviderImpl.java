@@ -29,11 +29,6 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     }
 
     @Override
-    public void clear() {
-        cache.clear();
-    }
-
-    @Override
     public void remove(String name) {
         cache.remove(name);
     }
