@@ -15,23 +15,19 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
 
     @Override
     public void writeObject(Object value) throws IOException {
+
         checkNull(value);
         checkExternalizable(value);
         checkClosed();
 
         byte[] bytes = {Bits.FLAG_EXTERNALIZABLE};
-        write(bytes, 0, bytes.length);
         String name = value.getClass().getName();
+
+        write(bytes, 0, bytes.length);
         writeUTF(name);
+
         Externalizable externalizable = (Externalizable) value;
         externalizable.writeExternal(this);
-    }
-
-    @Override
-    public void write(int value) throws IOException {
-        checkClosed();
-        byte[] bytes = Bits.byteToBytesWithFlag((byte) value);
-        write(bytes, 0, bytes.length);
     }
 
     @Override
@@ -124,6 +120,13 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
         checkClosed();
         checkNull(value);
         byte[] bytes = Bits.stringToBytesWithFlag(value);
+        write(bytes, 0, bytes.length);
+    }
+
+    @Override
+    public void write(int value) throws IOException {
+        checkClosed();
+        byte[] bytes = {(byte) value};
         write(bytes, 0, bytes.length);
     }
 
