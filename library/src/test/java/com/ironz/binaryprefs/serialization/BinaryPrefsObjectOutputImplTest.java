@@ -25,18 +25,20 @@ public class BinaryPrefsObjectOutputImplTest {
         objectOutput.writeObject(null);
     }
 
-    @Test
-    public void writeObjectExternalizable() throws Exception {
-        TestDataClass dataClass = new TestDataClass();
-        dataClass.setB(Byte.MAX_VALUE);
-        objectOutput.writeObject(dataClass);
-    }
-
     @Test(expected = IOException.class)
     public void writeObjectExternalizableClosed() throws Exception {
         TestDataClass dataClass = new TestDataClass();
         dataClass.setB(Byte.MAX_VALUE);
+
         objectOutput.close();
+        objectOutput.writeObject(dataClass);
+    }
+
+    @Test
+    public void writeObjectExternalizable() throws Exception {
+        TestDataClass dataClass = new TestDataClass();
+        dataClass.setB(Byte.MAX_VALUE);
+
         objectOutput.writeObject(dataClass);
     }
 }
