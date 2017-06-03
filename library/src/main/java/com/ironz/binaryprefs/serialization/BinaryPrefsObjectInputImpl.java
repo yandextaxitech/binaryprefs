@@ -6,7 +6,7 @@ import java.io.ObjectInput;
 public final class BinaryPrefsObjectInputImpl implements ObjectInput {
 
     private final byte[] buffer;
-    int offset = 0;
+    private int offset = 0;
 
     public BinaryPrefsObjectInputImpl(byte[] buffer) {
         this.buffer = buffer;
@@ -19,7 +19,7 @@ public final class BinaryPrefsObjectInputImpl implements ObjectInput {
 
     @Override
     public int read() throws IOException {
-        return offset;
+        return 0;
     }
 
     @Override

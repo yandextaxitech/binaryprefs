@@ -180,7 +180,10 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     }
 
     private void checkBounds(byte[] value, int off, int len) {
-        if (off > value.length || len > value.length || (value.length - off) < len) {
+        boolean incorrectOffset = off > value.length;
+        boolean incorrectLength = len > value.length;
+        boolean incorrectBounds = (value.length - off) < len;
+        if (incorrectOffset || incorrectLength || incorrectBounds) {
             throw new ArrayIndexOutOfBoundsException("Can't write out of bounds array");
         }
     }
