@@ -1,12 +1,10 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.TestDataClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Externalizable;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 public class BinaryPrefsObjectOutputImplTest {
 
@@ -29,39 +27,16 @@ public class BinaryPrefsObjectOutputImplTest {
 
     @Test
     public void writeObjectExternalizable() throws Exception {
-        DataClass dataClass = new DataClass();
+        TestDataClass dataClass = new TestDataClass();
         dataClass.setB(Byte.MAX_VALUE);
         objectOutput.writeObject(dataClass);
     }
 
     @Test(expected = IOException.class)
     public void writeObjectExternalizableClosed() throws Exception {
-        DataClass dataClass = new DataClass();
+        TestDataClass dataClass = new TestDataClass();
         dataClass.setB(Byte.MAX_VALUE);
         objectOutput.close();
         objectOutput.writeObject(dataClass);
-    }
-
-    private static class DataClass implements Externalizable {
-
-        private byte b;
-
-        @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
-
-        }
-
-        @Override
-        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-        }
-
-        public byte getB() {
-            return b;
-        }
-
-        public void setB(byte b) {
-            this.b = b;
-        }
     }
 }
