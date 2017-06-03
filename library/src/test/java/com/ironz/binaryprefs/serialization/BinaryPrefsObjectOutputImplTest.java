@@ -32,8 +32,14 @@ public class BinaryPrefsObjectOutputImplTest {
         DataClass dataClass = new DataClass();
         dataClass.setB(Byte.MAX_VALUE);
         objectOutput.writeObject(dataClass);
+    }
 
-
+    @Test(expected = IOException.class)
+    public void writeObjectExternalizableClosed() throws Exception {
+        DataClass dataClass = new DataClass();
+        dataClass.setB(Byte.MAX_VALUE);
+        objectOutput.close();
+        objectOutput.writeObject(dataClass);
     }
 
     private static class DataClass implements Externalizable {
