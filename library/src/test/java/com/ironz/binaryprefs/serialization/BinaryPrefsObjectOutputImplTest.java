@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.serialization;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Externalizable;
@@ -9,7 +10,12 @@ import java.io.ObjectOutput;
 
 public class BinaryPrefsObjectOutputImplTest {
 
-    private final BinaryPrefsObjectOutputImpl objectOutput = new BinaryPrefsObjectOutputImpl();
+    private BinaryPrefsObjectOutputImpl objectOutput;
+
+    @Before
+    public void setUp() {
+        objectOutput = new BinaryPrefsObjectOutputImpl();
+    }
 
     @Test(expected = UnsupportedOperationException.class)
     public void writeObjectNotExternalizable() throws Exception {
@@ -26,6 +32,8 @@ public class BinaryPrefsObjectOutputImplTest {
         DataClass dataClass = new DataClass();
         dataClass.setB(Byte.MAX_VALUE);
         objectOutput.writeObject(dataClass);
+
+
     }
 
     private static class DataClass implements Externalizable {
