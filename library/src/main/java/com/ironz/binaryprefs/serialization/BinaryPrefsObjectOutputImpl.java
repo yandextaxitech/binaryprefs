@@ -16,7 +16,6 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     public <T extends Externalizable> byte[] serialize(T t) throws Exception {
 
         checkNull(t);
-        checkExternalizable(t);
         checkClosed();
 
         byte[] flag = {Bits.FLAG_EXTERNALIZABLE};
@@ -183,16 +182,6 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     private void checkNull(Object value) {
         if (value == null) {
             throw new NullPointerException("Can't serialize null object");
-        }
-    }
-
-    private void checkExternalizable(Object value) {
-        if (!(value instanceof Externalizable)) {
-            throw new UnsupportedOperationException(
-                    String.format("Can't serialize object '%s' which are not implements '%s' interface",
-                            value.getClass().getSimpleName(),
-                            Externalizable.class.getName())
-            );
         }
     }
 

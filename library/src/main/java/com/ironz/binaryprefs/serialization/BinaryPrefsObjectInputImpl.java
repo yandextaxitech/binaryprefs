@@ -20,12 +20,6 @@ public final class BinaryPrefsObjectInputImpl implements ObjectInput {
         throw new UnsupportedOperationException("This deserialization type does not supported!");
     }
 
-    private void checkBounds() {
-        if (offset >= buffer.length - 1) {
-            throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array");
-        }
-    }
-
     @Override
     public int read() throws IOException {
         checkBounds();
@@ -146,5 +140,11 @@ public final class BinaryPrefsObjectInputImpl implements ObjectInput {
     public String readUTF() throws IOException {
         checkBounds();
         return null;
+    }
+
+    private void checkBounds() {
+        if (offset >= buffer.length - 1) {
+            throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array");
+        }
     }
 }
