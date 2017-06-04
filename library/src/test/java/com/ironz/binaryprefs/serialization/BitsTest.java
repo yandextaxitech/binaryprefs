@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class BitsTest {
@@ -192,28 +191,6 @@ public class BitsTest {
         bytes[0] = INCORRECT_FLAG;
 
         Bits.byteFromBytesWithFlag(bytes);
-    }
-
-    @Test
-    public void byteArrayConvert() {
-        byte[] original = {Byte.MAX_VALUE, Byte.MIN_VALUE};
-        byte[] bytes = Bits.byteArrayToBytesWithFlag(original);
-
-        byte[] restored = Bits.byteArrayFromBytesWithFlag(bytes);
-
-        assertEquals(3, bytes.length);
-        assertEquals(Bits.FLAG_BYTE_ARRAY, bytes[0]);
-        assertArrayEquals(original, restored);
-    }
-
-    @Test(expected = ClassCastException.class)
-    public void byteArrayIncorrectFlag() {
-        byte[] original = {Byte.MAX_VALUE, Byte.MIN_VALUE};
-        byte[] bytes = Bits.byteArrayToBytesWithFlag(original);
-
-        bytes[0] = INCORRECT_FLAG;
-
-        Bits.byteArrayFromBytesWithFlag(bytes);
     }
 
     @Test

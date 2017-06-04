@@ -49,28 +49,69 @@ public final class Bits {
     static final byte FLAG_BYTE = -8;
 
     /**
-     * Uses for detecting byte array primitive type of {@link Byte}
-     */
-    static final byte FLAG_BYTE_ARRAY = -9;
-
-    /**
      * Uses for detecting byte array primitive type of {@link Short}
      */
-    static final byte FLAG_SHORT = -10;
+    static final byte FLAG_SHORT = -9;
 
     /**
      * Uses for detecting byte array primitive type of {@link Character}
      */
-    static final byte FLAG_CHAR = -11;
+    static final byte FLAG_CHAR = -10;
 
     /**
      * Uses for detecting byte array primitive type of {@link java.io.Externalizable}
      */
-    static final byte FLAG_EXTERNALIZABLE = -12;
+    static final byte FLAG_EXTERNALIZABLE = -11;
+
+    /**
+     * Minimum size primitive type of {@link String}
+     */
+    static final int SIZE_STRING = 1;
+
+    /**
+     * Minimum size primitive type of {@link Integer}
+     */
+    static final int SIZE_INT = 2;
+
+    /**
+     * Minimum size primitive type of {@link Long}
+     */
+    static final int SIZE_LONG = 9;
+
+    /**
+     * Minimum size primitive type of {@link Double}
+     */
+    static final int SIZE_DOUBLE = 9;
+
+    /**
+     * Minimum size primitive type of {@link Float}
+     */
+    static final int SIZE_FLOAT = 5;
+
+    /**
+     * Minimum size primitive type of {@link Boolean}
+     */
+    static final int SIZE_BOOLEAN = 2;
+
+    /**
+     * Minimum size primitive type of {@link Byte}
+     */
+    static final int SIZE_BYTE = 2;
+
+    /**
+     * Minimum size primitive type of {@link Short}
+     */
+    static final int SIZE_SHORT = 3;
+
+    /**
+     * Minimum size primitive type of {@link Character}
+     */
+    static final int SIZE_CHAR = 3;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
 
     private Bits() {
+        throw new UnsupportedOperationException("Please, do not instantiate this class!");
     }
 
     /**
@@ -174,14 +215,26 @@ public final class Bits {
      * @return deserialized String
      */
     public static String stringFromBytesWithFlag(byte[] bytes) {
-        byte flag = bytes[0];
+        return stringFromBytesWithFlag(bytes, 0, bytes.length);
+    }
+
+    /**
+     * Deserialize byte by {@link #stringToBytesWithFlag(String)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @param length length of array to write
+     * @return deserialized String
+     */
+    public static String stringFromBytesWithFlag(byte[] bytes, int offset, int length) {
+        byte flag = bytes[offset];
         if (flag != FLAG_STRING) {
             throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
         }
-        int lengthWithoutFlag = bytes.length - 1;
-        return new String(bytes, 1, lengthWithoutFlag);
+        int lengthWithoutFlag = length - 1;
+        int flagOffset = 1;
+        return new String(bytes, offset + flagOffset, lengthWithoutFlag);
     }
-
 
     /**
      * Serialize {@code int} into byte array with following scheme:
@@ -207,15 +260,26 @@ public final class Bits {
      * @return deserialized int
      */
     public static int intFromBytesWithFlag(byte[] bytes) {
+        return intFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #intToBytesWithFlag(int)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized int
+     */
+    public static int intFromBytesWithFlag(byte[] bytes, int offset) {
         int i = 0xFF;
-        byte flag = bytes[0];
+        byte flag = bytes[offset];
         if (flag != FLAG_INT) {
             throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
         }
-        return ((bytes[4] & i)) +
-                ((bytes[3] & i) << 8) +
-                ((bytes[2] & i) << 16) +
-                ((bytes[1]) << 24);
+        return ((bytes[4 + offset] & i)) +
+                ((bytes[3 + offset] & i) << 8) +
+                ((bytes[2 + offset] & i) << 16) +
+                ((bytes[1 + offset]) << 24);
     }
 
     /**
@@ -246,19 +310,30 @@ public final class Bits {
      * @return deserialized long
      */
     public static long longFromBytesWithFlag(byte[] bytes) {
+        return longFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #longToBytesWithFlag(long)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized long
+     */
+    public static long longFromBytesWithFlag(byte[] bytes, int offset) {
         long l = 0xFFL;
-        byte flag = bytes[0];
+        byte flag = bytes[offset];
         if (flag != FLAG_LONG) {
             throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
         }
-        return ((bytes[8] & l)) +
-                ((bytes[7] & l) << 8) +
-                ((bytes[6] & l) << 16) +
-                ((bytes[5] & l) << 24) +
-                ((bytes[4] & l) << 32) +
-                ((bytes[3] & l) << 40) +
-                ((bytes[2] & l) << 48) +
-                (((long) bytes[1]) << 56);
+        return ((bytes[8 + offset] & l)) +
+                ((bytes[7 + offset] & l) << 8) +
+                ((bytes[6 + offset] & l) << 16) +
+                ((bytes[5 + offset] & l) << 24) +
+                ((bytes[4 + offset] & l) << 32) +
+                ((bytes[3 + offset] & l) << 40) +
+                ((bytes[2 + offset] & l) << 48) +
+                (((long) bytes[1 + offset]) << 56);
     }
 
     /**
@@ -290,19 +365,30 @@ public final class Bits {
      * @return deserialized double
      */
     public static double doubleFromBytesWithFlag(byte[] bytes) {
+        return doubleFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #doubleToBytesWithFlag(double)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized double
+     */
+    public static double doubleFromBytesWithFlag(byte[] bytes, int offset) {
         long l = 0xFFL;
-        byte flag = bytes[0];
+        byte flag = bytes[offset];
         if (flag != FLAG_DOUBLE) {
             throw new ClassCastException(String.format("double cannot be deserialized in '%s' flag type", flag));
         }
         long value = ((bytes[8] & l)) +
-                ((bytes[7] & l) << 8) +
-                ((bytes[6] & l) << 16) +
-                ((bytes[5] & l) << 24) +
-                ((bytes[4] & l) << 32) +
-                ((bytes[3] & l) << 40) +
-                ((bytes[2] & l) << 48) +
-                (((long) bytes[1]) << 56);
+                ((bytes[7 + offset] & l) << 8) +
+                ((bytes[6 + offset] & l) << 16) +
+                ((bytes[5 + offset] & l) << 24) +
+                ((bytes[4 + offset] & l) << 32) +
+                ((bytes[3 + offset] & l) << 40) +
+                ((bytes[2 + offset] & l) << 48) +
+                (((long) bytes[1 + offset]) << 56);
         return Double.longBitsToDouble(value);
     }
 
@@ -331,15 +417,26 @@ public final class Bits {
      * @return deserialized float
      */
     public static float floatFromBytesWithFlag(byte[] bytes) {
+        return floatFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #floatToBytesWithFlag(float)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized float
+     */
+    public static float floatFromBytesWithFlag(byte[] bytes, int offset) {
         int i = 0xFF;
-        byte flag = bytes[0];
+        byte flag = bytes[offset];
         if (flag != FLAG_FLOAT) {
             throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
         }
-        int value = ((bytes[4] & i)) +
-                ((bytes[3] & i) << 8) +
-                ((bytes[2] & i) << 16) +
-                (bytes[1] << 24);
+        int value = ((bytes[4 + offset] & i)) +
+                ((bytes[3 + offset] & i) << 8) +
+                ((bytes[2 + offset] & i) << 16) +
+                (bytes[1 + offset] << 24);
         return Float.intBitsToFloat(value);
     }
 
@@ -364,11 +461,22 @@ public final class Bits {
      * @return deserialized boolean
      */
     public static boolean booleanFromBytesWithFlag(byte[] bytes) {
-        byte flag = bytes[0];
+        return booleanFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #booleanToBytesWithFlag(boolean)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized boolean
+     */
+    public static boolean booleanFromBytesWithFlag(byte[] bytes, int offset) {
+        byte flag = bytes[offset];
         if (flag != FLAG_BOOLEAN) {
             throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
         }
-        return bytes[1] != 0;
+        return bytes[1 + offset] != 0;
     }
 
     /**
@@ -386,49 +494,28 @@ public final class Bits {
     }
 
     /**
-     * Serialize {@code byte array} into byte array with following scheme:
-     * [{@link #FLAG_BYTE}] + [byte_array].
-     *
-     * @param value target byte array to serialize.
-     * @return specific byte array with scheme.
-     */
-    public static byte[] byteArrayToBytesWithFlag(byte[] value) {
-        int flagOffset = 1;
-        byte[] copy = new byte[value.length + flagOffset];
-        copy[0] = FLAG_BYTE_ARRAY;
-        System.arraycopy(value, 0, copy, flagOffset, value.length);
-        return copy;
-    }
-
-    /**
-     * Deserialize byte array by {@link #byteToBytesWithFlag(byte)} convention
-     *
-     * @param bytes target byte array for deserialization
-     * @return deserialized byte array
-     */
-    public static byte[] byteArrayFromBytesWithFlag(byte[] bytes) {
-        byte flag = bytes[0];
-        if (flag != FLAG_BYTE_ARRAY) {
-            throw new ClassCastException(String.format("byte array cannot be deserialized in '%s' flag type", flag));
-        }
-        int flagOffset = 1;
-        byte[] copy = new byte[bytes.length - flagOffset];
-        System.arraycopy(bytes, flagOffset, copy, 0, copy.length);
-        return copy;
-    }
-
-    /**
      * Deserialize byte by {@link #byteToBytesWithFlag(byte)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized byte
      */
     public static byte byteFromBytesWithFlag(byte[] bytes) {
-        byte flag = bytes[0];
+        return byteFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #byteToBytesWithFlag(byte)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized byte
+     */
+    public static byte byteFromBytesWithFlag(byte[] bytes, int offset) {
+        byte flag = bytes[offset];
         if (flag != FLAG_BYTE) {
             throw new ClassCastException(String.format("byte cannot be deserialized in '%s' flag type", flag));
         }
-        return bytes[1];
+        return bytes[1 + offset];
     }
 
     /**
@@ -453,11 +540,22 @@ public final class Bits {
      * @return deserialized short
      */
     public static short shortFromBytesWithFlag(byte[] bytes) {
-        byte flag = bytes[0];
+        return shortFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize short by {@link #shortToBytesWithFlag(short)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized short
+     */
+    public static short shortFromBytesWithFlag(byte[] bytes, int offset) {
+        byte flag = bytes[offset];
         if (flag != FLAG_SHORT) {
             throw new ClassCastException(String.format("short cannot be deserialized in '%s' flag type", flag));
         }
-        return (short) ((bytes[1] << 8) +
+        return (short) ((bytes[1 + offset] << 8) +
                 (bytes[2] & 0xFF));
     }
 
@@ -483,12 +581,23 @@ public final class Bits {
      * @return deserialized char
      */
     public static char charFromBytesWithFlag(byte[] bytes) {
-        byte flag = bytes[0];
+        return charFromBytesWithFlag(bytes, 0);
+    }
+
+    /**
+     * Deserialize char by {@link #charToBytesWithFlag(char)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset offset of bytes array
+     * @return deserialized char
+     */
+    public static char charFromBytesWithFlag(byte[] bytes, int offset) {
+        byte flag = bytes[offset];
         if (flag != FLAG_CHAR) {
             throw new ClassCastException(String.format("char cannot be deserialized in '%s' flag type", flag));
         }
-        return (char) ((bytes[1] << 8) +
-                (bytes[2] & 0xFF));
+        return (char) ((bytes[1 + offset] << 8) +
+                (bytes[2 + offset] & 0xFF));
     }
 
     /**

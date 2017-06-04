@@ -1,174 +1,96 @@
 package com.ironz.binaryprefs.serialization;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
+public final class BinaryPrefsObjectInputImpl implements DataInput {
 
-public final class BinaryPrefsObjectInputImpl implements ObjectInput {
-
-    private byte[] buffer;
     private int offset = 0;
-    private boolean closed = false;
+    private byte[] buffer;
 
-    public <T extends Externalizable> T deserialize(byte[] bytes, Class<? extends T> clazz) throws Exception {
+    public <T extends Persistable> T deserialize(byte[] bytes, Class<? extends T> clazz) throws Exception {
 
+        checkBytes(bytes);
         checkNull(clazz);
-        checkClosed();
+        checkExternalizable(bytes);
+
+        this.buffer = bytes;
 
         T instance = clazz.newInstance();
         instance.readExternal(this);
+
         return instance;
     }
 
     @Override
-    public Object readObject() throws ClassNotFoundException, IOException {
-        throw new UnsupportedOperationException("This deserialization type does not supported!");
-    }
-
-    @Override
-    public int read() throws IOException {
-        checkClosed();
+    public boolean readBoolean() {
         checkBounds();
-        return 0;
+        boolean b = Bits.booleanFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_BOOLEAN;
+        return b;
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
-        checkClosed();
+    public byte readByte() {
         checkBounds();
-        return 0;
+        byte b = Bits.byteFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_BYTE;
+        return b;
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        checkClosed();
+    public short readShort() {
         checkBounds();
-        return 0;
+        short s = Bits.shortFromBytesWithFlag(buffer, offset);
+        offset += Bits.FLAG_SHORT;
+        return s;
     }
 
     @Override
-    public long skip(long n) throws IOException {
-        checkClosed();
+    public char readChar() {
         checkBounds();
-        return 0;
+        char c = Bits.charFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_CHAR;
+        return c;
     }
 
     @Override
-    public int available() throws IOException {
-        checkClosed();
-
+    public int readInt() {
         checkBounds();
-        return 0;
+        int i = Bits.intFromBytesWithFlag(buffer, offset);
+        offset += Bits.FLAG_INT;
+        return i;
     }
 
     @Override
-    public void close() throws IOException {
-        closed = true;
-    }
-
-    @Override
-    public void readFully(byte[] b) throws IOException {
-
-    }
-
-    @Override
-    public void readFully(byte[] b, int off, int len) throws IOException {
-
-    }
-
-    @Override
-    public int skipBytes(int n) throws IOException {
-        return 0;
-    }
-
-    @Override
-    public boolean readBoolean() throws IOException {
-        checkClosed();
+    public long readLong() {
         checkBounds();
-        return false;
+        long l = Bits.longFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_LONG;
+        return l;
     }
 
     @Override
-    public byte readByte() throws IOException {
-        checkClosed();
+    public float readFloat() {
         checkBounds();
-        return 0;
+        float f = Bits.floatFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_FLOAT;
+        return f;
     }
 
     @Override
-    public int readUnsignedByte() throws IOException {
-        checkClosed();
+    public double readDouble() {
         checkBounds();
-        return 0;
+        double d = Bits.doubleFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_DOUBLE;
+        return d;
     }
 
     @Override
-    public short readShort() throws IOException {
-        checkClosed();
+    public String readString() {
         checkBounds();
-        return 0;
-    }
-
-    @Override
-    public int readUnsignedShort() throws IOException {
-        checkClosed();
-        checkBounds();
-        return 0;
-    }
-
-    @Override
-    public char readChar() throws IOException {
-        checkClosed();
-        checkBounds();
-        return 0;
-    }
-
-    @Override
-    public int readInt() throws IOException {
-        checkClosed();
-        checkBounds();
-        return 0;
-    }
-
-    @Override
-    public long readLong() throws IOException {
-        checkClosed();
-        checkBounds();
-        return 0;
-    }
-
-    @Override
-    public float readFloat() throws IOException {
-        checkClosed();
-        checkBounds();
-        return 0;
-    }
-
-    @Override
-    public double readDouble() throws IOException {
-        checkClosed();
-        checkBounds();
-        return 0;
-    }
-
-    @Override
-    public String readLine() throws IOException {
-        checkClosed();
-        checkBounds();
-        return null;
-    }
-
-    @Override
-    public String readUTF() throws IOException {
-        checkClosed();
-        checkBounds();
-        return null;
-    }
-
-    private void checkClosed() throws IOException {
-        if (closed) {
-            throw new IOException("Cannot write to already closed object output");
-        }
+        int bytesStringSize = Bits.intFromBytesWithFlag(buffer, offset);
+        offset += Bits.SIZE_INT;
+        String s = Bits.stringFromBytesWithFlag(buffer, offset, bytesStringSize);
+        offset += bytesStringSize;
+        return s;
     }
 
     private void checkBounds() {
@@ -180,6 +102,20 @@ public final class BinaryPrefsObjectInputImpl implements ObjectInput {
     private void checkNull(Object value) {
         if (value == null) {
             throw new NullPointerException("Can't serialize null object");
+        }
+    }
+
+    private void checkExternalizable(byte[] bytes) {
+        byte flag = bytes[0];
+        if (flag != Bits.FLAG_EXTERNALIZABLE) {
+            throw new ClassCastException(String.format("Externalizable cannot be deserialized in '%s' flag type", flag));
+        }
+        offset++;
+    }
+
+    private void checkBytes(byte[] bytes) {
+        if (bytes.length < 1) {
+            throw new UnsupportedOperationException("Cannot deserialize empty byte array!");
         }
     }
 }
