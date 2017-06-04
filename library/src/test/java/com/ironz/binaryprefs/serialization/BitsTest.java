@@ -80,17 +80,6 @@ public class BitsTest {
         Bits.stringFromBytesWithFlag(bytes);
     }
 
-    @Test(expected = ClassCastException.class)
-    public void stringIncorrectLength() {
-        String value = "Some String";
-
-        byte[] bytes = Bits.stringToBytesWithFlag(value);
-        byte[] halfSize = new byte[bytes.length - (value.length() / 2)];
-        System.arraycopy(bytes, 0, halfSize, 0, halfSize.length);
-
-        Bits.stringFromBytesWithFlag(halfSize);
-    }
-
     @Test
     public void integerConvert() {
         byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);

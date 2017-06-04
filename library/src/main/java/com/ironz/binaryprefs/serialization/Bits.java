@@ -204,13 +204,8 @@ public final class Bits {
 
         int mainOffset = flagSize + stringLengthBytes.length;
         int expectedStringLength = intFromBytesWithFlag(stringLengthBytes);
-        int realStringLength = bytes.length - mainOffset;
 
-        if (expectedStringLength != realStringLength) {
-            throw new ClassCastException("Real String size does not match with expected String size");
-        }
-
-        return new String(bytes, flagSize + stringLengthBytes.length, expectedStringLength);
+        return new String(bytes, mainOffset, expectedStringLength);
     }
 
     /**
