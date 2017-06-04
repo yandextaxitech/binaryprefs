@@ -4,10 +4,10 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Persistable;
+import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.io.Externalizable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +50,7 @@ public final class BinaryPreferences implements Preferences {
     }
 
     @Override
-    public Map<String, ?> getAll() {
+    public Map<String, Object> getAll() {
         synchronized (lock) {
             try {
                 return getAllInternal();
@@ -134,10 +134,10 @@ public final class BinaryPreferences implements Preferences {
     }
 
     @Override
-    public <T extends Externalizable> T getObject(Class<T> clazz, String key, T defValue) {
+    public <T extends Persistable> T getPersistable(Class<T> clazz, String key, T defValue) {
         synchronized (lock) {
             try {
-                return getObjectInternal(key);
+                return getObjectInternal(key, clazz);
             } catch (Exception e) {
                 exceptionHandler.handle(e, key);
             }
@@ -173,7 +173,7 @@ public final class BinaryPreferences implements Preferences {
         }
     }
 
-    private Map<String, ?> getAllInternal() {
+    private Map<String, Object> getAllInternal() {
         Map<String, Object> map = new HashMap<>();
         for (String key : cacheProvider.keys()) {
             byte[] bytes = cacheProvider.get(key);
@@ -212,8 +212,9 @@ public final class BinaryPreferences implements Preferences {
         return Bits.booleanFromBytesWithFlag(bytes);
     }
 
-    private <T extends Externalizable> T getObjectInternal(String key) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    private <T extends Persistable> T getObjectInternal(String key, Class<T> clazz) {
+        byte[] bytes = cacheProvider.get(key);
+        return Bits.persistableFromBytes(bytes, clazz);
     }
 
     private boolean containsInternal(String key) {

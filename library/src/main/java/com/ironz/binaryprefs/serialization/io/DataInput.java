@@ -1,4 +1,6 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.io;
+
+import com.ironz.binaryprefs.serialization.Persistable;
 
 public interface DataInput {
 
@@ -82,4 +84,14 @@ public interface DataInput {
      * @return the <code>java.lang.String</code> value read.
      */
     String readString();
+
+    /**
+     * Deserializes byte array and given type into object.
+     *
+     * @param bytes given byte array created by specific output scheme
+     * @param clazz class type to deserialize in
+     * @param <T>   type
+     * @return deserialized object
+     */
+    <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) throws Exception;
 }

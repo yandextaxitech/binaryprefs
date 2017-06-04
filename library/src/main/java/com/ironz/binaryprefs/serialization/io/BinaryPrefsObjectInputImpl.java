@@ -1,15 +1,18 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.io;
+
+import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Persistable;
 
 public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     private int offset = 0;
     private byte[] buffer;
 
-    public <T extends Persistable> T deserialize(byte[] bytes, Class<? extends T> clazz) throws Exception {
-
+    @Override
+    public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) throws Exception {
         checkBytes(bytes);
         checkNull(clazz);
-        checkExternalizable(bytes);
+        checkPersistable(bytes);
 
         this.buffer = bytes;
 
@@ -23,7 +26,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public boolean readBoolean() {
         checkBounds();
         boolean b = Bits.booleanFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_BOOLEAN;
+        offset += Persistable.SIZE_BOOLEAN;
         return b;
     }
 
@@ -31,7 +34,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public byte readByte() {
         checkBounds();
         byte b = Bits.byteFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_BYTE;
+        offset += Persistable.SIZE_BYTE;
         return b;
     }
 
@@ -39,7 +42,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public short readShort() {
         checkBounds();
         short s = Bits.shortFromBytesWithFlag(buffer, offset);
-        offset += Bits.FLAG_SHORT;
+        offset += Persistable.SIZE_SHORT;
         return s;
     }
 
@@ -47,7 +50,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public char readChar() {
         checkBounds();
         char c = Bits.charFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_CHAR;
+        offset += Persistable.SIZE_CHAR;
         return c;
     }
 
@@ -55,7 +58,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public int readInt() {
         checkBounds();
         int i = Bits.intFromBytesWithFlag(buffer, offset);
-        offset += Bits.FLAG_INT;
+        offset += Persistable.SIZE_INT;
         return i;
     }
 
@@ -63,7 +66,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public long readLong() {
         checkBounds();
         long l = Bits.longFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_LONG;
+        offset += Persistable.SIZE_LONG;
         return l;
     }
 
@@ -71,7 +74,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public float readFloat() {
         checkBounds();
         float f = Bits.floatFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_FLOAT;
+        offset += Persistable.SIZE_FLOAT;
         return f;
     }
 
@@ -79,7 +82,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public double readDouble() {
         checkBounds();
         double d = Bits.doubleFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_DOUBLE;
+        offset += Persistable.SIZE_DOUBLE;
         return d;
     }
 
@@ -87,9 +90,9 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     public String readString() {
         checkBounds();
         int bytesStringSize = Bits.intFromBytesWithFlag(buffer, offset);
-        offset += Bits.SIZE_INT;
+        offset += Persistable.SIZE_INT;
         String s = Bits.stringFromBytesWithFlag(buffer, offset, bytesStringSize);
-        offset += bytesStringSize;
+        offset += Persistable.SIZE_STRING + bytesStringSize;
         return s;
     }
 
@@ -105,9 +108,9 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
         }
     }
 
-    private void checkExternalizable(byte[] bytes) {
+    private void checkPersistable(byte[] bytes) {
         byte flag = bytes[0];
-        if (flag != Bits.FLAG_EXTERNALIZABLE) {
+        if (flag != Persistable.FLAG_PERSISTABLE) {
             throw new ClassCastException(String.format("Externalizable cannot be deserialized in '%s' flag type", flag));
         }
         offset++;

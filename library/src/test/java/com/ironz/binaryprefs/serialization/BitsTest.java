@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.impl.TestAddress;
+import com.ironz.binaryprefs.impl.TestUser;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -231,6 +233,27 @@ public class BitsTest {
         bytes[0] = INCORRECT_FLAG;
 
         Bits.charFromBytesWithFlag(bytes);
+    }
+
+    @Test
+    public void persistableConvert() {
+        TestUser user = new TestUser();
+        user.setName("John");
+        user.setAge((short) 21);
+        user.setSex('M');
+        user.setMarried(true);
+        user.setPostal(1234567890L);
+        user.setChild((byte) 19);
+        user.addAddresses(new TestAddress("USA", "New York", "1th", 25));
+        user.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1));
+
+        byte[] bytes = Bits.persistableToBytes(user);
+
+        TestUser restored = Bits.persistableFromBytes(bytes, TestUser.class);
+
+        System.out.println(user + "\n\n\n" + restored);
+        assertEquals(Persistable.FLAG_PERSISTABLE, bytes[0]);
+        assertEquals(user, restored);
     }
 
     @Test(expected = UnsupportedClassVersionError.class)

@@ -1,4 +1,6 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.io;
+
+import com.ironz.binaryprefs.serialization.Persistable;
 
 public interface DataOutput {
 
@@ -73,4 +75,13 @@ public interface DataOutput {
      * @param s the <code>String</code> value to be written.
      */
     void writeString(String s);
+
+    /**
+     * Serializes all input object data into byte array with specific scheme
+     *
+     * @param value given object
+     * @param <T>   type
+     * @return byte array
+     */
+    <T extends Persistable> byte[] serialize(T value);
 }

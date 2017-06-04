@@ -1,21 +1,25 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.io;
+
+import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Persistable;
 
 public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     //bytes for initial array size, buffer array are resizable to (buffer.length + GROW_ARRAY_CAPACITY) after reaching limit.
-    private static final int GROW_ARRAY_CAPACITY = 128;
+    private static final int GROW_ARRAY_CAPACITY = 18;
+
 
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
-    public <T extends Persistable> byte[] serialize(T t) throws Exception {
+    @Override
+    public <T extends Persistable> byte[] serialize(T value) {
 
-        checkNull(t);
+        checkNull(value);
 
-        byte[] flag = {Bits.FLAG_EXTERNALIZABLE};
-        write(flag);
+        write(new byte[]{Persistable.FLAG_PERSISTABLE});
 
-        t.writeExternal(this);
+        value.writeExternal(this);
 
         byte[] bytes = new byte[offset];
         System.arraycopy(buffer, 0, bytes, 0, offset);
@@ -70,23 +74,9 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     private void write(byte[] value) {
         int length = value.length;
-        checkBounds(value, length);
         tryGrowArray(length);
         System.arraycopy(value, 0, buffer, offset, length);
-    }
-
-    private void checkBounds(byte[] value, int len) {
-        boolean incorrectLength = len > value.length;
-        if (incorrectLength) {
-            throw new ArrayIndexOutOfBoundsException("Can't write out of bounds array");
-        }
-    }
-
-    private void growArray(int len) {
-        byte[] bytes = new byte[buffer.length + GROW_ARRAY_CAPACITY];
-        System.arraycopy(buffer, 0, bytes, 0, buffer.length);
-        buffer = bytes;
-        offset += len;
+        offset += length;
     }
 
     private void checkNull(Object value) {
@@ -96,8 +86,14 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     }
 
     private void tryGrowArray(int len) {
-        if (offset + len <= buffer.length) {
+        if (offset + len >= buffer.length - 1) {
             growArray(len);
         }
+    }
+
+    private void growArray(int len) {
+        byte[] bytes = new byte[buffer.length + len + GROW_ARRAY_CAPACITY];
+        System.arraycopy(buffer, 0, bytes, 0, buffer.length);
+        buffer = bytes;
     }
 }

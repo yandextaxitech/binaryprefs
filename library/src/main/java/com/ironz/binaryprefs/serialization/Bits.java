@@ -1,5 +1,10 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.serialization.io.BinaryPrefsObjectInputImpl;
+import com.ironz.binaryprefs.serialization.io.BinaryPrefsObjectOutputImpl;
+import com.ironz.binaryprefs.serialization.io.DataInput;
+import com.ironz.binaryprefs.serialization.io.DataOutput;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,56 +62,6 @@ public final class Bits {
      * Uses for detecting byte array primitive type of {@link Character}
      */
     static final byte FLAG_CHAR = -10;
-
-    /**
-     * Uses for detecting byte array primitive type of {@link java.io.Externalizable}
-     */
-    static final byte FLAG_EXTERNALIZABLE = -11;
-
-    /**
-     * Minimum size primitive type of {@link String}
-     */
-    static final int SIZE_STRING = 1;
-
-    /**
-     * Minimum size primitive type of {@link Integer}
-     */
-    static final int SIZE_INT = 2;
-
-    /**
-     * Minimum size primitive type of {@link Long}
-     */
-    static final int SIZE_LONG = 9;
-
-    /**
-     * Minimum size primitive type of {@link Double}
-     */
-    static final int SIZE_DOUBLE = 9;
-
-    /**
-     * Minimum size primitive type of {@link Float}
-     */
-    static final int SIZE_FLOAT = 5;
-
-    /**
-     * Minimum size primitive type of {@link Boolean}
-     */
-    static final int SIZE_BOOLEAN = 2;
-
-    /**
-     * Minimum size primitive type of {@link Byte}
-     */
-    static final int SIZE_BYTE = 2;
-
-    /**
-     * Minimum size primitive type of {@link Short}
-     */
-    static final int SIZE_SHORT = 3;
-
-    /**
-     * Minimum size primitive type of {@link Character}
-     */
-    static final int SIZE_CHAR = 3;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
 
@@ -598,6 +553,37 @@ public final class Bits {
         }
         return (char) ((bytes[1 + offset] << 8) +
                 (bytes[2 + offset] & 0xFF));
+    }
+
+    /**
+     * Serialize {@code {@link Persistable}} into byte array with following scheme:
+     * [{@link Persistable#FLAG_PERSISTABLE}] + [persistable_bytes].
+     *
+     * @param value target {@link Persistable} to serialize.
+     * @return specific byte array with scheme.
+     */
+    public static <T extends Persistable> byte[] persistableToBytes(T value) {
+        DataOutput output = new BinaryPrefsObjectOutputImpl();
+        try {
+            return output.serialize(value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Deserialize {@link Persistable} by {@link #persistableToBytes(Persistable)} convention
+     *
+     * @param bytes target byte array for deserialization
+     * @return deserialized {@link Persistable}
+     */
+    public static <T extends Persistable> T persistableFromBytes(byte[] bytes, Class<T> clazz) {
+        DataInput input = new BinaryPrefsObjectInputImpl();
+        try {
+            return input.deserialize(bytes, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

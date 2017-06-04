@@ -5,10 +5,10 @@ import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.util.Pair;
 
-import java.io.Externalizable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -107,8 +107,12 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     @Override
-    public <T extends Externalizable> PreferencesEditor putObject(String key, T value) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
+        synchronized (lock) {
+            byte[] bytes = Bits.persistableToBytes(value);
+            commitList.add(new Pair<>(key, bytes));
+            return this;
+        }
     }
 
     @Override
