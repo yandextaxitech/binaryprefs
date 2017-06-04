@@ -69,7 +69,6 @@ public final class Bits {
     static final byte FLAG_EXTERNALIZABLE = -12;
 
     private static final int INITIAL_INTEGER_LENGTH = 5;
-    private static final int NULL_STRING_SIZE = -1;
 
     private Bits() {
     }
@@ -82,13 +81,16 @@ public final class Bits {
      * @return specific byte array with scheme.
      */
     public static byte[] stringSetToBytesWithFlag(Set<String> value) {
+
+        value.remove(null);
+
         byte[][] bytes = new byte[value.size()][];
         int i = 0;
         int totalArraySize = 1;
 
         for (String s : value) {
-            byte[] stringBytes = s == null ? new byte[0] : s.getBytes();
-            byte[] stringSizeBytes = s == null ? intToBytesWithFlag(NULL_STRING_SIZE) : intToBytesWithFlag(stringBytes.length);
+            byte[] stringBytes = s.getBytes();
+            byte[] stringSizeBytes = intToBytesWithFlag(stringBytes.length);
 
             byte[] merged = new byte[stringBytes.length + stringSizeBytes.length];
 
@@ -131,12 +133,6 @@ public final class Bits {
 
                 byte[] stringSizeBytes = {bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]};
                 int stringSize = intFromBytesWithFlag(stringSizeBytes);
-
-                if (stringSize == NULL_STRING_SIZE) {
-                    set.add(null);
-                    i += INITIAL_INTEGER_LENGTH;
-                    continue;
-                }
 
                 byte[] stringBytes = new byte[stringSize];
 

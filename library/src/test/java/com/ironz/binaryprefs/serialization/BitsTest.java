@@ -32,24 +32,18 @@ public class BitsTest {
         value.add("Two");
         value.add("Three");
         value.add("");
-        value.add(null);
 
         byte[] bytes = Bits.stringSetToBytesWithFlag(value);
         Set<String> restored = Bits.stringSetFromBytesWithFlag(bytes);
 
-        assertEquals(37, bytes.length);
+        assertEquals(32, bytes.length);
         assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
         assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void stringSetIncorrectFlag() {
-        Set<String> value = new HashSet<>();
-        value.add("One");
-        value.add("Two");
-        value.add("Three");
-        value.add("");
-        value.add(null);
+        Set<String> value = Collections.emptySet();
 
         byte[] bytes = Bits.stringSetToBytesWithFlag(value);
 
