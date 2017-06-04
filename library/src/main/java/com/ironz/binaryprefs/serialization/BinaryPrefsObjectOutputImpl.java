@@ -134,9 +134,7 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     public void write(byte[] value, int off, int len) throws IOException {
         checkClosed();
         checkBounds(value, off, len);
-        if (offset + len <= buffer.length) {
-            growArray(len);
-        }
+        tryGrowArray(len);
         System.arraycopy(value, off, buffer, offset, len);
     }
 
@@ -148,6 +146,21 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     @Override
     public void close() throws IOException {
         closed = true;
+    }
+
+    private void checkClosed() throws IOException {
+        if (closed) {
+            throw new IOException("Cannot write to already closed object output");
+        }
+    }
+
+    private void checkBounds(byte[] value, int off, int len) {
+        boolean incorrectOffset = off > value.length;
+        boolean incorrectLength = len > value.length;
+        boolean incorrectBounds = (value.length - off) < len;
+        if (incorrectOffset || incorrectLength || incorrectBounds) {
+            throw new ArrayIndexOutOfBoundsException("Can't write out of bounds array");
+        }
     }
 
     private void growArray(int len) {
@@ -173,18 +186,9 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
         }
     }
 
-    private void checkClosed() throws IOException {
-        if (closed) {
-            throw new IOException("Cannot write to already closed object output");
-        }
-    }
-
-    private void checkBounds(byte[] value, int off, int len) {
-        boolean incorrectOffset = off > value.length;
-        boolean incorrectLength = len > value.length;
-        boolean incorrectBounds = (value.length - off) < len;
-        if (incorrectOffset || incorrectLength || incorrectBounds) {
-            throw new ArrayIndexOutOfBoundsException("Can't write out of bounds array");
+    private void tryGrowArray(int len) {
+        if (offset + len <= buffer.length) {
+            growArray(len);
         }
     }
 
