@@ -129,7 +129,8 @@ public final class Bits {
 
             while (i < bytes.length) {
 
-                byte[] stringSizeBytes = {bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]};
+                byte[] stringSizeBytes = new byte[INITIAL_INTEGER_LENGTH];
+                System.arraycopy(bytes, i, stringSizeBytes, 0, stringSizeBytes.length);
                 int stringSize = intFromBytesWithFlag(stringSizeBytes);
 
                 byte[] stringBytes = new byte[stringSize];
@@ -180,6 +181,7 @@ public final class Bits {
         int lengthWithoutFlag = bytes.length - 1;
         return new String(bytes, 1, lengthWithoutFlag);
     }
+
 
     /**
      * Serialize {@code int} into byte array with following scheme:

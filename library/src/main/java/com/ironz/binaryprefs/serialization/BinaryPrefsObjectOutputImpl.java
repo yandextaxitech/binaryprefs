@@ -13,15 +13,14 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
     private boolean closed = false;
 
-    @Override
-    public void writeObject(Object value) throws IOException {
+    public <T extends Externalizable> byte[] serialize(T t) throws Exception {
 
-        checkNull(value);
-        checkExternalizable(value);
+        checkNull(t);
+        checkExternalizable(t);
         checkClosed();
 
         byte[] flag = {Bits.FLAG_EXTERNALIZABLE};
-        String className = value.getClass().getName();
+        String className = t.getClass().getName();
         byte[] nameLength = Bits.intToBytesWithFlag(className.length());
         byte[] name = Bits.stringToBytesWithFlag(className);
 
@@ -29,8 +28,16 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
         write(nameLength, 0, nameLength.length);
         write(name, 0, name.length);
 
-        Externalizable externalizable = (Externalizable) value;
-        externalizable.writeExternal(this);
+        t.writeExternal(this);
+
+        byte[] bytes = new byte[offset];
+        System.arraycopy(buffer, 0, bytes, 0, offset);
+        return bytes;
+    }
+
+    @Override
+    public void writeObject(Object value) throws IOException {
+        throw new UnsupportedOperationException("This serialization type does not supported!");
     }
 
     @Override
@@ -193,11 +200,5 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
         if (offset + len <= buffer.length) {
             growArray(len);
         }
-    }
-
-    public byte[] getBytes() {
-        byte[] bytes = new byte[offset];
-        System.arraycopy(buffer, 0, bytes, 0, offset);
-        return bytes;
     }
 }

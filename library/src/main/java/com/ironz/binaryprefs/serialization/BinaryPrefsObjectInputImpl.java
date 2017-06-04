@@ -1,43 +1,29 @@
 package com.ironz.binaryprefs.serialization;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 
 public final class BinaryPrefsObjectInputImpl implements ObjectInput {
 
-    private final byte[] buffer;
+    private byte[] buffer;
     private int offset = 0;
 
-    public BinaryPrefsObjectInputImpl(byte[] buffer) {
-        this.buffer = buffer;
+    public <T extends Externalizable> T deserialize(byte[] bytes, Class<? extends T> clazz) throws Exception {
+        T instance = clazz.newInstance();
+        instance.readExternal(this);
+        return instance;
     }
 
     @Override
     public Object readObject() throws ClassNotFoundException, IOException {
-
-        checkBounds();
-        checkExternalizable();
-        String className = getExternalizableClassName();
-
-        return null;
+        throw new UnsupportedOperationException("This deserialization type does not supported!");
     }
 
     private void checkBounds() {
         if (offset >= buffer.length - 1) {
             throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array");
         }
-    }
-
-    private void checkExternalizable() {
-        byte flag = buffer[offset];
-        if (flag != Bits.FLAG_EXTERNALIZABLE) {
-            throw new ClassCastException(String.format("Externalizable cannot be deserialized in '%s' flag type", flag));
-        }
-        offset++;
-    }
-
-    private String getExternalizableClassName() {
-        return null;
     }
 
     @Override
