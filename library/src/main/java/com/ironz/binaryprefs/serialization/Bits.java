@@ -123,10 +123,6 @@ public final class Bits {
         byte flag = bytes[0];
         if (flag == FLAG_STRING_SET) {
 
-            if (bytes.length == 1) {
-                return new HashSet<>(0);
-            }
-
             Set<String> set = new HashSet<>();
 
             int i = 1;
@@ -145,8 +141,8 @@ public final class Bits {
                 byte[] stringBytes = new byte[stringSize];
 
                 for (int k = 0; k < stringBytes.length; k++) {
-                    int offset = i + k + INITIAL_INTEGER_LENGTH;
-                    stringBytes[k] = bytes[offset];
+                    int stringOffset = i + k + INITIAL_INTEGER_LENGTH;
+                    stringBytes[k] = bytes[stringOffset];
                 }
 
                 set.add(new String(stringBytes));

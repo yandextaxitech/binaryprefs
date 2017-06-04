@@ -37,7 +37,6 @@ public final class BinaryPrefsObjectInputImpl implements ObjectInput {
     }
 
     private String getExternalizableClassName() {
-
         return null;
     }
 
