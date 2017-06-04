@@ -4,8 +4,8 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.util.Pair;
 
 import java.io.Externalizable;
@@ -63,6 +63,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (values == null) {
                 return remove(key);
             }
+            values.remove(null);
             byte[] bytes = Bits.stringSetToBytesWithFlag(values);
             commitList.add(new Pair<>(key, bytes));
             return this;

@@ -82,8 +82,6 @@ public final class Bits {
      */
     public static byte[] stringSetToBytesWithFlag(Set<String> value) {
 
-        value.remove(null);
-
         byte[][] bytes = new byte[value.size()][];
         int i = 0;
         int totalArraySize = 1;
