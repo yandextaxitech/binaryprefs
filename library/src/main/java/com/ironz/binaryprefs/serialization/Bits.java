@@ -152,27 +152,18 @@ public final class Bits {
 
     /**
      * Serialize {@code String} into byte array with following scheme:
-     * [{@link #FLAG_STRING}] + [string_length_int] + [string_byte_array].
+     * [{@link #FLAG_STRING}] + [string_byte_array].
      *
      * @param value target String to serialize.
      * @return specific byte array with scheme.
      */
     public static byte[] stringToBytesWithFlag(String value) {
-
         byte[] stringBytes = value.getBytes();
         int flagSize = 1;
-        int stringLength = stringBytes.length;
-        byte[] lengthBytes = intToBytesWithFlag(stringLength);
-        int mainOffset = flagSize + lengthBytes.length;
-
-        byte[] bytes = new byte[flagSize + lengthBytes.length + stringLength];
-
-        bytes[0] = FLAG_STRING;
-
-        System.arraycopy(lengthBytes, 0, bytes, flagSize, lengthBytes.length);
-        System.arraycopy(stringBytes, 0, bytes, mainOffset, stringBytes.length);
-
-        return bytes;
+        byte[] b = new byte[stringBytes.length + flagSize];
+        b[0] = FLAG_STRING;
+        System.arraycopy(stringBytes, 0, b, flagSize, stringBytes.length);
+        return b;
     }
 
     /**
@@ -186,16 +177,8 @@ public final class Bits {
         if (flag != FLAG_STRING) {
             throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
         }
-
-        int flagSize = 1;
-        byte[] stringLengthBytes = new byte[INITIAL_INTEGER_LENGTH];
-
-        System.arraycopy(bytes, flagSize, stringLengthBytes, 0, stringLengthBytes.length);
-
-        int mainOffset = flagSize + stringLengthBytes.length;
-        int expectedStringLength = intFromBytesWithFlag(stringLengthBytes);
-
-        return new String(bytes, mainOffset, expectedStringLength);
+        int lengthWithoutFlag = bytes.length - 1;
+        return new String(bytes, 1, lengthWithoutFlag);
     }
 
     /**

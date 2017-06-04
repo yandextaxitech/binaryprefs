@@ -21,9 +21,12 @@ public final class BinaryPrefsObjectOutputImpl implements ObjectOutput {
         checkClosed();
 
         byte[] flag = {Bits.FLAG_EXTERNALIZABLE};
-        byte[] name = Bits.stringToBytesWithFlag(value.getClass().getName());
+        String className = value.getClass().getName();
+        byte[] nameLength = Bits.intToBytesWithFlag(className.length());
+        byte[] name = Bits.stringToBytesWithFlag(className);
 
         write(flag, 0, flag.length);
+        write(nameLength, 0, nameLength.length);
         write(name, 0, name.length);
 
         Externalizable externalizable = (Externalizable) value;

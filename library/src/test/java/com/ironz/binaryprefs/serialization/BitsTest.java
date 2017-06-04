@@ -59,7 +59,7 @@ public class BitsTest {
         byte[] bytes = Bits.stringToBytesWithFlag(value);
         String restored = Bits.stringFromBytesWithFlag(bytes);
 
-        assertEquals(17, bytes.length);
+        assertEquals(12, bytes.length);
         assertEquals(Bits.FLAG_STRING, bytes[0]);
         assertEquals(value, restored);
     }
