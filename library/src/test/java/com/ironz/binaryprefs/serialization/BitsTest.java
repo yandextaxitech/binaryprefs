@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.Bits;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -66,18 +65,30 @@ public class BitsTest {
         byte[] bytes = Bits.stringToBytesWithFlag(value);
         String restored = Bits.stringFromBytesWithFlag(bytes);
 
-        assertEquals(12, bytes.length);
+        assertEquals(17, bytes.length);
         assertEquals(Bits.FLAG_STRING, bytes[0]);
         assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void stringIncorrectFlag() {
-        byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
+        String value = "Some String";
 
+        byte[] bytes = Bits.stringToBytesWithFlag(value);
         bytes[0] = INCORRECT_FLAG;
 
-        Bits.intFromBytesWithFlag(bytes);
+        Bits.stringFromBytesWithFlag(bytes);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void stringIncorrectLength() {
+        String value = "Some String";
+
+        byte[] bytes = Bits.stringToBytesWithFlag(value);
+        byte[] halfSize = new byte[bytes.length - (value.length() / 2)];
+        System.arraycopy(bytes, 0, halfSize, 0, halfSize.length);
+
+        Bits.stringFromBytesWithFlag(halfSize);
     }
 
     @Test
