@@ -10,6 +10,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) {
+
         checkBytes(bytes);
         checkNull(clazz);
         checkPersistable(bytes);
