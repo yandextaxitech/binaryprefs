@@ -8,9 +8,11 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
+import com.ironz.binaryprefs.impl.TestAddress;
+import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
@@ -213,6 +215,45 @@ public final class BinaryPreferencesTest {
         defaultValue.add("tree");
 
         Set<String> restored = preferences.getStringSet(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
+    public void persistableValue() {
+        String key = TestUser.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        TestUser value = new TestUser();
+        value.setName("John");
+        value.setAge((short) 21);
+        value.setSex('M');
+        value.setMarried(true);
+        value.setPostal(1234567890L);
+        value.setChild((byte) 19);
+        value.addAddresses(new TestAddress("USA", "New York", "1th", 25));
+        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1));
+
+        preferences.edit()
+                .putPersistable(key, value)
+                .apply();
+        TestUser restored = preferences.getPersistable(TestUser.class, key, new TestUser());
+
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void persistableDefaultValue() {
+        String key = TestUser.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        TestUser defaultValue = new TestUser();
+        defaultValue.setName("John");
+        defaultValue.setAge((short) 21);
+        defaultValue.setSex('M');
+        defaultValue.setMarried(true);
+        defaultValue.setPostal(1234567890L);
+        defaultValue.setChild((byte) 19);
+        defaultValue.addAddresses(new TestAddress("USA", "New York", "1th", 25));
+        defaultValue.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1));
+
+        TestUser restored = preferences.getPersistable(TestUser.class, key, defaultValue);
 
         assertEquals(defaultValue, restored);
     }
