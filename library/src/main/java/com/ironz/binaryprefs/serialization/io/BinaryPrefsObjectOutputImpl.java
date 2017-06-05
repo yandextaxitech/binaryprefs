@@ -5,9 +5,8 @@ import com.ironz.binaryprefs.serialization.Persistable;
 
 public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
-    //bytes for initial array size, buffer array are resizable to (buffer.length + GROW_ARRAY_CAPACITY) after reaching limit.
-    private static final int GROW_ARRAY_CAPACITY = 18;
-
+    //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) after reaching limit.
+    private static final int GROW_ARRAY_CAPACITY = 128;
 
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
