@@ -7,56 +7,55 @@ import com.ironz.binaryprefs.serialization.io.DataOutput;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
-public final class TestUser implements Persistable {
+public final class TestMigrateUser implements Persistable {
 
     private String name;
-    private short age;
+    private byte age;
     private char sex;
     private boolean married;
     private long postal;
-    private byte child;
+    private short child;
     private float weight;
     private float height;
 
     private final List<TestAddress> addresses = new ArrayList<>();
 
-    public TestUser() {
+    public TestMigrateUser() {
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public void setAge(short age) {
+    private void setAge(byte age) {
         this.age = age;
     }
 
-    public void setSex(char sex) {
+    private void setSex(char sex) {
         this.sex = sex;
     }
 
-    public void setMarried(boolean married) {
+    private void setMarried(boolean married) {
         this.married = married;
     }
 
-    public void setPostal(long postal) {
+    private void setPostal(long postal) {
         this.postal = postal;
     }
 
-    public void setChild(byte child) {
+    private void setChild(short child) {
         this.child = child;
     }
 
-    public void setWeight(float weight) {
+    private void setWeight(float weight) {
         this.weight = weight;
     }
 
-    public void setHeight(float height) {
+    private void setHeight(float height) {
         this.height = height;
     }
 
-    public void addAddresses(TestAddress address) {
+    private void addAddresses(TestAddress address) {
         this.addresses.add(address);
     }
 
@@ -64,11 +63,11 @@ public final class TestUser implements Persistable {
     public void writeExternal(DataOutput out) {
 
         out.writeString(name);
-        out.writeShort(age);
+        out.writeByte(age);
         out.writeChar(sex);
         out.writeBoolean(married);
         out.writeLong(postal);
-        out.writeByte(child);
+        out.writeShort(child);
         out.writeFloat(weight);
         out.writeFloat(height);
 
@@ -83,11 +82,11 @@ public final class TestUser implements Persistable {
     public void readExternal(DataInput in) {
 
         name = in.readString();
-        age = in.readShort();
+        age = in.readByte();
         sex = in.readChar();
         married = in.readBoolean();
         postal = in.readLong();
-        child = in.readByte();
+        child = in.readShort();
         weight = in.readFloat();
         height = in.readFloat();
 
@@ -104,17 +103,17 @@ public final class TestUser implements Persistable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TestUser testUser = (TestUser) o;
+        TestMigrateUser that = (TestMigrateUser) o;
 
-        if (age != testUser.age) return false;
-        if (sex != testUser.sex) return false;
-        if (married != testUser.married) return false;
-        if (postal != testUser.postal) return false;
-        if (child != testUser.child) return false;
-        if (Float.compare(testUser.weight, weight) != 0) return false;
-        if (Float.compare(testUser.height, height) != 0) return false;
-        if (name != null ? !name.equals(testUser.name) : testUser.name != null) return false;
-        return addresses != null ? addresses.equals(testUser.addresses) : testUser.addresses == null;
+        if (age != that.age) return false;
+        if (sex != that.sex) return false;
+        if (married != that.married) return false;
+        if (postal != that.postal) return false;
+        if (child != that.child) return false;
+        if (Float.compare(that.weight, weight) != 0) return false;
+        if (Float.compare(that.height, height) != 0) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return addresses != null ? addresses.equals(that.addresses) : that.addresses == null;
     }
 
     @Override
@@ -133,7 +132,7 @@ public final class TestUser implements Persistable {
 
     @Override
     public String toString() {
-        return "TestUser{" +
+        return "TestMigrateUser{" +
                 "name='" + name + '\'' + '\n' +
                 ", age=" + age + '\n' +
                 ", sex=" + sex + '\n' +
@@ -146,18 +145,19 @@ public final class TestUser implements Persistable {
                 '}';
     }
 
-    public static TestUser createUser() {
-        TestUser value = new TestUser();
+    public static TestMigrateUser createUser() {
+        TestMigrateUser value = new TestMigrateUser();
         value.setName("John");
-        value.setAge((short) 21);
+        value.setAge((byte) 21);
         value.setSex('M');
         value.setMarried(true);
         value.setPostal(1234567890L);
-        value.setChild((byte) 19);
+        value.setChild((short) 19);
         value.setWeight(74.2f);
         value.setHeight(1.78f);
         value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
         value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
         return value;
     }
+
 }

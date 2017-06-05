@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.impl.TestMigrateUser;
 import com.ironz.binaryprefs.impl.TestUser;
 import org.junit.Test;
 
@@ -265,6 +266,24 @@ public class BitsTest {
         byte[] bytes = Bits.persistableToBytes(value);
 
         bytes[0] = INCORRECT_FLAG;
+        Bits.persistableFromBytes(bytes, TestUser.class);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void persistableIncorrectReadConvert() {
+        TestUser value = TestUser.createUser();
+
+        byte[] bytes = Bits.persistableToBytes(value);
+
+        Bits.persistableFromBytes(bytes, TestMigrateUser.class);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void persistableIncorrectReadBackConvert() {
+        TestMigrateUser value = TestMigrateUser.createUser();
+
+        byte[] bytes = Bits.persistableToBytes(value);
+
         Bits.persistableFromBytes(bytes, TestUser.class);
     }
 
