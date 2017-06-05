@@ -10,12 +10,10 @@ import java.io.Serializable;
  * written in the serialization stream and it is the responsibility
  * of the class to save and restore the contents of its instances.
  * <p>
- * The writeExternal and readExternal methods of the Persistable
- * interface are implemented by a class to give the class complete
- * control over the format and contents of the stream for an object
- * and its supertypes. These methods must explicitly
- * coordinate with the supertype to save its state. These methods supersede
- * customized implementations of writeObject and readObject methods.<br>
+ * The {@link #writeExternal(DataOutput)} and {@link #readExternal(DataInput)}
+ * methods of the Persistable interface are implemented by a class to give
+ * the class complete control over the format and contents of the stream
+ * for an object and its supertypes.
  * <p>
  *
  * @see java.io.Serializable
