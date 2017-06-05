@@ -16,10 +16,15 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
         this.buffer = bytes;
 
+        T instance = newInstance(clazz);
+        instance.readExternal(this);
+
+        return instance;
+    }
+
+    private <T extends Persistable> T newInstance(Class<T> clazz) {
         try {
-            T instance = clazz.newInstance();
-            instance.readExternal(this);
-            return instance;
+            return clazz.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
