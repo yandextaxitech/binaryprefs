@@ -251,7 +251,6 @@ public class BitsTest {
 
         TestUser restored = Bits.persistableFromBytes(bytes, TestUser.class);
 
-        System.out.println(user + "\n\n\n" + restored);
         assertEquals(Persistable.FLAG_PERSISTABLE, bytes[0]);
         assertEquals(user, restored);
     }

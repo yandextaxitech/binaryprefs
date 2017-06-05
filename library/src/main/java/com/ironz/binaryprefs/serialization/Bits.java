@@ -170,7 +170,7 @@ public final class Bits {
      * @return deserialized String
      */
     public static String stringFromBytesWithFlag(byte[] bytes) {
-        return stringFromBytesWithFlag(bytes, 0, bytes.length);
+        return stringFromBytesWithFlag(bytes, 0, bytes.length - 1);
     }
 
     /**
@@ -186,9 +186,8 @@ public final class Bits {
         if (flag != FLAG_STRING) {
             throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
         }
-        int lengthWithoutFlag = length - 1;
         int flagOffset = 1;
-        return new String(bytes, offset + flagOffset, lengthWithoutFlag);
+        return new String(bytes, offset + flagOffset, length);
     }
 
     /**
@@ -511,7 +510,7 @@ public final class Bits {
             throw new ClassCastException(String.format("short cannot be deserialized in '%s' flag type", flag));
         }
         return (short) ((bytes[1 + offset] << 8) +
-                (bytes[2] & 0xFF));
+                (bytes[2 + offset] & 0xFF));
     }
 
     /**
