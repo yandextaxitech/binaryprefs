@@ -200,10 +200,10 @@ public final class Bits {
     public static byte[] intToBytesWithFlag(int value) {
         return new byte[]{
                 FLAG_INT,
-                (byte) (value >>> 24),
-                (byte) (value >>> 16),
-                (byte) (value >>> 8),
-                (byte) value
+                (byte) ((value >>> 24) & 255),
+                (byte) ((value >>> 16) & 255),
+                (byte) ((value >>> 8) & 255),
+                (byte) ((value >>> 0) & 255)
         };
     }
 
@@ -225,14 +225,13 @@ public final class Bits {
      * @return deserialized int
      */
     public static int intFromBytesWithFlag(byte[] bytes, int offset) {
-        int i = 0xFF;
         byte flag = bytes[offset];
         if (flag != FLAG_INT) {
             throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
         }
-        return ((bytes[4 + offset] & i)) +
-                ((bytes[3 + offset] & i) << 8) +
-                ((bytes[2 + offset] & i) << 16) +
+        return ((bytes[4 + offset] & 255 << 0)) +
+                ((bytes[3 + offset] & 255) << 8) +
+                ((bytes[2 + offset] & 255) << 16) +
                 ((bytes[1 + offset]) << 24);
     }
 
@@ -275,18 +274,17 @@ public final class Bits {
      * @return deserialized long
      */
     public static long longFromBytesWithFlag(byte[] bytes, int offset) {
-        long l = 0xFFL;
         byte flag = bytes[offset];
         if (flag != FLAG_LONG) {
             throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
         }
-        return ((bytes[8 + offset] & l)) +
-                ((bytes[7 + offset] & l) << 8) +
-                ((bytes[6 + offset] & l) << 16) +
-                ((bytes[5 + offset] & l) << 24) +
-                ((bytes[4 + offset] & l) << 32) +
-                ((bytes[3 + offset] & l) << 40) +
-                ((bytes[2 + offset] & l) << 48) +
+        return ((bytes[8 + offset] & 255L)) +
+                ((bytes[7 + offset] & 255L) << 8) +
+                ((bytes[6 + offset] & 255L) << 16) +
+                ((bytes[5 + offset] & 255L) << 24) +
+                ((bytes[4 + offset] & 255L) << 32) +
+                ((bytes[3 + offset] & 255L) << 40) +
+                ((bytes[2 + offset] & 255L) << 48) +
                 (((long) bytes[1 + offset]) << 56);
     }
 
@@ -308,7 +306,7 @@ public final class Bits {
                 (byte) (l >>> 24),
                 (byte) (l >>> 16),
                 (byte) (l >>> 8),
-                (byte) (value)
+                (byte) (l)
         };
     }
 
@@ -330,19 +328,18 @@ public final class Bits {
      * @return deserialized double
      */
     public static double doubleFromBytesWithFlag(byte[] bytes, int offset) {
-        long l = 0xFFL;
         byte flag = bytes[offset];
         if (flag != FLAG_DOUBLE) {
             throw new ClassCastException(String.format("double cannot be deserialized in '%s' flag type", flag));
         }
-        long value = ((bytes[8] & l)) +
-                ((bytes[7 + offset] & l) << 8) +
-                ((bytes[6 + offset] & l) << 16) +
-                ((bytes[5 + offset] & l) << 24) +
-                ((bytes[4 + offset] & l) << 32) +
-                ((bytes[3 + offset] & l) << 40) +
-                ((bytes[2 + offset] & l) << 48) +
-                (((long) bytes[1 + offset]) << 56);
+        long value = ((bytes[8] & 255)) +
+                ((bytes[7 + offset] & 255) << 8) +
+                ((bytes[6 + offset] & 255) << 16) +
+                ((long) (bytes[5 + offset] & 255) << 24) +
+                ((long) (bytes[4 + offset] & 255) << 32) +
+                ((long) (bytes[3 + offset] & 255) << 40) +
+                ((long) (bytes[2 + offset] & 255) << 48) +
+                ((long) (bytes[1 + offset]) << 56);
         return Double.longBitsToDouble(value);
     }
 
@@ -382,15 +379,14 @@ public final class Bits {
      * @return deserialized float
      */
     public static float floatFromBytesWithFlag(byte[] bytes, int offset) {
-        int i = 0xFF;
         byte flag = bytes[offset];
         if (flag != FLAG_FLOAT) {
             throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
         }
-        int value = ((bytes[4 + offset] & i)) +
-                ((bytes[3 + offset] & i) << 8) +
-                ((bytes[2 + offset] & i) << 16) +
-                (bytes[1 + offset] << 24);
+        int value = ((bytes[4 + offset] & 255)) +
+                ((bytes[3 + offset] & 255) << 8) +
+                ((bytes[2 + offset] & 255) << 16) +
+                ((bytes[1 + offset] & 255) << 24);
         return Float.intBitsToFloat(value);
     }
 

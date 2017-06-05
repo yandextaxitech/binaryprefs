@@ -4,6 +4,10 @@ import com.ironz.binaryprefs.impl.TestAddress;
 import com.ironz.binaryprefs.impl.TestUser;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -117,13 +121,14 @@ public class BitsTest {
 
     @Test
     public void doubleConvert() {
-        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
+        double value = 53.123;
+        byte[] bytes = Bits.doubleToBytesWithFlag(value);
 
         double restored = Bits.doubleFromBytesWithFlag(bytes);
 
         assertEquals(9, bytes.length);
         assertEquals(Bits.FLAG_DOUBLE, bytes[0]);
-        assertEquals(Double.MAX_VALUE, restored, .0);
+        assertEquals(value, restored, .0);
     }
 
     @Test(expected = ClassCastException.class)
@@ -137,13 +142,14 @@ public class BitsTest {
 
     @Test
     public void floatConvert() {
-        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
+        float value = 1.78f;
+        byte[] bytes = Bits.floatToBytesWithFlag(value);
 
         float restored = Bits.floatFromBytesWithFlag(bytes);
 
         assertEquals(5, bytes.length);
         assertEquals(Bits.FLAG_FLOAT, bytes[0]);
-        assertEquals(Float.MAX_VALUE, restored, .0);
+        assertEquals(value, restored, .0);
     }
 
     @Test(expected = ClassCastException.class)
@@ -236,23 +242,44 @@ public class BitsTest {
     }
 
     @Test
-    public void persistableConvert() {
-        TestUser user = new TestUser();
-        user.setName("John");
-        user.setAge((short) 21);
-        user.setSex('M');
-        user.setMarried(true);
-        user.setPostal(1234567890L);
-        user.setChild((byte) 19);
-        user.addAddresses(new TestAddress("USA", "New York", "1th", 25));
-        user.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1));
+    public void dataObjectStreams() throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeDouble(53.123);
+        objectOutputStream.writeDouble(35.098);
 
-        byte[] bytes = Bits.persistableToBytes(user);
+        outputStream.flush();
+        objectOutputStream.flush();
+
+        byte[] bytes = outputStream.toByteArray();
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        ObjectInputStream stream = new ObjectInputStream(inputStream);
+        double v = stream.readDouble();
+        double v1 = stream.readDouble();
+        System.out.println("v: " + v + ", v1: " + v1);
+    }
+
+    @Test
+    public void persistableConvert() {
+        TestUser value = new TestUser();
+        value.setName("John");
+        value.setAge((short) 21);
+        value.setSex('M');
+        value.setMarried(true);
+        value.setPostal(1234567890L);
+        value.setChild((byte) 19);
+        value.setWeight(74.2f);
+        value.setHeight(1.78f);
+        value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
+        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
+
+        byte[] bytes = Bits.persistableToBytes(value);
 
         TestUser restored = Bits.persistableFromBytes(bytes, TestUser.class);
 
         assertEquals(Persistable.FLAG_PERSISTABLE, bytes[0]);
-        assertEquals(user, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = UnsupportedClassVersionError.class)

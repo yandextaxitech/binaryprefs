@@ -229,8 +229,10 @@ public final class BinaryPreferencesTest {
         value.setMarried(true);
         value.setPostal(1234567890L);
         value.setChild((byte) 19);
-        value.addAddresses(new TestAddress("USA", "New York", "1th", 25));
-        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1));
+        value.setWeight(74.2f);
+        value.setHeight(1.78f);
+        value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
+        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
 
         preferences.edit()
                 .putPersistable(key, value)
@@ -250,8 +252,10 @@ public final class BinaryPreferencesTest {
         defaultValue.setMarried(true);
         defaultValue.setPostal(1234567890L);
         defaultValue.setChild((byte) 19);
-        defaultValue.addAddresses(new TestAddress("USA", "New York", "1th", 25));
-        defaultValue.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1));
+        defaultValue.setWeight(74.2f);
+        defaultValue.setHeight(1.78f);
+        defaultValue.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
+        defaultValue.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
 
         TestUser restored = preferences.getPersistable(TestUser.class, key, defaultValue);
 

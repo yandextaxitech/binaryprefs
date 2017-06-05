@@ -16,6 +16,9 @@ public final class TestUser implements Persistable {
     private boolean married;
     private long postal;
     private byte child;
+    private float weight;
+    private float height;
+
     private List<TestAddress> addresses = new ArrayList<>();
 
     public TestUser() {
@@ -69,6 +72,22 @@ public final class TestUser implements Persistable {
         this.child = child;
     }
 
+    public float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(float weight) {
+        this.weight = weight;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
     public List<TestAddress> getAddresses() {
         return addresses;
     }
@@ -86,6 +105,8 @@ public final class TestUser implements Persistable {
         out.writeBoolean(married);
         out.writeLong(postal);
         out.writeByte(child);
+        out.writeFloat(weight);
+        out.writeFloat(height);
 
         int size = addresses.size();
         out.writeInt(size);
@@ -103,6 +124,8 @@ public final class TestUser implements Persistable {
         married = in.readBoolean();
         postal = in.readLong();
         child = in.readByte();
+        weight = in.readFloat();
+        height = in.readFloat();
 
         int size = in.readInt();
         for (int i = 0; i < size; i++) {
@@ -124,6 +147,8 @@ public final class TestUser implements Persistable {
         if (married != testUser.married) return false;
         if (postal != testUser.postal) return false;
         if (child != testUser.child) return false;
+        if (Float.compare(testUser.weight, weight) != 0) return false;
+        if (Float.compare(testUser.height, height) != 0) return false;
         if (name != null ? !name.equals(testUser.name) : testUser.name != null) return false;
         return addresses != null ? addresses.equals(testUser.addresses) : testUser.addresses == null;
     }
@@ -136,6 +161,8 @@ public final class TestUser implements Persistable {
         result = 31 * result + (married ? 1 : 0);
         result = 31 * result + (int) (postal ^ (postal >>> 32));
         result = 31 * result + (int) child;
+        result = 31 * result + (weight != +0.0f ? Float.floatToIntBits(weight) : 0);
+        result = 31 * result + (height != +0.0f ? Float.floatToIntBits(height) : 0);
         result = 31 * result + (addresses != null ? addresses.hashCode() : 0);
         return result;
     }
@@ -143,13 +170,15 @@ public final class TestUser implements Persistable {
     @Override
     public String toString() {
         return "TestUser{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", sex=" + sex +
-                ", married=" + married +
-                ", postal=" + postal +
-                ", child=" + child +
-                ", addresses=" + addresses +
+                "name='" + name + '\'' + '\n' +
+                ", age=" + age + '\n' +
+                ", sex=" + sex + '\n' +
+                ", married=" + married + '\n' +
+                ", postal=" + postal + '\n' +
+                ", child=" + child + '\n' +
+                ", weight=" + weight + '\n' +
+                ", height=" + height + '\n' +
+                ", addresses=" + addresses + '\n' +
                 '}';
     }
 }
