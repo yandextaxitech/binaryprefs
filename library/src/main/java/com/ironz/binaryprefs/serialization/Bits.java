@@ -351,13 +351,14 @@ public final class Bits {
      * @return specific byte array with scheme.
      */
     public static byte[] floatToBytesWithFlag(float value) {
-        int i = Float.floatToIntBits(value);
-        return new byte[]{
+        int val = Float.floatToIntBits(value);
+
+        return new byte[] {
                 FLAG_FLOAT,
-                (byte) (i >>> 24),
-                (byte) (i >>> 16),
-                (byte) (i >>> 8),
-                (byte) value
+                (byte) (val >>> 24),
+                (byte) (val >>> 16),
+                (byte) (val >>> 8),
+                (byte) (val)
         };
     }
 
@@ -383,10 +384,12 @@ public final class Bits {
         if (flag != FLAG_FLOAT) {
             throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
         }
-        int value = ((bytes[4 + offset] & 255)) +
-                ((bytes[3 + offset] & 255) << 8) +
-                ((bytes[2 + offset] & 255) << 16) +
-                ((bytes[1 + offset] & 255) << 24);
+
+        int value = ((bytes[offset + 4] & 0xFF)) +
+                ((bytes[offset + 3] & 0xFF) << 8) +
+                ((bytes[offset + 2] & 0xFF) << 16) +
+                ((bytes[offset + 1]) << 24);
+
         return Float.intBitsToFloat(value);
     }
 
