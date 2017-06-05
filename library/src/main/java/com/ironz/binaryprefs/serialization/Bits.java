@@ -332,7 +332,7 @@ public final class Bits {
         if (flag != FLAG_DOUBLE) {
             throw new ClassCastException(String.format("double cannot be deserialized in '%s' flag type", flag));
         }
-        long value = ((bytes[8] & 255)) +
+        long value = ((bytes[8 + offset] & 255)) +
                 ((bytes[7 + offset] & 255) << 8) +
                 ((bytes[6 + offset] & 255) << 16) +
                 ((long) (bytes[5 + offset] & 255) << 24) +
@@ -352,8 +352,7 @@ public final class Bits {
      */
     public static byte[] floatToBytesWithFlag(float value) {
         int val = Float.floatToIntBits(value);
-
-        return new byte[] {
+        return new byte[]{
                 FLAG_FLOAT,
                 (byte) (val >>> 24),
                 (byte) (val >>> 16),
@@ -562,11 +561,7 @@ public final class Bits {
      */
     public static <T extends Persistable> byte[] persistableToBytes(T value) {
         DataOutput output = new BinaryPrefsObjectOutputImpl();
-        try {
-            return output.serialize(value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return output.serialize(value);
     }
 
     /**
@@ -577,11 +572,7 @@ public final class Bits {
      */
     public static <T extends Persistable> T persistableFromBytes(byte[] bytes, Class<T> clazz) {
         DataInput input = new BinaryPrefsObjectInputImpl();
-        try {
-            return input.deserialize(bytes, clazz);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return input.deserialize(bytes, clazz);
     }
 
     /**

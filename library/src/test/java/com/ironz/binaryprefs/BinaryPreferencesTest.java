@@ -11,7 +11,6 @@ import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
-import com.ironz.binaryprefs.impl.TestAddress;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
@@ -222,17 +221,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void persistableValue() {
         String key = TestUser.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
-        TestUser value = new TestUser();
-        value.setName("John");
-        value.setAge((short) 21);
-        value.setSex('M');
-        value.setMarried(true);
-        value.setPostal(1234567890L);
-        value.setChild((byte) 19);
-        value.setWeight(74.2f);
-        value.setHeight(1.78f);
-        value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
-        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
+        TestUser value = TestUser.createUser();
 
         preferences.edit()
                 .putPersistable(key, value)
@@ -245,17 +234,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void persistableDefaultValue() {
         String key = TestUser.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
-        TestUser defaultValue = new TestUser();
-        defaultValue.setName("John");
-        defaultValue.setAge((short) 21);
-        defaultValue.setSex('M');
-        defaultValue.setMarried(true);
-        defaultValue.setPostal(1234567890L);
-        defaultValue.setChild((byte) 19);
-        defaultValue.setWeight(74.2f);
-        defaultValue.setHeight(1.78f);
-        defaultValue.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
-        defaultValue.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
+        TestUser defaultValue = TestUser.createUser();
 
         TestUser restored = preferences.getPersistable(TestUser.class, key, defaultValue);
 

@@ -24,72 +24,36 @@ public final class TestUser implements Persistable {
     public TestUser() {
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public short getAge() {
-        return age;
     }
 
     public void setAge(short age) {
         this.age = age;
     }
 
-    public char getSex() {
-        return sex;
-    }
-
     public void setSex(char sex) {
         this.sex = sex;
-    }
-
-    public boolean isMarried() {
-        return married;
     }
 
     public void setMarried(boolean married) {
         this.married = married;
     }
 
-    public long getPostal() {
-        return postal;
-    }
-
     public void setPostal(long postal) {
         this.postal = postal;
-    }
-
-    public byte getChild() {
-        return child;
     }
 
     public void setChild(byte child) {
         this.child = child;
     }
 
-    public float getWeight() {
-        return weight;
-    }
-
     public void setWeight(float weight) {
         this.weight = weight;
     }
 
-    public float getHeight() {
-        return height;
-    }
-
     public void setHeight(float height) {
         this.height = height;
-    }
-
-    public List<TestAddress> getAddresses() {
-        return addresses;
     }
 
     public void addAddresses(TestAddress address) {
@@ -180,5 +144,20 @@ public final class TestUser implements Persistable {
                 ", height=" + height + '\n' +
                 ", addresses=" + addresses + '\n' +
                 '}';
+    }
+
+    public static TestUser createUser() {
+        TestUser value = new TestUser();
+        value.setName("John");
+        value.setAge((short) 21);
+        value.setSex('M');
+        value.setMarried(true);
+        value.setPostal(1234567890L);
+        value.setChild((byte) 19);
+        value.setWeight(74.2f);
+        value.setHeight(1.78f);
+        value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
+        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
+        return value;
     }
 }

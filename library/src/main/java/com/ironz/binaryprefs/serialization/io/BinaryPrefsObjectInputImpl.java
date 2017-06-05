@@ -9,17 +9,20 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     private byte[] buffer;
 
     @Override
-    public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) throws Exception {
+    public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) {
         checkBytes(bytes);
         checkNull(clazz);
         checkPersistable(bytes);
 
         this.buffer = bytes;
 
-        T instance = clazz.newInstance();
-        instance.readExternal(this);
-
-        return instance;
+        try {
+            T instance = clazz.newInstance();
+            instance.readExternal(this);
+            return instance;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

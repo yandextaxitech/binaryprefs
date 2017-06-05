@@ -93,5 +93,5 @@ public interface DataInput {
      * @param <T>   type
      * @return deserialized object
      */
-    <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) throws Exception;
+    <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz);
 }

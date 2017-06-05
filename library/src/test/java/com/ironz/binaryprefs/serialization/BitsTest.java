@@ -1,13 +1,8 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.impl.TestAddress;
 import com.ironz.binaryprefs.impl.TestUser;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +20,7 @@ public class BitsTest {
         byte[] bytes = Bits.stringSetToBytesWithFlag(value);
         Set<String> restored = Bits.stringSetFromBytesWithFlag(bytes);
 
-        assertEquals(1, bytes.length);
+        assertEquals(Persistable.SIZE_STRING, bytes.length);
         assertEquals(Bits.FLAG_STRING_SET, bytes[0]);
         assertEquals(value, restored);
     }
@@ -64,7 +59,7 @@ public class BitsTest {
         byte[] bytes = Bits.stringToBytesWithFlag(value);
         String restored = Bits.stringFromBytesWithFlag(bytes);
 
-        assertEquals(12, bytes.length);
+        assertEquals(Persistable.SIZE_STRING + value.getBytes().length, bytes.length);
         assertEquals(Bits.FLAG_STRING, bytes[0]);
         assertEquals(value, restored);
     }
@@ -81,18 +76,20 @@ public class BitsTest {
 
     @Test
     public void integerConvert() {
-        byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
+        int value = 53;
+        byte[] bytes = Bits.intToBytesWithFlag(value);
 
         int restored = Bits.intFromBytesWithFlag(bytes);
 
-        assertEquals(5, bytes.length);
+        assertEquals(Persistable.SIZE_INT, bytes.length);
         assertEquals(Bits.FLAG_INT, bytes[0]);
-        assertEquals(Integer.MAX_VALUE, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void integerIncorrectFlag() {
-        byte[] bytes = Bits.intToBytesWithFlag(Integer.MAX_VALUE);
+        int value = 53;
+        byte[] bytes = Bits.intToBytesWithFlag(value);
 
         bytes[0] = INCORRECT_FLAG;
 
@@ -101,18 +98,20 @@ public class BitsTest {
 
     @Test
     public void longConvert() {
-        byte[] bytes = Bits.longToBytesWithFlag(Long.MAX_VALUE);
+        long value = 53L;
+        byte[] bytes = Bits.longToBytesWithFlag(value);
 
         long restored = Bits.longFromBytesWithFlag(bytes);
 
-        assertEquals(9, bytes.length);
+        assertEquals(Persistable.SIZE_LONG, bytes.length);
         assertEquals(Bits.FLAG_LONG, bytes[0]);
-        assertEquals(Long.MAX_VALUE, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void longIncorrectFlag() {
-        byte[] bytes = Bits.longToBytesWithFlag(Long.MAX_VALUE);
+        long value = 53L;
+        byte[] bytes = Bits.longToBytesWithFlag(value);
 
         bytes[0] = INCORRECT_FLAG;
 
@@ -126,14 +125,15 @@ public class BitsTest {
 
         double restored = Bits.doubleFromBytesWithFlag(bytes);
 
-        assertEquals(9, bytes.length);
+        assertEquals(Persistable.SIZE_DOUBLE, bytes.length);
         assertEquals(Bits.FLAG_DOUBLE, bytes[0]);
         assertEquals(value, restored, .0);
     }
 
     @Test(expected = ClassCastException.class)
     public void doubleIncorrectFlag() {
-        byte[] bytes = Bits.doubleToBytesWithFlag(Double.MAX_VALUE);
+        double value = 53.123;
+        byte[] bytes = Bits.doubleToBytesWithFlag(value);
 
         bytes[0] = INCORRECT_FLAG;
 
@@ -142,19 +142,20 @@ public class BitsTest {
 
     @Test
     public void floatConvert() {
-        float value = 1.78f;
+        float value = 53.123f;
         byte[] bytes = Bits.floatToBytesWithFlag(value);
 
         float restored = Bits.floatFromBytesWithFlag(bytes);
 
-        assertEquals(5, bytes.length);
+        assertEquals(Persistable.SIZE_FLOAT, bytes.length);
         assertEquals(Bits.FLAG_FLOAT, bytes[0]);
         assertEquals(value, restored, .0);
     }
 
     @Test(expected = ClassCastException.class)
     public void floatIncorrectFlag() {
-        byte[] bytes = Bits.floatToBytesWithFlag(Float.MAX_VALUE);
+        float value = 53.123f;
+        byte[] bytes = Bits.floatToBytesWithFlag(value);
 
         bytes[0] = INCORRECT_FLAG;
 
@@ -167,7 +168,7 @@ public class BitsTest {
 
         boolean restored = Bits.booleanFromBytesWithFlag(bytes);
 
-        assertEquals(2, bytes.length);
+        assertEquals(Persistable.SIZE_BOOLEAN, bytes.length);
         assertEquals(Bits.FLAG_BOOLEAN, bytes[0]);
         assertEquals(true, restored);
     }
@@ -183,18 +184,20 @@ public class BitsTest {
 
     @Test
     public void byteConvert() {
-        byte[] bytes = Bits.byteToBytesWithFlag(Byte.MAX_VALUE);
+        byte value = 53;
+        byte[] bytes = Bits.byteToBytesWithFlag(value);
 
         byte restored = Bits.byteFromBytesWithFlag(bytes);
 
-        assertEquals(2, bytes.length);
+        assertEquals(Persistable.SIZE_BYTE, bytes.length);
         assertEquals(Bits.FLAG_BYTE, bytes[0]);
-        assertEquals(Byte.MAX_VALUE, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void byteIncorrectFlag() {
-        byte[] bytes = Bits.byteToBytesWithFlag(Byte.MAX_VALUE);
+        byte value = 53;
+        byte[] bytes = Bits.byteToBytesWithFlag(value);
 
         bytes[0] = INCORRECT_FLAG;
 
@@ -203,18 +206,20 @@ public class BitsTest {
 
     @Test
     public void shortConvert() {
-        byte[] bytes = Bits.shortToBytesWithFlag(Short.MAX_VALUE);
+        short value = 53;
+        byte[] bytes = Bits.shortToBytesWithFlag(value);
 
         short restored = Bits.shortFromBytesWithFlag(bytes);
 
-        assertEquals(3, bytes.length);
+        assertEquals(Persistable.SIZE_SHORT, bytes.length);
         assertEquals(Bits.FLAG_SHORT, bytes[0]);
-        assertEquals(Short.MAX_VALUE, restored);
+        assertEquals(value, restored);
     }
 
     @Test(expected = ClassCastException.class)
     public void shortIncorrectFlag() {
-        byte[] bytes = Bits.shortToBytesWithFlag(Short.MAX_VALUE);
+        short value = 53;
+        byte[] bytes = Bits.shortToBytesWithFlag(value);
 
         bytes[0] = INCORRECT_FLAG;
 
@@ -227,7 +232,7 @@ public class BitsTest {
 
         char restored = Bits.charFromBytesWithFlag(bytes);
 
-        assertEquals(3, bytes.length);
+        assertEquals(Persistable.SIZE_CHAR, bytes.length);
         assertEquals(Bits.FLAG_CHAR, bytes[0]);
         assertEquals(Character.MAX_VALUE, restored);
     }
@@ -242,37 +247,8 @@ public class BitsTest {
     }
 
     @Test
-    public void dataObjectStreams() throws Exception {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeDouble(53.123);
-        objectOutputStream.writeDouble(35.098);
-
-        outputStream.flush();
-        objectOutputStream.flush();
-
-        byte[] bytes = outputStream.toByteArray();
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        ObjectInputStream stream = new ObjectInputStream(inputStream);
-        double v = stream.readDouble();
-        double v1 = stream.readDouble();
-        System.out.println("v: " + v + ", v1: " + v1);
-    }
-
-    @Test
     public void persistableConvert() {
-        TestUser value = new TestUser();
-        value.setName("John");
-        value.setAge((short) 21);
-        value.setSex('M');
-        value.setMarried(true);
-        value.setPostal(1234567890L);
-        value.setChild((byte) 19);
-        value.setWeight(74.2f);
-        value.setHeight(1.78f);
-        value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
-        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
+        TestUser value = TestUser.createUser();
 
         byte[] bytes = Bits.persistableToBytes(value);
 
@@ -280,6 +256,16 @@ public class BitsTest {
 
         assertEquals(Persistable.FLAG_PERSISTABLE, bytes[0]);
         assertEquals(value, restored);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void persistableIncorrectFlag() {
+        TestUser value = TestUser.createUser();
+
+        byte[] bytes = Bits.persistableToBytes(value);
+
+        bytes[0] = INCORRECT_FLAG;
+        Bits.persistableFromBytes(bytes, TestUser.class);
     }
 
     @Test(expected = UnsupportedClassVersionError.class)
@@ -330,7 +316,7 @@ public class BitsTest {
 
     @Test
     public void tryDeserializeFloat() {
-        float value = Float.MAX_VALUE;
+        float value = 1.78f;
 
         byte[] bytes = Bits.floatToBytesWithFlag(value);
         Object o = Bits.tryDeserializeByFlag(bytes);
