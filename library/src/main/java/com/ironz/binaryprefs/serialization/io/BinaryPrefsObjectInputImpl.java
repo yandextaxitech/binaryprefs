@@ -111,7 +111,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     private void checkPersistable(byte[] bytes) {
         byte flag = bytes[0];
         if (flag != Persistable.FLAG_PERSISTABLE) {
-            throw new ClassCastException(String.format("Externalizable cannot be deserialized in '%s' flag type", flag));
+            throw new ClassCastException(String.format("Persistable cannot be deserialized in '%s' flag type", flag));
         }
         offset++;
     }
