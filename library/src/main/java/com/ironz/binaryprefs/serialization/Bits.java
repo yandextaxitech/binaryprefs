@@ -561,6 +561,8 @@ public final class Bits {
     /**
      * Serialize {@code {@link Persistable}} into byte array with following scheme:
      * [{@link Persistable#FLAG_PERSISTABLE}] + [persistable_bytes].
+     * see {@link BinaryPrefsObjectOutputImpl} implementation for
+     * understanding serialization contract of "persistable_bytes" part.
      *
      * @param value target {@link Persistable} to serialize.
      * @return specific byte array with scheme.

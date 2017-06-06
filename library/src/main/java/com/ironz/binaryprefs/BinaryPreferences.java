@@ -137,7 +137,7 @@ public final class BinaryPreferences implements Preferences {
     public <T extends Persistable> T getPersistable(Class<T> clazz, String key, T defValue) {
         synchronized (lock) {
             try {
-                return getObjectInternal(key, clazz);
+                return getPersistableInternal(key, clazz);
             } catch (Exception e) {
                 exceptionHandler.handle(e, key);
             }
@@ -212,7 +212,7 @@ public final class BinaryPreferences implements Preferences {
         return Bits.booleanFromBytesWithFlag(bytes);
     }
 
-    private <T extends Persistable> T getObjectInternal(String key, Class<T> clazz) {
+    private <T extends Persistable> T getPersistableInternal(String key, Class<T> clazz) {
         byte[] bytes = cacheProvider.get(key);
         return Bits.persistableFromBytes(bytes, clazz);
     }
