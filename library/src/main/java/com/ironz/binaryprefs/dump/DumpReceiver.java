@@ -23,6 +23,7 @@ public final class DumpReceiver extends BroadcastReceiver {
 
         if (!BINARY_PREFERENCES_HASH_MAP.containsKey(prefName)) {
             Log.e(DumpReceiver.class.getName(), String.format("Cannot find '%s' preference for dumping!", prefName));
+            return;
         }
 
         BinaryPreferences preferences = BINARY_PREFERENCES_HASH_MAP.get(prefName);
@@ -41,7 +42,7 @@ public final class DumpReceiver extends BroadcastReceiver {
     }
 
     @SuppressWarnings("unused")
-    public static void appendPreference(String name, BinaryPreferences preferences) {
+    public static void register(String name, BinaryPreferences preferences) {
         BINARY_PREFERENCES_HASH_MAP.put(name, preferences);
     }
 }
