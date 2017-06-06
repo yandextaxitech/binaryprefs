@@ -5,7 +5,7 @@ import com.ironz.binaryprefs.serialization.Persistable;
 
 public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
-    //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) after reaching limit.
+    //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
 
     private int offset = 0;
@@ -91,7 +91,8 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     }
 
     private void growArray(int len) {
-        byte[] bytes = new byte[buffer.length + len + GROW_ARRAY_CAPACITY];
+        int newLength = (buffer.length + len + GROW_ARRAY_CAPACITY) * 2;
+        byte[] bytes = new byte[newLength];
         System.arraycopy(buffer, 0, bytes, 0, buffer.length);
         buffer = bytes;
     }
