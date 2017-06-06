@@ -134,75 +134,100 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public void apply() {
         synchronized (lock) {
-            performTransactions();
+            try {
+                applyClear();
+                applyRemove();
+                applyStore();
+            } catch (Exception e) {
+                exceptionHandler.handle(e, "apply method");
+            }
+        }
+    }
+
+    private void applyClear() {
+        if (!clearFlag) {
+            return;
+        }
+        for (final String name : fileAdapter.names()) {
+            taskExecutor.submit(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    removeInternal(name);
+                    return name;
+                }
+            });
+        }
+    }
+
+    private void applyRemove() {
+        for (final String name : removeSet) {
+            taskExecutor.submit(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    removeInternal(name);
+                    return name;
+                }
+            });
+        }
+    }
+
+    private void applyStore() {
+        for (final Pair<String, byte[]> pair : commitList) {
+            final String name = pair.getFirst();
+            taskExecutor.submit(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    storeInternal(name, pair.getSecond());
+                    return name;
+                }
+            });
         }
     }
 
     @Override
     public boolean commit() {
-        throw new UnsupportedOperationException("Not implemented yet!");
-    }
-
-    private void performTransactions() {
         try {
-            tryClearAll();
-            tryRemoveByKeys();
-            tryStoreByKeys();
+            commitClear();
+            commitRemove();
+            commitStore();
+            return true;
         } catch (Exception e) {
-            exceptionHandler.handle(e, "apply method");
+            exceptionHandler.handle(e, "commit method");
         }
+        return false;
     }
 
-    private void tryClearAll() {
+    private void commitClear() {
         if (!clearFlag) {
             return;
         }
-        for (final String name : fileAdapter.names()) {
-            removeOne(name);
+        for (String name : fileAdapter.names()) {
+            removeInternal(name);
         }
     }
 
-    private void tryRemoveByKeys() {
+    private void commitRemove() {
         for (final String name : removeSet) {
-            removeOne(name);
+            removeInternal(name);
         }
     }
 
-    private void tryStoreByKeys() {
+    private void commitStore() {
         for (final Pair<String, byte[]> pair : commitList) {
-            storeOne(pair.getFirst(), pair.getSecond());
+            final String name = pair.getFirst();
+            storeInternal(name, pair.getSecond());
         }
     }
 
-    private void removeOne(final String name) {
-        taskExecutor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return removeAndReturnName(name);
-            }
-        });
-    }
-
-    private void storeOne(final String name, final byte[] value) {
-        taskExecutor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return saveAndReturnName(name, value);
-            }
-        });
-    }
-
-    private String removeAndReturnName(String name) {
+    private void removeInternal(String name) {
         cacheProvider.remove(name);
         fileAdapter.remove(name);
         bridge.notifyListenersRemove(preferences, name);
-        return name;
     }
 
-    private String saveAndReturnName(String name, byte[] value) {
+    private void storeInternal(String name, byte[] value) {
         cacheProvider.put(name, value);
         fileAdapter.save(name, value);
         bridge.notifyListenersUpdate(preferences, name, value);
-        return name;
     }
 }

@@ -309,6 +309,38 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void commitTrue() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+        String undefined = "undefined";
+
+        boolean commit = preferences.edit()
+                .putString(key, value)
+                .commit();
+        String restored = preferences.getString(key, undefined);
+
+        assertTrue(commit);
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void commitFalse() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+        String undefined = "undefined";
+
+        folder.delete();
+
+        boolean commit = preferences.edit()
+                .putString(key, value)
+                .commit();
+        String restored = preferences.getString(key, undefined);
+
+        assertFalse(commit);
+//        assertEquals(undefined, restored); // TODO: 6/6/17 implement safe commits (small changes for event bridge listener implementations)
+    }
+
+    @Test
     public void listeners() {
         final String key = "key";
         final String value = "value";
