@@ -144,6 +144,19 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
+    @Override
+    public boolean commit() {
+        try {
+            commitClear();
+            commitRemove();
+            commitStore();
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(e, "commit method");
+        }
+        return false;
+    }
+
     private void applyClear() {
         if (!clearFlag) {
             return;
@@ -182,19 +195,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                 }
             });
         }
-    }
-
-    @Override
-    public boolean commit() {
-        try {
-            commitClear();
-            commitRemove();
-            commitStore();
-            return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(e, "commit method");
-        }
-        return false;
     }
 
     private void commitClear() {
