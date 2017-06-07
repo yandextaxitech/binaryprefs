@@ -146,15 +146,17 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public boolean commit() {
-        try {
-            commitClear();
-            commitRemove();
-            commitStore();
-            return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(e, COMMIT_METHOD_KEY);
+        synchronized (lock) {
+            try {
+                commitClear();
+                commitRemove();
+                commitStore();
+                return true;
+            } catch (Exception e) {
+                exceptionHandler.handle(e, COMMIT_METHOD_KEY);
+            }
+            return false;
         }
-        return false;
     }
 
     private void applyClear() {
