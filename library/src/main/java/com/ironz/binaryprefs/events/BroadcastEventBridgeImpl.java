@@ -19,30 +19,15 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class BroadcastEventBridgeImpl implements EventBridge {
 
-    private static final String ACTION_PREFERENCE_UPDATED = "com.ironz.binaryprefs.ACTION_PREFERENCE_UPDATED";
-    private static final String ACTION_PREFERENCE_REMOVED = "com.ironz.binaryprefs.ACTION_PREFERENCE_REMOVED";
+    private static final String INTENT_PREFIX = "com.ironz.binaryprefs.";
+    private static final String ACTION_PREFERENCE_UPDATED = INTENT_PREFIX + "ACTION_PREFERENCE_UPDATED";
+    private static final String ACTION_PREFERENCE_REMOVED = INTENT_PREFIX + "ACTION_PREFERENCE_REMOVED";
 
     private static final String PREFERENCE_NAME = "preference_name";
     private static final String PREFERENCE_KEY = "preference_update_key";
     private static final String PREFERENCE_VALUE = "preference_update_value";
 
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
-    private final IntentFilter updateFilter = new IntentFilter(ACTION_PREFERENCE_UPDATED);
-    private final IntentFilter removeFilter = new IntentFilter(ACTION_PREFERENCE_REMOVED);
-
-    private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            notifyUpdate(intent);
-        }
-    };
-
-    private final BroadcastReceiver removeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            notifyRemove(intent);
-        }
-    };
 
     private final Context context;
     private final String prefName;
@@ -57,6 +42,26 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
         this.byteEncryption = byteEncryption;
+        subscribeUpdateReceiver();
+        subscribeRemoveReceiver();
+    }
+
+    private void subscribeUpdateReceiver() {
+        context.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyUpdate(intent);
+            }
+        }, new IntentFilter(ACTION_PREFERENCE_UPDATED));
+    }
+
+    private void subscribeRemoveReceiver() {
+        context.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyRemove(intent);
+            }
+        }, new IntentFilter(ACTION_PREFERENCE_REMOVED));
     }
 
     private void notifyUpdate(Intent intent) {
@@ -87,20 +92,12 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        if (listeners.isEmpty()) {
-            context.registerReceiver(updateReceiver, updateFilter);
-            context.registerReceiver(removeReceiver, removeFilter);
-        }
         listeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         listeners.remove(listener);
-        if (listeners.isEmpty()) {
-            context.unregisterReceiver(updateReceiver);
-            context.unregisterReceiver(removeReceiver);
-        }
     }
 
     @Override

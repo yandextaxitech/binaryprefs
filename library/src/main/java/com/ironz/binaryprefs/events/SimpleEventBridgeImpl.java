@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.events;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import com.ironz.binaryprefs.Preferences;
+import com.ironz.binaryprefs.cache.CacheProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,11 @@ import java.util.List;
 public final class SimpleEventBridgeImpl implements EventBridge {
 
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+    private final CacheProvider cacheProvider;
+
+    public SimpleEventBridgeImpl(CacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
+    }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
@@ -25,11 +31,13 @@ public final class SimpleEventBridgeImpl implements EventBridge {
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, byte[] value) {
+        cacheProvider.put(key, value);
         notifyListeners(preferences, key);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
+        cacheProvider.remove(key);
         notifyListeners(preferences, key);
     }
 

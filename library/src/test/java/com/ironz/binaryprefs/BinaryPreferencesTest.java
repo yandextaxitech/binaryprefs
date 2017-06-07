@@ -46,8 +46,8 @@ public final class BinaryPreferencesTest {
             }
         };
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-        EventBridge eventsBridge = new SimpleEventBridgeImpl();
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, cacheProvider, TaskExecutor.DEFAULT);
     }
 
@@ -337,7 +337,7 @@ public final class BinaryPreferencesTest {
         String restored = preferences.getString(key, undefined);
 
         assertFalse(commit);
-//        assertEquals(undefined, restored); // TODO: 6/6/17 implement safe commits (small changes for event bridge listener implementations)
+        assertEquals(undefined, restored);
     }
 
     @Test

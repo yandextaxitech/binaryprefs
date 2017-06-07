@@ -155,7 +155,7 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public PreferencesEditor edit() {
         synchronized (lock) {
-            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, cacheProvider, taskExecutor, lock);
+            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, taskExecutor, lock);
         }
     }
 
