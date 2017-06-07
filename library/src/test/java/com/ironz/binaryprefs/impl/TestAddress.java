@@ -1,9 +1,9 @@
 package com.ironz.binaryprefs.impl;
 
 
-import com.ironz.binaryprefs.serialization.Persistable;
-import com.ironz.binaryprefs.serialization.io.DataInput;
-import com.ironz.binaryprefs.serialization.io.DataOutput;
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.persistable.io.DataOutput;
 
 @SuppressWarnings("WeakerAccess")
 public final class TestAddress implements Persistable {

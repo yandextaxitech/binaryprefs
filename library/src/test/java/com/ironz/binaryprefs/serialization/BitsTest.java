@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.serialization;
 
 import com.ironz.binaryprefs.impl.TestMigrateUser;
 import com.ironz.binaryprefs.impl.TestUser;
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import org.junit.Test;
 
 import java.util.Collections;

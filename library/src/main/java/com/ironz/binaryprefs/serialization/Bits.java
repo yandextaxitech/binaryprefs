@@ -1,9 +1,10 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.io.BinaryPrefsObjectInputImpl;
-import com.ironz.binaryprefs.serialization.io.BinaryPrefsObjectOutputImpl;
-import com.ironz.binaryprefs.serialization.io.DataInput;
-import com.ironz.binaryprefs.serialization.io.DataOutput;
+import com.ironz.binaryprefs.serialization.persistable.*;
+import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectInputImpl;
+import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectOutputImpl;
+import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.persistable.io.DataOutput;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -559,7 +560,7 @@ public final class Bits {
     }
 
     /**
-     * Serialize {@code {@link Persistable}} into byte array with following scheme:
+     * Serialize {@code {@link Persistable }} into byte array with following scheme:
      * [{@link Persistable#FLAG_PERSISTABLE}] + [persistable_bytes].
      * see {@link BinaryPrefsObjectOutputImpl} implementation for
      * understanding serialization contract of "persistable_bytes" part.

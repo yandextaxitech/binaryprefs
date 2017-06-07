@@ -1,7 +1,7 @@
-package com.ironz.binaryprefs.serialization.io;
+package com.ironz.binaryprefs.serialization.persistable.io;
 
 import com.ironz.binaryprefs.serialization.Bits;
-import com.ironz.binaryprefs.serialization.Persistable;
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
 
 public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 

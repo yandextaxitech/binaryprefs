@@ -1,6 +1,6 @@
-package com.ironz.binaryprefs.serialization.io;
+package com.ironz.binaryprefs.serialization.persistable.io;
 
-import com.ironz.binaryprefs.serialization.Persistable;
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
 
 public interface DataInput {
 
