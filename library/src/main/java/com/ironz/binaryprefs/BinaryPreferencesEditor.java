@@ -11,7 +11,6 @@ import com.ironz.binaryprefs.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 @SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
@@ -134,13 +133,18 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public void apply() {
         synchronized (lock) {
-            try {
-                applyClear();
-                applyRemove();
-                applyStore();
-            } catch (Exception e) {
-                exceptionHandler.handle(e, APPLY_METHOD_KEY);
-            }
+            taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        clearInternal();
+                        removeAll();
+                        store();
+                    } catch (Exception e) {
+                        exceptionHandler.handle(e, APPLY_METHOD_KEY);
+                    }
+                }
+            });
         }
     }
 
@@ -148,9 +152,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public boolean commit() {
         synchronized (lock) {
             try {
-                commitClear();
-                commitRemove();
-                commitStore();
+                clearInternal();
+                removeAll();
+                store();
                 return true;
             } catch (Exception e) {
                 exceptionHandler.handle(e, COMMIT_METHOD_KEY);
@@ -159,47 +163,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void applyClear() {
-        if (!clearFlag) {
-            return;
-        }
-        for (final String name : fileAdapter.names()) {
-            taskExecutor.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    removeInternal(name);
-                    return name;
-                }
-            });
-        }
-    }
-
-    private void applyRemove() {
-        for (final String name : removeSet) {
-            taskExecutor.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    removeInternal(name);
-                    return name;
-                }
-            });
-        }
-    }
-
-    private void applyStore() {
-        for (final Pair<String, byte[]> pair : commitList) {
-            final String name = pair.getFirst();
-            taskExecutor.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    storeInternal(name, pair.getSecond());
-                    return name;
-                }
-            });
-        }
-    }
-
-    private void commitClear() {
+    private void clearInternal() {
         if (!clearFlag) {
             return;
         }
@@ -208,13 +172,13 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void commitRemove() {
+    private void removeAll() {
         for (final String name : removeSet) {
             removeInternal(name);
         }
     }
 
-    private void commitStore() {
+    private void store() {
         for (final Pair<String, byte[]> pair : commitList) {
             final String name = pair.getFirst();
             storeInternal(name, pair.getSecond());
