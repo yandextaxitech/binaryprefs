@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+@SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
+
+    public static final String COMMIT_METHOD_KEY = "commit method";
+    public static final String APPLY_METHOD_KEY = "apply method";
 
     private final List<Pair<String, byte[]>> commitList = new ArrayList<>(0);
     private final List<String> removeSet = new ArrayList<>(0);
@@ -135,7 +139,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                 applyRemove();
                 applyStore();
             } catch (Exception e) {
-                exceptionHandler.handle(e, "apply method");
+                exceptionHandler.handle(e, APPLY_METHOD_KEY);
             }
         }
     }
@@ -148,7 +152,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             commitStore();
             return true;
         } catch (Exception e) {
-            exceptionHandler.handle(e, "commit method");
+            exceptionHandler.handle(e, COMMIT_METHOD_KEY);
         }
         return false;
     }
