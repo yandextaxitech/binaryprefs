@@ -42,7 +42,7 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
      */
     @Override
     public Integer deserialize(byte[] bytes) {
-        return deserialize(bytes, 0);
+        return deserialize(bytes, 0, SIZE_INT);
     }
 
     /**
@@ -50,10 +50,11 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
      *
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
+     * @param length of bytes array part
      * @return deserialized int
      */
     @Override
-    public Integer deserialize(byte[] bytes, int offset) {
+    public Integer deserialize(byte[] bytes, int offset, int length) {
         int i = 0xff;
         return ((bytes[4 + offset] & i)) +
                 ((bytes[3 + offset] & i) << 8) +

@@ -76,7 +76,7 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
      */
     @Override
     public Set<String> deserialize(byte[] bytes) {
-        return deserialize(bytes, 0);
+        return deserialize(bytes, 0, bytes.length);
     }
 
 
@@ -85,10 +85,11 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
      *
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
+     * @param length of bytes array part
      * @return deserialized String Set
      */
     @Override
-    public Set<String> deserialize(byte[] bytes, int offset) {
+    public Set<String> deserialize(byte[] bytes, int offset, int length) {
         byte flag = bytes[offset];
         if (flag == FLAG_STRING_SET) {
 

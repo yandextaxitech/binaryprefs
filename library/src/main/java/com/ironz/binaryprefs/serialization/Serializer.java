@@ -25,9 +25,10 @@ public interface Serializer<T> {
      *
      * @param bytes  target byte array for deserialization
      * @param offset specific offset for using a long arrays
+     * @param length from bytes array
      * @return deserialized instance type
      */
-    T deserialize(byte[] bytes, int offset);
+    T deserialize(byte[] bytes, int offset, int length);
 
     /**
      * Checks and returns {@code true} if flag is matches
