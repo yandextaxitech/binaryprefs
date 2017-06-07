@@ -3,7 +3,8 @@ package com.ironz.binaryprefs;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Serializer;
+import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
@@ -26,6 +27,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final FileAdapter fileAdapter;
     private final EventBridge bridge;
     private final TaskExecutor taskExecutor;
+    private final SerializerFactory serializerFactory;
     private final Class lock;
 
     private boolean clearFlag;
@@ -35,12 +37,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             ExceptionHandler exceptionHandler,
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
+                            SerializerFactory serializerFactory,
                             Class lock) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
+        this.serializerFactory = serializerFactory;
         this.lock = lock;
     }
 
@@ -174,7 +178,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void store() {
         for (String key : commitMap.keySet()) {
             Object value = commitMap.get(key);
-            byte[] bytes = Bits.trySerializeByType(value);
+            Serializer<Object> serializer = serializerFactory.getByClassType(value.getClass().getName());
+            byte[] bytes = serializer.serialize(value);
             storeInternal(key, bytes);
         }
     }

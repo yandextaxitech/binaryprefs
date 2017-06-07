@@ -4,7 +4,8 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Serializer;
+import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
@@ -19,6 +20,7 @@ public final class BinaryPreferences implements Preferences {
     private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
+    private final SerializerFactory serializerFactory;
 
     private final Class lock = BinaryPreferences.class;
 
@@ -27,12 +29,14 @@ public final class BinaryPreferences implements Preferences {
                              ExceptionHandler exceptionHandler,
                              EventBridge eventsBridge,
                              CacheProvider cacheProvider,
-                             TaskExecutor taskExecutor) {
+                             TaskExecutor taskExecutor,
+                             SerializerFactory serializerFactory) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.eventsBridge = eventsBridge;
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
+        this.serializerFactory = serializerFactory;
         defineCache();
     }
 
@@ -155,7 +159,7 @@ public final class BinaryPreferences implements Preferences {
     @Override
     public PreferencesEditor edit() {
         synchronized (lock) {
-            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, taskExecutor, lock);
+            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, taskExecutor, serializerFactory, lock);
         }
     }
 
@@ -177,44 +181,54 @@ public final class BinaryPreferences implements Preferences {
         Map<String, Object> map = new HashMap<>();
         for (String key : cacheProvider.keys()) {
             byte[] bytes = cacheProvider.get(key);
-            map.put(key, Bits.tryDeserializeByFlag(bytes));
+            Serializer<Object> clazz = serializerFactory.getByFlag(bytes[0]);
+            map.put(key, clazz.deserialize(bytes));
         }
         return map;
     }
 
     private String getStringInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.stringFromBytesWithFlag(bytes);
+        Serializer<Object> serializer = serializerFactory.getByClassType(String.class.getName());
+        return (String) serializer.deserialize(bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.stringSetFromBytesWithFlag(bytes);
+        Serializer<Object> serializer = serializerFactory.getByClassType(Set.class.getName());
+        //noinspection unchecked
+        return (Set<String>) serializer.deserialize(bytes);
     }
 
     private int getIntInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.intFromBytesWithFlag(bytes);
+        Serializer<Object> serializer = serializerFactory.getByClassType(Integer.class.getName());
+        return (Integer) serializer.deserialize(bytes);
     }
 
     private long getLongInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.longFromBytesWithFlag(bytes);
+        Serializer<Object> serializer = serializerFactory.getByClassType(Long.class.getName());
+        return (Long) serializer.deserialize(bytes);
     }
 
     private float getFloatInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.floatFromBytesWithFlag(bytes);
+        Serializer<Object> serializer = serializerFactory.getByClassType(Float.class.getName());
+        return (Float) serializer.deserialize(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.booleanFromBytesWithFlag(bytes);
+        Serializer<Object> serializer = serializerFactory.getByClassType(Boolean.class.getName());
+        return (Boolean) serializer.deserialize(bytes);
     }
 
     private <T extends Persistable> T getPersistableInternal(String key, Class<T> clazz) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.persistableFromBytes(bytes, clazz);
+        Serializer<Object> serializer = serializerFactory.getByClassType(Persistable.class.getName());
+        //noinspection unchecked
+        return (T) serializer.deserialize(bytes);
     }
 
     private boolean containsInternal(String key) {

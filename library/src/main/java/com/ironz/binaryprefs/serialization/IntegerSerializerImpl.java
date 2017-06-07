@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
+
 /**
  * Integer to byte array implementation of {@link Serializer} and backwards
  */
@@ -42,19 +44,21 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
      */
     @Override
     public Integer deserialize(byte[] bytes) {
-        return deserialize(bytes, 0, SIZE_INT);
+        return deserialize(Persistable.EMPTY_KEY, bytes, 0, SIZE_INT);
     }
 
     /**
      * Deserialize byte by {@link #serialize(Integer)} convention
      *
+     *
+     * @param key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
      * @return deserialized int
      */
     @Override
-    public Integer deserialize(byte[] bytes, int offset, int length) {
+    public Integer deserialize(String key, byte[] bytes, int offset, int length) {
         int i = 0xff;
         return ((bytes[4 + offset] & i)) +
                 ((bytes[3 + offset] & i) << 8) +

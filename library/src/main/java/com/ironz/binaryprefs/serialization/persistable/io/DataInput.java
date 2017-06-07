@@ -88,9 +88,9 @@ public interface DataInput {
     /**
      * Deserializes byte array and given type into object.
      *
-     * @param bytes given byte array created by specific output scheme
-     * @param clazz class type to deserialize in
      * @param <T>   type
+     * @param bytes given byte array created by specific output scheme
+     * @param clazz
      * @return deserialized object
      */
     <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz);

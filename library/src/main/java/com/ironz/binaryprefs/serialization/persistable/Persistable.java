@@ -38,52 +38,12 @@ public interface Persistable extends Serializable {
     void readExternal(DataInput in);
 
     /**
+     * Empty key for determine empty object deserialization token
+     */
+    String EMPTY_KEY = "";
+
+    /**
      * Uses for detecting byte array primitive type of {@link Persistable}
      */
     byte FLAG_PERSISTABLE = -11;
-
-    /**
-     * Minimum size primitive type of {@link String}
-     */
-    int SIZE_STRING = 1;
-
-    /**
-     * Minimum size primitive type of {@link Integer}
-     */
-    int SIZE_INT = 5;
-
-    /**
-     * Minimum size primitive type of {@link Long}
-     */
-    int SIZE_LONG = 9;
-
-    /**
-     * Minimum size primitive type of {@link Double}
-     */
-    int SIZE_DOUBLE = 9;
-
-    /**
-     * Minimum size primitive type of {@link Float}
-     */
-    int SIZE_FLOAT = 5;
-
-    /**
-     * Minimum size primitive type of {@link Boolean}
-     */
-    int SIZE_BOOLEAN = 2;
-
-    /**
-     * Minimum size primitive type of {@link Byte}
-     */
-    int SIZE_BYTE = 2;
-
-    /**
-     * Minimum size primitive type of {@link Short}
-     */
-    int SIZE_SHORT = 3;
-
-    /**
-     * Minimum size primitive type of {@link Character}
-     */
-    int SIZE_CHAR = 3;
 }

@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
+
 /**
  * Float to byte array implementation of {@link Serializer} and backwards
  */
@@ -42,19 +44,21 @@ public final class FloatSerializerImpl implements Serializer<Float> {
      */
     @Override
     public Float deserialize(byte[] bytes) {
-        return deserialize(bytes, 0, FLAG_FLOAT);
+        return deserialize(Persistable.EMPTY_KEY, bytes, 0, FLAG_FLOAT);
     }
 
     /**
      * Deserialize byte by {@link #serialize(Float)} convention
      *
+     *
+     * @param key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
      * @return deserialized float
      */
     @Override
-    public Float deserialize(byte[] bytes, int offset, int length) {
+    public Float deserialize(String key, byte[] bytes, int offset, int length) {
         int i = 0xFF;
         int value = ((bytes[offset + 4] & i)) +
                 ((bytes[offset + 3] & i) << 8) +

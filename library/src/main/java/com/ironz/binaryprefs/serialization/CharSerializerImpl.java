@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
+
 /**
  * Char to byte array implementation of {@link Serializer} and backwards
  */
@@ -39,19 +41,21 @@ public final class CharSerializerImpl implements Serializer<Character> {
      */
     @Override
     public Character deserialize(byte[] bytes) {
-        return deserialize(bytes, 0, SIZE_CHAR);
+        return deserialize(Persistable.EMPTY_KEY, bytes, 0, SIZE_CHAR);
     }
 
     /**
      * Deserialize char by {@link #serialize(Character)} convention
      *
+     *
+     * @param key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
      * @return deserialized char
      */
     @Override
-    public Character deserialize(byte[] bytes, int offset, int length) {
+    public Character deserialize(String key, byte[] bytes, int offset, int length) {
         int i = 0xFF;
         return (char) ((bytes[1 + offset] << 8) +
                 (bytes[2 + offset] & i));

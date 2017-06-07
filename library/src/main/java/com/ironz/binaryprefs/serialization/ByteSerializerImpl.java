@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
+
 /**
  * Byte to byte array implementation of {@link Serializer} and backwards
  */
@@ -38,19 +40,21 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
      */
     @Override
     public Byte deserialize(byte[] bytes) {
-        return deserialize(bytes, 0, SIZE_BYTE);
+        return deserialize(Persistable.EMPTY_KEY, bytes, 0, SIZE_BYTE);
     }
 
     /**
      * Deserialize byte by {@link #serialize(Byte)}  convention
      *
+     *
+     * @param key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
      * @return deserialized byte
      */
     @Override
-    public Byte deserialize(byte[] bytes, int offset, int length) {
+    public Byte deserialize(String key, byte[] bytes, int offset, int length) {
         return bytes[1 + offset];
     }
 

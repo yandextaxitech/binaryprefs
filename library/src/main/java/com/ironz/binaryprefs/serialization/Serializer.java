@@ -23,12 +23,14 @@ public interface Serializer<T> {
     /**
      * Deserialize byte by {@link #serialize(Object)} convention
      *
+     *
+     * @param key
      * @param bytes  target byte array for deserialization
      * @param offset specific offset for using a long arrays
      * @param length from bytes array
      * @return deserialized instance type
      */
-    T deserialize(byte[] bytes, int offset, int length);
+    T deserialize(String key, byte[] bytes, int offset, int length);
 
     /**
      * Checks and returns {@code true} if flag is matches
@@ -56,4 +58,10 @@ public interface Serializer<T> {
      * @return structure bytes size or minimum size of bytes for few types.
      */
     int bytesLength();
+
+    /**
+     * Returns flag for concrete implementation
+     * @return byte flag
+     */
+    byte getFlag();
 }
