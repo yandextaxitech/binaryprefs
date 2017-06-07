@@ -6,10 +6,10 @@ import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.serialization.Bits;
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
-import com.ironz.binaryprefs.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
@@ -18,8 +18,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public static final String COMMIT_METHOD_KEY = "commit method";
     public static final String APPLY_METHOD_KEY = "apply method";
 
-    private final List<Pair<String, byte[]>> commitList = new ArrayList<>(0);
-    private final List<String> removeSet = new ArrayList<>(0);
+    private final Map<String, Object> commitMap = new HashMap<>();
+    private final Set<String> removeSet = new HashSet<>(0);
 
     private final Preferences preferences;
     private final ExceptionHandler exceptionHandler;
@@ -50,21 +50,19 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            byte[] bytes = Bits.stringToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+            commitMap.put(key, value);
             return this;
         }
     }
 
     @Override
-    public PreferencesEditor putStringSet(String key, Set<String> values) {
+    public PreferencesEditor putStringSet(String key, Set<String> value) {
         synchronized (lock) {
-            if (values == null) {
+            if (value == null) {
                 return remove(key);
             }
-            values.remove(null);
-            byte[] bytes = Bits.stringSetToBytesWithFlag(values);
-            commitList.add(new Pair<>(key, bytes));
+            value.remove(null);
+            commitMap.put(key, value);
             return this;
         }
     }
@@ -72,8 +70,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putInt(String key, int value) {
         synchronized (lock) {
-            byte[] bytes = Bits.intToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+            commitMap.put(key, value);
             return this;
         }
     }
@@ -81,8 +78,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putLong(String key, long value) {
         synchronized (lock) {
-            byte[] bytes = Bits.longToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+            commitMap.put(key, value);
             return this;
         }
     }
@@ -90,8 +86,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putFloat(String key, float value) {
         synchronized (lock) {
-            byte[] bytes = Bits.floatToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+            commitMap.put(key, value);
             return this;
         }
     }
@@ -99,8 +94,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
         synchronized (lock) {
-            byte[] bytes = Bits.booleanToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+            commitMap.put(key, value);
             return this;
         }
     }
@@ -108,8 +102,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
         synchronized (lock) {
-            byte[] bytes = Bits.persistableToBytes(value);
-            commitList.add(new Pair<>(key, bytes));
+            commitMap.put(key, value);
             return this;
         }
     }
@@ -179,9 +172,10 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void store() {
-        for (final Pair<String, byte[]> pair : commitList) {
-            final String name = pair.getFirst();
-            storeInternal(name, pair.getSecond());
+        for (String key : commitMap.keySet()) {
+            Object value = commitMap.get(key);
+            byte[] bytes = Bits.trySerializeByType(value);
+            storeInternal(key, bytes);
         }
     }
 

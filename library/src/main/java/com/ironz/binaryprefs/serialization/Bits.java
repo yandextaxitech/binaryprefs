@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.persistable.*;
+import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectInputImpl;
 import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectOutputImpl;
 import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
@@ -610,6 +610,40 @@ public final class Bits {
         if (flag == FLAG_BOOLEAN) {
             return booleanFromBytesWithFlag(bytes);
         }
-        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect type '%s'", flag));
+        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static byte[] trySerializeByType(Object o) {
+        if (isStringHashSet(o)) {
+            return stringSetToBytesWithFlag((Set<String>) o);
+        }
+        if (o.getClass().isAssignableFrom(String.class)) {
+            return stringToBytesWithFlag((String) o);
+        }
+        if (o.getClass().isAssignableFrom(Integer.class)) {
+            return intToBytesWithFlag((Integer) o);
+        }
+        if (o.getClass().isAssignableFrom(Long.class)) {
+            return longToBytesWithFlag((Long) o);
+        }
+        if (o.getClass().isAssignableFrom(Float.class)) {
+            return floatToBytesWithFlag((Float) o);
+        }
+        if (o.getClass().isAssignableFrom(Boolean.class)) {
+            return booleanToBytesWithFlag((Boolean) o);
+        }
+        throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", o.getClass().getName()));
+    }
+
+    private static boolean isStringHashSet(Object set) {
+        try {
+            //noinspection unused,unchecked
+            Set<String> stringSet = (Set<String>) set;
+            return true;
+        } catch (Exception ignored) {
+
+        }
+        return false;
     }
 }

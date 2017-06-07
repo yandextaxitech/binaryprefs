@@ -352,4 +352,70 @@ public class BitsTest {
 
         assertEquals(Boolean.class, o.getClass());
     }
+
+    @Test(expected = UnsupportedClassVersionError.class)
+    public void trySerializeUnsupported() {
+        Object o = new Object();
+        Bits.trySerializeByType(o);
+    }
+
+    @Test
+    public void trySerializeStringSet() {
+        Set<String> value = Collections.singleton("Some string");
+
+        byte[] bytes = Bits.trySerializeByType(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
+
+        assertEquals(HashSet.class, o.getClass());
+    }
+
+    @Test
+    public void trySerializeString() {
+        String value = "Some string";
+
+        byte[] bytes = Bits.trySerializeByType(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
+
+        assertEquals(String.class, o.getClass());
+    }
+
+    @Test
+    public void trySerializeInt() {
+        int value = Integer.MAX_VALUE;
+
+        byte[] bytes = Bits.trySerializeByType(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
+
+        assertEquals(Integer.class, o.getClass());
+    }
+
+    @Test
+    public void trySerializeLong() {
+        long value = Long.MAX_VALUE;
+
+        byte[] bytes = Bits.trySerializeByType(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
+
+        assertEquals(Long.class, o.getClass());
+    }
+
+    @Test
+    public void trySerializeFloat() {
+        float value = 1.78f;
+
+        byte[] bytes = Bits.trySerializeByType(value);
+        Object o = Bits.tryDeserializeByFlag(bytes);
+
+        assertEquals(Float.class, o.getClass());
+    }
+
+    @Test
+    public void trySerializeBoolean() {
+
+        byte[] bytes = Bits.trySerializeByType(true);
+        Object o = Bits.tryDeserializeByFlag(bytes);
+
+        assertEquals(Boolean.class, o.getClass());
+    }
+
 }
