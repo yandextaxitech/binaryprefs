@@ -618,19 +618,19 @@ public final class Bits {
         if (isStringHashSet(o)) {
             return stringSetToBytesWithFlag((Set<String>) o);
         }
-        if (o.getClass().isAssignableFrom(String.class)) {
+        if (o instanceof String) {
             return stringToBytesWithFlag((String) o);
         }
-        if (o.getClass().isAssignableFrom(Integer.class)) {
+        if (o instanceof Integer) {
             return intToBytesWithFlag((Integer) o);
         }
-        if (o.getClass().isAssignableFrom(Long.class)) {
+        if (o instanceof Long) {
             return longToBytesWithFlag((Long) o);
         }
-        if (o.getClass().isAssignableFrom(Float.class)) {
+        if (o instanceof Float) {
             return floatToBytesWithFlag((Float) o);
         }
-        if (o.getClass().isAssignableFrom(Boolean.class)) {
+        if (o instanceof Boolean) {
             return booleanToBytesWithFlag((Boolean) o);
         }
         throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", o.getClass().getName()));
