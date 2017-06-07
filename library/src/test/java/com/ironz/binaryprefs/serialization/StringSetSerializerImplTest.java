@@ -1,6 +1,5 @@
-package com.ironz.binaryprefs.serialization.set;
+package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import java.util.Collections;

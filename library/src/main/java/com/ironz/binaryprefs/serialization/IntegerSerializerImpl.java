@@ -1,6 +1,4 @@
-package com.ironz.binaryprefs.serialization.integer;
-
-import com.ironz.binaryprefs.serialization.Serializer;
+package com.ironz.binaryprefs.serialization;
 
 /**
  * Integer to byte array implementation of {@link Serializer} and backwards

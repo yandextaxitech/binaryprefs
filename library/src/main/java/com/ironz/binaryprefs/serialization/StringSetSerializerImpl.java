@@ -1,6 +1,4 @@
-package com.ironz.binaryprefs.serialization.set;
-
-import com.ironz.binaryprefs.serialization.Serializer;
+package com.ironz.binaryprefs.serialization;
 
 import java.util.HashSet;
 import java.util.Set;

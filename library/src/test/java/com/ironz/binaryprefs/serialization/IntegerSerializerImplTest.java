@@ -1,6 +1,5 @@
-package com.ironz.binaryprefs.serialization.integer;
+package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
