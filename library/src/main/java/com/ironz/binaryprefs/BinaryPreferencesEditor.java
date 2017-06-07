@@ -130,8 +130,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                 @Override
                 public void run() {
                     try {
-                        clearInternal();
-                        removeAll();
+                        clearAll();
+                        remove();
                         store();
                     } catch (Exception e) {
                         exceptionHandler.handle(e, APPLY_METHOD_KEY);
@@ -145,8 +145,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public boolean commit() {
         synchronized (lock) {
             try {
-                clearInternal();
-                removeAll();
+                clearAll();
+                remove();
                 store();
                 return true;
             } catch (Exception e) {
@@ -156,7 +156,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void clearInternal() {
+    private void clearAll() {
         if (!clearFlag) {
             return;
         }
@@ -165,7 +165,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void removeAll() {
+    private void remove() {
         for (final String name : removeSet) {
             removeInternal(name);
         }
