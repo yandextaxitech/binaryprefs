@@ -16,7 +16,7 @@ public class BooleanSerializerImplTest {
     public void booleanConvert() {
         byte[] bytes = serializer.serialize(true);
 
-        boolean restored = serializer.deserialize(bytes);
+        boolean restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(true));
         assertTrue(serializer.isMatches(bytes[0]));

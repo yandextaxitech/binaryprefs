@@ -1,7 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-
 /**
  * Short to byte array implementation of {@link Serializer} and backwards
  */
@@ -36,19 +34,19 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     /**
      * Deserialize short by {@link #serialize(Short)}  convention
      *
+     * @param key    object token key
      * @param bytes target byte array for deserialization
      * @return deserialized short
      */
     @Override
-    public Short deserialize(byte[] bytes) {
-        return deserialize(Persistable.EMPTY_KEY, bytes, 0, SIZE_SHORT);
+    public Short deserialize(String key, byte[] bytes) {
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_SHORT);
     }
 
     /**
      * Deserialize short by {@link #serialize(Short)}  convention
      *
-     *
-     * @param key
+     * @param key    object token key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -74,5 +72,10 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     @Override
     public int bytesLength() {
         return SIZE_SHORT;
+    }
+
+    @Override
+    public byte getFlag() {
+        return FLAG_SHORT;
     }
 }

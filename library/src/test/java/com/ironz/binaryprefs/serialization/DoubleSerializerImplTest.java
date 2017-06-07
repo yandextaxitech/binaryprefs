@@ -15,7 +15,7 @@ public class DoubleSerializerImplTest {
         double value = 53.123;
 
         byte[] bytes = serializer.serialize(value);
-        double restored = serializer.deserialize(bytes);
+        double restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

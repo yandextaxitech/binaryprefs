@@ -1,8 +1,6 @@
 package com.ironz.binaryprefs.serialization;
 
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-
 /**
  * Double to byte array implementation of {@link Serializer} and backwards
  */
@@ -44,19 +42,19 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     /**
      * Deserialize byte by {@link #serialize(Double)} convention
      *
+     * @param key    object token key
      * @param bytes target byte array for deserialization
      * @return deserialized double
      */
     @Override
-    public Double deserialize(byte[] bytes) {
-        return deserialize(Persistable.EMPTY_KEY, bytes, 0, SIZE_DOUBLE);
+    public Double deserialize(String key, byte[] bytes) {
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_DOUBLE);
     }
 
     /**
      * Deserialize byte by {@link #serialize(Double)} convention
      *
-     *
-     * @param key
+     * @param key    object token key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -90,5 +88,10 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     @Override
     public int bytesLength() {
         return SIZE_DOUBLE;
+    }
+
+    @Override
+    public byte getFlag() {
+        return FLAG_DOUBLE;
     }
 }

@@ -15,7 +15,7 @@ public class ShortSerializerImplTest {
         short value = Short.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
-        short restored = serializer.deserialize(bytes);
+        short restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

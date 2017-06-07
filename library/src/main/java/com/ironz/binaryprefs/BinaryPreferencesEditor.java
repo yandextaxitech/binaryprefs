@@ -66,7 +66,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                 return remove(key);
             }
             value.remove(null);
-            commitMap.put(key, value);
+            commitMap.put(key, new HashSet<>(value));
             return this;
         }
     }
@@ -178,7 +178,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void store() {
         for (String key : commitMap.keySet()) {
             Object value = commitMap.get(key);
-            Serializer<Object> serializer = serializerFactory.getByClassType(value.getClass().getName());
+            Serializer serializer = serializerFactory.getByClassType(value);
+            //noinspection unchecked
             byte[] bytes = serializer.serialize(value);
             storeInternal(key, bytes);
         }

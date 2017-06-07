@@ -3,7 +3,9 @@ package com.ironz.binaryprefs.serialization;
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.persistable.PersistableClassProvider;
 import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectInputImpl;
+import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectOutputImpl;
 import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.persistable.io.DataOutput;
 
 import java.util.Set;
 
@@ -55,18 +57,35 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
 
     @Override
     public byte[] serialize(Persistable persistable) {
-        return new byte[0];
-    }
-
-
-    @Override
-    public Persistable deserialize(byte[] bytes) {
-        return null;
+        DataOutput output = new BinaryPrefsObjectOutputImpl(booleanSerializer,
+                byteSerializer,
+                charSerializer,
+                doubleSerializer,
+                floatSerializer,
+                integerSerializer,
+                longSerializer,
+                shortSerializer,
+                stringSerializer
+        );
+        return output.serialize(persistable);
     }
 
     /**
      * Deserialize {@link Persistable} by {@link #serialize(Persistable)} convention
      *
+     * @param key    object token key
+     * @param bytes target byte array for deserialization
+     * @return deserialized {@link Persistable}
+     */
+    @Override
+    public Persistable deserialize(String key, byte[] bytes) {
+        return deserialize(key, bytes, 0, bytes.length);
+    }
+
+    /**
+     * Deserialize {@link Persistable} by {@link #serialize(Persistable)} convention
+     *
+     * @param key    object token key
      * @param key    key for deserialization token
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
@@ -76,7 +95,8 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     @Override
     public Persistable deserialize(String key, byte[] bytes, int offset, int length) {
         Class<? extends Persistable> clazz = persistableClassProvider.get(key);
-        DataInput input = new BinaryPrefsObjectInputImpl(booleanSerializer,
+        DataInput input = new BinaryPrefsObjectInputImpl(
+                booleanSerializer,
                 byteSerializer,
                 charSerializer,
                 doubleSerializer,

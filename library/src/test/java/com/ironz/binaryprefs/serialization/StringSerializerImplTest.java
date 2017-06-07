@@ -15,7 +15,7 @@ public class StringSerializerImplTest {
         String value = "Some String";
 
         byte[] bytes = serializer.serialize(value);
-        String restored = serializer.deserialize(bytes);
+        String restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

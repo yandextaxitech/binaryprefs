@@ -3,34 +3,44 @@ package com.ironz.binaryprefs.serialization;
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.persistable.PersistableClassProvider;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public final class SerializerFactory {
 
-    private final Map<String, Serializer> typeSerializerMap = new HashMap<>();
-    private final Map<Byte, Serializer> flagSerializerMap = new HashMap<>();
+    private final Serializer<Boolean> booleanSerializer;
+    private final Serializer<Byte> byteSerializer;
+    private final Serializer<Character> charSerializer;
+    private final Serializer<Double> doubleSerializer;
+    private final Serializer<Float> floatSerializer;
+    private final Serializer<Integer> integerSerializer;
+    private final Serializer<Long> longSerializer;
+    private final Serializer<Short> shortSerializer;
+    private final Serializer<String> stringSerializer;
+    private final Serializer<Set<String>> stringSetSerializer;
+    private final Serializer<Persistable> persistableSerializer;
 
     public static SerializerFactory create() {
-        return new SerializerFactory();
+        final PersistableClassProvider classProvider = new PersistableClassProvider();
+        return create(classProvider);
     }
 
-    private SerializerFactory() {
+    public static SerializerFactory create(PersistableClassProvider classProvider) {
+        return new SerializerFactory(classProvider);
+    }
 
-        final Serializer<Boolean> booleanSerializer = new BooleanSerializerImpl();
-        final Serializer<Byte> byteSerializer = new ByteSerializerImpl();
-        final Serializer<Character> charSerializer = new CharSerializerImpl();
-        final Serializer<Double> doubleSerializer = new DoubleSerializerImpl();
-        final Serializer<Float> floatSerializer = new FloatSerializerImpl();
-        final Serializer<Integer> integerSerializer = new IntegerSerializerImpl();
-        final Serializer<Long> longSerializer = new LongSerializerImpl();
-        final Serializer<Short> shortSerializer = new ShortSerializerImpl();
-        final Serializer<String> stringSerializer = new StringSerializerImpl();
-        final Serializer<Set<String>> stringSetSerializer = new StringSetSerializerImpl();
-        final PersistableClassProvider classProvider = new PersistableClassProvider();
+    private SerializerFactory(PersistableClassProvider classProvider) {
 
-        final Serializer<Persistable> persistableSerializer = new PersistableSerializerImpl(
+        booleanSerializer = new BooleanSerializerImpl();
+        byteSerializer = new ByteSerializerImpl();
+        charSerializer = new CharSerializerImpl();
+        doubleSerializer = new DoubleSerializerImpl();
+        floatSerializer = new FloatSerializerImpl();
+        integerSerializer = new IntegerSerializerImpl();
+        longSerializer = new LongSerializerImpl();
+        shortSerializer = new ShortSerializerImpl();
+        stringSerializer = new StringSerializerImpl();
+        stringSetSerializer = new StringSetSerializerImpl();
+        persistableSerializer = new PersistableSerializerImpl(
                 booleanSerializer,
                 byteSerializer,
                 charSerializer,
@@ -43,45 +53,123 @@ public final class SerializerFactory {
                 stringSetSerializer,
                 classProvider
         );
-
-        typeSerializerMap.put(Boolean.class.getName(), booleanSerializer);
-        typeSerializerMap.put(Byte.class.getName(), byteSerializer);
-        typeSerializerMap.put(Character.class.getName(), charSerializer);
-        typeSerializerMap.put(Double.class.getName(), doubleSerializer);
-        typeSerializerMap.put(Float.class.getName(), floatSerializer);
-        typeSerializerMap.put(Integer.class.getName(), integerSerializer);
-        typeSerializerMap.put(Long.class.getName(), longSerializer);
-        typeSerializerMap.put(Short.class.getName(), shortSerializer);
-        typeSerializerMap.put(String.class.getName(), stringSerializer);
-        typeSerializerMap.put(Set.class.getName(), stringSetSerializer);
-        typeSerializerMap.put(Persistable.class.getName(), persistableSerializer);
-
-        flagSerializerMap.put(booleanSerializer.getFlag(), booleanSerializer);
-        flagSerializerMap.put(byteSerializer.getFlag(), byteSerializer);
-        flagSerializerMap.put(charSerializer.getFlag(), charSerializer);
-        flagSerializerMap.put(doubleSerializer.getFlag(), doubleSerializer);
-        flagSerializerMap.put(floatSerializer.getFlag(), floatSerializer);
-        flagSerializerMap.put(integerSerializer.getFlag(), integerSerializer);
-        flagSerializerMap.put(longSerializer.getFlag(), longSerializer);
-        flagSerializerMap.put(shortSerializer.getFlag(), shortSerializer);
-        flagSerializerMap.put(stringSerializer.getFlag(), stringSerializer);
-        flagSerializerMap.put(stringSetSerializer.getFlag(), stringSetSerializer);
-        flagSerializerMap.put(persistableSerializer.getFlag(), persistableSerializer);
     }
 
-    public <T> Serializer<T> getByClassType(String classType) {
-        if (!typeSerializerMap.containsKey(classType)) {
-            throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", classType));
+    public Serializer getByClassType(Object o) {
+        if (booleanSerializer.isMatches(o)) {
+            return booleanSerializer;
         }
-        //noinspection unchecked
-        return typeSerializerMap.get(classType);
+        if (byteSerializer.isMatches(o)) {
+            return byteSerializer;
+        }
+        if (charSerializer.isMatches(o)) {
+            return charSerializer;
+        }
+        if (doubleSerializer.isMatches(o)) {
+            return doubleSerializer;
+        }
+        if (floatSerializer.isMatches(o)) {
+            return floatSerializer;
+        }
+        if (integerSerializer.isMatches(o)) {
+            return integerSerializer;
+        }
+        if (longSerializer.isMatches(o)) {
+            return longSerializer;
+        }
+        if (shortSerializer.isMatches(o)) {
+            return shortSerializer;
+        }
+        if (stringSerializer.isMatches(o)) {
+            return stringSerializer;
+        }
+        if (stringSetSerializer.isMatches(o)) {
+            return stringSetSerializer;
+        }
+        if (persistableSerializer.isMatches(o)) {
+            return persistableSerializer;
+        }
+        throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", o.getClass().getName()));
     }
 
-    public <T> Serializer<T> getByFlag(byte flag) {
-        if (!flagSerializerMap.containsKey(flag)) {
-            throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
+    public Serializer getByFlag(byte flag) {
+        if (booleanSerializer.isMatches(flag)) {
+            return booleanSerializer;
         }
-        //noinspection unchecked
-        return flagSerializerMap.get(flag);
+        if (byteSerializer.isMatches(flag)) {
+            return byteSerializer;
+        }
+        if (charSerializer.isMatches(flag)) {
+            return charSerializer;
+        }
+        if (doubleSerializer.isMatches(flag)) {
+            return doubleSerializer;
+        }
+        if (floatSerializer.isMatches(flag)) {
+            return floatSerializer;
+        }
+        if (integerSerializer.isMatches(flag)) {
+            return integerSerializer;
+        }
+        if (longSerializer.isMatches(flag)) {
+            return longSerializer;
+        }
+        if (shortSerializer.isMatches(flag)) {
+            return shortSerializer;
+        }
+        if (stringSerializer.isMatches(flag)) {
+            return stringSerializer;
+        }
+        if (stringSetSerializer.isMatches(flag)) {
+            return stringSetSerializer;
+        }
+        if (persistableSerializer.isMatches(flag)) {
+            return persistableSerializer;
+        }
+        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
+    }
+
+    public Serializer<Boolean> getBooleanSerializer() {
+        return booleanSerializer;
+    }
+
+    public Serializer<Byte> getByteSerializer() {
+        return byteSerializer;
+    }
+
+    public Serializer<Character> getCharSerializer() {
+        return charSerializer;
+    }
+
+    public Serializer<Double> getDoubleSerializer() {
+        return doubleSerializer;
+    }
+
+    public Serializer<Float> getFloatSerializer() {
+        return floatSerializer;
+    }
+
+    public Serializer<Integer> getIntegerSerializer() {
+        return integerSerializer;
+    }
+
+    public Serializer<Long> getLongSerializer() {
+        return longSerializer;
+    }
+
+    public Serializer<Short> getShortSerializer() {
+        return shortSerializer;
+    }
+
+    public Serializer<String> getStringSerializer() {
+        return stringSerializer;
+    }
+
+    public Serializer<Set<String>> getStringSetSerializer() {
+        return stringSetSerializer;
+    }
+
+    public Serializer<Persistable> getPersistableSerializer() {
+        return persistableSerializer;
     }
 }

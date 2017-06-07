@@ -1,15 +1,45 @@
 package com.ironz.binaryprefs.serialization.persistable.io;
 
-import com.ironz.binaryprefs.serialization.Bits;
+import com.ironz.binaryprefs.serialization.Serializer;
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
 
 public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
+    private final Serializer<Boolean> booleanSerializer;
+    private final Serializer<Byte> byteSerializer;
+    private final Serializer<Character> charSerializer;
+    private final Serializer<Double> doubleSerializer;
+    private final Serializer<Float> floatSerializer;
+    private final Serializer<Integer> integerSerializer;
+    private final Serializer<Long> longSerializer;
+    private final Serializer<Short> shortSerializer;
+    private final Serializer<String> stringSerializer;
 
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
+
+    public BinaryPrefsObjectOutputImpl(Serializer<Boolean> booleanSerializer,
+                                       Serializer<Byte> byteSerializer,
+                                       Serializer<Character> charSerializer,
+                                       Serializer<Double> doubleSerializer,
+                                       Serializer<Float> floatSerializer,
+                                       Serializer<Integer> integerSerializer,
+                                       Serializer<Long> longSerializer,
+                                       Serializer<Short> shortSerializer,
+                                       Serializer<String> stringSerializer) {
+
+        this.booleanSerializer = booleanSerializer;
+        this.byteSerializer = byteSerializer;
+        this.charSerializer = charSerializer;
+        this.doubleSerializer = doubleSerializer;
+        this.floatSerializer = floatSerializer;
+        this.integerSerializer = integerSerializer;
+        this.longSerializer = longSerializer;
+        this.shortSerializer = shortSerializer;
+        this.stringSerializer = stringSerializer;
+    }
 
     @Override
     public <T extends Persistable> byte[] serialize(T value) {
@@ -27,48 +57,48 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     @Override
     public void writeBoolean(boolean value) {
-        write(Bits.booleanToBytesWithFlag(value));
+        write(booleanSerializer.serialize(value));
     }
 
     @Override
     public void writeByte(int value) {
-        write(Bits.byteToBytesWithFlag((byte) value));
+        write(byteSerializer.serialize((byte) value));
     }
 
     @Override
     public void writeShort(int value) {
-        write(Bits.shortToBytesWithFlag((short) value));
+        write(shortSerializer.serialize((short) value));
     }
 
     @Override
     public void writeChar(int value) {
-        write(Bits.charToBytesWithFlag((char) value));
+        write(charSerializer.serialize((char) value));
     }
 
     @Override
     public void writeInt(int value) {
-        write(Bits.intToBytesWithFlag(value));
+        write(integerSerializer.serialize(value));
     }
 
     @Override
     public void writeLong(long value) {
-        write(Bits.longToBytesWithFlag(value));
+        write(longSerializer.serialize(value));
     }
 
     @Override
     public void writeFloat(float value) {
-        write(Bits.floatToBytesWithFlag(value));
+        write(floatSerializer.serialize(value));
     }
 
     @Override
     public void writeDouble(double value) {
-        write(Bits.doubleToBytesWithFlag(value));
+        write(doubleSerializer.serialize(value));
     }
 
     @Override
     public void writeString(String s) {
-        write(Bits.intToBytesWithFlag(s.getBytes().length));
-        write(Bits.stringToBytesWithFlag(s));
+        write(integerSerializer.serialize(s.getBytes().length));
+        write(stringSerializer.serialize(s));
     }
 
     private void write(byte[] value) {

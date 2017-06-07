@@ -15,16 +15,16 @@ public interface Serializer<T> {
     /**
      * Deserialize byte by {@link #serialize(Object)} convention
      *
+     * @param key
      * @param bytes target byte array for deserialization
      * @return deserialized instance type
      */
-    T deserialize(byte[] bytes);
+    T deserialize(String key, byte[] bytes);
 
     /**
      * Deserialize byte by {@link #serialize(Object)} convention
      *
-     *
-     * @param key
+     * @param key    object token key
      * @param bytes  target byte array for deserialization
      * @param offset specific offset for using a long arrays
      * @param length from bytes array
@@ -61,7 +61,13 @@ public interface Serializer<T> {
 
     /**
      * Returns flag for concrete implementation
+     *
      * @return byte flag
      */
     byte getFlag();
+
+    /**
+     * Empty key for determine empty object deserialization token
+     */
+    String EMPTY_KEY = "";
 }

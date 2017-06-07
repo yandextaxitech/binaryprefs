@@ -15,7 +15,7 @@ public class CharSerializerImplTest {
         char value = Character.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
-        char restored = serializer.deserialize(bytes);
+        char restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

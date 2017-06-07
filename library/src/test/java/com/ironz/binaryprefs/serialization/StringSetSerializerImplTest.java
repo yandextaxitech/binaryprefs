@@ -19,7 +19,7 @@ public class StringSetSerializerImplTest {
         Set<String> value = new HashSet<>();
 
         byte[] bytes = serializer.serialize(value);
-        Set<String> restored = serializer.deserialize(bytes);
+        Set<String> restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
@@ -36,7 +36,7 @@ public class StringSetSerializerImplTest {
         value.add("");
 
         byte[] bytes = serializer.serialize(value);
-        Set<String> restored = serializer.deserialize(bytes);
+        Set<String> restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

@@ -38,11 +38,6 @@ public interface Persistable extends Serializable {
     void readExternal(DataInput in);
 
     /**
-     * Empty key for determine empty object deserialization token
-     */
-    String EMPTY_KEY = "";
-
-    /**
      * Uses for detecting byte array primitive type of {@link Persistable}
      */
     byte FLAG_PERSISTABLE = -11;

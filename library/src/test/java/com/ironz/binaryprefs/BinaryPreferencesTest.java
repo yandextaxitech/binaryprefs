@@ -12,6 +12,8 @@ import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.impl.TestUser;
+import com.ironz.binaryprefs.serialization.SerializerFactory;
+import com.ironz.binaryprefs.serialization.persistable.PersistableClassProvider;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,7 +50,17 @@ public final class BinaryPreferencesTest {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, cacheProvider, TaskExecutor.DEFAULT);
+        PersistableClassProvider classProvider = new PersistableClassProvider();
+        classProvider.define(TestUser.KEY, TestUser.class);
+        SerializerFactory serializerFactory = SerializerFactory.create(classProvider);
+        preferences = new BinaryPreferences(
+                fileAdapter,
+                ExceptionHandler.IGNORE,
+                eventsBridge,
+                cacheProvider,
+                TaskExecutor.DEFAULT,
+                serializerFactory
+        );
     }
 
     @Test
@@ -220,23 +232,23 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void persistableValue() {
-        String key = TestUser.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String key = TestUser.KEY;
         TestUser value = TestUser.createUser();
 
         preferences.edit()
                 .putPersistable(key, value)
                 .apply();
-        TestUser restored = preferences.getPersistable(TestUser.class, key, new TestUser());
+        TestUser restored = preferences.getPersistable(key, new TestUser());
 
         assertEquals(value, restored);
     }
 
     @Test
     public void persistableDefaultValue() {
-        String key = TestUser.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String key = TestUser.KEY;
         TestUser defaultValue = TestUser.createUser();
 
-        TestUser restored = preferences.getPersistable(TestUser.class, key, defaultValue);
+        TestUser restored = preferences.getPersistable(key, defaultValue);
 
         assertEquals(defaultValue, restored);
     }

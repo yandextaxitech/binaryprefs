@@ -16,7 +16,7 @@ public class FloatSerializerImplTest {
 
         byte[] bytes = serializer.serialize(value);
 
-        float restored = serializer.deserialize(bytes);
+        float restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

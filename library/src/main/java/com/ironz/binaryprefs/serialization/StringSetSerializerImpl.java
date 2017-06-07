@@ -1,7 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,20 +71,20 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     /**
      * Deserialize byte by {@link #serialize(Set)} convention
      *
+     * @param key   object token key
      * @param bytes target byte array for deserialization
      * @return deserialized String Set
      */
     @Override
-    public Set<String> deserialize(byte[] bytes) {
-        return deserialize(Persistable.EMPTY_KEY, bytes, 0, bytes.length);
+    public Set<String> deserialize(String key, byte[] bytes) {
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length);
     }
 
 
     /**
      * Deserialize byte by {@link #serialize(Set)} convention
      *
-     *
-     * @param key
+     * @param key    object token key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -155,5 +153,10 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     @Override
     public int bytesLength() {
         return SIZE_SET;
+    }
+
+    @Override
+    public byte getFlag() {
+        return FLAG_STRING_SET;
     }
 }

@@ -64,7 +64,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public boolean readBoolean() {
         checkBounds();
-        boolean b = booleanSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, booleanSerializer.bytesLength());
+        boolean b = booleanSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, booleanSerializer.bytesLength());
         offset += booleanSerializer.bytesLength();
         return b;
     }
@@ -72,7 +72,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public byte readByte() {
         checkBounds();
-        byte b = byteSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, byteSerializer.bytesLength());
+        byte b = byteSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, byteSerializer.bytesLength());
         offset += byteSerializer.bytesLength();
         return b;
     }
@@ -80,7 +80,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public short readShort() {
         checkBounds();
-        short s = shortSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, shortSerializer.bytesLength());
+        short s = shortSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, shortSerializer.bytesLength());
         offset += shortSerializer.bytesLength();
         return s;
     }
@@ -88,7 +88,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public char readChar() {
         checkBounds();
-        char c = charSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, charSerializer.bytesLength());
+        char c = charSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, charSerializer.bytesLength());
         offset += charSerializer.bytesLength();
         return c;
     }
@@ -96,7 +96,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public int readInt() {
         checkBounds();
-        int i = integerSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, integerSerializer.bytesLength());
+        int i = integerSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, integerSerializer.bytesLength());
         offset += integerSerializer.bytesLength();
         return i;
     }
@@ -104,7 +104,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public long readLong() {
         checkBounds();
-        long l = longSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, longSerializer.bytesLength());
+        long l = longSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, longSerializer.bytesLength());
         offset += longSerializer.bytesLength();
         return l;
     }
@@ -112,7 +112,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public float readFloat() {
         checkBounds();
-        float f = floatSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, floatSerializer.bytesLength());
+        float f = floatSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, floatSerializer.bytesLength());
         offset += floatSerializer.bytesLength();
         return f;
     }
@@ -120,7 +120,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public double readDouble() {
         checkBounds();
-        double d = doubleSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, doubleSerializer.bytesLength());
+        double d = doubleSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, doubleSerializer.bytesLength());
         offset += doubleSerializer.bytesLength();
         return d;
     }
@@ -128,9 +128,9 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public String readString() {
         checkBounds();
-        int bytesStringSize = integerSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, integerSerializer.bytesLength());
+        int bytesStringSize = integerSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, integerSerializer.bytesLength());
         offset += integerSerializer.bytesLength();
-        String s = stringSerializer.deserialize(Persistable.EMPTY_KEY, buffer, offset, bytesStringSize);
+        String s = stringSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, bytesStringSize);
         offset += stringSerializer.bytesLength() + bytesStringSize;
         return s;
     }

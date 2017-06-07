@@ -15,7 +15,7 @@ public class LongSerializerImplTest {
         long value = 53L;
         byte[] bytes = serializer.serialize(value);
 
-        long restored = serializer.deserialize(bytes);
+        long restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

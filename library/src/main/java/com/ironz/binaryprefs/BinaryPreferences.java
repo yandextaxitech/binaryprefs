@@ -138,10 +138,10 @@ public final class BinaryPreferences implements Preferences {
     }
 
     @Override
-    public <T extends Persistable> T getPersistable(Class<T> clazz, String key, T defValue) {
+    public <T extends Persistable> T getPersistable(String key, T defValue) {
         synchronized (lock) {
             try {
-                return getPersistableInternal(key, clazz);
+                return getPersistableInternal(key);
             } catch (Exception e) {
                 exceptionHandler.handle(e, key);
             }
@@ -181,54 +181,53 @@ public final class BinaryPreferences implements Preferences {
         Map<String, Object> map = new HashMap<>();
         for (String key : cacheProvider.keys()) {
             byte[] bytes = cacheProvider.get(key);
-            Serializer<Object> clazz = serializerFactory.getByFlag(bytes[0]);
-            map.put(key, clazz.deserialize(bytes));
+            Serializer clazz = serializerFactory.getByFlag(bytes[0]);
+            map.put(key, clazz.deserialize(key, bytes));
         }
         return map;
     }
 
     private String getStringInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(String.class.getName());
-        return (String) serializer.deserialize(bytes);
+        Serializer<String> serializer = serializerFactory.getStringSerializer();
+        return serializer.deserialize(key, bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(Set.class.getName());
-        //noinspection unchecked
-        return (Set<String>) serializer.deserialize(bytes);
+        Serializer<Set<String>> serializer = serializerFactory.getStringSetSerializer();
+        return serializer.deserialize(key, bytes);
     }
 
     private int getIntInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(Integer.class.getName());
-        return (Integer) serializer.deserialize(bytes);
+        Serializer<Integer> serializer = serializerFactory.getIntegerSerializer();
+        return serializer.deserialize(key, bytes);
     }
 
     private long getLongInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(Long.class.getName());
-        return (Long) serializer.deserialize(bytes);
+        Serializer<Long> serializer = serializerFactory.getLongSerializer();
+        return serializer.deserialize(key, bytes);
     }
 
     private float getFloatInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(Float.class.getName());
-        return (Float) serializer.deserialize(bytes);
+        Serializer<Float> serializer = serializerFactory.getFloatSerializer();
+        return serializer.deserialize(key, bytes);
     }
 
     private boolean getBooleanInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(Boolean.class.getName());
-        return (Boolean) serializer.deserialize(bytes);
+        Serializer<Boolean> serializer = serializerFactory.getBooleanSerializer();
+        return serializer.deserialize(key, bytes);
     }
 
-    private <T extends Persistable> T getPersistableInternal(String key, Class<T> clazz) {
+    private <T extends Persistable> T getPersistableInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        Serializer<Object> serializer = serializerFactory.getByClassType(Persistable.class.getName());
+        Serializer<Persistable> serializer = serializerFactory.getPersistableSerializer();
         //noinspection unchecked
-        return (T) serializer.deserialize(bytes);
+        return (T) serializer.deserialize(key, bytes);
     }
 
     private boolean containsInternal(String key) {

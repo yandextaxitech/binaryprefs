@@ -10,6 +10,8 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public final class TestUser implements Persistable {
 
+    public static final String KEY = "user";
+
     private String name;
     private short age;
     private char sex;

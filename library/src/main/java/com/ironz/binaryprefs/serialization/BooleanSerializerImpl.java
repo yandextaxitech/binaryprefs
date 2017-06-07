@@ -1,7 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-
 /**
  * Boolean to byte array implementation of {@link Serializer} and backwards
  */
@@ -35,19 +33,19 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     /**
      * Deserialize byte by {@link #serialize(Boolean)} convention
      *
+     * @param key   object token key
      * @param bytes target byte array for deserialization
      * @return deserialized boolean
      */
     @Override
-    public Boolean deserialize(byte[] bytes) {
-        return deserialize(Persistable.EMPTY_KEY, bytes, 0, SIZE_BOOLEAN);
+    public Boolean deserialize(String key, byte[] bytes) {
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_BOOLEAN);
     }
 
     /**
      * Deserialize byte by {@link #serialize(Boolean)} convention
      *
-     *
-     * @param key
+     * @param key    object token key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -71,5 +69,10 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     @Override
     public int bytesLength() {
         return SIZE_BOOLEAN;
+    }
+
+    @Override
+    public byte getFlag() {
+        return FLAG_BOOLEAN;
     }
 }

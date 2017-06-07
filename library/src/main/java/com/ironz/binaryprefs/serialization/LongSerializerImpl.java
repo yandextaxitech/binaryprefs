@@ -1,7 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-
 /**
  * Long to byte array implementation of {@link Serializer} and backwards
  */
@@ -43,19 +41,21 @@ public final class LongSerializerImpl implements Serializer<Long> {
     /**
      * Deserialize byte by {@link #serialize(Long)} convention
      *
+     *
+     * @param key    object token key
      * @param bytes target byte array for deserialization
      * @return deserialized long
      */
     @Override
-    public Long deserialize(byte[] bytes) {
-        return deserialize(Persistable.EMPTY_KEY, bytes, 0, bytes.length);
+    public Long deserialize(String key, byte[] bytes) {
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length);
     }
 
     /**
      * Deserialize byte by {@link #serialize(Long)} convention
      *
      *
-     * @param key
+     * @param key    object token key
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -87,5 +87,10 @@ public final class LongSerializerImpl implements Serializer<Long> {
     @Override
     public int bytesLength() {
         return SIZE_LONG;
+    }
+
+    @Override
+    public byte getFlag() {
+        return FLAG_LONG;
     }
 }

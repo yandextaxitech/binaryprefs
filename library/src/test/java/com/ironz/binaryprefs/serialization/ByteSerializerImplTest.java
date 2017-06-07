@@ -15,7 +15,7 @@ public class ByteSerializerImplTest {
         byte value = 53;
 
         byte[] bytes = serializer.serialize(value);
-        byte restored = serializer.deserialize(bytes);
+        byte restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(((Object) value)));
         assertTrue(serializer.isMatches(bytes[0]));
