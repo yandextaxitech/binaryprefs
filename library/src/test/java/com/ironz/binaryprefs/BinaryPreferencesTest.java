@@ -13,7 +13,7 @@ import com.ironz.binaryprefs.file.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
-import com.ironz.binaryprefs.serialization.persistable.PersistableRegistry;
+import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;

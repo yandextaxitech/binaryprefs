@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.serialization.persistable;
+package com.ironz.binaryprefs.serialization.impl.persistable;
 
 import java.util.HashMap;
 import java.util.Map;

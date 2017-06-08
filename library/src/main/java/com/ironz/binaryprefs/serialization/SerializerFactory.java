@@ -1,7 +1,8 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.persistable.PersistableRegistry;
+import com.ironz.binaryprefs.serialization.impl.*;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 
 import java.util.Set;
 

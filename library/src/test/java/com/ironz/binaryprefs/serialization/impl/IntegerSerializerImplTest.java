@@ -1,31 +1,32 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.impl;
 
+import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DoubleSerializerImplTest {
+public class IntegerSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Double> serializer = new DoubleSerializerImpl();
+    private final Serializer<Integer> serializer = new IntegerSerializerImpl();
 
     @Test
-    public void doubleConvert() {
-        double value = 53.123;
+    public void integerConvert() {
+        int value = 53;
 
         byte[] bytes = serializer.serialize(value);
-        double restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        int restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
-        assertEquals(value, restored, .0);
+        assertEquals(value, restored);
     }
 
     @Test
-    public void doubleIncorrectFlag() {
-        double value = 53.123;
+    public void integerIncorrectFlag() {
+        int value = 53;
 
         byte[] bytes = serializer.serialize(value);
         bytes[0] = INCORRECT_FLAG;

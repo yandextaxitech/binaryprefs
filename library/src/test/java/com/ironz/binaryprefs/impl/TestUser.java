@@ -1,8 +1,8 @@
 package com.ironz.binaryprefs.impl;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
-import com.ironz.binaryprefs.serialization.persistable.io.DataOutput;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.impl.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
 
 import java.util.ArrayList;
 import java.util.List;

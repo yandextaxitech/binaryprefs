@@ -1,11 +1,12 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.persistable.PersistableRegistry;
-import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectInputImpl;
-import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectOutputImpl;
-import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
-import com.ironz.binaryprefs.serialization.persistable.io.DataOutput;
+import com.ironz.binaryprefs.serialization.Serializer;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
+import com.ironz.binaryprefs.serialization.impl.persistable.io.BinaryPrefsObjectInputImpl;
+import com.ironz.binaryprefs.serialization.impl.persistable.io.BinaryPrefsObjectOutputImpl;
+import com.ironz.binaryprefs.serialization.impl.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
 
 import java.util.Set;
 

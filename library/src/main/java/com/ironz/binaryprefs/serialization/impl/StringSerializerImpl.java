@@ -1,4 +1,6 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.impl;
+
+import com.ironz.binaryprefs.serialization.Serializer;
 
 /**
  * {@code String} to byte array implementation of {@link Serializer} and backwards

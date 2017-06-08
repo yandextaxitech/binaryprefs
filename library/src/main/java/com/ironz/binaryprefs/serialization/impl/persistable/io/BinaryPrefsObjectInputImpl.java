@@ -1,7 +1,7 @@
-package com.ironz.binaryprefs.serialization.persistable.io;
+package com.ironz.binaryprefs.serialization.impl.persistable.io;
 
 import com.ironz.binaryprefs.serialization.Serializer;
-import com.ironz.binaryprefs.serialization.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 
 public final class BinaryPrefsObjectInputImpl implements DataInput {
 

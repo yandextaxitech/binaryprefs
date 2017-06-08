@@ -1,21 +1,22 @@
-package com.ironz.binaryprefs.serialization;
+package com.ironz.binaryprefs.serialization.impl;
 
+import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CharSerializerImplTest {
+public class ShortSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Character> serializer = new CharSerializerImpl();
+    private final Serializer<Short> serializer = new ShortSerializerImpl();
 
     @Test
     public void booleanConvert() {
-        char value = Character.MAX_VALUE;
+        short value = Short.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
-        char restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        short restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
@@ -25,7 +26,7 @@ public class CharSerializerImplTest {
 
     @Test
     public void booleanIncorrectFlag() {
-        char value = Character.MAX_VALUE;
+        short value = Short.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
         bytes[0] = INCORRECT_FLAG;
