@@ -54,8 +54,7 @@ public class PersistableSerializerImplTest {
 
         byte[] bytes = serializer.serialize(value);
 
-        Persistable deserialize = serializer.deserialize(TestMigrateUser.KEY, bytes);
-        System.out.println(deserialize.toString());
+        serializer.deserialize(TestMigrateUser.KEY, bytes);
     }
 
     @Test(expected = ClassCastException.class)
