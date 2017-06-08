@@ -13,7 +13,7 @@ import com.ironz.binaryprefs.file.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
-import com.ironz.binaryprefs.serialization.persistable.PersistableClassProvider;
+import com.ironz.binaryprefs.serialization.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,6 +36,7 @@ public final class BinaryPreferencesTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private Preferences preferences;
+    private PersistableRegistry persistableRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -50,9 +51,9 @@ public final class BinaryPreferencesTest {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
-        PersistableClassProvider classProvider = new PersistableClassProvider();
-        classProvider.define(TestUser.KEY, TestUser.class);
-        SerializerFactory serializerFactory = SerializerFactory.create(classProvider);
+        persistableRegistry = new PersistableRegistry();
+        persistableRegistry.register(TestUser.KEY, TestUser.class);
+        SerializerFactory serializerFactory = SerializerFactory.create(persistableRegistry);
         preferences = new BinaryPreferences(
                 fileAdapter,
                 ExceptionHandler.IGNORE,
@@ -251,6 +252,22 @@ public final class BinaryPreferencesTest {
         TestUser restored = preferences.getPersistable(key, defaultValue);
 
         assertEquals(defaultValue, restored);
+    }
+
+    @Test(expected = UnsupportedClassVersionError.class)
+    public void persistableNotRegistered() {
+        String key = TestUser.KEY;
+        TestUser value = TestUser.createUser();
+
+        preferences.edit()
+                .putPersistable(key, value)
+                .apply();
+
+        persistableRegistry.remove(key);
+
+        TestUser restored = preferences.getPersistable(key, new TestUser());
+
+        assertEquals(value, restored);
     }
 
     @Test

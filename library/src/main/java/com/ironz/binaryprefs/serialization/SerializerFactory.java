@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.persistable.PersistableClassProvider;
+import com.ironz.binaryprefs.serialization.persistable.PersistableRegistry;
 
 import java.util.Set;
 
@@ -20,16 +20,15 @@ public final class SerializerFactory {
     private final Serializer<Persistable> persistableSerializer;
 
     public static SerializerFactory create() {
-        final PersistableClassProvider classProvider = new PersistableClassProvider();
-        return create(classProvider);
+        final PersistableRegistry registry = new PersistableRegistry();
+        return create(registry);
     }
 
-    public static SerializerFactory create(PersistableClassProvider classProvider) {
-        return new SerializerFactory(classProvider);
+    public static SerializerFactory create(PersistableRegistry registry) {
+        return new SerializerFactory(registry);
     }
 
-    private SerializerFactory(PersistableClassProvider classProvider) {
-
+    private SerializerFactory(PersistableRegistry classProvider) {
         booleanSerializer = new BooleanSerializerImpl();
         byteSerializer = new ByteSerializerImpl();
         charSerializer = new CharSerializerImpl();

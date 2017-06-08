@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
 import com.ironz.binaryprefs.serialization.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.persistable.PersistableClassProvider;
+import com.ironz.binaryprefs.serialization.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectInputImpl;
 import com.ironz.binaryprefs.serialization.persistable.io.BinaryPrefsObjectOutputImpl;
 import com.ironz.binaryprefs.serialization.persistable.io.DataInput;
@@ -29,7 +29,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     private final Serializer<Short> shortSerializer;
     private final Serializer<String> stringSerializer;
     private final Serializer<Set<String>> stringSetSerializer; //temporary not used
-    private final PersistableClassProvider persistableClassProvider;
+    private final PersistableRegistry persistableRegistry;
 
     public PersistableSerializerImpl(Serializer<Boolean> booleanSerializer,
                                      Serializer<Byte> byteSerializer,
@@ -41,7 +41,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
                                      Serializer<Short> shortSerializer,
                                      Serializer<String> stringSerializer,
                                      Serializer<Set<String>> stringSetSerializer,
-                                     PersistableClassProvider persistableClassProvider) {
+                                     PersistableRegistry persistableRegistry) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
         this.charSerializer = charSerializer;
@@ -52,7 +52,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
         this.shortSerializer = shortSerializer;
         this.stringSerializer = stringSerializer;
         this.stringSetSerializer = stringSetSerializer;
-        this.persistableClassProvider = persistableClassProvider;
+        this.persistableRegistry = persistableRegistry;
     }
 
     @Override
@@ -73,7 +73,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     /**
      * Deserialize {@link Persistable} by {@link #serialize(Persistable)} convention
      *
-     * @param key    object token key
+     * @param key   object token key
      * @param bytes target byte array for deserialization
      * @return deserialized {@link Persistable}
      */
@@ -94,7 +94,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
      */
     @Override
     public Persistable deserialize(String key, byte[] bytes, int offset, int length) {
-        Class<? extends Persistable> clazz = persistableClassProvider.get(key);
+        Class<? extends Persistable> clazz = persistableRegistry.get(key);
         DataInput input = new BinaryPrefsObjectInputImpl(
                 booleanSerializer,
                 byteSerializer,

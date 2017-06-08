@@ -41,7 +41,7 @@ public final class StringSerializerImpl implements Serializer<String> {
      */
     @Override
     public String deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length - 1);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class StringSerializerImpl implements Serializer<String> {
     @Override
     public String deserialize(String key, byte[] bytes, int offset, int length) {
         int flagOffset = 1;
-        return new String(bytes, offset + flagOffset, length - 1);
+        return new String(bytes, offset + flagOffset, length);
     }
 
     @Override
