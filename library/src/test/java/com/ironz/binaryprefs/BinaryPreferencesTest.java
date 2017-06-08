@@ -53,7 +53,7 @@ public final class BinaryPreferencesTest {
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
-        SerializerFactory serializerFactory = SerializerFactory.create(persistableRegistry);
+        SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         preferences = new BinaryPreferences(
                 fileAdapter,
                 ExceptionHandler.IGNORE,

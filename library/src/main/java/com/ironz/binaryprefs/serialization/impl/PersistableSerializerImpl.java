@@ -8,8 +8,6 @@ import com.ironz.binaryprefs.serialization.impl.persistable.io.BinaryPrefsObject
 import com.ironz.binaryprefs.serialization.impl.persistable.io.DataInput;
 import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
 
-import java.util.Set;
-
 /**
  * {@code Persistable} to byte array implementation of {@link Serializer} and backwards
  */
@@ -29,7 +27,6 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     private final Serializer<Long> longSerializer;
     private final Serializer<Short> shortSerializer;
     private final Serializer<String> stringSerializer;
-    private final Serializer<Set<String>> stringSetSerializer; //temporary not used
     private final PersistableRegistry persistableRegistry;
 
     public PersistableSerializerImpl(Serializer<Boolean> booleanSerializer,
@@ -41,7 +38,6 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
                                      Serializer<Long> longSerializer,
                                      Serializer<Short> shortSerializer,
                                      Serializer<String> stringSerializer,
-                                     Serializer<Set<String>> stringSetSerializer,
                                      PersistableRegistry persistableRegistry) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
@@ -52,7 +48,6 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
         this.longSerializer = longSerializer;
         this.shortSerializer = shortSerializer;
         this.stringSerializer = stringSerializer;
-        this.stringSetSerializer = stringSetSerializer;
         this.persistableRegistry = persistableRegistry;
     }
 
