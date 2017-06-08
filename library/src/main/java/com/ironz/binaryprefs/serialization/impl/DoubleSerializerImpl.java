@@ -1,12 +1,10 @@
 package com.ironz.binaryprefs.serialization.impl;
 
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * Double to byte array implementation of {@link Serializer} and backwards
+ * Double to byte array implementation and backwards
  */
-public final class DoubleSerializerImpl implements Serializer<Double> {
+public final class DoubleSerializerImpl {
 
     /**
      * Uses for detecting byte array primitive type of {@link Double}
@@ -25,8 +23,7 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
      * @param value target double to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
-    public byte[] serialize(Double value) {
+    public byte[] serialize(double value) {
         long l = Double.doubleToLongBits(value);
         return new byte[]{
                 DOUBLE_FLAG,
@@ -42,58 +39,33 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(Double)} convention
+     * Deserialize byte by {@link #serialize(double)} convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized double
      */
-    @Override
-    public Double deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, DOUBLE_SIZE);
-    }
-
-    /**
-     * Deserialize byte by {@link #serialize(Double)} convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized double
-     */
-    @Override
-    public Double deserialize(String key, byte[] bytes, int offset, int length) {
+    public double deserialize(byte[] bytes) {
         int i = 0xff;
         long value =
-                ((bytes[8 + offset] & i)) +
-                        ((bytes[7 + offset] & i) << 8) +
-                        ((bytes[6 + offset] & i) << 16) +
-                        ((long) (bytes[5 + offset] & i) << 24) +
-                        ((long) (bytes[4 + offset] & i) << 32) +
-                        ((long) (bytes[3 + offset] & i) << 40) +
-                        ((long) (bytes[2 + offset] & i) << 48) +
-                        ((long) (bytes[1 + offset]) << 56);
+                ((bytes[8] & i)) +
+                        ((bytes[7] & i) << 8) +
+                        ((bytes[6] & i) << 16) +
+                        ((long) (bytes[5] & i) << 24) +
+                        ((long) (bytes[4] & i) << 32) +
+                        ((long) (bytes[3] & i) << 40) +
+                        ((long) (bytes[2] & i) << 48) +
+                        ((long) (bytes[1]) << 56);
         return Double.longBitsToDouble(value);
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == DOUBLE_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof Double;
     }
 
-    @Override
     public int bytesLength() {
         return DOUBLE_SIZE;
     }

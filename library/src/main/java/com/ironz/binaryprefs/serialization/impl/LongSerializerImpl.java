@@ -1,11 +1,9 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * Long to byte array implementation of {@link Serializer} and backwards
+ * Long to byte array implementation and backwards
  */
-public final class LongSerializerImpl implements Serializer<Long> {
+public final class LongSerializerImpl {
 
     /**
      * Uses for detecting byte array primitive type of {@link Long}
@@ -24,8 +22,7 @@ public final class LongSerializerImpl implements Serializer<Long> {
      * @param value target long to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
-    public byte[] serialize(Long value) {
+    public byte[] serialize(long value) {
         return new byte[]{
                 LONG_FLAG,
                 (byte) (value >>> 56),
@@ -39,58 +36,32 @@ public final class LongSerializerImpl implements Serializer<Long> {
         };
     }
 
-
     /**
-     * Deserialize byte by {@link #serialize(Long)} convention
+     * Deserialize byte by {@link #serialize(long)} convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized long
      */
-    @Override
-    public Long deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length);
-    }
-
-    /**
-     * Deserialize byte by {@link #serialize(Long)} convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized long
-     */
-    @Override
-    public Long deserialize(String key, byte[] bytes, int offset, int length) {
+    public long deserialize(byte[] bytes) {
         long l = 0xffL;
-        return ((bytes[8 + offset] & l)) +
-                ((bytes[7 + offset] & l) << 8) +
-                ((bytes[6 + offset] & l) << 16) +
-                ((bytes[5 + offset] & l) << 24) +
-                ((bytes[4 + offset] & l) << 32) +
-                ((bytes[3 + offset] & l) << 40) +
-                ((bytes[2 + offset] & l) << 48) +
-                (((long) bytes[1 + offset]) << 56);
+        return ((bytes[8] & l)) +
+                ((bytes[7] & l) << 8) +
+                ((bytes[6] & l) << 16) +
+                ((bytes[5] & l) << 24) +
+                ((bytes[4] & l) << 32) +
+                ((bytes[3] & l) << 40) +
+                ((bytes[2] & l) << 48) +
+                (((long) bytes[1]) << 56);
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == LONG_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof Long;
     }
 
-    @Override
     public int bytesLength() {
         return LONG_SIZE;
     }

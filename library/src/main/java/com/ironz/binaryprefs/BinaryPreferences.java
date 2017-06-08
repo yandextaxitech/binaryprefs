@@ -187,8 +187,8 @@ public final class BinaryPreferences implements Preferences {
         Map<String, Object> map = new HashMap<>();
         for (String key : cacheProvider.keys()) {
             byte[] bytes = cacheProvider.get(key);
-            Serializer clazz = serializerFactory.getByFlag(bytes[0]);
-            map.put(key, clazz.deserialize(key, bytes));
+            Object o = serializerFactory.deserialize(key, bytes);
+            map.put(key, o);
         }
         return map;
     }

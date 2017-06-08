@@ -1,11 +1,9 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * Integer to byte array implementation of {@link Serializer} and backwards
+ * Integer to byte array implementation and backwards
  */
-public final class IntegerSerializerImpl implements Serializer<Integer> {
+public final class IntegerSerializerImpl {
 
     /**
      * Minimum size primitive type of {@link Integer}
@@ -24,8 +22,7 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
      * @param value target int to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
-    public byte[] serialize(Integer value) {
+    public byte[] serialize(int value) {
         int i = 0xff;
         return new byte[]{
                 INT_FLAG,
@@ -37,52 +34,27 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(Integer)} convention
+     * Deserialize byte by {@link #serialize(int)} convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized int
      */
-    @Override
-    public Integer deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, INT_SIZE);
-    }
-
-    /**
-     * Deserialize byte by {@link #serialize(Integer)} convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized int
-     */
-    @Override
-    public Integer deserialize(String key, byte[] bytes, int offset, int length) {
+    public int deserialize(byte[] bytes) {
         int i = 0xff;
-        return ((bytes[4 + offset] & i)) +
-                ((bytes[3 + offset] & i) << 8) +
-                ((bytes[2 + offset] & i) << 16) +
-                ((bytes[1 + offset]) << 24);
+        return ((bytes[4] & i)) +
+                ((bytes[3] & i) << 8) +
+                ((bytes[2] & i) << 16) +
+                ((bytes[1]) << 24);
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == INT_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof Integer;
     }
 
-    @Override
     public int bytesLength() {
         return INT_SIZE;
     }

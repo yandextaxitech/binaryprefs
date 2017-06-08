@@ -1,21 +1,20 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class BooleanSerializerImplTest {
+public class BooleanSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Boolean> serializer = new BooleanSerializerImpl();
+    private final BooleanSerializer serializer = new BooleanSerializer();
 
     @Test
     public void booleanConvert() {
         byte[] bytes = serializer.serialize(true);
 
-        boolean restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        boolean restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(true));
         assertTrue(serializer.isMatches(bytes[0]));

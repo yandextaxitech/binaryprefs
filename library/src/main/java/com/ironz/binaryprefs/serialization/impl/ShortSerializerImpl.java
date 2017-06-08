@@ -1,11 +1,9 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * Short to byte array implementation of {@link Serializer} and backwards
+ * Short to byte array implementation and backwards
  */
-public final class ShortSerializerImpl implements Serializer<Short> {
+public final class ShortSerializerImpl {
 
     /**
      * Uses for detecting byte array primitive type of {@link Short}
@@ -24,8 +22,7 @@ public final class ShortSerializerImpl implements Serializer<Short> {
      * @param value target short to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
-    public byte[] serialize(Short value) {
+    public byte[] serialize(short value) {
         return new byte[]{
                 SHORT_FLAG,
                 (byte) (value >>> 8),
@@ -34,50 +31,25 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     }
 
     /**
-     * Deserialize short by {@link #serialize(Short)}  convention
+     * Deserialize short by {@link #serialize(short)}  convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized short
      */
-    @Override
-    public Short deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SHORT_SIZE);
-    }
-
-    /**
-     * Deserialize short by {@link #serialize(Short)}  convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized short
-     */
-    @Override
-    public Short deserialize(String key, byte[] bytes, int offset, int length) {
+    public short deserialize(byte[] bytes) {
         int i = 0xff;
-        return (short) ((bytes[1 + offset] << 8) +
-                (bytes[2 + offset] & i));
+        return (short) ((bytes[1] << 8) +
+                (bytes[2] & i));
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == SHORT_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof Short;
     }
 
-    @Override
     public int bytesLength() {
         return SHORT_SIZE;
     }

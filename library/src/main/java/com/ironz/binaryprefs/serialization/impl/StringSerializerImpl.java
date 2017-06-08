@@ -1,11 +1,9 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * {@code String} to byte array implementation of {@link Serializer} and backwards
+ * {@code String} to byte array implementation and backwards
  */
-public final class StringSerializerImpl implements Serializer<String> {
+public final class StringSerializerImpl {
 
     /**
      * Uses for detecting byte array type of {@link String}
@@ -24,7 +22,6 @@ public final class StringSerializerImpl implements Serializer<String> {
      * @param s target String to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
     public byte[] serialize(String s) {
         byte[] stringBytes = s.getBytes();
         int flagSize = 1;
@@ -37,47 +34,22 @@ public final class StringSerializerImpl implements Serializer<String> {
     /**
      * Deserialize byte by {@link #serialize(String)} convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized String
      */
-    @Override
-    public String deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length - 1);
-    }
-
-    /**
-     * Deserialize byte by {@link #serialize(String)} convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized String
-     */
-    @Override
-    public String deserialize(String key, byte[] bytes, int offset, int length) {
+    public String deserialize(byte[] bytes) {
         int flagOffset = 1;
-        return new String(bytes, offset + flagOffset, length);
+        return new String(bytes, flagOffset, bytes.length - 1);
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == STRING_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof String;
     }
 
-    @Override
     public int bytesLength() {
         return STRING_SIZE;
     }

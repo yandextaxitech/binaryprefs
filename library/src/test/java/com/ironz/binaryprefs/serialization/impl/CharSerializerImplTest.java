@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,14 +8,14 @@ public class CharSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Character> serializer = new CharSerializerImpl();
+    private final CharSerializerImpl serializer = new CharSerializerImpl();
 
     @Test
     public void booleanConvert() {
         char value = Character.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
-        char restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        char restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

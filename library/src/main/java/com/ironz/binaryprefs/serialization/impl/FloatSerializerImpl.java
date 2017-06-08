@@ -1,11 +1,9 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * Float to byte array implementation of {@link Serializer} and backwards
+ * Float to byte array implementation and backwards
  */
-public final class FloatSerializerImpl implements Serializer<Float> {
+public final class FloatSerializerImpl {
 
     /**
      * Uses for detecting byte array primitive type of {@link Float}
@@ -24,8 +22,7 @@ public final class FloatSerializerImpl implements Serializer<Float> {
      * @param value target float to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
-    public byte[] serialize(Float value) {
+    public byte[] serialize(float value) {
         int val = Float.floatToIntBits(value);
         return new byte[]{
                 FLOAT_FLAG,
@@ -37,53 +34,28 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(Float)} convention
+     * Deserialize byte by {@link #serialize(float)} convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized float
      */
-    @Override
-    public Float deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, FLOAT_FLAG);
-    }
-
-    /**
-     * Deserialize byte by {@link #serialize(Float)} convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized float
-     */
-    @Override
-    public Float deserialize(String key, byte[] bytes, int offset, int length) {
+    public float deserialize(byte[] bytes) {
         int i = 0xFF;
-        int value = ((bytes[offset + 4] & i)) +
-                ((bytes[offset + 3] & i) << 8) +
-                ((bytes[offset + 2] & i) << 16) +
-                ((bytes[offset + 1]) << 24);
+        int value = ((bytes[4] & i)) +
+                ((bytes[3] & i) << 8) +
+                ((bytes[2] & i) << 16) +
+                ((bytes[1]) << 24);
         return Float.intBitsToFloat(value);
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == FLOAT_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof Float;
     }
 
-    @Override
     public int bytesLength() {
         return FLOAT_SIZE;
     }

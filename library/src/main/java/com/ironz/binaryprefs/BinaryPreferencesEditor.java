@@ -183,7 +183,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void storeCache() {
         for (String name : commitMap.keySet()) {
             Object value = commitMap.get(name);
-            Serializer serializer = serializerFactory.getByClassType(value);
+            Serializer serializer = serializerFactory.serialize(value);
             //noinspection unchecked
             byte[] bytes = serializer.serialize(value);
             cacheProvider.put(name, bytes);
@@ -208,7 +208,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void store() {
         for (String key : commitMap.keySet()) {
             Object value = commitMap.get(key);
-            Serializer serializer = serializerFactory.getByClassType(value);
+            Serializer serializer = serializerFactory.serialize(value);
             //noinspection unchecked
             byte[] bytes = serializer.serialize(value);
             storeInternal(key, bytes);

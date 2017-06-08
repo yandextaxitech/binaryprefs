@@ -8,20 +8,20 @@ import java.util.Set;
 
 public final class SerializerFactory {
 
-    private final Serializer<Boolean> booleanSerializer;
-    private final Serializer<Byte> byteSerializer;
-    private final Serializer<Character> charSerializer;
-    private final Serializer<Double> doubleSerializer;
-    private final Serializer<Float> floatSerializer;
-    private final Serializer<Integer> integerSerializer;
-    private final Serializer<Long> longSerializer;
-    private final Serializer<Short> shortSerializer;
-    private final Serializer<String> stringSerializer;
-    private final Serializer<Set<String>> stringSetSerializer;
-    private final Serializer<Persistable> persistableSerializer;
+    private final BooleanSerializer booleanSerializer;
+    private final ByteSerializerImpl byteSerializer;
+    private final CharSerializerImpl charSerializer;
+    private final DoubleSerializerImpl doubleSerializer;
+    private final FloatSerializerImpl floatSerializer;
+    private final IntegerSerializerImpl integerSerializer;
+    private final LongSerializerImpl longSerializer;
+    private final ShortSerializerImpl shortSerializer;
+    private final StringSerializerImpl stringSerializer;
+    private final StringSetSerializerImpl stringSetSerializer;
+    private final PersistableSerializerImpl persistableSerializer;
 
     public SerializerFactory(PersistableRegistry persistableRegistry) {
-        booleanSerializer = new BooleanSerializerImpl();
+        booleanSerializer = new BooleanSerializer();
         byteSerializer = new ByteSerializerImpl();
         charSerializer = new CharSerializerImpl();
         doubleSerializer = new DoubleSerializerImpl();
@@ -45,121 +45,122 @@ public final class SerializerFactory {
         );
     }
 
-    public Serializer getByClassType(Object o) {
+    public byte[] serialize(Object o) {
         if (booleanSerializer.isMatches(o)) {
-            return booleanSerializer;
+            return booleanSerializer.serialize(((boolean) o));
         }
         if (byteSerializer.isMatches(o)) {
-            return byteSerializer;
+            return byteSerializer.serialize(((byte) o));
         }
         if (charSerializer.isMatches(o)) {
-            return charSerializer;
+            return charSerializer.serialize((char) o);
         }
         if (doubleSerializer.isMatches(o)) {
-            return doubleSerializer;
+            return doubleSerializer.serialize((double) o);
         }
         if (floatSerializer.isMatches(o)) {
-            return floatSerializer;
+            return floatSerializer.serialize((float) o);
         }
         if (integerSerializer.isMatches(o)) {
-            return integerSerializer;
+            return integerSerializer.serialize((int) o);
         }
         if (longSerializer.isMatches(o)) {
-            return longSerializer;
+            return longSerializer.serialize((long) o);
         }
         if (shortSerializer.isMatches(o)) {
-            return shortSerializer;
+            return shortSerializer.serialize((short) o);
         }
         if (stringSerializer.isMatches(o)) {
-            return stringSerializer;
+            return stringSerializer.serialize((String) o);
         }
         if (stringSetSerializer.isMatches(o)) {
-            return stringSetSerializer;
+            //noinspection unchecked
+            return stringSetSerializer.serialize((Set<String>) o);
         }
         if (persistableSerializer.isMatches(o)) {
-            return persistableSerializer;
+            return persistableSerializer.serialize((Persistable) o);
         }
         throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", o.getClass().getName()));
     }
 
-    public Serializer getByFlag(byte flag) {
-        if (booleanSerializer.isMatches(flag)) {
-            return booleanSerializer;
+    public Object deserialize(String key, byte[] bytes) {
+        if (booleanSerializer.isMatches(bytes)) {
+            return booleanSerializer.deserialize(bytes);
         }
-        if (byteSerializer.isMatches(flag)) {
-            return byteSerializer;
+        if (byteSerializer.isMatches(bytes)) {
+            return byteSerializer.deserialize(bytes);
         }
-        if (charSerializer.isMatches(flag)) {
-            return charSerializer;
+        if (charSerializer.isMatches(bytes)) {
+            return charSerializer.deserialize(bytes);
         }
-        if (doubleSerializer.isMatches(flag)) {
-            return doubleSerializer;
+        if (doubleSerializer.isMatches(bytes)) {
+            return doubleSerializer.deserialize(bytes);
         }
-        if (floatSerializer.isMatches(flag)) {
-            return floatSerializer;
+        if (floatSerializer.isMatches(bytes)) {
+            return floatSerializer.deserialize(bytes);
         }
-        if (integerSerializer.isMatches(flag)) {
-            return integerSerializer;
+        if (integerSerializer.isMatches(bytes)) {
+            return integerSerializer.deserialize(bytes);
         }
-        if (longSerializer.isMatches(flag)) {
-            return longSerializer;
+        if (longSerializer.isMatches(bytes)) {
+            return longSerializer.deserialize(bytes);
         }
-        if (shortSerializer.isMatches(flag)) {
-            return shortSerializer;
+        if (shortSerializer.isMatches(bytes)) {
+            return shortSerializer.deserialize(bytes);
         }
-        if (stringSerializer.isMatches(flag)) {
-            return stringSerializer;
+        if (stringSerializer.isMatches(bytes)) {
+            return stringSerializer.deserialize(bytes);
         }
-        if (stringSetSerializer.isMatches(flag)) {
-            return stringSetSerializer;
+        if (stringSetSerializer.isMatches(bytes)) {
+            return stringSetSerializer.deserialize(bytes);
         }
-        if (persistableSerializer.isMatches(flag)) {
-            return persistableSerializer;
+        if (persistableSerializer.isMatches(bytes)) {
+            return persistableSerializer.deserialize(key, bytes);
         }
-        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
+        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", bytes));
     }
 
-    public Serializer<Boolean> getBooleanSerializer() {
+    public BooleanSerializer getBooleanSerializer() {
         return booleanSerializer;
     }
 
-    public Serializer<Byte> getByteSerializer() {
+    public ByteSerializerImpl getByteSerializer() {
         return byteSerializer;
     }
 
-    public Serializer<Character> getCharSerializer() {
+    public CharSerializerImpl getCharSerializer() {
         return charSerializer;
     }
 
-    public Serializer<Double> getDoubleSerializer() {
+    public DoubleSerializerImpl getDoubleSerializer() {
         return doubleSerializer;
     }
 
-    public Serializer<Float> getFloatSerializer() {
+    public FloatSerializerImpl getFloatSerializer() {
         return floatSerializer;
     }
 
-    public Serializer<Integer> getIntegerSerializer() {
+    public IntegerSerializerImpl getIntegerSerializer() {
         return integerSerializer;
     }
 
-    public Serializer<Long> getLongSerializer() {
+    public LongSerializerImpl getLongSerializer() {
         return longSerializer;
     }
 
-    public Serializer<Short> getShortSerializer() {
+    public ShortSerializerImpl getShortSerializer() {
         return shortSerializer;
     }
 
-    public Serializer<String> getStringSerializer() {
+    public StringSerializerImpl getStringSerializer() {
         return stringSerializer;
     }
 
-    public Serializer<Set<String>> getStringSetSerializer() {
+    public StringSetSerializerImpl getStringSetSerializer() {
         return stringSetSerializer;
     }
 
-    public Serializer<Persistable> getPersistableSerializer() {
+    public PersistableSerializerImpl getPersistableSerializer() {
         return persistableSerializer;
     }
 }

@@ -1,14 +1,12 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * {@code Set<String>} to byte array implementation of {@link Serializer} and backwards
+ * {@code Set<String>} to byte array implementation and backwards
  */
-public final class StringSetSerializerImpl implements Serializer<Set<String>> {
+public final class StringSetSerializerImpl {
 
     /**
      * Minimum size primitive type of {@link Set}
@@ -27,7 +25,6 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
      * @param set target Set to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
     public byte[] serialize(Set<String> set) {
         byte[][] bytes = new byte[set.size()][];
         int i = 0;
@@ -73,34 +70,11 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     /**
      * Deserialize byte by {@link #serialize(Set)} convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized String Set
      */
-    @Override
-    public Set<String> deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, bytes.length);
-    }
-
-
-    /**
-     * Deserialize byte by {@link #serialize(Set)} convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized String Set
-     */
-    @Override
-    public Set<String> deserialize(String key, byte[] bytes, int offset, int length) {
-        byte flag = bytes[offset];
+    public Set<String> deserialize(byte[] bytes) {
+        byte flag = bytes[0];
         if (flag == STRING_SET_FLAG) {
 
             Set<String> set = new HashSet<>();
@@ -111,13 +85,13 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
 
                 int integerBytesSize = Integer.SIZE / 8;
                 byte[] stringSizeBytes = new byte[integerBytesSize];
-                System.arraycopy(bytes, offset + i, stringSizeBytes, 0, stringSizeBytes.length);
+                System.arraycopy(bytes, i, stringSizeBytes, 0, stringSizeBytes.length);
                 int stringSize = intFromBytes(stringSizeBytes);
 
                 byte[] stringBytes = new byte[stringSize];
 
                 for (int k = 0; k < stringBytes.length; k++) {
-                    int stringOffset = offset + i + k + integerBytesSize;
+                    int stringOffset = i + k + integerBytesSize;
                     stringBytes[k] = bytes[stringOffset];
                 }
 
@@ -130,7 +104,6 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
         }
 
         throw new ClassCastException(String.format("Set<String> cannot be deserialized in '%s' flag type", flag));
-
     }
 
     private int intFromBytes(byte[] bytes) {
@@ -141,12 +114,10 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
                 ((bytes[0]) << 24);
     }
 
-    @Override
     public boolean isMatches(byte flag) {
         return flag == STRING_SET_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         try {
             //noinspection unused,unchecked
@@ -158,7 +129,6 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
         return false;
     }
 
-    @Override
     public int bytesLength() {
         return STRING_SET_SIZE;
     }

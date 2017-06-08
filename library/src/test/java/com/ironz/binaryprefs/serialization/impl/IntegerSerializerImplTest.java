@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,14 +8,14 @@ public class IntegerSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Integer> serializer = new IntegerSerializerImpl();
+    private final IntegerSerializerImpl serializer = new IntegerSerializerImpl();
 
     @Test
     public void integerConvert() {
         int value = 53;
 
         byte[] bytes = serializer.serialize(value);
-        int restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        int restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

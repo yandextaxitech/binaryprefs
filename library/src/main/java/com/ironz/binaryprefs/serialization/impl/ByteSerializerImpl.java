@@ -1,11 +1,9 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
-
 /**
- * Byte to byte array implementation of {@link Serializer} and backwards
+ * Byte to byte array implementation and backwards
  */
-public final class ByteSerializerImpl implements Serializer<Byte> {
+public final class ByteSerializerImpl {
 
     /**
      * Uses for detecting byte primitive type of {@link Byte}
@@ -24,8 +22,7 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
      * @param value target byte to serialize.
      * @return specific byte array with scheme.
      */
-    @Override
-    public byte[] serialize(Byte value) {
+    public byte[] serialize(byte value) {
         return new byte[]{
                 BYTE_FLAG,
                 value
@@ -33,48 +30,23 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(Byte)}  convention
+     * Deserialize byte by {@link #serialize(byte)}  convention
      *
-     * @param key   token for determinate how to serialize
-     *              one type of class type or interface type by two or more
-     *              different serialization protocols.
-     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized byte
      */
-    @Override
-    public Byte deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, BYTE_SIZE);
+    public byte deserialize(byte[] bytes) {
+        return bytes[1];
     }
 
-    /**
-     * Deserialize byte by {@link #serialize(Byte)}  convention
-     *
-     * @param key    token for determinate how to serialize
-     *               one type of class type or interface type by two or more
-     *               different serialization protocols.
-     *               Default key is {@link #EMPTY_KEY}
-     * @param bytes  target byte array for deserialization
-     * @param offset offset of bytes array
-     * @param length of bytes array part
-     * @return deserialized byte
-     */
-    @Override
-    public Byte deserialize(String key, byte[] bytes, int offset, int length) {
-        return bytes[1 + offset];
-    }
-
-    @Override
     public boolean isMatches(byte flag) {
         return flag == BYTE_FLAG;
     }
 
-    @Override
     public boolean isMatches(Object o) {
         return o instanceof Byte;
     }
 
-    @Override
     public int bytesLength() {
         return BYTE_SIZE;
     }
