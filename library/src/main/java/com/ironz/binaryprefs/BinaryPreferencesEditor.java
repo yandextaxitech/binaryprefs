@@ -65,7 +65,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            value.remove(null);
             commitMap.put(key, value);
             return this;
         }

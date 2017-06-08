@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple preference change listener bridge
+ * Main thread preference change listener bridge
  */
 @SuppressWarnings("unused")
 public final class MainThreadEventBridgeImpl implements EventBridge {

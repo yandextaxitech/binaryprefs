@@ -9,8 +9,8 @@ import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -27,7 +27,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_KEY = "preference_update_key";
     private static final String PREFERENCE_VALUE = "preference_update_value";
 
-    private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+    private final List<OnSharedPreferenceChangeListener> listeners = new CopyOnWriteArrayList<>();
 
     private final Context context;
     private final String prefName;
