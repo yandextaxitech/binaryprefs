@@ -146,6 +146,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public boolean commit() {
         synchronized (Preferences.class) {
+            clearCache();
+            removeCache();
+            storeCache();
             return saveAll();
         }
     }

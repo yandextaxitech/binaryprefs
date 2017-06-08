@@ -16,6 +16,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 7. Custom serializers
 8. Lock free (stamped lock)
 9. Synchronous commits
+10. Transactions
 
 ## License
 ```
