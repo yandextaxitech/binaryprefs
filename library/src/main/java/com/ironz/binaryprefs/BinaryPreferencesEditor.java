@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -16,8 +17,7 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
-    public static final String COMMIT_METHOD_KEY = "commit method";
-    public static final String APPLY_METHOD_KEY = "apply method";
+    public static final String SAVE = "save";
 
     private final Map<String, Object> commitMap = new HashMap<>();
     private final Set<String> removeSet = new HashSet<>(0);
@@ -28,7 +28,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final EventBridge bridge;
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
-    private final Class lock;
+    private final CacheProvider cacheProvider;
 
     private boolean clearFlag;
 
@@ -38,19 +38,19 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
-                            Class lock) {
+                            CacheProvider cacheProvider) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
-        this.lock = lock;
+        this.cacheProvider = cacheProvider;
     }
 
     @Override
     public PreferencesEditor putString(String key, String value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             if (value == null) {
                 return remove(key);
             }
@@ -61,7 +61,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putStringSet(String key, Set<String> value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             if (value == null) {
                 return remove(key);
             }
@@ -72,7 +72,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putInt(String key, int value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             commitMap.put(key, value);
             return this;
         }
@@ -80,7 +80,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putLong(String key, long value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             commitMap.put(key, value);
             return this;
         }
@@ -88,7 +88,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putFloat(String key, float value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             commitMap.put(key, value);
             return this;
         }
@@ -96,7 +96,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             commitMap.put(key, value);
             return this;
         }
@@ -104,7 +104,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             commitMap.put(key, value);
             return this;
         }
@@ -112,7 +112,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor remove(String key) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             removeSet.add(key);
             return this;
         }
@@ -120,7 +120,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor clear() {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             clearFlag = true;
             return this;
         }
@@ -128,16 +128,15 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public void apply() {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
+            clearCache();
+            removeCache();
+            storeCache();
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        clearAll();
-                        remove();
-                        store();
-                    } catch (Exception e) {
-                        exceptionHandler.handle(e, APPLY_METHOD_KEY);
+                    synchronized (Preferences.class) {
+                        saveAll();
                     }
                 }
             });
@@ -146,16 +145,45 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public boolean commit() {
-        synchronized (lock) {
-            try {
-                clearAll();
-                remove();
-                store();
-                return true;
-            } catch (Exception e) {
-                exceptionHandler.handle(e, COMMIT_METHOD_KEY);
-            }
-            return false;
+        synchronized (Preferences.class) {
+            return saveAll();
+        }
+    }
+
+    private boolean saveAll() {
+        try {
+            clearAll();
+            remove();
+            store();
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(e, SAVE);
+        }
+        return false;
+    }
+
+    private void clearCache() {
+        if (!clearFlag) {
+            return;
+        }
+        for (String name : fileAdapter.names()) {
+            cacheProvider.remove(name);
+        }
+    }
+
+    private void removeCache() {
+        for (String name : removeSet) {
+            cacheProvider.remove(name);
+        }
+    }
+
+    private void storeCache() {
+        for (String name : commitMap.keySet()) {
+            Object value = commitMap.get(name);
+            Serializer serializer = serializerFactory.getByClassType(value);
+            //noinspection unchecked
+            byte[] bytes = serializer.serialize(value);
+            cacheProvider.put(name, bytes);
         }
     }
 

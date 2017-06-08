@@ -22,8 +22,6 @@ public final class BinaryPreferences implements Preferences {
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
 
-    private final Class lock = BinaryPreferences.class;
-
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(FileAdapter fileAdapter,
                              ExceptionHandler exceptionHandler,
@@ -41,7 +39,7 @@ public final class BinaryPreferences implements Preferences {
     }
 
     private void defineCache() {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             for (String name : fileAdapter.names()) {
                 try {
                     byte[] bytes = fileAdapter.fetch(name);
@@ -55,7 +53,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public Map<String, Object> getAll() {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getAllInternal();
             } catch (Exception e) {
@@ -67,7 +65,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public String getString(String key, String defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getStringInternal(key);
             } catch (Exception e) {
@@ -79,7 +77,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
@@ -91,7 +89,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public int getInt(String key, int defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getIntInternal(key);
             } catch (Exception e) {
@@ -103,7 +101,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public long getLong(String key, long defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getLongInternal(key);
             } catch (Exception e) {
@@ -115,7 +113,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public float getFloat(String key, float defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getFloatInternal(key);
             } catch (Exception e) {
@@ -127,7 +125,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getBooleanInternal(key);
             } catch (Exception e) {
@@ -139,7 +137,7 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public <T extends Persistable> T getPersistable(String key, T defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getPersistableInternal(key);
             } catch (Exception e) {
@@ -151,28 +149,36 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public boolean contains(String key) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             return containsInternal(key);
         }
     }
 
     @Override
     public PreferencesEditor edit() {
-        synchronized (lock) {
-            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, taskExecutor, serializerFactory, lock);
+        synchronized (Preferences.class) {
+            return new BinaryPreferencesEditor(
+                    this,
+                    fileAdapter,
+                    exceptionHandler,
+                    eventsBridge,
+                    taskExecutor,
+                    serializerFactory,
+                    cacheProvider
+            );
         }
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             eventsBridge.registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             eventsBridge.unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
