@@ -15,7 +15,9 @@ public interface Serializer<T> {
     /**
      * Deserialize byte by {@link #serialize(Object)} convention
      *
-     * @param key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols
      * @param bytes target byte array for deserialization
      * @return deserialized instance type
      */
