@@ -7,7 +7,6 @@ import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public final class TestUser implements Persistable {
 
     public static final String KEY = "user";
@@ -26,39 +25,39 @@ public final class TestUser implements Persistable {
     public TestUser() {
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public void setAge(short age) {
+    private void setAge(short age) {
         this.age = age;
     }
 
-    public void setSex(char sex) {
+    private void setSex(char sex) {
         this.sex = sex;
     }
 
-    public void setMarried(boolean married) {
+    private void setMarried(boolean married) {
         this.married = married;
     }
 
-    public void setPostal(long postal) {
+    private void setPostal(long postal) {
         this.postal = postal;
     }
 
-    public void setChild(byte child) {
+    private void setChild(byte child) {
         this.child = child;
     }
 
-    public void setWeight(float weight) {
+    private void setWeight(float weight) {
         this.weight = weight;
     }
 
-    public void setHeight(float height) {
+    private void setHeight(float height) {
         this.height = height;
     }
 
-    public void addAddresses(TestAddress address) {
+    private void addAddresses(TestAddress address) {
         this.addresses.add(address);
     }
 
@@ -148,7 +147,7 @@ public final class TestUser implements Persistable {
                 '}';
     }
 
-    public static TestUser createUser() {
+    public static TestUser create() {
         TestUser value = new TestUser();
         value.setName("John");
         value.setAge((short) 21);

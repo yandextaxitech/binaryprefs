@@ -12,8 +12,8 @@ public class SerializerFactoryTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final PersistableRegistry classProvider = new PersistableRegistry();
-    private final SerializerFactory factory = new SerializerFactory(classProvider);
+    private final PersistableRegistry registry = new PersistableRegistry();
+    private final SerializerFactory factory = new SerializerFactory(registry);
 
     @Test
     public void booleanSerializerType() {

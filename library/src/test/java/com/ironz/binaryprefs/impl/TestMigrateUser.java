@@ -9,6 +9,8 @@ import java.util.List;
 
 public final class TestMigrateUser implements Persistable {
 
+    public static final String KEY = "migrate_user";
+
     private String name;
     private byte age;
     private char sex;
@@ -145,7 +147,7 @@ public final class TestMigrateUser implements Persistable {
                 '}';
     }
 
-    public static TestMigrateUser createUser() {
+    public static TestMigrateUser create() {
         TestMigrateUser value = new TestMigrateUser();
         value.setName("John");
         value.setAge((byte) 21);
@@ -159,5 +161,4 @@ public final class TestMigrateUser implements Persistable {
         value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
         return value;
     }
-
 }

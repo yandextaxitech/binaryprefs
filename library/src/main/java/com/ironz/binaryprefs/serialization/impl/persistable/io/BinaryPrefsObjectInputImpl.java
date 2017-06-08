@@ -41,11 +41,11 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) {
 
-        checkBytes(bytes);
-        checkNull(clazz);
-
         this.buffer = bytes;
-        offset++;
+
+        checkBytes();
+        checkNull(clazz);
+        checkPersistable();
 
         T instance = newInstance(clazz);
         instance.readExternal(this);
@@ -64,6 +64,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public boolean readBoolean() {
         checkBounds();
+        checkType(booleanSerializer, buffer[offset]);
         int length = booleanSerializer.bytesLength();
         boolean b = booleanSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -73,6 +74,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public byte readByte() {
         checkBounds();
+        checkType(byteSerializer, buffer[offset]);
         int length = byteSerializer.bytesLength();
         byte b = byteSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -82,6 +84,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public short readShort() {
         checkBounds();
+        checkType(shortSerializer, buffer[offset]);
         int length = shortSerializer.bytesLength();
         short s = shortSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -91,6 +94,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public char readChar() {
         checkBounds();
+        checkType(charSerializer, buffer[offset]);
         int length = charSerializer.bytesLength();
         char c = charSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -100,6 +104,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public int readInt() {
         checkBounds();
+        checkType(integerSerializer, buffer[offset]);
         int length = integerSerializer.bytesLength();
         int i = integerSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -109,6 +114,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public long readLong() {
         checkBounds();
+        checkType(longSerializer, buffer[offset]);
         int length = longSerializer.bytesLength();
         long l = longSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -118,6 +124,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public float readFloat() {
         checkBounds();
+        checkType(floatSerializer, buffer[offset]);
         int length = floatSerializer.bytesLength();
         float f = floatSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -127,6 +134,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public double readDouble() {
         checkBounds();
+        checkType(doubleSerializer, buffer[offset]);
         int length = doubleSerializer.bytesLength();
         double d = doubleSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
@@ -136,9 +144,13 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public String readString() {
         checkBounds();
+        checkType(integerSerializer, buffer[offset]);
         int length = integerSerializer.bytesLength();
         int bytesStringSize = integerSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
         offset += length;
+
+        checkBounds();
+        checkType(stringSerializer, buffer[offset]);
         String s = stringSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, bytesStringSize);
         offset += stringSerializer.bytesLength() + bytesStringSize;
         return s;
@@ -150,15 +162,29 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
         }
     }
 
+    private void checkType(Serializer<?> serializer, byte flag) {
+        if (!serializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("Can't deserialize flag type '%s' with '%s' serializer.", flag, serializer.getClass().getName()));
+        }
+    }
+
+    private void checkBytes() {
+        if (buffer.length < 1) {
+            throw new UnsupportedOperationException("Cannot deserialize empty byte array!");
+        }
+    }
+
     private void checkNull(Object value) {
         if (value == null) {
             throw new NullPointerException("Can't serialize null object");
         }
     }
 
-    private void checkBytes(byte[] bytes) {
-        if (bytes.length < 1) {
-            throw new UnsupportedOperationException("Cannot deserialize empty byte array!");
+    private void checkPersistable() {
+        byte flag = buffer[0];
+        if (flag != Persistable.FLAG_PERSISTABLE) {
+            throw new ClassCastException(String.format("Persistable cannot be deserialized in '%s' flag type", flag));
         }
+        offset++;
     }
 }

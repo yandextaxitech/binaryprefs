@@ -20,7 +20,7 @@ public final class SerializerFactory {
     private final Serializer<Set<String>> stringSetSerializer;
     private final Serializer<Persistable> persistableSerializer;
 
-    public SerializerFactory(PersistableRegistry classProvider) {
+    public SerializerFactory(PersistableRegistry persistableRegistry) {
         booleanSerializer = new BooleanSerializerImpl();
         byteSerializer = new ByteSerializerImpl();
         charSerializer = new CharSerializerImpl();
@@ -41,7 +41,7 @@ public final class SerializerFactory {
                 longSerializer,
                 shortSerializer,
                 stringSerializer,
-                classProvider
+                persistableRegistry
         );
     }
 

@@ -234,7 +234,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void persistableValue() {
         String key = TestUser.KEY;
-        TestUser value = TestUser.createUser();
+        TestUser value = TestUser.create();
 
         preferences.edit()
                 .putPersistable(key, value)
@@ -247,7 +247,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void persistableDefaultValue() {
         String key = TestUser.KEY;
-        TestUser defaultValue = TestUser.createUser();
+        TestUser defaultValue = TestUser.create();
 
         TestUser restored = preferences.getPersistable(key, defaultValue);
 
@@ -257,7 +257,7 @@ public final class BinaryPreferencesTest {
     @Test(expected = UnsupportedClassVersionError.class)
     public void persistableNotRegistered() {
         String key = TestUser.KEY;
-        TestUser value = TestUser.createUser();
+        TestUser value = TestUser.create();
 
         preferences.edit()
                 .putPersistable(key, value)
