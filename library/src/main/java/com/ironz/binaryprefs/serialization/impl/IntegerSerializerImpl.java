@@ -15,7 +15,7 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     /**
      * Uses for detecting byte array primitive type of {@link Integer}
      */
-    private static final byte INT_FLAG = (byte) -3;
+    public static final byte INT_FLAG = (byte) -3;
 
     /**
      * Serialize {@code int} into byte array with following scheme:
@@ -39,7 +39,10 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     /**
      * Deserialize byte by {@link #serialize(Integer)} convention
      *
-     * @param key   object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized int
      */
@@ -51,7 +54,10 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     /**
      * Deserialize byte by {@link #serialize(Integer)} convention
      *
-     * @param key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -79,10 +85,5 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     @Override
     public int bytesLength() {
         return INT_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return INT_FLAG;
     }
 }

@@ -10,7 +10,7 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     /**
      * Uses for detecting byte array primitive type of {@link Short}
      */
-    private static final byte SHORT_FLAG = -9;
+    public static final byte SHORT_FLAG = -9;
 
     /**
      * Minimum size primitive type of {@link Short}
@@ -36,7 +36,10 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     /**
      * Deserialize short by {@link #serialize(Short)}  convention
      *
-     * @param key    object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized short
      */
@@ -48,7 +51,10 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     /**
      * Deserialize short by {@link #serialize(Short)}  convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -74,10 +80,5 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     @Override
     public int bytesLength() {
         return SHORT_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return SHORT_FLAG;
     }
 }

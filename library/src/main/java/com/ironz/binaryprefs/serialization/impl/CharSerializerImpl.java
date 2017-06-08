@@ -10,7 +10,7 @@ public final class CharSerializerImpl implements Serializer<Character> {
     /**
      * Uses for detecting byte array primitive type of {@link Character}
      */
-    private static final byte CHAR_FLAG = -10;
+    public static final byte CHAR_FLAG = -10;
 
     /**
      * Minimum size primitive type of {@link Character}
@@ -36,7 +36,10 @@ public final class CharSerializerImpl implements Serializer<Character> {
     /**
      * Deserialize char by {@link #serialize(Character)} convention
      *
-     * @param key   object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized char
      */
@@ -48,7 +51,10 @@ public final class CharSerializerImpl implements Serializer<Character> {
     /**
      * Deserialize char by {@link #serialize(Character)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -74,10 +80,5 @@ public final class CharSerializerImpl implements Serializer<Character> {
     @Override
     public int bytesLength() {
         return CHAR_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return CHAR_FLAG;
     }
 }

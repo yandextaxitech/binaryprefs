@@ -10,7 +10,7 @@ public final class StringSerializerImpl implements Serializer<String> {
     /**
      * Uses for detecting byte array type of {@link String}
      */
-    private static final byte STRING_FLAG = (byte) -2;
+    public static final byte STRING_FLAG = (byte) -2;
 
     /**
      * Minimum size primitive type of {@link String}
@@ -37,7 +37,10 @@ public final class StringSerializerImpl implements Serializer<String> {
     /**
      * Deserialize byte by {@link #serialize(String)} convention
      *
-     * @param key    object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized String
      */
@@ -49,7 +52,10 @@ public final class StringSerializerImpl implements Serializer<String> {
     /**
      * Deserialize byte by {@link #serialize(String)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -74,10 +80,5 @@ public final class StringSerializerImpl implements Serializer<String> {
     @Override
     public int bytesLength() {
         return STRING_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return STRING_FLAG;
     }
 }

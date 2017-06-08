@@ -18,7 +18,7 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     /**
      * Uses for detecting byte array type of {@link Set} of {@link String}
      */
-    private static final byte STRING_SET_FLAG = -1;
+    public static final byte STRING_SET_FLAG = -1;
 
     /**
      * Serialize {@code Set<String>} into byte array with following scheme:
@@ -73,7 +73,10 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     /**
      * Deserialize byte by {@link #serialize(Set)} convention
      *
-     * @param key   object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized String Set
      */
@@ -86,7 +89,10 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     /**
      * Deserialize byte by {@link #serialize(Set)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -155,10 +161,5 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     @Override
     public int bytesLength() {
         return STRING_SET_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return STRING_SET_FLAG;
     }
 }

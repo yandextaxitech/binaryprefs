@@ -10,7 +10,7 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     /**
      * Uses for detecting byte array primitive type of {@link Float}
      */
-    private static final byte FLOAT_FLAG = -6;
+    public static final byte FLOAT_FLAG = -6;
 
     /**
      * Minimum size primitive type of {@link Float}
@@ -39,7 +39,10 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     /**
      * Deserialize byte by {@link #serialize(Float)} convention
      *
-     * @param key    object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized float
      */
@@ -51,7 +54,10 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     /**
      * Deserialize byte by {@link #serialize(Float)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -80,10 +86,5 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     @Override
     public int bytesLength() {
         return FLOAT_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return FLOAT_FLAG;
     }
 }

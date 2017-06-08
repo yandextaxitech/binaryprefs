@@ -17,7 +17,8 @@ public interface Serializer<T> {
      *
      * @param key   token for determinate how to serialize
      *              one type of class type or interface type by two or more
-     *              different serialization protocols
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized instance type
      */
@@ -26,7 +27,10 @@ public interface Serializer<T> {
     /**
      * Deserialize byte by {@link #serialize(Object)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset specific offset for using a long arrays
      * @param length from bytes array
@@ -60,13 +64,6 @@ public interface Serializer<T> {
      * @return structure bytes size or minimum size of bytes for few types.
      */
     int bytesLength();
-
-    /**
-     * Returns flag for concrete implementation
-     *
-     * @return byte flag
-     */
-    byte getFlag();
 
     /**
      * Empty key for determine empty object deserialization token

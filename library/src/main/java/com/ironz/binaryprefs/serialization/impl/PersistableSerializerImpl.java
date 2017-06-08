@@ -69,7 +69,10 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     /**
      * Deserialize {@link Persistable} by {@link #serialize(Persistable)} convention
      *
-     * @param key   object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized {@link Persistable}
      */
@@ -81,8 +84,10 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     /**
      * Deserialize {@link Persistable} by {@link #serialize(Persistable)} convention
      *
-     * @param key    object token key
-     * @param key    key for deserialization token
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -118,10 +123,5 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     @Override
     public int bytesLength() {
         return PERSISTABLE_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return Persistable.FLAG_PERSISTABLE;
     }
 }

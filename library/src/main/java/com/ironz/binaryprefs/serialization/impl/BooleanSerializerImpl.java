@@ -10,7 +10,7 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     /**
      * Uses for detecting byte array primitive type of {@link Boolean}
      */
-    private static final byte BOOLEAN_FLAG = -7;
+    public static final byte BOOLEAN_FLAG = -7;
 
     /**
      * Minimum size primitive type of {@link Boolean}
@@ -35,7 +35,10 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     /**
      * Deserialize byte by {@link #serialize(Boolean)} convention
      *
-     * @param key   object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized boolean
      */
@@ -47,7 +50,10 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     /**
      * Deserialize byte by {@link #serialize(Boolean)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -71,10 +77,5 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     @Override
     public int bytesLength() {
         return BOOLEAN_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return BOOLEAN_FLAG;
     }
 }

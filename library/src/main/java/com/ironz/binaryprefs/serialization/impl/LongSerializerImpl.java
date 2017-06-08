@@ -10,7 +10,7 @@ public final class LongSerializerImpl implements Serializer<Long> {
     /**
      * Uses for detecting byte array primitive type of {@link Long}
      */
-    private static final byte LONG_FLAG = -4;
+    public static final byte LONG_FLAG = -4;
 
     /**
      * Minimum size primitive type of {@link Long}
@@ -43,8 +43,10 @@ public final class LongSerializerImpl implements Serializer<Long> {
     /**
      * Deserialize byte by {@link #serialize(Long)} convention
      *
-     *
-     * @param key    object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized long
      */
@@ -56,8 +58,10 @@ public final class LongSerializerImpl implements Serializer<Long> {
     /**
      * Deserialize byte by {@link #serialize(Long)} convention
      *
-     *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -89,10 +93,5 @@ public final class LongSerializerImpl implements Serializer<Long> {
     @Override
     public int bytesLength() {
         return LONG_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return LONG_FLAG;
     }
 }

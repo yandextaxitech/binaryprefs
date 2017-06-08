@@ -11,7 +11,7 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     /**
      * Uses for detecting byte array primitive type of {@link Double}
      */
-    private static final byte DOUBLE_FLAG = -5;
+    public static final byte DOUBLE_FLAG = -5;
 
     /**
      * Minimum size primitive type of {@link Double}
@@ -44,7 +44,10 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     /**
      * Deserialize byte by {@link #serialize(Double)} convention
      *
-     * @param key    object token key
+     * @param key   token for determinate how to serialize
+     *              one type of class type or interface type by two or more
+     *              different serialization protocols.
+     *              Default key is {@link #EMPTY_KEY}
      * @param bytes target byte array for deserialization
      * @return deserialized double
      */
@@ -56,7 +59,10 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     /**
      * Deserialize byte by {@link #serialize(Double)} convention
      *
-     * @param key    object token key
+     * @param key    token for determinate how to serialize
+     *               one type of class type or interface type by two or more
+     *               different serialization protocols.
+     *               Default key is {@link #EMPTY_KEY}
      * @param bytes  target byte array for deserialization
      * @param offset offset of bytes array
      * @param length of bytes array part
@@ -90,10 +96,5 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     @Override
     public int bytesLength() {
         return DOUBLE_SIZE;
-    }
-
-    @Override
-    public byte getFlag() {
-        return DOUBLE_FLAG;
     }
 }
