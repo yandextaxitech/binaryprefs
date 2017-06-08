@@ -51,9 +51,17 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
         this.persistableRegistry = persistableRegistry;
     }
 
+    /**
+     * Serialize {@code Persistable} into byte array with following scheme:
+     * [{@link Persistable#FLAG_PERSISTABLE}] + [boolean_bytes].
+     *
+     * @param value target persistable to serialize.
+     * @return specific byte array with scheme.
+     */
     @Override
-    public byte[] serialize(Persistable persistable) {
-        DataOutput output = new BinaryPrefsObjectOutputImpl(booleanSerializer,
+    public byte[] serialize(Persistable value) {
+        DataOutput output = new BinaryPrefsObjectOutputImpl(
+                booleanSerializer,
                 byteSerializer,
                 charSerializer,
                 doubleSerializer,
@@ -63,7 +71,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
                 shortSerializer,
                 stringSerializer
         );
-        return output.serialize(persistable);
+        return output.serialize(value);
     }
 
     /**
