@@ -66,7 +66,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                 return remove(key);
             }
             value.remove(null);
-            commitMap.put(key, new HashSet<>(value));
+            commitMap.put(key, value);
             return this;
         }
     }

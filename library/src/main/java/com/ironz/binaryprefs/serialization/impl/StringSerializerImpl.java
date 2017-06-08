@@ -10,16 +10,16 @@ public final class StringSerializerImpl implements Serializer<String> {
     /**
      * Uses for detecting byte array type of {@link String}
      */
-    private static final byte FLAG_STRING = (byte) -2;
+    private static final byte STRING_FLAG = (byte) -2;
 
     /**
      * Minimum size primitive type of {@link String}
      */
-    private static final int SIZE_STRING = 1;
+    private static final int STRING_SIZE = 1;
 
     /**
      * Serialize {@code String} into byte array with following scheme:
-     * [{@link #FLAG_STRING}] + [string_byte_array].
+     * [{@link #STRING_FLAG}] + [string_byte_array].
      *
      * @param s target String to serialize.
      * @return specific byte array with scheme.
@@ -29,7 +29,7 @@ public final class StringSerializerImpl implements Serializer<String> {
         byte[] stringBytes = s.getBytes();
         int flagSize = 1;
         byte[] b = new byte[stringBytes.length + flagSize];
-        b[0] = FLAG_STRING;
+        b[0] = STRING_FLAG;
         System.arraycopy(stringBytes, 0, b, flagSize, stringBytes.length);
         return b;
     }
@@ -63,7 +63,7 @@ public final class StringSerializerImpl implements Serializer<String> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_STRING;
+        return flag == STRING_FLAG;
     }
 
     @Override
@@ -73,11 +73,11 @@ public final class StringSerializerImpl implements Serializer<String> {
 
     @Override
     public int bytesLength() {
-        return SIZE_STRING;
+        return STRING_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_STRING;
+        return STRING_FLAG;
     }
 }

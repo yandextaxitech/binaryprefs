@@ -10,16 +10,16 @@ public final class CharSerializerImpl implements Serializer<Character> {
     /**
      * Uses for detecting byte array primitive type of {@link Character}
      */
-    private static final byte FLAG_CHAR = -10;
+    private static final byte CHAR_FLAG = -10;
 
     /**
      * Minimum size primitive type of {@link Character}
      */
-    private static final int SIZE_CHAR = 3;
+    private static final int CHAR_SIZE = 3;
 
     /**
      * Serialize {@code char} into byte array with following scheme:
-     * [{@link #FLAG_CHAR}] + [char_bytes].
+     * [{@link #CHAR_FLAG}] + [char_bytes].
      *
      * @param value target char to serialize.
      * @return specific byte array with scheme.
@@ -27,7 +27,7 @@ public final class CharSerializerImpl implements Serializer<Character> {
     @Override
     public byte[] serialize(Character value) {
         return new byte[]{
-                FLAG_CHAR,
+                CHAR_FLAG,
                 (byte) (value >>> 8),
                 ((byte) ((char) value))
         };
@@ -36,13 +36,13 @@ public final class CharSerializerImpl implements Serializer<Character> {
     /**
      * Deserialize char by {@link #serialize(Character)} convention
      *
-     * @param key    object token key
+     * @param key   object token key
      * @param bytes target byte array for deserialization
      * @return deserialized char
      */
     @Override
     public Character deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_CHAR);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, CHAR_SIZE);
     }
 
     /**
@@ -63,7 +63,7 @@ public final class CharSerializerImpl implements Serializer<Character> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_CHAR;
+        return flag == CHAR_FLAG;
     }
 
     @Override
@@ -73,11 +73,11 @@ public final class CharSerializerImpl implements Serializer<Character> {
 
     @Override
     public int bytesLength() {
-        return SIZE_CHAR;
+        return CHAR_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_CHAR;
+        return CHAR_FLAG;
     }
 }

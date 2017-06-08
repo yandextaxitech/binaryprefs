@@ -10,16 +10,16 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     /**
      * Uses for detecting byte array primitive type of {@link Short}
      */
-    private static final byte FLAG_SHORT = -9;
+    private static final byte SHORT_FLAG = -9;
 
     /**
      * Minimum size primitive type of {@link Short}
      */
-    private static final int SIZE_SHORT = 3;
+    private static final int SHORT_SIZE = 3;
 
     /**
      * Serialize {@code short} into byte array with following scheme:
-     * [{@link #FLAG_SHORT}] + [short_bytes].
+     * [{@link #SHORT_FLAG}] + [short_bytes].
      *
      * @param value target short to serialize.
      * @return specific byte array with scheme.
@@ -27,7 +27,7 @@ public final class ShortSerializerImpl implements Serializer<Short> {
     @Override
     public byte[] serialize(Short value) {
         return new byte[]{
-                FLAG_SHORT,
+                SHORT_FLAG,
                 (byte) (value >>> 8),
                 ((byte) ((short) value))
         };
@@ -42,7 +42,7 @@ public final class ShortSerializerImpl implements Serializer<Short> {
      */
     @Override
     public Short deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_SHORT);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SHORT_SIZE);
     }
 
     /**
@@ -63,7 +63,7 @@ public final class ShortSerializerImpl implements Serializer<Short> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_SHORT;
+        return flag == SHORT_FLAG;
     }
 
     @Override
@@ -73,11 +73,11 @@ public final class ShortSerializerImpl implements Serializer<Short> {
 
     @Override
     public int bytesLength() {
-        return SIZE_SHORT;
+        return SHORT_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_SHORT;
+        return SHORT_FLAG;
     }
 }

@@ -10,16 +10,16 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
     /**
      * Uses for detecting byte primitive type of {@link Byte}
      */
-    private static final byte FLAG_BYTE = -8;
+    private static final byte BYTE_FLAG = -8;
 
     /**
      * Minimum size primitive type of {@link Byte}
      */
-    private static final int SIZE_BYTE = 2;
+    private static final int BYTE_SIZE = 2;
 
     /**
      * Serialize {@code byte} into byte array with following scheme:
-     * [{@link #FLAG_BYTE}] + [byte].
+     * [{@link #BYTE_FLAG}] + [byte].
      *
      * @param value target byte to serialize.
      * @return specific byte array with scheme.
@@ -27,7 +27,7 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
     @Override
     public byte[] serialize(Byte value) {
         return new byte[]{
-                FLAG_BYTE,
+                BYTE_FLAG,
                 value
         };
     }
@@ -41,7 +41,7 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
      */
     @Override
     public Byte deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_BYTE);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, BYTE_SIZE);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_BYTE;
+        return flag == BYTE_FLAG;
     }
 
     @Override
@@ -71,11 +71,11 @@ public final class ByteSerializerImpl implements Serializer<Byte> {
 
     @Override
     public int bytesLength() {
-        return SIZE_BYTE;
+        return BYTE_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_BYTE;
+        return BYTE_FLAG;
     }
 }

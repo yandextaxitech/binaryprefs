@@ -11,16 +11,16 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     /**
      * Uses for detecting byte array primitive type of {@link Double}
      */
-    private static final byte FLAG_DOUBLE = -5;
+    private static final byte DOUBLE_FLAG = -5;
 
     /**
      * Minimum size primitive type of {@link Double}
      */
-    private static final int SIZE_DOUBLE = 9;
+    private static final int DOUBLE_SIZE = 9;
 
     /**
      * Serialize {@code double} into byte array with following scheme:
-     * [{@link #FLAG_DOUBLE}] + [double_bytes].
+     * [{@link #DOUBLE_FLAG}] + [double_bytes].
      *
      * @param value target double to serialize.
      * @return specific byte array with scheme.
@@ -29,7 +29,7 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
     public byte[] serialize(Double value) {
         long l = Double.doubleToLongBits(value);
         return new byte[]{
-                FLAG_DOUBLE,
+                DOUBLE_FLAG,
                 (byte) (l >>> 56),
                 (byte) (l >>> 48),
                 (byte) (l >>> 40),
@@ -50,7 +50,7 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
      */
     @Override
     public Double deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_DOUBLE);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, DOUBLE_SIZE);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_DOUBLE;
+        return flag == DOUBLE_FLAG;
     }
 
     @Override
@@ -89,11 +89,11 @@ public final class DoubleSerializerImpl implements Serializer<Double> {
 
     @Override
     public int bytesLength() {
-        return SIZE_DOUBLE;
+        return DOUBLE_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_DOUBLE;
+        return DOUBLE_FLAG;
     }
 }

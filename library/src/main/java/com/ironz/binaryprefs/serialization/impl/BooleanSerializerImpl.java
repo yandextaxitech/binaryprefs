@@ -10,16 +10,16 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     /**
      * Uses for detecting byte array primitive type of {@link Boolean}
      */
-    private static final byte FLAG_BOOLEAN = -7;
+    private static final byte BOOLEAN_FLAG = -7;
 
     /**
      * Minimum size primitive type of {@link Boolean}
      */
-    private static final int SIZE_BOOLEAN = 2;
+    private static final int BOOLEAN_SIZE = 2;
 
     /**
      * Serialize {@code boolean} into byte array with following scheme:
-     * [{@link #FLAG_BOOLEAN}] + [boolean_bytes].
+     * [{@link #BOOLEAN_FLAG}] + [boolean_bytes].
      *
      * @param value target boolean to serialize.
      * @return specific byte array with scheme.
@@ -27,7 +27,7 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
     @Override
     public byte[] serialize(Boolean value) {
         return new byte[]{
-                FLAG_BOOLEAN,
+                BOOLEAN_FLAG,
                 (byte) (value ? 1 : 0)
         };
     }
@@ -41,7 +41,7 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
      */
     @Override
     public Boolean deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_BOOLEAN);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, BOOLEAN_SIZE);
     }
 
     /**
@@ -60,7 +60,7 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_BOOLEAN;
+        return flag == BOOLEAN_FLAG;
     }
 
     @Override
@@ -70,11 +70,11 @@ public final class BooleanSerializerImpl implements Serializer<Boolean> {
 
     @Override
     public int bytesLength() {
-        return SIZE_BOOLEAN;
+        return BOOLEAN_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_BOOLEAN;
+        return BOOLEAN_FLAG;
     }
 }

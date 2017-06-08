@@ -18,7 +18,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
     /**
      * Minimum size primitive type of {@link Persistable}
      */
-    private static final int SIZE_PERSISTABLE = 1;
+    private static final int PERSISTABLE_SIZE = 1;
 
     private final Serializer<Boolean> booleanSerializer;
     private final Serializer<Byte> byteSerializer;
@@ -122,7 +122,7 @@ public final class PersistableSerializerImpl implements Serializer<Persistable> 
 
     @Override
     public int bytesLength() {
-        return SIZE_PERSISTABLE;
+        return PERSISTABLE_SIZE;
     }
 
     @Override

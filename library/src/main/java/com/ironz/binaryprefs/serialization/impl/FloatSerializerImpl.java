@@ -10,16 +10,16 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     /**
      * Uses for detecting byte array primitive type of {@link Float}
      */
-    private static final byte FLAG_FLOAT = -6;
+    private static final byte FLOAT_FLAG = -6;
 
     /**
      * Minimum size primitive type of {@link Float}
      */
-    private static final int SIZE_FLOAT = 5;
+    private static final int FLOAT_SIZE = 5;
 
     /**
      * Serialize {@code float} into byte array with following scheme:
-     * [{@link #FLAG_FLOAT}] + [float_bytes].
+     * [{@link #FLOAT_FLAG}] + [float_bytes].
      *
      * @param value target float to serialize.
      * @return specific byte array with scheme.
@@ -28,7 +28,7 @@ public final class FloatSerializerImpl implements Serializer<Float> {
     public byte[] serialize(Float value) {
         int val = Float.floatToIntBits(value);
         return new byte[]{
-                FLAG_FLOAT,
+                FLOAT_FLAG,
                 (byte) (val >>> 24),
                 (byte) (val >>> 16),
                 (byte) (val >>> 8),
@@ -45,7 +45,7 @@ public final class FloatSerializerImpl implements Serializer<Float> {
      */
     @Override
     public Float deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, FLAG_FLOAT);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, FLOAT_FLAG);
     }
 
     /**
@@ -69,7 +69,7 @@ public final class FloatSerializerImpl implements Serializer<Float> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_FLOAT;
+        return flag == FLOAT_FLAG;
     }
 
     @Override
@@ -79,11 +79,11 @@ public final class FloatSerializerImpl implements Serializer<Float> {
 
     @Override
     public int bytesLength() {
-        return SIZE_FLOAT;
+        return FLOAT_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_FLOAT;
+        return FLOAT_FLAG;
     }
 }

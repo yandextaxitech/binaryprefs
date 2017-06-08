@@ -10,16 +10,16 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     /**
      * Minimum size primitive type of {@link Integer}
      */
-    private static final int SIZE_INT = 5;
+    private static final int INT_SIZE = 5;
 
     /**
      * Uses for detecting byte array primitive type of {@link Integer}
      */
-    private static final byte FLAG_INT = (byte) -3;
+    private static final byte INT_FLAG = (byte) -3;
 
     /**
      * Serialize {@code int} into byte array with following scheme:
-     * [{@link #FLAG_INT}] + [int_bytes].
+     * [{@link #INT_FLAG}] + [int_bytes].
      *
      * @param value target int to serialize.
      * @return specific byte array with scheme.
@@ -28,7 +28,7 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
     public byte[] serialize(Integer value) {
         int i = 0xff;
         return new byte[]{
-                FLAG_INT,
+                INT_FLAG,
                 (byte) ((value >>> 24) & i),
                 (byte) ((value >>> 16) & i),
                 (byte) ((value >>> 8) & i),
@@ -45,7 +45,7 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
      */
     @Override
     public Integer deserialize(String key, byte[] bytes) {
-        return deserialize(Serializer.EMPTY_KEY, bytes, 0, SIZE_INT);
+        return deserialize(Serializer.EMPTY_KEY, bytes, 0, INT_SIZE);
     }
 
     /**
@@ -68,7 +68,7 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_INT;
+        return flag == INT_FLAG;
     }
 
     @Override
@@ -78,11 +78,11 @@ public final class IntegerSerializerImpl implements Serializer<Integer> {
 
     @Override
     public int bytesLength() {
-        return SIZE_INT;
+        return INT_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_INT;
+        return INT_FLAG;
     }
 }

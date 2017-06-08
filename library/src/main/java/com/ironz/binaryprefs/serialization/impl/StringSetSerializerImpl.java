@@ -13,16 +13,16 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     /**
      * Minimum size primitive type of {@link Set}
      */
-    private static final int SIZE_SET = 1;
+    private static final int STRING_SET_SIZE = 1;
 
     /**
      * Uses for detecting byte array type of {@link Set} of {@link String}
      */
-    private static final byte FLAG_STRING_SET = -1;
+    private static final byte STRING_SET_FLAG = -1;
 
     /**
      * Serialize {@code Set<String>} into byte array with following scheme:
-     * [{@link #FLAG_STRING_SET}] + (([string_size] + [string_byte_array]) * n).
+     * [{@link #STRING_SET_FLAG}] + (([string_size] + [string_byte_array]) * n).
      *
      * @param set target Set to serialize.
      * @return specific byte array with scheme.
@@ -49,7 +49,7 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
         }
 
         byte[] totalArray = new byte[totalArraySize];
-        totalArray[0] = FLAG_STRING_SET;
+        totalArray[0] = STRING_SET_FLAG;
 
         int offset = 1;
         for (byte[] b : bytes) {
@@ -95,7 +95,7 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
     @Override
     public Set<String> deserialize(String key, byte[] bytes, int offset, int length) {
         byte flag = bytes[offset];
-        if (flag == FLAG_STRING_SET) {
+        if (flag == STRING_SET_FLAG) {
 
             Set<String> set = new HashSet<>();
 
@@ -137,7 +137,7 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_STRING_SET;
+        return flag == STRING_SET_FLAG;
     }
 
     @Override
@@ -154,11 +154,11 @@ public final class StringSetSerializerImpl implements Serializer<Set<String>> {
 
     @Override
     public int bytesLength() {
-        return SIZE_SET;
+        return STRING_SET_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_STRING_SET;
+        return STRING_SET_FLAG;
     }
 }

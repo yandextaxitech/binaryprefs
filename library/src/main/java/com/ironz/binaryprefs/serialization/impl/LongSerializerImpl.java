@@ -10,16 +10,16 @@ public final class LongSerializerImpl implements Serializer<Long> {
     /**
      * Uses for detecting byte array primitive type of {@link Long}
      */
-    private static final byte FLAG_LONG = -4;
+    private static final byte LONG_FLAG = -4;
 
     /**
      * Minimum size primitive type of {@link Long}
      */
-    private static final int SIZE_LONG = 9;
+    private static final int LONG_SIZE = 9;
 
     /**
      * Serialize {@code long} into byte array with following scheme:
-     * [{@link #FLAG_LONG}] + [long_bytes].
+     * [{@link #LONG_FLAG}] + [long_bytes].
      *
      * @param value target long to serialize.
      * @return specific byte array with scheme.
@@ -27,7 +27,7 @@ public final class LongSerializerImpl implements Serializer<Long> {
     @Override
     public byte[] serialize(Long value) {
         return new byte[]{
-                FLAG_LONG,
+                LONG_FLAG,
                 (byte) (value >>> 56),
                 (byte) (value >>> 48),
                 (byte) (value >>> 40),
@@ -78,7 +78,7 @@ public final class LongSerializerImpl implements Serializer<Long> {
 
     @Override
     public boolean isMatches(byte flag) {
-        return flag == FLAG_LONG;
+        return flag == LONG_FLAG;
     }
 
     @Override
@@ -88,11 +88,11 @@ public final class LongSerializerImpl implements Serializer<Long> {
 
     @Override
     public int bytesLength() {
-        return SIZE_LONG;
+        return LONG_SIZE;
     }
 
     @Override
     public byte getFlag() {
-        return FLAG_LONG;
+        return LONG_FLAG;
     }
 }
