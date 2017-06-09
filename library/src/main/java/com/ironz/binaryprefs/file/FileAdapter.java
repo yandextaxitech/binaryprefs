@@ -40,7 +40,7 @@ public interface FileAdapter {
      * Returns {@code true} if file exists {@code false} otherwise.
      *
      * @param name exact name pattern
-     * @return true if FS contains false otherwise
+     * @return true if filesystem contains false otherwise
      */
     boolean contains(String name);
 }

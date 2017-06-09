@@ -36,7 +36,7 @@ public class NioFileAdapterTest {
 
     @Test
     public void directoryProvider() {
-        assertEquals(srcDir, ((NioFileAdapter) fileAdapter).srcDir);
+        assertEquals(srcDir, ((NioFileAdapter) fileAdapter).getSrcDir());
     }
 
     @Test
