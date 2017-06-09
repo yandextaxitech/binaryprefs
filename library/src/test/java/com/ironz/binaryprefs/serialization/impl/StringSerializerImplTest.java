@@ -8,7 +8,7 @@ public class StringSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final StringSerializerImpl serializer = new StringSerializerImpl();
+    private final StringSerializer serializer = new StringSerializer();
 
     @Test
     public void stringConvert() {

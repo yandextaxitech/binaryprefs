@@ -37,8 +37,4 @@ public interface Persistable extends Serializable {
      */
     void readExternal(DataInput in);
 
-    /**
-     * Uses for detecting byte array primitive type of {@link Persistable}
-     */
-    byte FLAG_PERSISTABLE = -11;
 }

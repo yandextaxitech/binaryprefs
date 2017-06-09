@@ -10,34 +10,38 @@ import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
 /**
  * {@code Persistable} to byte array implementation and backwards
  */
-public final class PersistableSerializerImpl {
+public final class PersistableSerializer {
 
+    /**
+     * Uses for detecting byte array primitive type of {@link Persistable}
+     */
+    public static final byte FLAG_PERSISTABLE = -11;
     /**
      * Minimum size primitive type of {@link Persistable}
      */
     private static final int PERSISTABLE_SIZE = 1;
 
     private final BooleanSerializer booleanSerializer;
-    private final ByteSerializerImpl byteSerializer;
-    private final CharSerializerImpl charSerializer;
-    private final DoubleSerializerImpl doubleSerializer;
-    private final FloatSerializerImpl floatSerializer;
-    private final IntegerSerializerImpl integerSerializer;
-    private final LongSerializerImpl longSerializer;
-    private final ShortSerializerImpl shortSerializer;
-    private final StringSerializerImpl stringSerializer;
+    private final ByteSerializer byteSerializer;
+    private final CharSerializer charSerializer;
+    private final DoubleSerializer doubleSerializer;
+    private final FloatSerializer floatSerializer;
+    private final IntegerSerializer integerSerializer;
+    private final LongSerializer longSerializer;
+    private final ShortSerializer shortSerializer;
+    private final StringSerializer stringSerializer;
     private final PersistableRegistry persistableRegistry;
 
-    public PersistableSerializerImpl(BooleanSerializer booleanSerializer,
-                                     ByteSerializerImpl byteSerializer,
-                                     CharSerializerImpl charSerializer,
-                                     DoubleSerializerImpl doubleSerializer,
-                                     FloatSerializerImpl floatSerializer,
-                                     IntegerSerializerImpl integerSerializer,
-                                     LongSerializerImpl longSerializer,
-                                     ShortSerializerImpl shortSerializer,
-                                     StringSerializerImpl stringSerializer,
-                                     PersistableRegistry persistableRegistry) {
+    public PersistableSerializer(BooleanSerializer booleanSerializer,
+                                 ByteSerializer byteSerializer,
+                                 CharSerializer charSerializer,
+                                 DoubleSerializer doubleSerializer,
+                                 FloatSerializer floatSerializer,
+                                 IntegerSerializer integerSerializer,
+                                 LongSerializer longSerializer,
+                                 ShortSerializer shortSerializer,
+                                 StringSerializer stringSerializer,
+                                 PersistableRegistry persistableRegistry) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
         this.charSerializer = charSerializer;
@@ -52,7 +56,7 @@ public final class PersistableSerializerImpl {
 
     /**
      * Serialize {@code Persistable} into byte array with following scheme:
-     * [{@link Persistable#FLAG_PERSISTABLE}] + [boolean_bytes].
+     * [{@link PersistableSerializer#FLAG_PERSISTABLE}] + [boolean_bytes].
      *
      * @param value target persistable to serialize.
      * @return specific byte array with scheme.
@@ -98,7 +102,7 @@ public final class PersistableSerializerImpl {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == Persistable.FLAG_PERSISTABLE;
+        return flag == FLAG_PERSISTABLE;
     }
 
     public boolean isMatches(Object o) {

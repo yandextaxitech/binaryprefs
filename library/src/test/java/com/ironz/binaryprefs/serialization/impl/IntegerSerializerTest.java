@@ -4,29 +4,28 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class FloatSerializerImplTest {
+public class IntegerSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final FloatSerializerImpl serializer = new FloatSerializerImpl();
+    private final IntegerSerializer serializer = new IntegerSerializer();
 
     @Test
-    public void floatConvert() {
-        float value = 53.123f;
+    public void integerConvert() {
+        int value = 53;
 
         byte[] bytes = serializer.serialize(value);
-
-        float restored = serializer.deserialize(bytes);
+        int restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
-        assertEquals(value, restored, .0);
+        assertEquals(value, restored);
     }
 
     @Test
-    public void floatIncorrectFlag() {
-        float value = 53.123f;
+    public void integerIncorrectFlag() {
+        int value = 53;
 
         byte[] bytes = serializer.serialize(value);
         bytes[0] = INCORRECT_FLAG;

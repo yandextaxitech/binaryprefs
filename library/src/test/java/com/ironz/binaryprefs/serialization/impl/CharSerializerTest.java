@@ -4,11 +4,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CharSerializerImplTest {
+public class CharSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final CharSerializerImpl serializer = new CharSerializerImpl();
+    private final CharSerializer serializer = new CharSerializer();
 
     @Test
     public void booleanConvert() {

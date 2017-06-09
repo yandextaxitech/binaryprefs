@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * {@code String} to byte array implementation and backwards
  */
-public final class StringSerializerImpl {
+public final class StringSerializer {
 
     /**
      * Uses for detecting byte array type of {@link String}

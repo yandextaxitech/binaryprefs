@@ -8,27 +8,27 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
     private final BooleanSerializer booleanSerializer;
-    private final ByteSerializerImpl byteSerializer;
-    private final CharSerializerImpl charSerializer;
-    private final DoubleSerializerImpl doubleSerializer;
-    private final FloatSerializerImpl floatSerializer;
-    private final IntegerSerializerImpl integerSerializer;
-    private final LongSerializerImpl longSerializer;
-    private final ShortSerializerImpl shortSerializer;
-    private final StringSerializerImpl stringSerializer;
+    private final ByteSerializer byteSerializer;
+    private final CharSerializer charSerializer;
+    private final DoubleSerializer doubleSerializer;
+    private final FloatSerializer floatSerializer;
+    private final IntegerSerializer integerSerializer;
+    private final LongSerializer longSerializer;
+    private final ShortSerializer shortSerializer;
+    private final StringSerializer stringSerializer;
 
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
     public BinaryPrefsObjectOutputImpl(BooleanSerializer booleanSerializer,
-                                       ByteSerializerImpl byteSerializer,
-                                       CharSerializerImpl charSerializer,
-                                       DoubleSerializerImpl doubleSerializer,
-                                       FloatSerializerImpl floatSerializer,
-                                       IntegerSerializerImpl integerSerializer,
-                                       LongSerializerImpl longSerializer,
-                                       ShortSerializerImpl shortSerializer,
-                                       StringSerializerImpl stringSerializer) {
+                                       ByteSerializer byteSerializer,
+                                       CharSerializer charSerializer,
+                                       DoubleSerializer doubleSerializer,
+                                       FloatSerializer floatSerializer,
+                                       IntegerSerializer integerSerializer,
+                                       LongSerializer longSerializer,
+                                       ShortSerializer shortSerializer,
+                                       StringSerializer stringSerializer) {
 
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
@@ -46,7 +46,7 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
         checkNull(value);
 
-        write(new byte[]{Persistable.FLAG_PERSISTABLE});
+        write(new byte[]{PersistableSerializer.FLAG_PERSISTABLE});
 
         value.writeExternal(this);
 

@@ -195,31 +195,31 @@ public final class BinaryPreferences implements Preferences {
 
     private String getStringInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        StringSerializerImpl serializer = serializerFactory.getStringSerializer();
+        StringSerializer serializer = serializerFactory.getStringSerializer();
         return serializer.deserialize(bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        StringSetSerializerImpl serializer = serializerFactory.getStringSetSerializer();
+        StringSetSerializer serializer = serializerFactory.getStringSetSerializer();
         return serializer.deserialize(bytes);
     }
 
     private int getIntInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        IntegerSerializerImpl serializer = serializerFactory.getIntegerSerializer();
+        IntegerSerializer serializer = serializerFactory.getIntegerSerializer();
         return serializer.deserialize(bytes);
     }
 
     private long getLongInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        LongSerializerImpl serializer = serializerFactory.getLongSerializer();
+        LongSerializer serializer = serializerFactory.getLongSerializer();
         return serializer.deserialize(bytes);
     }
 
     private float getFloatInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        FloatSerializerImpl serializer = serializerFactory.getFloatSerializer();
+        FloatSerializer serializer = serializerFactory.getFloatSerializer();
         return serializer.deserialize(bytes);
     }
 
@@ -231,7 +231,7 @@ public final class BinaryPreferences implements Preferences {
 
     private <T extends Persistable> T getPersistableInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        PersistableSerializerImpl serializer = serializerFactory.getPersistableSerializer();
+        PersistableSerializer serializer = serializerFactory.getPersistableSerializer();
         //noinspection unchecked
         return (T) serializer.deserialize(key, bytes);
     }

@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Short to byte array implementation and backwards
  */
-public final class ShortSerializerImpl {
+public final class ShortSerializer {
 
     /**
      * Uses for detecting byte array primitive type of {@link Short}

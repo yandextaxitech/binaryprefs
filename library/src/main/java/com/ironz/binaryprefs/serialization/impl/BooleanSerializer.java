@@ -8,7 +8,7 @@ public final class BooleanSerializer {
     /**
      * Uses for detecting byte array primitive type of {@link Boolean}
      */
-    public static final byte BOOLEAN_FLAG = -7;
+    private static final byte BOOLEAN_FLAG = -7;
 
     /**
      * Minimum size primitive type of {@link Boolean}

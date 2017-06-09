@@ -14,29 +14,29 @@ public final class SerializerFactory {
     static final String EMPTY_TOKEN = "";
 
     private final BooleanSerializer booleanSerializer;
-    private final ByteSerializerImpl byteSerializer;
-    private final CharSerializerImpl charSerializer;
-    private final DoubleSerializerImpl doubleSerializer;
-    private final FloatSerializerImpl floatSerializer;
-    private final IntegerSerializerImpl integerSerializer;
-    private final LongSerializerImpl longSerializer;
-    private final ShortSerializerImpl shortSerializer;
-    private final StringSerializerImpl stringSerializer;
-    private final StringSetSerializerImpl stringSetSerializer;
-    private final PersistableSerializerImpl persistableSerializer;
+    private final ByteSerializer byteSerializer;
+    private final CharSerializer charSerializer;
+    private final DoubleSerializer doubleSerializer;
+    private final FloatSerializer floatSerializer;
+    private final IntegerSerializer integerSerializer;
+    private final LongSerializer longSerializer;
+    private final ShortSerializer shortSerializer;
+    private final StringSerializer stringSerializer;
+    private final StringSetSerializer stringSetSerializer;
+    private final PersistableSerializer persistableSerializer;
 
     public SerializerFactory(PersistableRegistry persistableRegistry) {
         booleanSerializer = new BooleanSerializer();
-        byteSerializer = new ByteSerializerImpl();
-        charSerializer = new CharSerializerImpl();
-        doubleSerializer = new DoubleSerializerImpl();
-        floatSerializer = new FloatSerializerImpl();
-        integerSerializer = new IntegerSerializerImpl();
-        longSerializer = new LongSerializerImpl();
-        shortSerializer = new ShortSerializerImpl();
-        stringSerializer = new StringSerializerImpl();
-        stringSetSerializer = new StringSetSerializerImpl();
-        persistableSerializer = new PersistableSerializerImpl(
+        byteSerializer = new ByteSerializer();
+        charSerializer = new CharSerializer();
+        doubleSerializer = new DoubleSerializer();
+        floatSerializer = new FloatSerializer();
+        integerSerializer = new IntegerSerializer();
+        longSerializer = new LongSerializer();
+        shortSerializer = new ShortSerializer();
+        stringSerializer = new StringSerializer();
+        stringSetSerializer = new StringSetSerializer();
+        persistableSerializer = new PersistableSerializer(
                 booleanSerializer,
                 byteSerializer,
                 charSerializer,
@@ -130,43 +130,43 @@ public final class SerializerFactory {
         return booleanSerializer;
     }
 
-    public ByteSerializerImpl getByteSerializer() {
+    public ByteSerializer getByteSerializer() {
         return byteSerializer;
     }
 
-    public CharSerializerImpl getCharSerializer() {
+    public CharSerializer getCharSerializer() {
         return charSerializer;
     }
 
-    public DoubleSerializerImpl getDoubleSerializer() {
+    public DoubleSerializer getDoubleSerializer() {
         return doubleSerializer;
     }
 
-    public FloatSerializerImpl getFloatSerializer() {
+    public FloatSerializer getFloatSerializer() {
         return floatSerializer;
     }
 
-    public IntegerSerializerImpl getIntegerSerializer() {
+    public IntegerSerializer getIntegerSerializer() {
         return integerSerializer;
     }
 
-    public LongSerializerImpl getLongSerializer() {
+    public LongSerializer getLongSerializer() {
         return longSerializer;
     }
 
-    public ShortSerializerImpl getShortSerializer() {
+    public ShortSerializer getShortSerializer() {
         return shortSerializer;
     }
 
-    public StringSerializerImpl getStringSerializer() {
+    public StringSerializer getStringSerializer() {
         return stringSerializer;
     }
 
-    public StringSetSerializerImpl getStringSetSerializer() {
+    public StringSetSerializer getStringSetSerializer() {
         return stringSetSerializer;
     }
 
-    public PersistableSerializerImpl getPersistableSerializer() {
+    public PersistableSerializer getPersistableSerializer() {
         return persistableSerializer;
     }
 }

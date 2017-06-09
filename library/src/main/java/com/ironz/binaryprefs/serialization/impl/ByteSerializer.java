@@ -3,12 +3,12 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Byte to byte array implementation and backwards
  */
-public final class ByteSerializerImpl {
+public final class ByteSerializer {
 
     /**
      * Uses for detecting byte primitive type of {@link Byte}
      */
-    public static final byte BYTE_FLAG = -8;
+    private static final byte BYTE_FLAG = -8;
 
     /**
      * Minimum size primitive type of {@link Byte}

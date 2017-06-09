@@ -6,27 +6,27 @@ import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     private final BooleanSerializer booleanSerializer;
-    private final ByteSerializerImpl byteSerializer;
-    private final CharSerializerImpl charSerializer;
-    private final DoubleSerializerImpl doubleSerializer;
-    private final FloatSerializerImpl floatSerializer;
-    private final IntegerSerializerImpl integerSerializer;
-    private final LongSerializerImpl longSerializer;
-    private final ShortSerializerImpl shortSerializer;
-    private final StringSerializerImpl stringSerializer;
+    private final ByteSerializer byteSerializer;
+    private final CharSerializer charSerializer;
+    private final DoubleSerializer doubleSerializer;
+    private final FloatSerializer floatSerializer;
+    private final IntegerSerializer integerSerializer;
+    private final LongSerializer longSerializer;
+    private final ShortSerializer shortSerializer;
+    private final StringSerializer stringSerializer;
 
     private int offset = 0;
     private byte[] buffer;
 
     public BinaryPrefsObjectInputImpl(BooleanSerializer booleanSerializer,
-                                      ByteSerializerImpl byteSerializer,
-                                      CharSerializerImpl charSerializer,
-                                      DoubleSerializerImpl doubleSerializer,
-                                      FloatSerializerImpl floatSerializer,
-                                      IntegerSerializerImpl integerSerializer,
-                                      LongSerializerImpl longSerializer,
-                                      ShortSerializerImpl shortSerializer,
-                                      StringSerializerImpl stringSerializer) {
+                                      ByteSerializer byteSerializer,
+                                      CharSerializer charSerializer,
+                                      DoubleSerializer doubleSerializer,
+                                      FloatSerializer floatSerializer,
+                                      IntegerSerializer integerSerializer,
+                                      LongSerializer longSerializer,
+                                      ShortSerializer shortSerializer,
+                                      StringSerializer stringSerializer) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
         this.charSerializer = charSerializer;
@@ -41,11 +41,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) {
 
-        this.buffer = bytes;
+        buffer = bytes;
 
         checkBytes();
         checkNull(clazz);
-        checkPersistable();
+
+        offset++;
 
         T instance = newInstance(clazz);
         instance.readExternal(this);
@@ -202,13 +203,5 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
         if (value == null) {
             throw new NullPointerException("Can't serialize null object");
         }
-    }
-
-    private void checkPersistable() {
-        byte flag = buffer[0];
-        if (flag != Persistable.FLAG_PERSISTABLE) {
-            throw new ClassCastException(String.format("Persistable cannot be deserialized in '%s' flag type", flag));
-        }
-        offset++;
     }
 }

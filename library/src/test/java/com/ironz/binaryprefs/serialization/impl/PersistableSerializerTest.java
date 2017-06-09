@@ -3,18 +3,18 @@ package com.ironz.binaryprefs.serialization.impl;
 import com.ironz.binaryprefs.impl.TestMigrateUser;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
-import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-public class PersistableSerializerImplTest {
+public class PersistableSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private PersistableSerializerImpl serializer;
+    private PersistableSerializer serializer;
     private PersistableRegistry persistableRegistry;
 
     @Before
@@ -34,18 +34,18 @@ public class PersistableSerializerImplTest {
 
         TestUser restored = (TestUser) serializer.deserialize(TestUser.KEY, bytes);
 
-        assertEquals(Persistable.FLAG_PERSISTABLE, bytes[0]);
         assertEquals(value, restored);
     }
 
-    @Test(expected = ClassCastException.class)
+    @Test
     public void persistableIncorrectFlag() {
         TestUser value = TestUser.create();
 
         byte[] bytes = serializer.serialize(value);
 
         bytes[0] = INCORRECT_FLAG;
-        serializer.deserialize(TestUser.KEY, bytes);
+
+        assertFalse(serializer.isMatches(bytes[0]));
     }
 
     @Test(expected = ClassCastException.class)

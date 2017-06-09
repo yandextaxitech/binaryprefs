@@ -3,17 +3,17 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Integer to byte array implementation and backwards
  */
-public final class IntegerSerializerImpl {
+public final class IntegerSerializer {
+
+    /**
+     * Uses for detecting byte array primitive type of {@link Integer}
+     */
+    private static final byte INT_FLAG = -3;
 
     /**
      * Minimum size primitive type of {@link Integer}
      */
     private static final int INT_SIZE = 5;
-
-    /**
-     * Uses for detecting byte array primitive type of {@link Integer}
-     */
-    public static final byte INT_FLAG = (byte) -3;
 
     /**
      * Serialize {@code int} into byte array with following scheme:

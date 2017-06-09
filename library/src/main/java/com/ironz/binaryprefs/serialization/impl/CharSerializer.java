@@ -3,12 +3,12 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Char to byte array implementation and backwards
  */
-public final class CharSerializerImpl {
+public final class CharSerializer {
 
     /**
      * Uses for detecting byte array primitive type of {@link Character}
      */
-    public static final byte CHAR_FLAG = -10;
+    private static final byte CHAR_FLAG = -10;
 
     /**
      * Minimum size primitive type of {@link Character}

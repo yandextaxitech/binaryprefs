@@ -4,18 +4,18 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class IntegerSerializerImplTest {
+public class ShortSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final IntegerSerializerImpl serializer = new IntegerSerializerImpl();
+    private final ShortSerializer serializer = new ShortSerializer();
 
     @Test
-    public void integerConvert() {
-        int value = 53;
+    public void booleanConvert() {
+        short value = Short.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
-        int restored = serializer.deserialize(bytes);
+        short restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
@@ -24,8 +24,8 @@ public class IntegerSerializerImplTest {
     }
 
     @Test
-    public void integerIncorrectFlag() {
-        int value = 53;
+    public void booleanIncorrectFlag() {
+        short value = Short.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
         bytes[0] = INCORRECT_FLAG;

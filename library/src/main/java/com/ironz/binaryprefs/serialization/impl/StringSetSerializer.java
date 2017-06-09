@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * {@code Set<String>} to byte array implementation and backwards
  */
-public final class StringSetSerializerImpl {
+public final class StringSetSerializer {
 
     /**
      * Minimum size primitive type of {@link Set}

@@ -8,11 +8,11 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class StringSetSerializerImplTest {
+public class StringSetSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final StringSetSerializerImpl serializer = new StringSetSerializerImpl();
+    private final StringSetSerializer serializer = new StringSetSerializer();
 
     @Test
     public void emptyStringSet() {

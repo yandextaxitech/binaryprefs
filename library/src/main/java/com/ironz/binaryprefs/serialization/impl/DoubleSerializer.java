@@ -4,12 +4,12 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Double to byte array implementation and backwards
  */
-public final class DoubleSerializerImpl {
+public final class DoubleSerializer {
 
     /**
      * Uses for detecting byte array primitive type of {@link Double}
      */
-    public static final byte DOUBLE_FLAG = -5;
+    private static final byte DOUBLE_FLAG = -5;
 
     /**
      * Minimum size primitive type of {@link Double}

@@ -4,11 +4,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DoubleSerializerImplTest {
+public class DoubleSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final DoubleSerializerImpl serializer = new DoubleSerializerImpl();
+    private final DoubleSerializer serializer = new DoubleSerializer();
 
     @Test
     public void doubleConvert() {

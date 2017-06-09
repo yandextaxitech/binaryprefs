@@ -3,12 +3,12 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Long to byte array implementation and backwards
  */
-public final class LongSerializerImpl {
+public final class LongSerializer {
 
     /**
      * Uses for detecting byte array primitive type of {@link Long}
      */
-    public static final byte LONG_FLAG = -4;
+    private static final byte LONG_FLAG = -4;
 
     /**
      * Minimum size primitive type of {@link Long}

@@ -3,12 +3,12 @@ package com.ironz.binaryprefs.serialization.impl;
 /**
  * Float to byte array implementation and backwards
  */
-public final class FloatSerializerImpl {
+public final class FloatSerializer {
 
     /**
      * Uses for detecting byte array primitive type of {@link Float}
      */
-    public static final byte FLOAT_FLAG = -6;
+    private static final byte FLOAT_FLAG = -6;
 
     /**
      * Minimum size primitive type of {@link Float}
