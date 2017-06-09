@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.serialization.impl.persistable.io.BinaryPrefsObjectInputImpl;
@@ -18,15 +17,15 @@ public final class PersistableSerializerImpl {
      */
     private static final int PERSISTABLE_SIZE = 1;
 
-    private final Serializer<Boolean> booleanSerializer;
-    private final Serializer<Byte> byteSerializer;
-    private final Serializer<Character> charSerializer;
-    private final Serializer<Double> doubleSerializer;
-    private final Serializer<Float> floatSerializer;
-    private final Serializer<Integer> integerSerializer;
-    private final Serializer<Long> longSerializer;
-    private final Serializer<Short> shortSerializer;
-    private final Serializer<String> stringSerializer;
+    private final BooleanSerializer booleanSerializer;
+    private final ByteSerializerImpl byteSerializer;
+    private final CharSerializerImpl charSerializer;
+    private final DoubleSerializerImpl doubleSerializer;
+    private final FloatSerializerImpl floatSerializer;
+    private final IntegerSerializerImpl integerSerializer;
+    private final LongSerializerImpl longSerializer;
+    private final ShortSerializerImpl shortSerializer;
+    private final StringSerializerImpl stringSerializer;
     private final PersistableRegistry persistableRegistry;
 
     public PersistableSerializerImpl(BooleanSerializer booleanSerializer,
@@ -76,14 +75,14 @@ public final class PersistableSerializerImpl {
     /**
      * Deserialize {@link Persistable} by {@link #serialize(Persistable)} convention
      *
-     * @param key   token for determinate how to serialize
+     * @param token token for determinate how to serialize
      *              one type of class type or interface type by two or more
      *              different serialization protocols.
      * @param bytes target byte array for deserialization
      * @return deserialized {@link Persistable}
      */
-    public Persistable deserialize(String key, byte[] bytes) {
-        Class<? extends Persistable> clazz = persistableRegistry.get(key);
+    public Persistable deserialize(String token, byte[] bytes) {
+        Class<? extends Persistable> clazz = persistableRegistry.get(token);
         DataInput input = new BinaryPrefsObjectInputImpl(
                 booleanSerializer,
                 byteSerializer,

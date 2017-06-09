@@ -37,9 +37,20 @@ public final class ShortSerializerImpl {
      * @return deserialized short
      */
     public short deserialize(byte[] bytes) {
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize short by {@link #serialize(short)}  convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized short
+     */
+    public short deserialize(byte[] bytes, int offset) {
         int i = 0xff;
-        return (short) ((bytes[1] << 8) +
-                (bytes[2] & i));
+        return (short) ((bytes[1 + offset] << 8) +
+                (bytes[2 + offset] & i));
     }
 
     public boolean isMatches(byte flag) {

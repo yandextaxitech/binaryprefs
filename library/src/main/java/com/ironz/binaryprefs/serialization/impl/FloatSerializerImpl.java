@@ -40,11 +40,22 @@ public final class FloatSerializerImpl {
      * @return deserialized float
      */
     public float deserialize(byte[] bytes) {
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(float)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized float
+     */
+    public float deserialize(byte[] bytes, int offset) {
         int i = 0xFF;
-        int value = ((bytes[4] & i)) +
-                ((bytes[3] & i) << 8) +
-                ((bytes[2] & i) << 16) +
-                ((bytes[1]) << 24);
+        int value = ((bytes[4 + offset] & i)) +
+                ((bytes[3 + offset] & i) << 8) +
+                ((bytes[2 + offset] & i) << 16) +
+                ((bytes[1 + offset]) << 24);
         return Float.intBitsToFloat(value);
     }
 

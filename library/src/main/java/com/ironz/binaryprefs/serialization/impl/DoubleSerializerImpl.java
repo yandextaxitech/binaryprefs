@@ -45,16 +45,26 @@ public final class DoubleSerializerImpl {
      * @return deserialized double
      */
     public double deserialize(byte[] bytes) {
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(double)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized double
+     */
+    public double deserialize(byte[] bytes, int offset) {
         int i = 0xff;
-        long value =
-                ((bytes[8] & i)) +
-                        ((bytes[7] & i) << 8) +
-                        ((bytes[6] & i) << 16) +
-                        ((long) (bytes[5] & i) << 24) +
-                        ((long) (bytes[4] & i) << 32) +
-                        ((long) (bytes[3] & i) << 40) +
-                        ((long) (bytes[2] & i) << 48) +
-                        ((long) (bytes[1]) << 56);
+        long value = ((bytes[8 + offset] & i)) +
+                ((bytes[7 + offset] & i) << 8) +
+                ((bytes[6 + offset] & i) << 16) +
+                ((long) (bytes[5 + offset] & i) << 24) +
+                ((long) (bytes[4 + offset] & i) << 32) +
+                ((long) (bytes[3 + offset] & i) << 40) +
+                ((long) (bytes[2 + offset] & i) << 48) +
+                ((long) (bytes[1 + offset]) << 56);
         return Double.longBitsToDouble(value);
     }
 

@@ -2,7 +2,6 @@ package com.ironz.binaryprefs.serialization.impl;
 
 import com.ironz.binaryprefs.impl.TestMigrateUser;
 import com.ironz.binaryprefs.impl.TestUser;
-import com.ironz.binaryprefs.serialization.Serializer;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
@@ -15,7 +14,7 @@ public class PersistableSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private Serializer<Persistable> serializer;
+    private PersistableSerializerImpl serializer;
 
     @Before
     public void setUp() {

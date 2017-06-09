@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,14 +8,14 @@ public class ShortSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Short> serializer = new ShortSerializerImpl();
+    private final ShortSerializerImpl serializer = new ShortSerializerImpl();
 
     @Test
     public void booleanConvert() {
         short value = Short.MAX_VALUE;
 
         byte[] bytes = serializer.serialize(value);
-        short restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        short restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

@@ -38,8 +38,20 @@ public final class StringSerializerImpl {
      * @return deserialized String
      */
     public String deserialize(byte[] bytes) {
+        return deserialize(bytes, 0, bytes.length - 1);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(String)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @param length bytes array length
+     * @return deserialized String
+     */
+    public String deserialize(byte[] bytes, int offset, int length) {
         int flagOffset = 1;
-        return new String(bytes, flagOffset, bytes.length - 1);
+        return new String(bytes, flagOffset + offset, length);
     }
 
     public boolean isMatches(byte flag) {

@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization.impl;
 
-import com.ironz.binaryprefs.serialization.Serializer;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -13,14 +12,14 @@ public class StringSetSerializerImplTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
-    private final Serializer<Set<String>> serializer = new StringSetSerializerImpl();
+    private final StringSetSerializerImpl serializer = new StringSetSerializerImpl();
 
     @Test
     public void emptyStringSet() {
         Set<String> value = new HashSet<>();
 
         byte[] bytes = serializer.serialize(value);
-        Set<String> restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        Set<String> restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
@@ -37,7 +36,7 @@ public class StringSetSerializerImplTest {
         value.add("");
 
         byte[] bytes = serializer.serialize(value);
-        Set<String> restored = serializer.deserialize(Serializer.EMPTY_KEY, bytes);
+        Set<String> restored = serializer.deserialize(bytes);
 
         assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));

@@ -36,7 +36,18 @@ public final class BooleanSerializer {
      * @return deserialized boolean
      */
     public boolean deserialize(byte[] bytes) {
-        return bytes[1] != 0;
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(boolean)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset byte array offset
+     * @return deserialized boolean
+     */
+    public boolean deserialize(byte[] bytes, int offset) {
+        return bytes[1 + offset] != 0;
     }
 
     public boolean isMatches(byte flag) {

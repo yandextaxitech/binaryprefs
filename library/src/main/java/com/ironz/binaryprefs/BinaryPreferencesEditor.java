@@ -4,7 +4,6 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.serialization.Serializer;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
@@ -183,9 +182,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void storeCache() {
         for (String name : commitMap.keySet()) {
             Object value = commitMap.get(name);
-            Serializer serializer = serializerFactory.serialize(value);
-            //noinspection unchecked
-            byte[] bytes = serializer.serialize(value);
+            byte[] bytes = serializerFactory.serialize(value);
             cacheProvider.put(name, bytes);
         }
     }
@@ -208,9 +205,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void store() {
         for (String key : commitMap.keySet()) {
             Object value = commitMap.get(key);
-            Serializer serializer = serializerFactory.serialize(value);
-            //noinspection unchecked
-            byte[] bytes = serializer.serialize(value);
+            byte[] bytes = serializerFactory.serialize(value);
             storeInternal(key, bytes);
         }
     }

@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.impl.*;
 import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 import org.junit.Test;
 
@@ -17,122 +16,101 @@ public class SerializerFactoryTest {
 
     @Test
     public void booleanSerializerType() {
-        Serializer serializer = factory.serialize(true);
-        assertEquals(BooleanSerializer.class, serializer.getClass());
-    }
+        byte[] bytes = factory.serialize(true);
 
-    @Test
-    public void booleanSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, BooleanSerializer.BOOLEAN_FLAG);
-        assertEquals(BooleanSerializer.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(true, o);
     }
 
     @Test
     public void byteSerializerType() {
-        Serializer serializer = factory.serialize(Byte.MAX_VALUE);
-        assertEquals(ByteSerializerImpl.class, serializer.getClass());
-    }
+        byte value = Byte.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void byteSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, ByteSerializerImpl.BYTE_FLAG);
-        assertEquals(ByteSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void charSerializerType() {
-        Serializer serializer = factory.serialize(Character.MAX_VALUE);
-        assertEquals(CharSerializerImpl.class, serializer.getClass());
-    }
+        char value = Character.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void charSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, CharSerializerImpl.CHAR_FLAG);
-        assertEquals(CharSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void doubleSerializerType() {
-        Serializer serializer = factory.serialize(Double.MAX_VALUE);
-        assertEquals(DoubleSerializerImpl.class, serializer.getClass());
-    }
+        double value = Double.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void doubleSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, DoubleSerializerImpl.DOUBLE_FLAG);
-        assertEquals(DoubleSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void floatSerializerType() {
-        Serializer serializer = factory.serialize(Float.MAX_VALUE);
-        assertEquals(FloatSerializerImpl.class, serializer.getClass());
-    }
+        float value = Float.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void floatSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, FloatSerializerImpl.FLOAT_FLAG);
-        assertEquals(FloatSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void integerSerializerType() {
-        Serializer serializer = factory.serialize(Integer.MAX_VALUE);
-        assertEquals(IntegerSerializerImpl.class, serializer.getClass());
-    }
+        int value = Integer.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void integerSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, IntegerSerializerImpl.INT_FLAG);
-        assertEquals(IntegerSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void longSerializerType() {
-        Serializer serializer = factory.serialize(Long.MAX_VALUE);
-        assertEquals(LongSerializerImpl.class, serializer.getClass());
-    }
+        long value = Long.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void longSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, LongSerializerImpl.LONG_FLAG);
-        assertEquals(LongSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void shortSerializerType() {
-        Serializer serializer = factory.serialize(Short.MAX_VALUE);
-        assertEquals(ShortSerializerImpl.class, serializer.getClass());
-    }
+        short value = Short.MAX_VALUE;
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void shortSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, ShortSerializerImpl.SHORT_FLAG);
-        assertEquals(ShortSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void stringSerializerType() {
-        Serializer serializer = factory.serialize(String.class.getName());
-        assertEquals(StringSerializerImpl.class, serializer.getClass());
-    }
+        String value = String.class.getName();
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void stringSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, StringSerializerImpl.STRING_FLAG);
-        assertEquals(StringSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test
     public void stringSetSerializerType() {
-        Serializer serializer = factory.serialize(new HashSet<>());
-        assertEquals(StringSetSerializerImpl.class, serializer.getClass());
-    }
+        HashSet<Object> value = new HashSet<>();
+        byte[] bytes = factory.serialize(value);
 
-    @Test
-    public void stringSetSerializerFlag() {
-        Serializer serializer = factory.deserialize(key, StringSetSerializerImpl.STRING_SET_FLAG);
-        assertEquals(StringSetSerializerImpl.class, serializer.getClass());
+        Object o = factory.deserialize(SerializerFactory.EMPTY_TOKEN, bytes);
+
+        assertEquals(value, o);
     }
 
     @Test(expected = UnsupportedClassVersionError.class)
@@ -142,6 +120,6 @@ public class SerializerFactoryTest {
 
     @Test(expected = UnsupportedClassVersionError.class)
     public void unknownSerializerFlag() {
-        factory.deserialize(key, INCORRECT_FLAG);
+        factory.deserialize(SerializerFactory.EMPTY_TOKEN, new byte[]{INCORRECT_FLAG});
     }
 }

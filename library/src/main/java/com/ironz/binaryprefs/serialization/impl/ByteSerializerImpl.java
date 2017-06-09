@@ -36,7 +36,18 @@ public final class ByteSerializerImpl {
      * @return deserialized byte
      */
     public byte deserialize(byte[] bytes) {
-        return bytes[1];
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(byte)}  convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized byte
+     */
+    public byte deserialize(byte[] bytes, int offset) {
+        return bytes[offset + 1];
     }
 
     public boolean isMatches(byte flag) {

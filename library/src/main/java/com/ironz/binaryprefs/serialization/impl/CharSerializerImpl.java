@@ -37,9 +37,20 @@ public final class CharSerializerImpl {
      * @return deserialized char
      */
     public char deserialize(byte[] bytes) {
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize char by {@link #serialize(char)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized char
+     */
+    public char deserialize(byte[] bytes, int offset) {
         int i = 0xFF;
-        return (char) ((bytes[1] << 8) +
-                (bytes[2] & i));
+        return (char) ((bytes[1 + offset] << 8) +
+                (bytes[2 + offset] & i));
     }
 
     public boolean isMatches(byte flag) {

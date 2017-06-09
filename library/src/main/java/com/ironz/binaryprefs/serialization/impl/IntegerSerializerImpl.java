@@ -40,11 +40,22 @@ public final class IntegerSerializerImpl {
      * @return deserialized int
      */
     public int deserialize(byte[] bytes) {
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(int)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized int
+     */
+    public int deserialize(byte[] bytes, int offset) {
         int i = 0xff;
-        return ((bytes[4] & i)) +
-                ((bytes[3] & i) << 8) +
-                ((bytes[2] & i) << 16) +
-                ((bytes[1]) << 24);
+        return ((bytes[4 + offset] & i)) +
+                ((bytes[3 + offset] & i) << 8) +
+                ((bytes[2 + offset] & i) << 16) +
+                ((bytes[1 + offset]) << 24);
     }
 
     public boolean isMatches(byte flag) {

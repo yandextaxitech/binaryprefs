@@ -1,34 +1,34 @@
 package com.ironz.binaryprefs.serialization.impl.persistable.io;
 
-import com.ironz.binaryprefs.serialization.Serializer;
+import com.ironz.binaryprefs.serialization.impl.*;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 
 public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
-    private final Serializer<Boolean> booleanSerializer;
-    private final Serializer<Byte> byteSerializer;
-    private final Serializer<Character> charSerializer;
-    private final Serializer<Double> doubleSerializer;
-    private final Serializer<Float> floatSerializer;
-    private final Serializer<Integer> integerSerializer;
-    private final Serializer<Long> longSerializer;
-    private final Serializer<Short> shortSerializer;
-    private final Serializer<String> stringSerializer;
+    private final BooleanSerializer booleanSerializer;
+    private final ByteSerializerImpl byteSerializer;
+    private final CharSerializerImpl charSerializer;
+    private final DoubleSerializerImpl doubleSerializer;
+    private final FloatSerializerImpl floatSerializer;
+    private final IntegerSerializerImpl integerSerializer;
+    private final LongSerializerImpl longSerializer;
+    private final ShortSerializerImpl shortSerializer;
+    private final StringSerializerImpl stringSerializer;
 
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
-    public BinaryPrefsObjectOutputImpl(Serializer<Boolean> booleanSerializer,
-                                       Serializer<Byte> byteSerializer,
-                                       Serializer<Character> charSerializer,
-                                       Serializer<Double> doubleSerializer,
-                                       Serializer<Float> floatSerializer,
-                                       Serializer<Integer> integerSerializer,
-                                       Serializer<Long> longSerializer,
-                                       Serializer<Short> shortSerializer,
-                                       Serializer<String> stringSerializer) {
+    public BinaryPrefsObjectOutputImpl(BooleanSerializer booleanSerializer,
+                                       ByteSerializerImpl byteSerializer,
+                                       CharSerializerImpl charSerializer,
+                                       DoubleSerializerImpl doubleSerializer,
+                                       FloatSerializerImpl floatSerializer,
+                                       IntegerSerializerImpl integerSerializer,
+                                       LongSerializerImpl longSerializer,
+                                       ShortSerializerImpl shortSerializer,
+                                       StringSerializerImpl stringSerializer) {
 
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;

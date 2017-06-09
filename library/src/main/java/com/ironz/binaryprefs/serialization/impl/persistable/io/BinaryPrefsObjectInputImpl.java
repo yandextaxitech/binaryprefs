@@ -1,32 +1,32 @@
 package com.ironz.binaryprefs.serialization.impl.persistable.io;
 
-import com.ironz.binaryprefs.serialization.Serializer;
+import com.ironz.binaryprefs.serialization.impl.*;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 
 public final class BinaryPrefsObjectInputImpl implements DataInput {
 
-    private final Serializer<Boolean> booleanSerializer;
-    private final Serializer<Byte> byteSerializer;
-    private final Serializer<Character> charSerializer;
-    private final Serializer<Double> doubleSerializer;
-    private final Serializer<Float> floatSerializer;
-    private final Serializer<Integer> integerSerializer;
-    private final Serializer<Long> longSerializer;
-    private final Serializer<Short> shortSerializer;
-    private final Serializer<String> stringSerializer;
+    private final BooleanSerializer booleanSerializer;
+    private final ByteSerializerImpl byteSerializer;
+    private final CharSerializerImpl charSerializer;
+    private final DoubleSerializerImpl doubleSerializer;
+    private final FloatSerializerImpl floatSerializer;
+    private final IntegerSerializerImpl integerSerializer;
+    private final LongSerializerImpl longSerializer;
+    private final ShortSerializerImpl shortSerializer;
+    private final StringSerializerImpl stringSerializer;
 
     private int offset = 0;
     private byte[] buffer;
 
-    public BinaryPrefsObjectInputImpl(Serializer<Boolean> booleanSerializer,
-                                      Serializer<Byte> byteSerializer,
-                                      Serializer<Character> charSerializer,
-                                      Serializer<Double> doubleSerializer,
-                                      Serializer<Float> floatSerializer,
-                                      Serializer<Integer> integerSerializer,
-                                      Serializer<Long> longSerializer,
-                                      Serializer<Short> shortSerializer,
-                                      Serializer<String> stringSerializer) {
+    public BinaryPrefsObjectInputImpl(BooleanSerializer booleanSerializer,
+                                      ByteSerializerImpl byteSerializer,
+                                      CharSerializerImpl charSerializer,
+                                      DoubleSerializerImpl doubleSerializer,
+                                      FloatSerializerImpl floatSerializer,
+                                      IntegerSerializerImpl integerSerializer,
+                                      LongSerializerImpl longSerializer,
+                                      ShortSerializerImpl shortSerializer,
+                                      StringSerializerImpl stringSerializer) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
         this.charSerializer = charSerializer;
@@ -64,9 +64,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public boolean readBoolean() {
         checkBounds();
-        checkType(booleanSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!booleanSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
+        }
         int length = booleanSerializer.bytesLength();
-        boolean b = booleanSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        boolean b = booleanSerializer.deserialize(buffer, offset);
         offset += length;
         return b;
     }
@@ -74,9 +77,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public byte readByte() {
         checkBounds();
-        checkType(byteSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!byteSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("byte cannot be deserialized in '%s' flag type", flag));
+        }
         int length = byteSerializer.bytesLength();
-        byte b = byteSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        byte b = byteSerializer.deserialize(buffer, offset);
         offset += length;
         return b;
     }
@@ -84,9 +90,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public short readShort() {
         checkBounds();
-        checkType(shortSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!shortSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("short cannot be deserialized in '%s' flag type", flag));
+        }
         int length = shortSerializer.bytesLength();
-        short s = shortSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        short s = shortSerializer.deserialize(buffer, offset);
         offset += length;
         return s;
     }
@@ -94,9 +103,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public char readChar() {
         checkBounds();
-        checkType(charSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!charSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("char cannot be deserialized in '%s' flag type", flag));
+        }
         int length = charSerializer.bytesLength();
-        char c = charSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        char c = charSerializer.deserialize(buffer, offset);
         offset += length;
         return c;
     }
@@ -104,9 +116,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public int readInt() {
         checkBounds();
-        checkType(integerSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!integerSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
+        }
         int length = integerSerializer.bytesLength();
-        int i = integerSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        int i = integerSerializer.deserialize(buffer, offset);
         offset += length;
         return i;
     }
@@ -114,9 +129,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public long readLong() {
         checkBounds();
-        checkType(longSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!longSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
+        }
         int length = longSerializer.bytesLength();
-        long l = longSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        long l = longSerializer.deserialize(buffer, offset);
         offset += length;
         return l;
     }
@@ -124,9 +142,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public float readFloat() {
         checkBounds();
-        checkType(floatSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!floatSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
+        }
         int length = floatSerializer.bytesLength();
-        float f = floatSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        float f = floatSerializer.deserialize(buffer, offset);
         offset += length;
         return f;
     }
@@ -134,9 +155,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public double readDouble() {
         checkBounds();
-        checkType(doubleSerializer, buffer[offset]);
+        byte flag = buffer[offset];
+        if (!doubleSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("double cannot be deserialized in '%s' flag type", flag));
+        }
         int length = doubleSerializer.bytesLength();
-        double d = doubleSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        double d = doubleSerializer.deserialize(buffer, offset);
         offset += length;
         return d;
     }
@@ -144,14 +168,20 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public String readString() {
         checkBounds();
-        checkType(integerSerializer, buffer[offset]);
+        byte integerFlag = buffer[offset];
+        if (!integerSerializer.isMatches(integerFlag)) {
+            throw new ClassCastException(String.format("string cannot be deserialized in '%s' flag type", integerFlag));
+        }
         int length = integerSerializer.bytesLength();
-        int bytesStringSize = integerSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, length);
+        int bytesStringSize = integerSerializer.deserialize(buffer, offset);
         offset += length;
 
         checkBounds();
-        checkType(stringSerializer, buffer[offset]);
-        String s = stringSerializer.deserialize(Serializer.EMPTY_KEY, buffer, offset, bytesStringSize);
+        byte stringFlag = buffer[offset];
+        if (!stringSerializer.isMatches(stringFlag)) {
+            throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", stringFlag));
+        }
+        String s = stringSerializer.deserialize(buffer, offset, bytesStringSize);
         offset += stringSerializer.bytesLength() + bytesStringSize;
         return s;
     }
@@ -159,12 +189,6 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     private void checkBounds() {
         if (offset >= buffer.length - 1) {
             throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array");
-        }
-    }
-
-    private void checkType(Serializer<?> serializer, byte flag) {
-        if (!serializer.isMatches(flag)) {
-            throw new ClassCastException(String.format("Can't deserialize flag type '%s' with '%s' serializer.", flag, serializer.getClass().getName()));
         }
     }
 

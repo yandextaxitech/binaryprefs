@@ -43,15 +43,26 @@ public final class LongSerializerImpl {
      * @return deserialized long
      */
     public long deserialize(byte[] bytes) {
+        return deserialize(bytes, 0);
+    }
+
+    /**
+     * Deserialize byte by {@link #serialize(long)} convention
+     *
+     * @param bytes  target byte array for deserialization
+     * @param offset bytes array offset
+     * @return deserialized long
+     */
+    public long deserialize(byte[] bytes, int offset) {
         long l = 0xffL;
-        return ((bytes[8] & l)) +
-                ((bytes[7] & l) << 8) +
-                ((bytes[6] & l) << 16) +
-                ((bytes[5] & l) << 24) +
-                ((bytes[4] & l) << 32) +
-                ((bytes[3] & l) << 40) +
-                ((bytes[2] & l) << 48) +
-                (((long) bytes[1]) << 56);
+        return ((bytes[8 + offset] & l)) +
+                ((bytes[7 + offset] & l) << 8) +
+                ((bytes[6 + offset] & l) << 16) +
+                ((bytes[5 + offset] & l) << 24) +
+                ((bytes[4 + offset] & l) << 32) +
+                ((bytes[3 + offset] & l) << 40) +
+                ((bytes[2 + offset] & l) << 48) +
+                (((long) bytes[1 + offset]) << 56);
     }
 
     public boolean isMatches(byte flag) {

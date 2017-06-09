@@ -8,6 +8,11 @@ import java.util.Set;
 
 public final class SerializerFactory {
 
+    /**
+     * Empty token for determine empty object deserialization token
+     */
+    static final String EMPTY_TOKEN = "";
+
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializerImpl byteSerializer;
     private final CharSerializerImpl charSerializer;
@@ -83,41 +88,42 @@ public final class SerializerFactory {
         throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", o.getClass().getName()));
     }
 
-    public Object deserialize(String key, byte[] bytes) {
-        if (booleanSerializer.isMatches(bytes)) {
+    public Object deserialize(String token, byte[] bytes) {
+        byte flag = bytes[0];
+        if (booleanSerializer.isMatches(flag)) {
             return booleanSerializer.deserialize(bytes);
         }
-        if (byteSerializer.isMatches(bytes)) {
+        if (byteSerializer.isMatches(flag)) {
             return byteSerializer.deserialize(bytes);
         }
-        if (charSerializer.isMatches(bytes)) {
+        if (charSerializer.isMatches(flag)) {
             return charSerializer.deserialize(bytes);
         }
-        if (doubleSerializer.isMatches(bytes)) {
+        if (doubleSerializer.isMatches(flag)) {
             return doubleSerializer.deserialize(bytes);
         }
-        if (floatSerializer.isMatches(bytes)) {
+        if (floatSerializer.isMatches(flag)) {
             return floatSerializer.deserialize(bytes);
         }
-        if (integerSerializer.isMatches(bytes)) {
+        if (integerSerializer.isMatches(flag)) {
             return integerSerializer.deserialize(bytes);
         }
-        if (longSerializer.isMatches(bytes)) {
+        if (longSerializer.isMatches(flag)) {
             return longSerializer.deserialize(bytes);
         }
-        if (shortSerializer.isMatches(bytes)) {
+        if (shortSerializer.isMatches(flag)) {
             return shortSerializer.deserialize(bytes);
         }
-        if (stringSerializer.isMatches(bytes)) {
+        if (stringSerializer.isMatches(flag)) {
             return stringSerializer.deserialize(bytes);
         }
-        if (stringSetSerializer.isMatches(bytes)) {
+        if (stringSetSerializer.isMatches(flag)) {
             return stringSetSerializer.deserialize(bytes);
         }
-        if (persistableSerializer.isMatches(bytes)) {
-            return persistableSerializer.deserialize(key, bytes);
+        if (persistableSerializer.isMatches(flag)) {
+            return persistableSerializer.deserialize(token, bytes);
         }
-        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", bytes));
+        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
     }
 
     public BooleanSerializer getBooleanSerializer() {
