@@ -1,17 +1,9 @@
 package com.ironz.binaryprefs.serialization;
 
 import com.ironz.binaryprefs.serialization.impl.*;
-import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 
-import java.util.Set;
-
 public final class SerializerFactory {
-
-    /**
-     * Empty token for determine empty object deserialization token
-     */
-    static final String EMPTY_TOKEN = "";
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
@@ -48,44 +40,6 @@ public final class SerializerFactory {
                 stringSerializer,
                 persistableRegistry
         );
-    }
-
-    public byte[] serialize(Object o) {
-        if (booleanSerializer.isMatches(o)) {
-            return booleanSerializer.serialize(((boolean) o));
-        }
-        if (byteSerializer.isMatches(o)) {
-            return byteSerializer.serialize(((byte) o));
-        }
-        if (charSerializer.isMatches(o)) {
-            return charSerializer.serialize((char) o);
-        }
-        if (doubleSerializer.isMatches(o)) {
-            return doubleSerializer.serialize((double) o);
-        }
-        if (floatSerializer.isMatches(o)) {
-            return floatSerializer.serialize((float) o);
-        }
-        if (integerSerializer.isMatches(o)) {
-            return integerSerializer.serialize((int) o);
-        }
-        if (longSerializer.isMatches(o)) {
-            return longSerializer.serialize((long) o);
-        }
-        if (shortSerializer.isMatches(o)) {
-            return shortSerializer.serialize((short) o);
-        }
-        if (stringSerializer.isMatches(o)) {
-            return stringSerializer.serialize((String) o);
-        }
-        if (stringSetSerializer.isMatches(o)) {
-            //noinspection unchecked
-            return stringSetSerializer.serialize((Set<String>) o);
-        }
-        if (persistableSerializer.isMatches(o)) {
-            return persistableSerializer.serialize((Persistable) o);
-        }
-        throw new UnsupportedClassVersionError(String.format("Type verification failed. Incorrect type '%s'", o.getClass().getName()));
     }
 
     public Object deserialize(String token, byte[] bytes) {
