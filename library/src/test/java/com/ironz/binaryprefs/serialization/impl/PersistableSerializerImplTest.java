@@ -15,10 +15,11 @@ public class PersistableSerializerImplTest {
     private static final byte INCORRECT_FLAG = 0;
 
     private PersistableSerializerImpl serializer;
+    private PersistableRegistry persistableRegistry;
 
     @Before
     public void setUp() {
-        PersistableRegistry persistableRegistry = new PersistableRegistry();
+        persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         persistableRegistry.register(TestMigrateUser.KEY, TestMigrateUser.class);
         SerializerFactory factory = new SerializerFactory(persistableRegistry);
@@ -61,6 +62,17 @@ public class PersistableSerializerImplTest {
         TestMigrateUser value = TestMigrateUser.create();
 
         byte[] bytes = serializer.serialize(value);
+
+        serializer.deserialize(TestUser.KEY, bytes);
+    }
+
+    @Test(expected = UnsupportedClassVersionError.class)
+    public void persistableIncorrectRegistryToken() {
+        TestMigrateUser value = TestMigrateUser.create();
+
+        byte[] bytes = serializer.serialize(value);
+
+        persistableRegistry.remove(TestUser.KEY);
 
         serializer.deserialize(TestUser.KEY, bytes);
     }
