@@ -5,6 +5,7 @@ import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
+import com.ironz.binaryprefs.serialization.impl.*;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
@@ -18,7 +19,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     public static final String SAVE = "save";
 
-    private final Map<String, Object> commitMap = new HashMap<>();
+    private final Map<String, byte[]> commitMap = new HashMap<>();
     private final Set<String> removeSet = new HashSet<>(0);
 
     private final Preferences preferences;
@@ -53,7 +54,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            commitMap.put(key, value);
+            StringSerializer serializer = serializerFactory.getStringSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -64,7 +67,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             if (value == null) {
                 return remove(key);
             }
-            commitMap.put(key, value);
+            StringSetSerializer serializer = serializerFactory.getStringSetSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -72,7 +77,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putInt(String key, int value) {
         synchronized (Preferences.class) {
-            commitMap.put(key, value);
+            IntegerSerializer serializer = serializerFactory.getIntegerSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -80,7 +87,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putLong(String key, long value) {
         synchronized (Preferences.class) {
-            commitMap.put(key, value);
+            LongSerializer serializer = serializerFactory.getLongSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -88,7 +97,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putFloat(String key, float value) {
         synchronized (Preferences.class) {
-            commitMap.put(key, value);
+            FloatSerializer serializer = serializerFactory.getFloatSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -96,7 +107,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
         synchronized (Preferences.class) {
-            commitMap.put(key, value);
+            BooleanSerializer serializer = serializerFactory.getBooleanSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -104,7 +117,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
         synchronized (Preferences.class) {
-            commitMap.put(key, value);
+            PersistableSerializer serializer = serializerFactory.getPersistableSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
@@ -181,8 +196,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void storeCache() {
         for (String name : commitMap.keySet()) {
-            Object value = commitMap.get(name);
-            byte[] bytes = serializerFactory.serialize(value);
+            byte[] bytes = commitMap.get(name);
             cacheProvider.put(name, bytes);
         }
     }
@@ -204,8 +218,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void store() {
         for (String key : commitMap.keySet()) {
-            Object value = commitMap.get(key);
-            byte[] bytes = serializerFactory.serialize(value);
+            byte[] bytes = commitMap.get(key);
             storeInternal(key, bytes);
         }
     }
