@@ -45,7 +45,7 @@ public final class BinaryPreferences implements Preferences {
                     byte[] bytes = fileAdapter.fetch(name);
                     cacheProvider.put(name, bytes);
                 } catch (Exception e) {
-                    exceptionHandler.handle(e, name);
+                    exceptionHandler.handle(name, e);
                 }
             }
         }
@@ -57,7 +57,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getAllInternal();
             } catch (Exception e) {
-                exceptionHandler.handle(e, "getAll method");
+                exceptionHandler.handle("getAll method", e);
             }
             return new HashMap<>();
         }
@@ -69,7 +69,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getStringInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -81,7 +81,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValues;
         }
@@ -93,7 +93,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getIntInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -105,7 +105,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getLongInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -117,7 +117,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getFloatInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -129,7 +129,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getBooleanInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -141,7 +141,7 @@ public final class BinaryPreferences implements Preferences {
             try {
                 return getPersistableInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
