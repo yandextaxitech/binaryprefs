@@ -9,6 +9,7 @@ import com.ironz.binaryprefs.serialization.impl.*;
 import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +60,7 @@ public final class BinaryPreferences implements Preferences {
             } catch (Exception e) {
                 exceptionHandler.handle("getAll method", e);
             }
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
     }
 
