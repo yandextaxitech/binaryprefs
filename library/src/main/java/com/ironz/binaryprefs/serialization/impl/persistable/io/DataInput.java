@@ -90,7 +90,7 @@ public interface DataInput {
      *
      * @param <T>   type
      * @param bytes given byte array created by specific output scheme
-     * @param clazz
+     * @param clazz given class type
      * @return deserialized object
      */
     <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz);
