@@ -36,10 +36,10 @@ public final class BinaryPreferences implements Preferences {
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
-        defineCache();
+        fetchCache();
     }
 
-    private void defineCache() {
+    private void fetchCache() {
         synchronized (Preferences.class) {
             for (String name : fileAdapter.names()) {
                 try {
