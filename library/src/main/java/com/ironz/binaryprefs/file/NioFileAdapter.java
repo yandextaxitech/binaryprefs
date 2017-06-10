@@ -68,7 +68,7 @@ public final class NioFileAdapter implements FileAdapter {
         File file = new File(srcDir, name);
         if (backupFile.exists()) {
             deleteOriginal(file);
-            swapFiles(backupFile, file);
+            swap(backupFile, file);
         }
         return fetchInternal(file);
     }
@@ -101,7 +101,7 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     @Override
-    public void save(final String name, final byte[] bytes) {
+    public void save(String name, byte[] bytes) {
         backupAndSave(name, bytes);
     }
 
@@ -110,7 +110,7 @@ public final class NioFileAdapter implements FileAdapter {
         File file = new File(srcDir, name);
         File backupFile = new File(srcDir, file.getName() + BACKUP_EXTENSION);
         byte[] encrypt = encryption.encrypt(bytes);
-        swapFiles(file, backupFile);
+        swap(file, backupFile);
         saveInternal(file, encrypt);
         deleteBackup(backupFile);
         persistenceHandler.onSuccess(name);
@@ -121,7 +121,7 @@ public final class NioFileAdapter implements FileAdapter {
         backupFile.delete();
     }
 
-    private void swapFiles(File from, File to) {
+    private void swap(File from, File to) {
         //noinspection ResultOfMethodCallIgnored
         from.renameTo(to);
     }
@@ -149,7 +149,7 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     @Override
-    public void remove(final String name) {
+    public void remove(String name) {
         removeInternal(name);
     }
 
