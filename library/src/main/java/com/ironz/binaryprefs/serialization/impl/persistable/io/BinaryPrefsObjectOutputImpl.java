@@ -44,8 +44,6 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     @Override
     public <T extends Persistable> byte[] serialize(T value) {
 
-        checkNull(value);
-
         write(new byte[]{PersistableSerializer.FLAG_PERSISTABLE});
 
         value.writeExternal(this);
@@ -106,12 +104,6 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
         tryGrowArray(length);
         System.arraycopy(value, 0, buffer, offset, length);
         offset += length;
-    }
-
-    private void checkNull(Object value) {
-        if (value == null) {
-            throw new NullPointerException("Can't serialize null object");
-        }
     }
 
     private void tryGrowArray(int len) {
