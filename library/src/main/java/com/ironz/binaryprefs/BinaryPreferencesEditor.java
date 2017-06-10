@@ -172,9 +172,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private boolean saveAll() {
         try {
-            clearAll();
-            remove();
-            store();
+            clearPersistance();
+            removePersistance();
+            storePersistance();
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(SAVE, e);
@@ -204,7 +204,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void clearAll() {
+    private void clearPersistance() {
         if (!clearFlag) {
             return;
         }
@@ -213,13 +213,13 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void remove() {
+    private void removePersistance() {
         for (final String name : removeSet) {
             removeInternal(name);
         }
     }
 
-    private void store() {
+    private void storePersistance() {
         for (String key : commitMap.keySet()) {
             byte[] bytes = commitMap.get(key);
             storeInternal(key, bytes);
