@@ -8,9 +8,12 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
+import com.ironz.binaryprefs.impl.TestUser;
+import com.ironz.binaryprefs.serialization.SerializerFactory;
+import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,6 +36,7 @@ public final class BinaryPreferencesTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private Preferences preferences;
+    private PersistableRegistry persistableRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -45,9 +49,19 @@ public final class BinaryPreferencesTest {
             }
         };
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-        EventBridge eventsBridge = new SimpleEventBridgeImpl();
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-        preferences = new BinaryPreferences(fileAdapter, ExceptionHandler.IGNORE, eventsBridge, cacheProvider, TaskExecutor.DEFAULT);
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
+        persistableRegistry = new PersistableRegistry();
+        persistableRegistry.register(TestUser.KEY, TestUser.class);
+        SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
+        preferences = new BinaryPreferences(
+                fileAdapter,
+                ExceptionHandler.IGNORE,
+                eventsBridge,
+                cacheProvider,
+                TaskExecutor.DEFAULT,
+                serializerFactory
+        );
     }
 
     @Test
@@ -218,6 +232,45 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void persistableValue() {
+        String key = TestUser.KEY;
+        TestUser value = TestUser.create();
+
+        preferences.edit()
+                .putPersistable(key, value)
+                .apply();
+        TestUser restored = preferences.getPersistable(key, new TestUser());
+
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void persistableDefaultValue() {
+        String key = TestUser.KEY;
+        TestUser defaultValue = TestUser.create();
+
+        TestUser restored = preferences.getPersistable(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test(expected = UnsupportedClassVersionError.class)
+    public void persistableNotRegistered() {
+        String key = TestUser.KEY;
+        TestUser value = TestUser.create();
+
+        preferences.edit()
+                .putPersistable(key, value)
+                .apply();
+
+        persistableRegistry.remove(key);
+
+        TestUser restored = preferences.getPersistable(key, new TestUser());
+
+        assertEquals(value, restored);
+    }
+
+    @Test
     public void clear() {
         String key = "key";
         String value = "value";
@@ -282,6 +335,35 @@ public final class BinaryPreferencesTest {
         String restored = preferences.getString(key, undefined);
 
         assertEquals(value, restored);
+    }
+
+    @Test
+    public void commitTrue() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+        String undefined = "undefined";
+
+        boolean commit = preferences.edit()
+                .putString(key, value)
+                .commit();
+        String restored = preferences.getString(key, undefined);
+
+        assertTrue(commit);
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void commitFalse() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+
+        folder.delete();
+
+        boolean commit = preferences.edit()
+                .putString(key, value)
+                .commit();
+
+        assertFalse(commit);
     }
 
     @Test

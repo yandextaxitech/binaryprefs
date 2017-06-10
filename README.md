@@ -6,16 +6,17 @@ Implementation of SharedPreferences which stores each preference in files separa
 
 ## Roadmap
 
-1. ~~Disk I/O encrypt~~ completed
-2. ~~IPC~~ completed
-3. Externalizable (acyclic graph)
+1. ~~Disk I/O encrypt~~ completed.
+2. ~~IPC~~ completed.
+3. ~~Externalizable~~ completed as `Persistable`.
 4. ~~Preferences tooling (key set reading)~~ completed:
-`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
-5. Store all primitives (like byte, short, char, double)
-6. Store cache in object map (not `byte[]`)
-7. Custom serializers
-8. Lock free (stamped lock)
-9. Synchronous commits
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`.
+5. Store all primitives (like byte, short, char, double).
+6. Custom serializers.
+7. Lock free (stamped lock).
+8. Synchronous commits.
+9. Transactions.
+10. Exact background tasks for each serialization strategies.
 
 ## License
 ```

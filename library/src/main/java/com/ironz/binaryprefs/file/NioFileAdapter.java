@@ -17,23 +17,30 @@ public final class NioFileAdapter implements FileAdapter {
 
     private static final String BACKUP_EXTENSION = ".bak";
 
-    final File srcDir;
+    private final File srcDir;
     private final ByteEncryption encryption;
+    private final SuccessPersistenceHandler persistenceHandler;
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP);
+        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP, SuccessPersistenceHandler.NO_OP);
     }
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption) {
-        this(directoryProvider.getBaseDirectory(), encryption);
+        this(directoryProvider.getBaseDirectory(), encryption, SuccessPersistenceHandler.NO_OP);
+    }
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption, SuccessPersistenceHandler successPersistenceHandler) {
+        this(directoryProvider.getBaseDirectory(), encryption, successPersistenceHandler);
     }
 
     @SuppressWarnings("WeakerAccess")
-    private NioFileAdapter(File srcDir, ByteEncryption encryption) {
+    private NioFileAdapter(File srcDir, ByteEncryption encryption, SuccessPersistenceHandler persistenceHandler) {
         this.srcDir = srcDir;
         this.encryption = encryption;
+        this.persistenceHandler = persistenceHandler;
     }
 
     @Override
@@ -106,6 +113,7 @@ public final class NioFileAdapter implements FileAdapter {
         swapFiles(file, backupFile);
         saveInternal(file, encrypt);
         deleteBackup(backupFile);
+        persistenceHandler.onSuccess(name);
     }
 
     private void deleteBackup(File backupFile) {
@@ -159,5 +167,9 @@ public final class NioFileAdapter implements FileAdapter {
     public boolean contains(String name) {
         File file = new File(srcDir, name);
         return file.exists();
+    }
+
+    File getSrcDir() {
+        return srcDir;
     }
 }

@@ -4,28 +4,31 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.serialization.SerializerFactory;
+import com.ironz.binaryprefs.serialization.impl.*;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
-import com.ironz.binaryprefs.util.Bits;
-import com.ironz.binaryprefs.util.Pair;
 
-import java.io.Externalizable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
+@SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
-    private final List<Pair<String, byte[]>> commitList = new ArrayList<>(0);
-    private final List<String> removeSet = new ArrayList<>(0);
+    public static final String SAVE = "save";
+
+    private final Map<String, byte[]> commitMap = new HashMap<>();
+    private final Set<String> removeSet = new HashSet<>(0);
 
     private final Preferences preferences;
     private final ExceptionHandler exceptionHandler;
     private final FileAdapter fileAdapter;
     private final EventBridge bridge;
-    private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
-    private final Class lock;
+    private final SerializerFactory serializerFactory;
+    private final CacheProvider cacheProvider;
 
     private boolean clearFlag;
 
@@ -33,86 +36,97 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             FileAdapter fileAdapter,
                             ExceptionHandler exceptionHandler,
                             EventBridge bridge,
-                            CacheProvider cacheProvider,
                             TaskExecutor taskExecutor,
-                            Class lock) {
+                            SerializerFactory serializerFactory,
+                            CacheProvider cacheProvider) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
-        this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
-        this.lock = lock;
+        this.serializerFactory = serializerFactory;
+        this.cacheProvider = cacheProvider;
     }
 
     @Override
     public PreferencesEditor putString(String key, String value) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             if (value == null) {
                 return remove(key);
             }
-            byte[] bytes = Bits.stringToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+            StringSerializer serializer = serializerFactory.getStringSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
 
     @Override
-    public PreferencesEditor putStringSet(String key, Set<String> values) {
-        synchronized (lock) {
-            if (values == null) {
+    public PreferencesEditor putStringSet(String key, Set<String> value) {
+        synchronized (Preferences.class) {
+            if (value == null) {
                 return remove(key);
             }
-            byte[] bytes = Bits.stringSetToBytesWithFlag(values);
-            commitList.add(new Pair<>(key, bytes));
+            StringSetSerializer serializer = serializerFactory.getStringSetSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
 
     @Override
     public PreferencesEditor putInt(String key, int value) {
-        synchronized (lock) {
-            byte[] bytes = Bits.intToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+        synchronized (Preferences.class) {
+            IntegerSerializer serializer = serializerFactory.getIntegerSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
 
     @Override
     public PreferencesEditor putLong(String key, long value) {
-        synchronized (lock) {
-            byte[] bytes = Bits.longToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+        synchronized (Preferences.class) {
+            LongSerializer serializer = serializerFactory.getLongSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
 
     @Override
     public PreferencesEditor putFloat(String key, float value) {
-        synchronized (lock) {
-            byte[] bytes = Bits.floatToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+        synchronized (Preferences.class) {
+            FloatSerializer serializer = serializerFactory.getFloatSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
 
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
-        synchronized (lock) {
-            byte[] bytes = Bits.booleanToBytesWithFlag(value);
-            commitList.add(new Pair<>(key, bytes));
+        synchronized (Preferences.class) {
+            BooleanSerializer serializer = serializerFactory.getBooleanSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
             return this;
         }
     }
 
     @Override
-    public <T extends Externalizable> PreferencesEditor putObject(String key, T value) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
+        synchronized (Preferences.class) {
+            PersistableSerializer serializer = serializerFactory.getPersistableSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
+            return this;
+        }
     }
 
     @Override
     public PreferencesEditor remove(String key) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             removeSet.add(key);
             return this;
         }
@@ -120,7 +134,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor clear() {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             clearFlag = true;
             return this;
         }
@@ -128,76 +142,94 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public void apply() {
-        synchronized (lock) {
-            performTransactions();
+        synchronized (Preferences.class) {
+            clearCache();
+            removeCache();
+            storeCache();
+            taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (Preferences.class) {
+                        saveAll();
+                    }
+                }
+            });
         }
     }
 
     @Override
     public boolean commit() {
-        throw new UnsupportedOperationException("Not implemented yet!");
-    }
-
-    private void performTransactions() {
-        try {
-            tryClearAll();
-            tryRemoveByKeys();
-            tryStoreByKeys();
-        } catch (Exception e) {
-            exceptionHandler.handle(e, "apply method");
+        synchronized (Preferences.class) {
+            clearCache();
+            removeCache();
+            storeCache();
+            return saveAll();
         }
     }
 
-    private void tryClearAll() {
+    private boolean saveAll() {
+        try {
+            clearAll();
+            remove();
+            store();
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(SAVE, e);
+        }
+        return false;
+    }
+
+    private void clearCache() {
         if (!clearFlag) {
             return;
         }
-        for (final String name : fileAdapter.names()) {
-            removeOne(name);
+        for (String name : fileAdapter.names()) {
+            cacheProvider.remove(name);
         }
     }
 
-    private void tryRemoveByKeys() {
+    private void removeCache() {
+        for (String name : removeSet) {
+            cacheProvider.remove(name);
+        }
+    }
+
+    private void storeCache() {
+        for (String name : commitMap.keySet()) {
+            byte[] bytes = commitMap.get(name);
+            cacheProvider.put(name, bytes);
+        }
+    }
+
+    private void clearAll() {
+        if (!clearFlag) {
+            return;
+        }
+        for (String name : fileAdapter.names()) {
+            removeInternal(name);
+        }
+    }
+
+    private void remove() {
         for (final String name : removeSet) {
-            removeOne(name);
+            removeInternal(name);
         }
     }
 
-    private void tryStoreByKeys() {
-        for (final Pair<String, byte[]> pair : commitList) {
-            storeOne(pair.getFirst(), pair.getSecond());
+    private void store() {
+        for (String key : commitMap.keySet()) {
+            byte[] bytes = commitMap.get(key);
+            storeInternal(key, bytes);
         }
     }
 
-    private void removeOne(final String name) {
-        taskExecutor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return removeAndReturnName(name);
-            }
-        });
-    }
-
-    private void storeOne(final String name, final byte[] value) {
-        taskExecutor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return saveAndReturnName(name, value);
-            }
-        });
-    }
-
-    private String removeAndReturnName(String name) {
-        cacheProvider.remove(name);
+    private void removeInternal(String name) {
         fileAdapter.remove(name);
         bridge.notifyListenersRemove(preferences, name);
-        return name;
     }
 
-    private String saveAndReturnName(String name, byte[] value) {
-        cacheProvider.put(name, value);
+    private void storeInternal(String name, byte[] value) {
         fileAdapter.save(name, value);
         bridge.notifyListenersUpdate(preferences, name, value);
-        return name;
     }
 }

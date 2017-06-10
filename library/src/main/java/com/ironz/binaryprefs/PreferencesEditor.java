@@ -1,8 +1,8 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 
-import java.io.Externalizable;
 import java.util.Set;
 
 /**
@@ -48,5 +48,5 @@ public interface PreferencesEditor extends SharedPreferences.Editor {
      * @return Returns a reference to the same Editor object, so you can
      * chain put calls together.
      */
-    <T extends Externalizable> PreferencesEditor putObject(String key, T value);
+    <T extends Persistable> PreferencesEditor putPersistable(String key, T value);
 }

@@ -4,10 +4,11 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.serialization.SerializerFactory;
+import com.ironz.binaryprefs.serialization.impl.*;
+import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
-import com.ironz.binaryprefs.util.Bits;
 
-import java.io.Externalizable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,43 +20,44 @@ public final class BinaryPreferences implements Preferences {
     private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
-
-    private final Class lock = BinaryPreferences.class;
+    private final SerializerFactory serializerFactory;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(FileAdapter fileAdapter,
                              ExceptionHandler exceptionHandler,
                              EventBridge eventsBridge,
                              CacheProvider cacheProvider,
-                             TaskExecutor taskExecutor) {
+                             TaskExecutor taskExecutor,
+                             SerializerFactory serializerFactory) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.eventsBridge = eventsBridge;
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
+        this.serializerFactory = serializerFactory;
         defineCache();
     }
 
     private void defineCache() {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             for (String name : fileAdapter.names()) {
                 try {
                     byte[] bytes = fileAdapter.fetch(name);
                     cacheProvider.put(name, bytes);
                 } catch (Exception e) {
-                    exceptionHandler.handle(e, name);
+                    exceptionHandler.handle(name, e);
                 }
             }
         }
     }
 
     @Override
-    public Map<String, ?> getAll() {
-        synchronized (lock) {
+    public Map<String, Object> getAll() {
+        synchronized (Preferences.class) {
             try {
                 return getAllInternal();
             } catch (Exception e) {
-                exceptionHandler.handle(e, "getAll method");
+                exceptionHandler.handle("getAll method", e);
             }
             return new HashMap<>();
         }
@@ -63,11 +65,11 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public String getString(String key, String defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getStringInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -75,11 +77,11 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getStringSetInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValues;
         }
@@ -87,11 +89,11 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public int getInt(String key, int defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getIntInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -99,11 +101,11 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public long getLong(String key, long defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getLongInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -111,11 +113,11 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public float getFloat(String key, float defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getFloatInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -123,23 +125,23 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             try {
                 return getBooleanInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
     }
 
     @Override
-    public <T extends Externalizable> T getObject(Class<T> clazz, String key, T defValue) {
-        synchronized (lock) {
+    public <T extends Persistable> T getPersistable(String key, T defValue) {
+        synchronized (Preferences.class) {
             try {
-                return getObjectInternal(key);
+                return getPersistableInternal(key);
             } catch (Exception e) {
-                exceptionHandler.handle(e, key);
+                exceptionHandler.handle(key, e);
             }
             return defValue;
         }
@@ -147,73 +149,91 @@ public final class BinaryPreferences implements Preferences {
 
     @Override
     public boolean contains(String key) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             return containsInternal(key);
         }
     }
 
     @Override
     public PreferencesEditor edit() {
-        synchronized (lock) {
-            return new BinaryPreferencesEditor(this, fileAdapter, exceptionHandler, eventsBridge, cacheProvider, taskExecutor, lock);
+        synchronized (Preferences.class) {
+            return new BinaryPreferencesEditor(
+                    this,
+                    fileAdapter,
+                    exceptionHandler,
+                    eventsBridge,
+                    taskExecutor,
+                    serializerFactory,
+                    cacheProvider
+            );
         }
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             eventsBridge.registerOnSharedPreferenceChangeListener(listener);
         }
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        synchronized (lock) {
+        synchronized (Preferences.class) {
             eventsBridge.unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 
-    private Map<String, ?> getAllInternal() {
+    private Map<String, Object> getAllInternal() {
         Map<String, Object> map = new HashMap<>();
         for (String key : cacheProvider.keys()) {
             byte[] bytes = cacheProvider.get(key);
-            map.put(key, Bits.tryDeserializeByFlag(bytes));
+            Object o = serializerFactory.deserialize(key, bytes);
+            map.put(key, o);
         }
         return map;
     }
 
     private String getStringInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.stringFromBytesWithFlag(bytes);
+        StringSerializer serializer = serializerFactory.getStringSerializer();
+        return serializer.deserialize(bytes);
     }
 
     private Set<String> getStringSetInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.stringSetFromBytesWithFlag(bytes);
+        StringSetSerializer serializer = serializerFactory.getStringSetSerializer();
+        return serializer.deserialize(bytes);
     }
 
     private int getIntInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.intFromBytesWithFlag(bytes);
+        IntegerSerializer serializer = serializerFactory.getIntegerSerializer();
+        return serializer.deserialize(bytes);
     }
 
     private long getLongInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.longFromBytesWithFlag(bytes);
+        LongSerializer serializer = serializerFactory.getLongSerializer();
+        return serializer.deserialize(bytes);
     }
 
     private float getFloatInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.floatFromBytesWithFlag(bytes);
+        FloatSerializer serializer = serializerFactory.getFloatSerializer();
+        return serializer.deserialize(bytes);
     }
 
     private boolean getBooleanInternal(String key) {
         byte[] bytes = cacheProvider.get(key);
-        return Bits.booleanFromBytesWithFlag(bytes);
+        BooleanSerializer serializer = serializerFactory.getBooleanSerializer();
+        return serializer.deserialize(bytes);
     }
 
-    private <T extends Externalizable> T getObjectInternal(String key) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    private <T extends Persistable> T getPersistableInternal(String key) {
+        byte[] bytes = cacheProvider.get(key);
+        PersistableSerializer serializer = serializerFactory.getPersistableSerializer();
+        //noinspection unchecked
+        return (T) serializer.deserialize(key, bytes);
     }
 
     private boolean containsInternal(String key) {
