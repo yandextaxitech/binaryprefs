@@ -113,6 +113,19 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void stringNullValue() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String undefined = "undefined";
+
+        preferences.edit()
+                .putString(key, null)
+                .apply();
+        String restored = preferences.getString(key, undefined);
+
+        assertEquals(undefined, restored);
+    }
+
+    @Test
     public void intValue() {
         String key = int.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         int value = Integer.MAX_VALUE;
@@ -219,6 +232,19 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void stringSetNullValue() {
+        String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        HashSet<String> defaultValue = new HashSet<>();
+
+        preferences.edit()
+                .putStringSet(key, null)
+                .apply();
+        Set<String> restored = preferences.getStringSet(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
     public void stringSetDefaultValue() {
         String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         HashSet<String> defaultValue = new HashSet<>();
@@ -242,6 +268,19 @@ public final class BinaryPreferencesTest {
         TestUser restored = preferences.getPersistable(key, new TestUser());
 
         assertEquals(value, restored);
+    }
+
+    @Test
+    public void persistableNullValue() {
+        String key = TestUser.KEY;
+        TestUser defaultValue = new TestUser();
+
+        preferences.edit()
+                .putPersistable(key, null)
+                .apply();
+        TestUser restored = preferences.getPersistable(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
     }
 
     @Test

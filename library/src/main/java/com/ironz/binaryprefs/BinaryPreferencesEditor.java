@@ -117,6 +117,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     @Override
     public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
         synchronized (Preferences.class) {
+            if (value == null) {
+                return remove(key);
+            }
             PersistableSerializer serializer = serializerFactory.getPersistableSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
