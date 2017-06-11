@@ -149,6 +149,54 @@ public final class BinaryPreferences implements Preferences {
     }
 
     @Override
+    public byte getByte(String key, byte defValue) {
+        synchronized (Preferences.class) {
+            try {
+                return getByteInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(key, e);
+            }
+            return defValue;
+        }
+    }
+
+    @Override
+    public short getShort(String key, short defValue) {
+        synchronized (Preferences.class) {
+            try {
+                return getShortInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(key, e);
+            }
+            return defValue;
+        }
+    }
+
+    @Override
+    public char getChar(String key, char defValue) {
+        synchronized (Preferences.class) {
+            try {
+                return getCharInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(key, e);
+            }
+            return defValue;
+        }
+    }
+
+    @Override
+    public double getDouble(String key, double defValue) {
+        synchronized (Preferences.class) {
+            try {
+                return getDoubleInternal(key);
+            } catch (Exception e) {
+                exceptionHandler.handle(key, e);
+            }
+            return defValue;
+        }
+    }
+
+    @Override
     public boolean contains(String key) {
         synchronized (Preferences.class) {
             return containsInternal(key);
@@ -235,6 +283,30 @@ public final class BinaryPreferences implements Preferences {
         PersistableSerializer serializer = serializerFactory.getPersistableSerializer();
         //noinspection unchecked
         return (T) serializer.deserialize(key, bytes);
+    }
+
+    private byte getByteInternal(String key) {
+        byte[] bytes = cacheProvider.get(key);
+        ByteSerializer byteSerializer = serializerFactory.getByteSerializer();
+        return byteSerializer.deserialize(bytes);
+    }
+
+    private short getShortInternal(String key) {
+        byte[] bytes = cacheProvider.get(key);
+        ShortSerializer byteSerializer = serializerFactory.getShortSerializer();
+        return byteSerializer.deserialize(bytes);
+    }
+
+    private char getCharInternal(String key) {
+        byte[] bytes = cacheProvider.get(key);
+        CharSerializer byteSerializer = serializerFactory.getCharSerializer();
+        return byteSerializer.deserialize(bytes);
+    }
+
+    private double getDoubleInternal(String key) {
+        byte[] bytes = cacheProvider.get(key);
+        DoubleSerializer byteSerializer = serializerFactory.getDoubleSerializer();
+        return byteSerializer.deserialize(bytes);
     }
 
     private boolean containsInternal(String key) {
