@@ -49,4 +49,48 @@ public interface PreferencesEditor extends SharedPreferences.Editor {
      * chain put calls together.
      */
     <T extends Persistable> PreferencesEditor putPersistable(String key, T value);
+
+    /**
+     * Set an byte value in the preferences editor, to be written back once
+     * {@link #commit} or {@link #apply} are called.
+     *
+     * @param key   The name of the preference to modify.
+     * @param value The new value for the preference.
+     * @return Returns a reference to the same Editor object, so you can
+     * chain put calls together.
+     */
+    PreferencesEditor putByte(String key, byte value);
+
+    /**
+     * Set an short value in the preferences editor, to be written back once
+     * {@link #commit} or {@link #apply} are called.
+     *
+     * @param key   The name of the preference to modify.
+     * @param value The new value for the preference.
+     * @return Returns a reference to the same Editor object, so you can
+     * chain put calls together.
+     */
+    PreferencesEditor putShort(String key, short value);
+
+    /**
+     * Set an char value in the preferences editor, to be written back once
+     * {@link #commit} or {@link #apply} are called.
+     *
+     * @param key   The name of the preference to modify.
+     * @param value The new value for the preference.
+     * @return Returns a reference to the same Editor object, so you can
+     * chain put calls together.
+     */
+    PreferencesEditor putChar(String key, char value);
+
+    /**
+     * Set an double value in the preferences editor, to be written back once
+     * {@link #commit} or {@link #apply} are called.
+     *
+     * @param key   The name of the preference to modify.
+     * @param value The new value for the preference.
+     * @return Returns a reference to the same Editor object, so you can
+     * chain put calls together.
+     */
+    PreferencesEditor putDouble(String key, double value);
 }

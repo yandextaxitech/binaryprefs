@@ -310,6 +310,102 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void byteValue() {
+        String key = byte.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        byte value = Byte.MAX_VALUE;
+        byte defaultValue = 0;
+
+        preferences.edit()
+                .putByte(key, value)
+                .apply();
+        byte restored = preferences.getByte(key, defaultValue);
+
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void byteDefaultValue() {
+        String key = byte.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        byte defaultValue = Byte.MAX_VALUE;
+
+        byte restored = preferences.getByte(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
+    public void shortValue() {
+        String key = short.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        short value = Short.MAX_VALUE;
+        short defaultValue = 0;
+
+        preferences.edit()
+                .putShort(key, value)
+                .apply();
+        short restored = preferences.getShort(key, defaultValue);
+
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void shortDefaultValue() {
+        String key = short.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        short defaultValue = Short.MAX_VALUE;
+
+        short restored = preferences.getShort(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
+    public void charValue() {
+        String key = char.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        char value = Character.MAX_VALUE;
+        char defaultValue = 0;
+
+        preferences.edit()
+                .putChar(key, value)
+                .apply();
+        char restored = preferences.getChar(key, defaultValue);
+
+        assertEquals(value, restored);
+    }
+
+    @Test
+    public void charDefaultValue() {
+        String key = char.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        char defaultValue = Character.MAX_VALUE;
+
+        char restored = preferences.getChar(key, defaultValue);
+
+        assertEquals(defaultValue, restored);
+    }
+
+    @Test
+    public void doubleValue() {
+        String key = double.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        double value = Double.MAX_VALUE;
+        double defaultValue = 0;
+
+        preferences.edit()
+                .putDouble(key, value)
+                .apply();
+        double restored = preferences.getDouble(key, defaultValue);
+
+        assertEquals(value, restored, .0);
+    }
+
+    @Test
+    public void doubleDefaultValue() {
+        String key = double.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        double defaultValue = Double.MAX_VALUE;
+
+        double restored = preferences.getDouble(key, defaultValue);
+
+        assertEquals(defaultValue, restored, .0);
+    }
+
+    @Test
     public void clear() {
         String key = "key";
         String value = "value";

@@ -13,7 +13,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`.
 5. ~~Custom serializers~~ completed.
 6. ~~Synchronous commits~~ completed.
-7. Store all primitives (like byte, short, char, double).
+7. ~~Store all primitives (like byte, short, char, double)~~ completed.
 8. Lock free (stamped lock).
 9. Transactions.
 10. Exact background tasks for each serialization strategies.

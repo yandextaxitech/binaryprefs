@@ -128,6 +128,46 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     @Override
+    public PreferencesEditor putByte(String key, byte value) {
+        synchronized (Preferences.class) {
+            ByteSerializer serializer = serializerFactory.getByteSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
+            return this;
+        }
+    }
+
+    @Override
+    public PreferencesEditor putShort(String key, short value) {
+        synchronized (Preferences.class) {
+            ShortSerializer serializer = serializerFactory.getShortSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
+            return this;
+        }
+    }
+
+    @Override
+    public PreferencesEditor putChar(String key, char value) {
+        synchronized (Preferences.class) {
+            CharSerializer serializer = serializerFactory.getCharSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
+            return this;
+        }
+    }
+
+    @Override
+    public PreferencesEditor putDouble(String key, double value) {
+        synchronized (Preferences.class) {
+            DoubleSerializer serializer = serializerFactory.getDoubleSerializer();
+            byte[] bytes = serializer.serialize(value);
+            commitMap.put(key, bytes);
+            return this;
+        }
+    }
+
+    @Override
     public PreferencesEditor remove(String key) {
         synchronized (Preferences.class) {
             removeSet.add(key);
