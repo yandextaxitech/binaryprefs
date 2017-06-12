@@ -4,6 +4,45 @@
 
 Implementation of SharedPreferences which stores each preference in files separately, performs disk IO via NIO2 with memory mapped file and works IPC (between processes).
 
+## Usage
+
+#### Minimal working configuration
+
+```java
+        String prefName = "pref_1";
+        
+        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
+        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
+        PersistableRegistry persistableRegistry = new PersistableRegistry();
+        persistableRegistry.register(TestUser.KEY, TestUser.class);
+        SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
+        LockFactory lockFactory = new SimpleLockFactoryImpl(prefName);
+        TaskExecutor executor = new ScheduledBackgroundTaskExecutor();
+        ExceptionHandler exceptionHandler = new ExceptionHandler() {
+            @Override
+            public void handle(String key, Exception e) {
+                //do some metric report call
+            }
+        };
+        
+        Preferences preferences = new BinaryPreferences(
+                fileAdapter,
+                exceptionHandler,
+                eventsBridge,
+                cacheProvider,
+                executor,
+                serializerFactory,
+                lockFactory
+        );
+```
+
+`Preferences.java` is child of `SharedPreferences.java` from android standard library.
+That means compatibility with parent interface. Also that means you can use this 
+preferences implementation as before because behaviour an contract is fully identical.
+
 ## Roadmap
 
 1. ~~Disk I/O encrypt~~ completed.
