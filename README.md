@@ -53,9 +53,8 @@ preferences implementation as before because behaviour and contract is fully res
 6. ~~Synchronous commits~~ completed.
 7. ~~Store all primitives (like byte, short, char, double)~~ completed.
 8. ~~Lock free (avoid locks)~~ completed as `LockFactory`.
-9. Transactions.
-10. Exact background tasks for each serialization strategies.
-11. RxJava support. 
+9. Exact background tasks for each serialization strategies.
+10. RxJava support. 
 
 ## License
 ```
