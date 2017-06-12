@@ -10,7 +10,6 @@ Implementation of SharedPreferences which stores each preference in files separa
 
 ```java
         String prefName = "pref_1";
-        
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
