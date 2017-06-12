@@ -232,6 +232,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void removeCache() {
+        if (clearFlag) {
+            return;
+        }
         for (String name : removeSet) {
             cacheProvider.remove(name);
         }
