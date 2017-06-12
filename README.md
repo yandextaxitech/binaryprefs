@@ -39,9 +39,9 @@ Implementation of SharedPreferences which stores each preference in files separa
         );
 ```
 
-`Preferences.java` is child of `SharedPreferences.java` from android standard library.
+`Preferences.java` this is a child of `SharedPreferences.java` from android standard library.
 That means compatibility with parent interface. Also that means you can use this 
-preferences implementation as before because behaviour an contract is fully identical.
+preferences implementation as before because behaviour and contract is fully respected.
 
 ## Roadmap
 
