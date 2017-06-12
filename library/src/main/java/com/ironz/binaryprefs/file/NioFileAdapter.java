@@ -93,8 +93,12 @@ public final class NioFileAdapter implements FileAdapter {
             throw new FileOperationException(e);
         } finally {
             try {
-                if (randomAccessFile != null) randomAccessFile.close();
-                if (channel != null) channel.close();
+                if (randomAccessFile != null) {
+                    randomAccessFile.close();
+                }
+                if (channel != null) {
+                    channel.close();
+                }
             } catch (IOException ignored) {
             }
         }
@@ -141,8 +145,12 @@ public final class NioFileAdapter implements FileAdapter {
             throw new FileOperationException(e);
         } finally {
             try {
-                if (randomAccessFile != null) randomAccessFile.close();
-                if (channel != null) channel.close();
+                if (randomAccessFile != null) {
+                    randomAccessFile.close();
+                }
+                if (channel != null) {
+                    channel.close();
+                }
             } catch (Exception ignored) {
             }
         }
