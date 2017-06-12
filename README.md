@@ -14,7 +14,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 5. ~~Custom serializers~~ completed.
 6. ~~Synchronous commits~~ completed.
 7. ~~Store all primitives (like byte, short, char, double)~~ completed.
-8. Lock free (avoid locks).
+8. ~~Lock free (avoid locks)~~ completed as `LockFactory`.
 9. Transactions.
 10. Exact background tasks for each serialization strategies.
 11. RxJava support. 
