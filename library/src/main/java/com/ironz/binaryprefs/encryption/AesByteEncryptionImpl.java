@@ -9,7 +9,6 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private static final String AES = "AES";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5PADDING";
 
-    private final Class lock = ByteEncryption.class;
     private final byte[] secretKeyBytes;
     private final byte[] initialVector;
 
@@ -21,7 +20,7 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     @Override
     public byte[] encrypt(byte[] bytes) {
-        synchronized (lock) {
+        synchronized (this) {
             try {
                 SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
                 IvParameterSpec iv = new IvParameterSpec(initialVector);
@@ -36,7 +35,7 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     @Override
     public byte[] decrypt(byte[] bytes) {
-        synchronized (lock) {
+        synchronized (this) {
             try {
                 SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
                 IvParameterSpec iv = new IvParameterSpec(initialVector);

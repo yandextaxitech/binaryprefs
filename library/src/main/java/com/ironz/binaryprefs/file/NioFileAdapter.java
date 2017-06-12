@@ -17,6 +17,9 @@ public final class NioFileAdapter implements FileAdapter {
 
     private static final String BACKUP_EXTENSION = ".bak";
 
+    private static final String READ_MODE = "r";
+    private static final String RWD_MODE = "rwd";
+
     private final File srcDir;
     private final ByteEncryption encryption;
     private final SuccessPersistenceHandler persistenceHandler;
@@ -82,7 +85,7 @@ public final class NioFileAdapter implements FileAdapter {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            randomAccessFile = new RandomAccessFile(file, "r");
+            randomAccessFile = new RandomAccessFile(file, READ_MODE);
             channel = randomAccessFile.getChannel();
             int size = (int) randomAccessFile.length();
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
@@ -134,7 +137,7 @@ public final class NioFileAdapter implements FileAdapter {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            randomAccessFile = new RandomAccessFile(file, "rwd");
+            randomAccessFile = new RandomAccessFile(file, RWD_MODE);
             randomAccessFile.setLength(0);
             channel = randomAccessFile.getChannel();
             MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);

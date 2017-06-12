@@ -12,6 +12,8 @@ import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.file.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.impl.TestUser;
+import com.ironz.binaryprefs.lock.LockFactory;
+import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
@@ -54,13 +56,15 @@ public final class BinaryPreferencesTest {
         persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
+        LockFactory lockFactory = new SimpleLockFactoryImpl("preferences");
         preferences = new BinaryPreferences(
                 fileAdapter,
                 ExceptionHandler.IGNORE,
                 eventsBridge,
                 cacheProvider,
                 TaskExecutor.DEFAULT,
-                serializerFactory
+                serializerFactory,
+                lockFactory
         );
     }
 
@@ -218,7 +222,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void stringSetValue() {
         String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
-        HashSet<String> value = new HashSet<>();
+        Set<String> value = new HashSet<>();
         value.add("one");
         value.add("two");
         value.add("tree");
@@ -234,7 +238,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void stringSetNullValue() {
         String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
-        HashSet<String> defaultValue = new HashSet<>();
+        Set<String> defaultValue = new HashSet<>();
 
         preferences.edit()
                 .putStringSet(key, null)
@@ -247,7 +251,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void stringSetDefaultValue() {
         String key = Set.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
-        HashSet<String> defaultValue = new HashSet<>();
+        Set<String> defaultValue = new HashSet<>();
         defaultValue.add("one");
         defaultValue.add("two");
         defaultValue.add("tree");

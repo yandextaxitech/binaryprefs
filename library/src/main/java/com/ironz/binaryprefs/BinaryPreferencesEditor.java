@@ -29,6 +29,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
+    private final Object lock;
 
     private boolean clearFlag;
 
@@ -38,7 +39,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
-                            CacheProvider cacheProvider) {
+                            CacheProvider cacheProvider,
+                            Object lock) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -46,11 +48,12 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
+        this.lock = lock;
     }
 
     @Override
     public PreferencesEditor putString(String key, String value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             if (value == null) {
                 return remove(key);
             }
@@ -63,7 +66,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putStringSet(String key, Set<String> value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             if (value == null) {
                 return remove(key);
             }
@@ -76,7 +79,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putInt(String key, int value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             IntegerSerializer serializer = serializerFactory.getIntegerSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -86,7 +89,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putLong(String key, long value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             LongSerializer serializer = serializerFactory.getLongSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -96,7 +99,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putFloat(String key, float value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             FloatSerializer serializer = serializerFactory.getFloatSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -106,7 +109,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             BooleanSerializer serializer = serializerFactory.getBooleanSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -116,7 +119,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public <T extends Persistable> PreferencesEditor putPersistable(String key, T value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             if (value == null) {
                 return remove(key);
             }
@@ -129,7 +132,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putByte(String key, byte value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             ByteSerializer serializer = serializerFactory.getByteSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -139,7 +142,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putShort(String key, short value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             ShortSerializer serializer = serializerFactory.getShortSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -149,7 +152,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putChar(String key, char value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             CharSerializer serializer = serializerFactory.getCharSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -159,7 +162,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor putDouble(String key, double value) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             DoubleSerializer serializer = serializerFactory.getDoubleSerializer();
             byte[] bytes = serializer.serialize(value);
             commitMap.put(key, bytes);
@@ -169,7 +172,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor remove(String key) {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             removeSet.add(key);
             return this;
         }
@@ -177,7 +180,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public PreferencesEditor clear() {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             clearFlag = true;
             return this;
         }
@@ -185,14 +188,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public void apply() {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             clearCache();
             removeCache();
             storeCache();
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    synchronized (Preferences.class) {
+                    synchronized (lock) {
                         saveAll();
                     }
                 }
@@ -202,7 +205,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     @Override
     public boolean commit() {
-        synchronized (Preferences.class) {
+        synchronized (lock) {
             clearCache();
             removeCache();
             storeCache();
