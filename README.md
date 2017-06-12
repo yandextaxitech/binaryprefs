@@ -17,6 +17,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 8. Lock free (avoid locks).
 9. Transactions.
 10. Exact background tasks for each serialization strategies.
+11. RxJava support. 
 
 ## License
 ```
