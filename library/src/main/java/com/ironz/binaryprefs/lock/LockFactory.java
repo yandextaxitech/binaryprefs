@@ -7,7 +7,8 @@ public interface LockFactory {
     /**
      * Returns lock object for synchronous operations.
      *
+     * @param name given preferences name
      * @return lock object, instantiated for concrete preference
      */
-    Object get();
+    Object get(String name);
 }

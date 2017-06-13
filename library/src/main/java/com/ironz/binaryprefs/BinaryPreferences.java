@@ -26,7 +26,8 @@ public final class BinaryPreferences implements Preferences {
     private final Object lock;
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileAdapter fileAdapter,
+    public BinaryPreferences(String prefName,
+                             FileAdapter fileAdapter,
                              ExceptionHandler exceptionHandler,
                              EventBridge eventsBridge,
                              CacheProvider cacheProvider,
@@ -39,7 +40,7 @@ public final class BinaryPreferences implements Preferences {
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
-        this.lock = lockFactory.get();
+        this.lock = lockFactory.get(prefName);
         fetchCache();
     }
 

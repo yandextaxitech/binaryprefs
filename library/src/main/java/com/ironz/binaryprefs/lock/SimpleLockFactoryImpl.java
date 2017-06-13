@@ -9,19 +9,9 @@ import java.util.Map;
 public final class SimpleLockFactoryImpl implements LockFactory {
 
     private final Map<String, Object> locks = new HashMap<>();
-    private final String name;
-
-    /**
-     * Base constructor
-     *
-     * @param name given preferences set name
-     */
-    public SimpleLockFactoryImpl(String name) {
-        this.name = name;
-    }
 
     @Override
-    public Object get() {
+    public Object get(String name) {
         if (!locks.containsKey(name)) {
             final Object lock = new Object();
             locks.put(name, lock);
