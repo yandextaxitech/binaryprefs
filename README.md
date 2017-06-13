@@ -9,33 +9,33 @@ Implementation of SharedPreferences which stores each preference in files separa
 #### Minimal working configuration
 
 ```java
-        String prefName = "pref_1";
-        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
-        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
-        PersistableRegistry persistableRegistry = new PersistableRegistry();
-        persistableRegistry.register(TestUser.KEY, TestUser.class);
-        SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(prefName);
-        TaskExecutor executor = new ScheduledBackgroundTaskExecutor();
-        ExceptionHandler exceptionHandler = new ExceptionHandler() {
-            @Override
-            public void handle(String key, Exception e) {
-                //do some metric report call
-            }
-        };
+String prefName = "pref_1";
+ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
+FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
+CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
+PersistableRegistry persistableRegistry = new PersistableRegistry();
+persistableRegistry.register(TestUser.KEY, TestUser.class);
+SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
+LockFactory lockFactory = new SimpleLockFactoryImpl(prefName);
+TaskExecutor executor = new ScheduledBackgroundTaskExecutor();
+ExceptionHandler exceptionHandler = new ExceptionHandler() {
+        @Override
+        public void handle(String key, Exception e) {
+            //do some metric report call
+        }
+};
         
-        Preferences preferences = new BinaryPreferences(
-                fileAdapter,
-                exceptionHandler,
-                eventsBridge,
-                cacheProvider,
-                executor,
-                serializerFactory,
-                lockFactory
-        );
+Preferences preferences = new BinaryPreferences(
+        fileAdapter,
+        exceptionHandler,
+        eventsBridge,
+        cacheProvider,
+        executor,
+        serializerFactory,
+        lockFactory
+);
 ```
 
 `Preferences.java` this is a child of `SharedPreferences.java` from android standard library.
