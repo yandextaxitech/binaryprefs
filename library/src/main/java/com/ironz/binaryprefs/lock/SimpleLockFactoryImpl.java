@@ -12,11 +12,11 @@ public final class SimpleLockFactoryImpl implements LockFactory {
 
     @Override
     public Object get(String name) {
-        if (!locks.containsKey(name)) {
-            final Object lock = new Object();
-            locks.put(name, lock);
-            return lock;
+        if (locks.containsKey(name)) {
+            return locks.get(name);
         }
-        return locks.get(name);
+        final Object lock = new Object();
+        locks.put(name, lock);
+        return lock;
     }
 }
