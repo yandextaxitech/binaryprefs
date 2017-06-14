@@ -4,6 +4,21 @@
 
 Implementation of SharedPreferences which stores each preference in files separately, performs disk IO via NIO with memory mapped file and works IPC (between processes).
 
+## Advantages
+
+* Saving in separate files (just byte array not XML).
+* All saved data encryption.
+* Providing custom directory.
+* Custom file adapters implementation (remote persistence, custom disk saving protocol).
+* Providing custom cache mechanisms.
+* Store all primitives like `byte`, `short`, `char` and `double`.
+* IPC support (between processes and apk if byte encryption are similar).
+* Store complex objects backward compatible (see `Persistable` class documentation).
+* Working with your own lock for read/write.
+* Using custom task executor (like RxJava, UI thread or Thread Pools).
+* Handle exception events.
+* Backward compatible with `SharedPreferences` interface.
+
 ## Usage
 
 #### Minimal working configuration
