@@ -180,7 +180,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
         checkBounds();
         byte stringFlag = buffer[offset];
         if (!stringSerializer.isMatches(stringFlag)) {
-            throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", stringFlag));
+            throw new ClassCastException(String.format("string cannot be deserialized in '%s' flag type", stringFlag));
         }
         String s = stringSerializer.deserialize(buffer, offset, bytesStringSize);
         offset += stringSerializer.bytesLength() + bytesStringSize;
