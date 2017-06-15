@@ -15,7 +15,7 @@ public interface DataOutput {
      * Writes to the output stream the eight low-
      * order bits of the argument <code>v</code>.
      *
-     * @param v the byte value to be written.
+     * @param v the <code>byte</code> value to be written.
      */
     void writeByte(int v);
 
@@ -72,7 +72,7 @@ public interface DataOutput {
      * Writes a <code>String</code> value,
      * which is comprised of n bytes, to the output stream.
      *
-     * @param s the <code>String</code> value to be written.
+     * @param s the <code>String</code> not null value to be written.
      */
     void writeString(String s);
 
