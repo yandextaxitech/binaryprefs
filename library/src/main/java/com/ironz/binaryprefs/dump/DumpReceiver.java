@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.ironz.binaryprefs.BinaryPreferences;
+import com.ironz.binaryprefs.Preferences;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ public final class DumpReceiver extends BroadcastReceiver {
     private static final String PREF_NAME = "pref_name";
     private static final String PREF_KEY = "pref_key";
 
-    private static final Map<String, BinaryPreferences> BINARY_PREFERENCES_HASH_MAP = new HashMap<>();
+    private static final Map<String, Preferences> BINARY_PREFERENCES_HASH_MAP = new HashMap<>();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -26,7 +26,7 @@ public final class DumpReceiver extends BroadcastReceiver {
             return;
         }
 
-        BinaryPreferences preferences = BINARY_PREFERENCES_HASH_MAP.get(prefName);
+        Preferences preferences = BINARY_PREFERENCES_HASH_MAP.get(prefName);
         Map<String, ?> all = preferences.getAll();
 
         if (intent.hasExtra(PREF_KEY)) {
@@ -42,7 +42,7 @@ public final class DumpReceiver extends BroadcastReceiver {
     }
 
     @SuppressWarnings("unused")
-    public static void register(String name, BinaryPreferences preferences) {
+    public static void register(String name, Preferences preferences) {
         BINARY_PREFERENCES_HASH_MAP.put(name, preferences);
     }
 }
