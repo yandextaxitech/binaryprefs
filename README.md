@@ -11,7 +11,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Providing custom directory.
 * Custom file adapters implementation (remote persistence, custom disk saving protocol).
 * Providing custom cache mechanisms.
-* Store all primitives like `byte`, `short`, `char` and `double`.
+* Store all primitives include `byte`, `short`, `char` and `double`.
 * IPC support (between processes and apk if byte encryption are similar).
 * Store complex objects backward compatible (see `Persistable` class documentation).
 * Working with your own lock for read/write.
@@ -53,9 +53,11 @@ Preferences preferences = new BinaryPreferences(
 );
 ```
 
-`Preferences.java` this is a child of `SharedPreferences.java` from android standard library.
-That means compatibility with parent interface. Also that means you can use this 
-preferences implementation as before because behaviour and contract is fully respected.
+`Preferences.java` this is child of `SharedPreferences.java` from android
+standard library.
+That means compatibility with parent interface. Also that means you can
+use this preferences implementation instead of native preferences
+as before because behaviour and contract is fully respected.
 
 ## Roadmap
 
