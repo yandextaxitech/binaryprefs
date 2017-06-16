@@ -63,7 +63,6 @@ public final class TestUser implements Persistable {
 
     @Override
     public void writeExternal(DataOutput out) {
-
         out.writeString(name);
         out.writeShort(age);
         out.writeChar(sex);
@@ -82,7 +81,6 @@ public final class TestUser implements Persistable {
 
     @Override
     public void readExternal(DataInput in) {
-
         name = in.readString();
         age = in.readShort();
         sex = in.readChar();
