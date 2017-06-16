@@ -101,6 +101,24 @@ public final class TestUser implements Persistable {
     }
 
     @Override
+    public Persistable deepCopy() {
+        TestUser value = new TestUser();
+        value.setName(name);
+        value.setAge(age);
+        value.setSex(sex);
+        value.setMarried(married);
+        value.setPostal(postal);
+        value.setChild(child);
+        value.setWeight(weight);
+        value.setHeight(height);
+        for (TestAddress address : addresses) {
+            Persistable persistable = address.deepCopy();
+            value.addAddresses((TestAddress) persistable);
+        }
+        return value;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

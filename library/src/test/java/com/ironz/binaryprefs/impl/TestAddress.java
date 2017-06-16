@@ -78,6 +78,11 @@ public final class TestAddress implements Persistable {
     }
 
     @Override
+    public Persistable deepCopy() {
+        return new TestAddress(country, city, street, apt, latitude, longitude);
+    }
+
+    @Override
     public String toString() {
         return "TestAddress{" +
                 "country='" + country + '\'' + '\n' +
