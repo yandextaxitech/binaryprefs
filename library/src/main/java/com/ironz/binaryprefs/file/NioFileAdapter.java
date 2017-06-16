@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Concrete file adapter which implements NIO file operations
@@ -16,6 +18,7 @@ import java.nio.channels.FileChannel;
 public final class NioFileAdapter implements FileAdapter {
 
     private static final String BACKUP_EXTENSION = ".bak";
+    private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
 
     private static final String READ_MODE = "r";
     private static final String RWD_MODE = "rwd";
@@ -53,10 +56,21 @@ public final class NioFileAdapter implements FileAdapter {
 
     private String[] namesInternal() {
         String[] list = srcDir.list();
-        if (list != null) {
-            return list;
+
+        if (list == null) {
+            return EMPTY_STRING_NAMES_ARRAY;
         }
-        return new String[0];
+
+        final List<String> names = new ArrayList<>();
+
+        for (String name : list) {
+            if (name.endsWith(BACKUP_EXTENSION)) {
+                continue;
+            }
+            names.add(name);
+        }
+
+        return names.toArray(EMPTY_STRING_NAMES_ARRAY);
     }
 
     @Override

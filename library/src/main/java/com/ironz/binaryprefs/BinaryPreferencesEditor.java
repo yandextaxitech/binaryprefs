@@ -229,7 +229,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         if (!clearFlag) {
             return;
         }
-        for (String name : fileAdapter.names()) {
+        for (String name : cacheProvider.keys()) {
             cacheProvider.remove(name);
         }
     }
@@ -254,7 +254,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         if (!clearFlag) {
             return;
         }
-        for (String name : fileAdapter.names()) {
+        for (String name : cacheProvider.keys()) {
             removeInternal(name);
         }
     }
