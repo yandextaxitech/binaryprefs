@@ -36,7 +36,7 @@ FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
 CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
 EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 PersistableRegistry persistableRegistry = new PersistableRegistry();
-persistableRegistry.register(TestUser.KEY, TestUser.class);
+persistableRegistry.register(User.KEY, User.class);
 SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
 LockFactory lockFactory = new SimpleLockFactoryImpl(prefName);
 TaskExecutor executor = new ScheduledBackgroundTaskExecutor();
