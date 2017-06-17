@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple preference change listener bridge
+ * Simple preference change listener bridge. Uses current thread for delivering all events.
  */
 public final class SimpleEventBridgeImpl implements EventBridge {
 
