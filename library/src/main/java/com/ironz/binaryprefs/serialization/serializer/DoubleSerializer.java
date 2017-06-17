@@ -9,16 +9,16 @@ public final class DoubleSerializer {
     /**
      * Uses for detecting byte array primitive type of {@link Double}
      */
-    private static final byte DOUBLE_FLAG = -5;
+    private static final byte FLAG = -5;
 
     /**
      * Minimum size primitive type of {@link Double}
      */
-    private static final int DOUBLE_SIZE = 9;
+    private static final int SIZE = 9;
 
     /**
      * Serialize {@code double} into byte array with following scheme:
-     * [{@link #DOUBLE_FLAG}] + [double_bytes].
+     * [{@link #FLAG}] + [double_bytes].
      *
      * @param value target double to serialize.
      * @return specific byte array with scheme.
@@ -26,7 +26,7 @@ public final class DoubleSerializer {
     public byte[] serialize(double value) {
         long l = Double.doubleToLongBits(value);
         return new byte[]{
-                DOUBLE_FLAG,
+                FLAG,
                 (byte) (l >>> 56),
                 (byte) (l >>> 48),
                 (byte) (l >>> 40),
@@ -69,14 +69,10 @@ public final class DoubleSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == DOUBLE_FLAG;
-    }
-
-    public boolean isMatches(Object o) {
-        return o instanceof Double;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return DOUBLE_SIZE;
+        return SIZE;
     }
 }

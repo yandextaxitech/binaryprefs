@@ -8,16 +8,16 @@ public final class IntegerSerializer {
     /**
      * Uses for detecting byte array primitive type of {@link Integer}
      */
-    private static final byte INT_FLAG = -3;
+    private static final byte FLAG = -3;
 
     /**
      * Minimum size primitive type of {@link Integer}
      */
-    private static final int INT_SIZE = 5;
+    private static final int SIZE = 5;
 
     /**
      * Serialize {@code int} into byte array with following scheme:
-     * [{@link #INT_FLAG}] + [int_bytes].
+     * [{@link #FLAG}] + [int_bytes].
      *
      * @param value target int to serialize.
      * @return specific byte array with scheme.
@@ -25,7 +25,7 @@ public final class IntegerSerializer {
     public byte[] serialize(int value) {
         int i = 0xff;
         return new byte[]{
-                INT_FLAG,
+                FLAG,
                 (byte) ((value >>> 24) & i),
                 (byte) ((value >>> 16) & i),
                 (byte) ((value >>> 8) & i),
@@ -59,14 +59,10 @@ public final class IntegerSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == INT_FLAG;
-    }
-
-    public boolean isMatches(Object o) {
-        return o instanceof Integer;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return INT_SIZE;
+        return SIZE;
     }
 }

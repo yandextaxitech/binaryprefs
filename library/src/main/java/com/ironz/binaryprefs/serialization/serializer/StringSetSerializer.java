@@ -9,18 +9,18 @@ import java.util.Set;
 public final class StringSetSerializer {
 
     /**
-     * Minimum size primitive type of {@link Set}
-     */
-    private static final int STRING_SET_SIZE = 1;
-
-    /**
      * Uses for detecting byte array type of {@link Set} of {@link String}
      */
-    public static final byte STRING_SET_FLAG = -1;
+    private static final byte FLAG = -1;
+
+    /**
+     * Minimum size primitive type of {@link Set}
+     */
+    private static final int SIZE = 1;
 
     /**
      * Serialize {@code Set<String>} into byte array with following scheme:
-     * [{@link #STRING_SET_FLAG}] + (([string_size] + [string_byte_array]) * n).
+     * [{@link #FLAG}] + (([string_size] + [string_byte_array]) * n).
      *
      * @param set target Set to serialize.
      * @return specific byte array with scheme.
@@ -46,7 +46,7 @@ public final class StringSetSerializer {
         }
 
         byte[] totalArray = new byte[totalArraySize];
-        totalArray[0] = STRING_SET_FLAG;
+        totalArray[0] = FLAG;
 
         int offset = 1;
         for (byte[] b : bytes) {
@@ -75,7 +75,7 @@ public final class StringSetSerializer {
      */
     public Set<String> deserialize(byte[] bytes) {
         byte flag = bytes[0];
-        if (flag == STRING_SET_FLAG) {
+        if (flag == FLAG) {
 
             Set<String> set = new HashSet<>();
 
@@ -115,21 +115,10 @@ public final class StringSetSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == STRING_SET_FLAG;
-    }
-
-    public boolean isMatches(Object o) {
-        try {
-            //noinspection unused,unchecked
-            Set<String> stringSet = (Set<String>) o;
-            return true;
-        } catch (Exception ignored) {
-
-        }
-        return false;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return STRING_SET_SIZE;
+        return SIZE;
     }
 }

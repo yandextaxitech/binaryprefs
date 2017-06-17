@@ -21,7 +21,6 @@ public class StringSetSerializerTest {
         byte[] bytes = serializer.serialize(value);
         Set<String> restored = serializer.deserialize(bytes);
 
-        assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
         assertEquals(value, restored);
@@ -38,7 +37,6 @@ public class StringSetSerializerTest {
         byte[] bytes = serializer.serialize(value);
         Set<String> restored = serializer.deserialize(bytes);
 
-        assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(28, bytes.length);
         assertEquals(value, restored);

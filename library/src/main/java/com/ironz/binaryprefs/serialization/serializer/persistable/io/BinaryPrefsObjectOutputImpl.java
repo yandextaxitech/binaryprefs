@@ -44,7 +44,7 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     @Override
     public <T extends Persistable> byte[] serialize(T value) {
 
-        write(new byte[]{PersistableSerializer.FLAG_PERSISTABLE});
+        write(new byte[]{PersistableSerializer.FLAG});
 
         value.writeExternal(this);
 

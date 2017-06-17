@@ -17,7 +17,6 @@ public class ShortSerializerTest {
         byte[] bytes = serializer.serialize(value);
         short restored = serializer.deserialize(bytes);
 
-        assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
         assertEquals(value, restored);

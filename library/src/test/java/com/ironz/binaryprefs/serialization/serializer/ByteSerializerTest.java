@@ -17,7 +17,6 @@ public class ByteSerializerTest {
         byte[] bytes = serializer.serialize(value);
         byte restored = serializer.deserialize(bytes);
 
-        assertTrue(serializer.isMatches(((Object) value)));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
         assertEquals(value, restored);

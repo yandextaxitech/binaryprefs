@@ -8,23 +8,23 @@ public final class BooleanSerializer {
     /**
      * Uses for detecting byte array primitive type of {@link Boolean}
      */
-    private static final byte BOOLEAN_FLAG = -7;
+    private static final byte FLAG = -7;
 
     /**
      * Minimum size primitive type of {@link Boolean}
      */
-    private static final int BOOLEAN_SIZE = 2;
+    private static final int SIZE = 2;
 
     /**
      * Serialize {@code boolean} into byte array with following scheme:
-     * [{@link #BOOLEAN_FLAG}] + [boolean_bytes].
+     * [{@link #FLAG}] + [boolean_bytes].
      *
      * @param value target boolean to serialize.
      * @return specific byte array with scheme.
      */
     public byte[] serialize(boolean value) {
         return new byte[]{
-                BOOLEAN_FLAG,
+                FLAG,
                 (byte) (value ? 1 : 0)
         };
     }
@@ -51,14 +51,10 @@ public final class BooleanSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == BOOLEAN_FLAG;
-    }
-
-    public boolean isMatches(Object o) {
-        return o instanceof Boolean;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return BOOLEAN_SIZE;
+        return SIZE;
     }
 }

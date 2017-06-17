@@ -8,23 +8,23 @@ public final class ByteSerializer {
     /**
      * Uses for detecting byte primitive type of {@link Byte}
      */
-    private static final byte BYTE_FLAG = -8;
+    private static final byte FLAG = -8;
 
     /**
      * Minimum size primitive type of {@link Byte}
      */
-    private static final int BYTE_SIZE = 2;
+    private static final int SIZE = 2;
 
     /**
      * Serialize {@code byte} into byte array with following scheme:
-     * [{@link #BYTE_FLAG}] + [byte].
+     * [{@link #FLAG}] + [byte].
      *
      * @param value target byte to serialize.
      * @return specific byte array with scheme.
      */
     public byte[] serialize(byte value) {
         return new byte[]{
-                BYTE_FLAG,
+                FLAG,
                 value
         };
     }
@@ -51,14 +51,10 @@ public final class ByteSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == BYTE_FLAG;
-    }
-
-    public boolean isMatches(Object o) {
-        return o instanceof Byte;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return BYTE_SIZE;
+        return SIZE;
     }
 }

@@ -15,11 +15,11 @@ public final class PersistableSerializer {
     /**
      * Uses for detecting byte array primitive type of {@link Persistable}
      */
-    public static final byte FLAG_PERSISTABLE = -11;
+    public static final byte FLAG = -11;
     /**
      * Minimum size primitive type of {@link Persistable}
      */
-    private static final int PERSISTABLE_SIZE = 1;
+    private static final int SIZE = 1;
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
@@ -56,7 +56,7 @@ public final class PersistableSerializer {
 
     /**
      * Serialize {@code Persistable} into byte array with following scheme:
-     * [{@link PersistableSerializer#FLAG_PERSISTABLE}] + [boolean_bytes].
+     * [{@link PersistableSerializer#FLAG}] + [boolean_bytes].
      *
      * @param value target persistable to serialize.
      * @return specific byte array with scheme.
@@ -102,14 +102,10 @@ public final class PersistableSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == FLAG_PERSISTABLE;
-    }
-
-    public boolean isMatches(Object o) {
-        return o instanceof Persistable;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return PERSISTABLE_SIZE;
+        return SIZE;
     }
 }

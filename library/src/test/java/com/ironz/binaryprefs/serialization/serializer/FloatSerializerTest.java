@@ -18,7 +18,6 @@ public class FloatSerializerTest {
 
         float restored = serializer.deserialize(bytes);
 
-        assertTrue(serializer.isMatches(value));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
         assertEquals(value, restored, .0);

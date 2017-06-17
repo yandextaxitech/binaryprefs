@@ -16,7 +16,6 @@ public class BooleanSerializerTest {
 
         boolean restored = serializer.deserialize(bytes);
 
-        assertTrue(serializer.isMatches(true));
         assertTrue(serializer.isMatches(bytes[0]));
         assertEquals(serializer.bytesLength(), bytes.length);
         assertEquals(true, restored);

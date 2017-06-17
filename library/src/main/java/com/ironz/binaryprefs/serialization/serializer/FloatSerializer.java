@@ -8,16 +8,16 @@ public final class FloatSerializer {
     /**
      * Uses for detecting byte array primitive type of {@link Float}
      */
-    private static final byte FLOAT_FLAG = -6;
+    private static final byte FLAG = -6;
 
     /**
      * Minimum size primitive type of {@link Float}
      */
-    private static final int FLOAT_SIZE = 5;
+    private static final int SIZE = 5;
 
     /**
      * Serialize {@code float} into byte array with following scheme:
-     * [{@link #FLOAT_FLAG}] + [float_bytes].
+     * [{@link #FLAG}] + [float_bytes].
      *
      * @param value target float to serialize.
      * @return specific byte array with scheme.
@@ -25,7 +25,7 @@ public final class FloatSerializer {
     public byte[] serialize(float value) {
         int val = Float.floatToIntBits(value);
         return new byte[]{
-                FLOAT_FLAG,
+                FLAG,
                 (byte) (val >>> 24),
                 (byte) (val >>> 16),
                 (byte) (val >>> 8),
@@ -60,14 +60,10 @@ public final class FloatSerializer {
     }
 
     public boolean isMatches(byte flag) {
-        return flag == FLOAT_FLAG;
-    }
-
-    public boolean isMatches(Object o) {
-        return o instanceof Float;
+        return flag == FLAG;
     }
 
     public int bytesLength() {
-        return FLOAT_SIZE;
+        return SIZE;
     }
 }
