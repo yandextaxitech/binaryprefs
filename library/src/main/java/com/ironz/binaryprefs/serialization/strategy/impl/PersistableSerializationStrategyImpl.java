@@ -10,7 +10,7 @@ public final class PersistableSerializationStrategyImpl implements Serialization
     private final Persistable value;
     private final PersistableSerializer persistableSerializer;
 
-    public <T extends Persistable> PersistableSerializationStrategyImpl(T value, SerializerFactory serializerFactory) {
+    public PersistableSerializationStrategyImpl(Persistable value, SerializerFactory serializerFactory) {
         this.value = value;
         this.persistableSerializer = serializerFactory.getPersistableSerializer();
     }

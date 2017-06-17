@@ -78,7 +78,7 @@ public final class TestAddress implements Persistable {
     }
 
     @Override
-    public Persistable deepCopy() {
+    public TestAddress deepCopy() {
         return new TestAddress(country, city, street, apt, latitude, longitude);
     }
 

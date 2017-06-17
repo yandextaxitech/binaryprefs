@@ -99,7 +99,7 @@ public final class TestMigrateUser implements Persistable {
     }
 
     @Override
-    public Persistable deepCopy() {
+    public TestMigrateUser deepCopy() {
         TestMigrateUser value = new TestMigrateUser();
         value.setName(name);
         value.setAge(age);
@@ -110,7 +110,7 @@ public final class TestMigrateUser implements Persistable {
         value.setWeight(weight);
         value.setHeight(height);
         for (TestAddress address : addresses) {
-            TestAddress persistable = (TestAddress) address.deepCopy();
+            TestAddress persistable = address.deepCopy();
             value.addAddresses(persistable);
         }
         return value;
