@@ -77,9 +77,10 @@ as before because behaviour and contract is fully respected.
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. Concurrent preference initializer.
-11. Reduce events (implement events transaction).
-12. Store all data to one file. 
-13. RxJava support. 
+11. Serialization in separate process.
+12. Reduce events (implement events transaction).
+13. Store all data to one file. 
+14. RxJava support. 
 
 ## License
 ```
