@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
-import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
 /**
  * Extension of {@link SharedPreferences} class for using plain serialization mechanism

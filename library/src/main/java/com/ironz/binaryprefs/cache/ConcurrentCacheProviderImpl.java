@@ -1,12 +1,13 @@
 package com.ironz.binaryprefs.cache;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
-    private final Map<String, byte[]> cache = new ConcurrentHashMap<>();
+    private final Map<String, Object> cache = new ConcurrentHashMap<>();
 
     @Override
     public boolean contains(String key) {
@@ -14,7 +15,7 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     }
 
     @Override
-    public void put(String key, byte[] value) {
+    public void put(String key, Object value) {
         cache.put(key, value);
     }
 
@@ -24,12 +25,17 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     }
 
     @Override
-    public byte[] get(String key) {
+    public Object get(String key) {
         return cache.get(key);
     }
 
     @Override
     public void remove(String name) {
         cache.remove(name);
+    }
+
+    @Override
+    public Map<String, Object> getAll() {
+        return Collections.unmodifiableMap(cache);
     }
 }

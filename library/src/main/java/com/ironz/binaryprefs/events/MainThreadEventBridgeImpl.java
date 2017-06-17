@@ -15,8 +15,9 @@ import java.util.List;
 public final class MainThreadEventBridgeImpl implements EventBridge {
 
     private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
-    private final CacheProvider cacheProvider;
     private final Handler handler = new Handler();
+
+    private final CacheProvider cacheProvider;
 
     public MainThreadEventBridgeImpl(CacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
@@ -33,7 +34,7 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, byte[] value) {
+    public void notifyListenersUpdate(final Preferences preferences, final String key, Object value) {
         cacheProvider.put(key, value);
         notifyListeners(preferences, key);
     }

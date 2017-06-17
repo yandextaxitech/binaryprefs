@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs.serialization;
 
-import com.ironz.binaryprefs.serialization.impl.*;
-import com.ironz.binaryprefs.serialization.impl.persistable.PersistableRegistry;
+import com.ironz.binaryprefs.serialization.serializer.*;
+import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 
 public final class SerializerFactory {
 

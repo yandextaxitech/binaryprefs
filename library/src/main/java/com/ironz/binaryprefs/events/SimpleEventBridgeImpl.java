@@ -30,7 +30,7 @@ public final class SimpleEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, byte[] value) {
+    public void notifyListenersUpdate(Preferences preferences, String key, Object value) {
         cacheProvider.put(key, value);
         notifyListeners(preferences, key);
     }
