@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
+import android.os.Process;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -28,6 +29,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     private static final String PREFERENCE_NAME = "preference_name";
     private static final String PREFERENCE_KEY = "preference_update_key";
+    private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
     private final List<OnSharedPreferenceChangeListener> listeners = new CopyOnWriteArrayList<>();
     private final Handler handler = new Handler();
@@ -51,21 +53,13 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.fileAdapter = fileAdapter;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
-        subscribeUpdateReceiver();
-        subscribeRemoveReceiver();
-    }
-
-    private void subscribeUpdateReceiver() {
-        context.registerReceiver(new BroadcastReceiver() {
+        this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 notifyUpdate(intent);
             }
         }, new IntentFilter(ACTION_PREFERENCE_UPDATED));
-    }
-
-    private void subscribeRemoveReceiver() {
-        context.registerReceiver(new BroadcastReceiver() {
+        this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 notifyRemove(intent);
@@ -77,14 +71,16 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
         }
+        if (Process.myPid() == intent.getIntExtra(PREFERENCE_PROCESS_ID, 0)) {
+            return;
+        }
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 String key = intent.getStringExtra(PREFERENCE_KEY);
                 byte[] bytes = fileAdapter.fetch(key);
                 Object o = serializerFactory.deserialize(key, bytes);
-                cacheProvider.put(key, o);
-                notifyListeners(key);
+                update(key, o);
             }
         });
     }
@@ -93,14 +89,26 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
         }
+        if (Process.myPid() == intent.getIntExtra(PREFERENCE_PROCESS_ID, 0)) {
+            return;
+        }
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 String key = intent.getStringExtra(PREFERENCE_KEY);
-                cacheProvider.remove(key);
-                notifyListeners(key);
+                remove(key);
             }
         });
+    }
+
+    private void update(String key, Object value) {
+        cacheProvider.put(key, value);
+        notifyListeners(key);
+    }
+
+    private void remove(String key) {
+        cacheProvider.remove(key);
+        notifyListeners(key);
     }
 
     private void notifyListeners(final String key) {
@@ -126,7 +134,9 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, Object value) {
+        update(key, value);
         Intent intent = new Intent(ACTION_PREFERENCE_UPDATED);
+        intent.putExtra(PREFERENCE_PROCESS_ID, Process.myPid());
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
         context.sendBroadcast(intent);
@@ -134,7 +144,9 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
+        remove(key);
         Intent intent = new Intent(ACTION_PREFERENCE_REMOVED);
+        intent.putExtra(PREFERENCE_PROCESS_ID, Process.myPid());
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
         context.sendBroadcast(intent);
