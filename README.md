@@ -75,7 +75,7 @@ as before because behaviour and contract is fully respected.
 6. ~~Synchronous commits~~ completed.
 7. ~~Store all primitives (like byte, short, char, double)~~ completed.
 8. ~~Lock free (avoid locks)~~ completed as `LockFactory`.
-9. Exact background tasks for each serialization strategies.
+9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. Reduce events (implement events transaction).
 11. Store all data to one file. 
 12. RxJava support. 
