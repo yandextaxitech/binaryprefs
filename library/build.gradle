@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 group = "com.ironz.binaryprefs"
 version = "0.8.1"
@@ -33,4 +33,27 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "com.ironz:binaryprefs"
+        websiteUrl = "https://github.com/iamironz/binaryprefs"
+        vcsUrl = "https://github.com/iamironz/binaryprefs"
+        licenses = ["Apache-2.0"]
+        publish = true
+        version {
+            gpg {
+                sign = true
+                passphrase = properties.getProperty("bintray.gpg.password")
+            }
+        }
+    }
 }
