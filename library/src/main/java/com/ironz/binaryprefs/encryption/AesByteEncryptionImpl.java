@@ -4,6 +4,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * Implementation of {@link ByteEncryption} class which uses AES for <code>byte[]</code> data encryption.
+ */
 public final class AesByteEncryptionImpl implements ByteEncryption {
 
     private static final String AES = "AES";
