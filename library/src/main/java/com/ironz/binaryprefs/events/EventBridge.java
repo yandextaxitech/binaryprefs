@@ -29,7 +29,7 @@ public interface EventBridge {
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference update
      *
-     * @param preferences preferences, might be null (ipc)
+     * @param preferences preferences, might be null (IPC)
      * @param key         target key
      * @param value       target value for cache update
      */
