@@ -9,6 +9,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Lightweight. Zero dependency.
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
+* Backward compatible with default `SharedPreferences` interface.
 * Zero copy in-memory cache (except `Set<String>` and `Persistable`).
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
@@ -21,7 +22,6 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Working with your own locks for read/write mechanism.
 * Using custom task executor (like RxJava, UI thread or Thread Pools).
 * Handle various exception events.
-* Backward compatible with default `SharedPreferences` interface.
 * One or all values logcat dump for faster debugging.
 
 ## Usage
