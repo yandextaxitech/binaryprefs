@@ -135,6 +135,16 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, Object value) {
         update(key, value);
+        sendUpdateIntent(key);
+    }
+
+    @Override
+    public void notifyListenersRemove(Preferences preferences, String key) {
+        remove(key);
+        sendRemoveIntent(key);
+    }
+
+    private void sendUpdateIntent(String key) {
         Intent intent = new Intent(ACTION_PREFERENCE_UPDATED);
         intent.putExtra(PREFERENCE_PROCESS_ID, Process.myPid());
         intent.putExtra(PREFERENCE_NAME, prefName);
@@ -142,9 +152,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         context.sendBroadcast(intent);
     }
 
-    @Override
-    public void notifyListenersRemove(Preferences preferences, String key) {
-        remove(key);
+    private void sendRemoveIntent(String key) {
         Intent intent = new Intent(ACTION_PREFERENCE_REMOVED);
         intent.putExtra(PREFERENCE_PROCESS_ID, Process.myPid());
         intent.putExtra(PREFERENCE_NAME, prefName);
