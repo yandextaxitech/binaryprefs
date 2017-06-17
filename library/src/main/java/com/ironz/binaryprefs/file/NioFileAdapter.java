@@ -13,7 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Concrete file adapter which implements NIO file operations
+ * File adapter implementation which performs NIO file operations.
+ * This implementation support IPC locks and makes back-up for
+ * each file before new data will be written. See {@link #backupAndSave(String, byte[])}.
+ * After success write backup file will be removed.
+ * If adapter detects backup file it will be replaced
+ * to original file. See {@link #fetchBackupOrOriginal(String)}.
  */
 public final class NioFileAdapter implements FileAdapter {
 
