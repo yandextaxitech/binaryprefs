@@ -76,10 +76,12 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         if (Process.myPid() == intent.getIntExtra(PREFERENCE_PROCESS_ID, 0)) {
             return;
         }
+
+        final String key = intent.getStringExtra(PREFERENCE_KEY);
+
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                String key = intent.getStringExtra(PREFERENCE_KEY);
                 byte[] bytes = fileAdapter.fetch(key);
                 Object o = serializerFactory.deserialize(key, bytes);
                 update(key, o);
@@ -94,10 +96,12 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         if (Process.myPid() == intent.getIntExtra(PREFERENCE_PROCESS_ID, 0)) {
             return;
         }
+
+        final String key = intent.getStringExtra(PREFERENCE_KEY);
+
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                String key = intent.getStringExtra(PREFERENCE_KEY);
                 remove(key);
             }
         });
