@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Uses global broadcast receiver mechanism for delivering all key change events.
  * Main propose for using this implementation is IPC mechanism.
  * This bridge optimized even if broadcast comes in local process.
+ * Uses UI thread for delivering key changes.
  */
 @SuppressWarnings("unused")
 public final class BroadcastEventBridgeImpl implements EventBridge {
