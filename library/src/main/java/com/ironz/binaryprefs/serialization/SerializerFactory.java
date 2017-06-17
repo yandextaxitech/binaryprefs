@@ -3,6 +3,10 @@ package com.ironz.binaryprefs.serialization;
 import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 
+/**
+ * Contains all serializers which possible for data transformation.
+ * This is non-public api class.
+ */
 public final class SerializerFactory {
 
     private final BooleanSerializer booleanSerializer;
