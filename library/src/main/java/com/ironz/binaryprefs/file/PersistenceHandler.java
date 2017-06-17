@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.file;
 /**
  * Interface which describes success persistence event listener
  */
-public interface SuccessPersistenceHandler {
+public interface PersistenceHandler {
     /**
      * Calls after saving has been successfully completed
      *
@@ -14,7 +14,7 @@ public interface SuccessPersistenceHandler {
     /**
      * Implementation which do nothing
      */
-    SuccessPersistenceHandler NO_OP = new SuccessPersistenceHandler() {
+    PersistenceHandler NO_OP = new PersistenceHandler() {
         @Override
         public void onSuccess(String key) {
 

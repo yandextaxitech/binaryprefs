@@ -25,25 +25,25 @@ public final class NioFileAdapter implements FileAdapter {
 
     private final File srcDir;
     private final ByteEncryption encryption;
-    private final SuccessPersistenceHandler persistenceHandler;
+    private final PersistenceHandler persistenceHandler;
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP, SuccessPersistenceHandler.NO_OP);
+        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP, PersistenceHandler.NO_OP);
     }
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption) {
-        this(directoryProvider.getBaseDirectory(), encryption, SuccessPersistenceHandler.NO_OP);
+        this(directoryProvider.getBaseDirectory(), encryption, PersistenceHandler.NO_OP);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption, SuccessPersistenceHandler successPersistenceHandler) {
-        this(directoryProvider.getBaseDirectory(), encryption, successPersistenceHandler);
+    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption, PersistenceHandler persistenceHandler) {
+        this(directoryProvider.getBaseDirectory(), encryption, persistenceHandler);
     }
 
     @SuppressWarnings("WeakerAccess")
-    private NioFileAdapter(File srcDir, ByteEncryption encryption, SuccessPersistenceHandler persistenceHandler) {
+    private NioFileAdapter(File srcDir, ByteEncryption encryption, PersistenceHandler persistenceHandler) {
         this.srcDir = srcDir;
         this.encryption = encryption;
         this.persistenceHandler = persistenceHandler;
