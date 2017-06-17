@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.task;
 /**
  * Interface which describes fail event listener
  */
-public interface ErrorExecutionHandler {
+public interface PersistenceExecutionHandler {
     /**
      * Calls after task has been failed
      *
@@ -15,7 +15,7 @@ public interface ErrorExecutionHandler {
     /**
      * Implementation which do nothing
      */
-    ErrorExecutionHandler NO_OP = new ErrorExecutionHandler() {
+    PersistenceExecutionHandler NO_OP = new PersistenceExecutionHandler() {
         @Override
         public void onFail(String key, Exception e) {
 

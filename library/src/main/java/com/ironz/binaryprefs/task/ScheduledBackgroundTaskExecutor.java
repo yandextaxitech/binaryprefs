@@ -13,13 +13,13 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final ErrorExecutionHandler exceptionHandler;
+    private final PersistenceExecutionHandler exceptionHandler;
 
     public ScheduledBackgroundTaskExecutor() {
-        this(ErrorExecutionHandler.NO_OP);
+        this(PersistenceExecutionHandler.NO_OP);
     }
 
-    public ScheduledBackgroundTaskExecutor(ErrorExecutionHandler exceptionHandler) {
+    public ScheduledBackgroundTaskExecutor(PersistenceExecutionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 
