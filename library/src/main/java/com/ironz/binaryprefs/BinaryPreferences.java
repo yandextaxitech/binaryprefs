@@ -9,6 +9,7 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,11 +74,12 @@ public final class BinaryPreferences implements Preferences {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<String> getStringSet(String key, Set<String> defValue) {
         synchronized (lock) {
             if (cacheProvider.contains(key)) {
-                //noinspection unchecked
-                return (Set<String>) cacheProvider.get(key);
+                Set<String> strings = (Set<String>) cacheProvider.get(key);
+                return new HashSet<>(strings);
             }
             return defValue;
         }
@@ -123,12 +125,13 @@ public final class BinaryPreferences implements Preferences {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Persistable> T getPersistable(String key, T defValue) {
         synchronized (lock) {
             if (cacheProvider.contains(key)) {
-                //noinspection unchecked
-                return (T) cacheProvider.get(key);
+                T t = (T) cacheProvider.get(key);
+                return (T) t.deepCopy();
             }
             return defValue;
         }
