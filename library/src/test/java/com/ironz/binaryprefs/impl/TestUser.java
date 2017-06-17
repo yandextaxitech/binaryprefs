@@ -110,8 +110,8 @@ public final class TestUser implements Persistable {
         value.setWeight(weight);
         value.setHeight(height);
         for (TestAddress address : addresses) {
-            Persistable persistable = address.deepCopy();
-            value.addAddresses((TestAddress) persistable);
+            TestAddress persistable = (TestAddress) address.deepCopy();
+            value.addAddresses(persistable);
         }
         return value;
     }
