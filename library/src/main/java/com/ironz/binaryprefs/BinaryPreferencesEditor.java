@@ -249,7 +249,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void removePersistence() {
-        for (final String name : removeSet) {
+        for (String name : removeSet) {
             removeInternal(name);
         }
     }
