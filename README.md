@@ -7,7 +7,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 ## Advantages
 
 * Lightweight. Zero dependency.
-* Fast (faster than most others).
+* Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
 * Zero copy (except `Set<String>` and `Persistable`) in-memory cache.
 * Persists data in separate files (just binary byte array not XML).
