@@ -89,13 +89,18 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         });
     }
 
-    private void notifyRemove(Intent intent) {
+    private void notifyRemove(final Intent intent) {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
         }
-        String key = intent.getStringExtra(PREFERENCE_KEY);
-        cacheProvider.remove(key);
-        notifyListeners(key);
+        taskExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                String key = intent.getStringExtra(PREFERENCE_KEY);
+                cacheProvider.remove(key);
+                notifyListeners(key);
+            }
+        });
     }
 
     private void notifyListeners(final String key) {
