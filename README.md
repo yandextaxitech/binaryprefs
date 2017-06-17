@@ -66,15 +66,15 @@ as before because behaviour and contract is fully respected.
 
 ## Roadmap
 
-1. ~~Disk I/O encrypt~~ completed.
+1. ~~Disk I/O encrypt.~~ completed.
 2. ~~IPC~~ completed.
-3. ~~Externalizable~~ completed as `Persistable`.
-4. ~~Preferences tooling (key set reading)~~ completed:
+3. ~~Externalizable.~~ completed as `Persistable`.
+4. ~~Preferences tooling (key set reading).~~ completed:
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`.
-5. ~~Custom serializers~~ completed.
-6. ~~Synchronous commits~~ completed.
-7. ~~Store all primitives (like byte, short, char, double)~~ completed.
-8. ~~Lock free (avoid locks)~~ completed as `LockFactory`.
+5. ~~Custom serializers.~~ completed.
+6. ~~Synchronous commits.~~ completed.
+7. ~~Store all primitives (like byte, short, char, double).~~ completed.
+8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. Reduce events (implement events transaction).
 11. Store all data to one file. 
