@@ -6,18 +6,23 @@ Implementation of SharedPreferences which stores each preference in files separa
 
 ## Advantages
 
-* Saving in separate files (just byte array not XML).
-* All saved data encryption.
-* Providing custom directory.
-* Custom file adapters implementation (remote persistence, custom disk saving protocol).
-* Providing custom cache mechanisms.
-* Store all primitives include `byte`, `short`, `char` and `double`.
-* IPC support (between processes and apk if byte encryption are similar).
-* Store complex objects backward compatible (see `Persistable` class documentation).
-* Working with your own lock for read/write.
+* Lightweight. Zero dependency.
+* Fast (faster than most others).
+* Small memory footprint while serialize/deserialize data.
+* Zero copy (except `Set<String>` and `Persistable`) in-memory cache.
+* Persists data in separate files (just binary byte array not XML).
+* All persisted data are encrypted. Default is AES encryption.
+* Define custom directory.
+* Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
+* Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
+* Store all primitives include `double`, `char`, `byte` and `short`.
+* Fully optimized IPC support (between processes and apk).
+* Store complex objects backward-compatible (see `Persistable` class documentation).
+* Working with your own lock for read/write mechanism.
 * Using custom task executor (like RxJava, UI thread or Thread Pools).
-* Handle exception events.
-* Backward compatible with `SharedPreferences` interface.
+* Handle various exception events.
+* Backward compatible with default `SharedPreferences` interface.
+* One or all values logcat dump for faster debugging.
 
 ## Usage
 
