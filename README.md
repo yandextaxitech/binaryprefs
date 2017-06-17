@@ -9,16 +9,16 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Lightweight. Zero dependency.
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
-* Zero copy (except `Set<String>` and `Persistable`) in-memory cache.
-* Persists data in separate files (just binary byte array not XML).
+* Zero copy in-memory cache (except `Set<String>` and `Persistable`).
+* Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
-* Define custom directory.
+* Define custom directory for saving.
 * Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
 * Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Fully optimized IPC support (between processes and apk).
-* Store complex objects backward-compatible (see `Persistable` class documentation).
-* Working with your own lock for read/write mechanism.
+* Store complex data objects backward-compatible (see `Persistable` class documentation).
+* Working with your own locks for read/write mechanism.
 * Using custom task executor (like RxJava, UI thread or Thread Pools).
 * Handle various exception events.
 * Backward compatible with default `SharedPreferences` interface.
