@@ -38,22 +38,21 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     private final Context context;
     private final String prefName;
-    private final Preferences preferences;
     private final CacheProvider cacheProvider;
     private final FileAdapter fileAdapter;
     private final SerializerFactory serializerFactory;
     private final TaskExecutor taskExecutor;
 
+    private  Preferences preferences;
+
     public BroadcastEventBridgeImpl(Context context,
                                     String prefName,
-                                    Preferences preferences,
                                     CacheProvider cacheProvider,
                                     FileAdapter fileAdapter,
                                     SerializerFactory serializerFactory,
                                     TaskExecutor taskExecutor) {
         this.context = context;
         this.prefName = prefName;
-        this.preferences = preferences;
         this.cacheProvider = cacheProvider;
         this.fileAdapter = fileAdapter;
         this.serializerFactory = serializerFactory;
@@ -129,6 +128,10 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                 }
             }
         });
+    }
+
+    public void definePreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 
     @Override
