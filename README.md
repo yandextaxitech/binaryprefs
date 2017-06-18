@@ -73,7 +73,7 @@ base storing directory.
 10. Concurrent preferences initializer.
 11. Reduce events (implement events transaction).
 12. `Persistable` upgrade/downgrade api.
-13. Simplify api.
+13. Simplify api (instance creating, exception handles).
 14. RxJava support. 
 
 ## License

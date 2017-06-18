@@ -91,8 +91,13 @@ public final class BinaryPreferencesTest {
 
         Map<String, ?> all = preferences.getAll();
 
-        assertEquals(all.get(stringKey).getClass(), String.class);
-        assertEquals(all.get(booleanKey).getClass(), Boolean.class);
+        Object str = all.get(stringKey);
+        Object bool = all.get(booleanKey);
+
+        assertEquals(str.getClass(), String.class);
+        assertEquals(bool.getClass(), Boolean.class);
+        assertEquals(str, stringValue);
+        assertEquals(true, bool);
     }
 
     @Test
