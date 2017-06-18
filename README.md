@@ -9,7 +9,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Lightweight. Zero dependency.
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
-* Backward compatible with default `SharedPreferences` interface.
+* Fully backward compatible with default `SharedPreferences` interface.
 * Zero copy in-memory cache (except `Set<String>` and `Persistable`).
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
@@ -30,7 +30,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 
 ```java
 String prefName = "user_preferences";
-ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+ByteEncryption byteEncryption = new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes());
 DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
 ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
 FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
@@ -52,11 +52,11 @@ Preferences preferences = new BinaryPreferences(
 );
 ```
 
-`Preferences.java` this is child of `SharedPreferences.java` from android
-standard library.
-That means compatibility with parent interface. Also that means you can
-use this preferences implementation instead of native preferences
-as before because behaviour and contract is fully respected.
+#### Override string directory
+
+You should re-implement your own `DirectoryProvider`, which is the provider of
+base storing directory.
+
 
 ## Roadmap
 
