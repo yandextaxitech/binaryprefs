@@ -29,23 +29,17 @@ Implementation of SharedPreferences which stores each preference in files separa
 #### Minimal working configuration
 
 ```java
-String prefName = "pref_1";
+String prefName = "user_preferences";
 ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
 DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
+ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
 FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
 CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 PersistableRegistry persistableRegistry = new PersistableRegistry();
 persistableRegistry.register(User.KEY, User.class);
 SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-LockFactory lockFactory = new SimpleLockFactoryImpl(prefName);
-TaskExecutor executor = new ScheduledBackgroundTaskExecutor();
-ExceptionHandler exceptionHandler = new ExceptionHandler() {
-        @Override
-        public void handle(String key, Exception e) {
-            //do some metric report call
-        }
-};
+LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
+EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         
 Preferences preferences = new BinaryPreferences(
         fileAdapter,
@@ -76,11 +70,10 @@ as before because behaviour and contract is fully respected.
 7. ~~Store all primitives (like byte, short, char, double).~~ completed.
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
-10. Concurrent preference initializer.
-11. Serialization in separate process.
-12. Reduce events (implement events transaction).
-13. Store all data to one file. 
-14. RxJava support. 
+10. Concurrent preferences initializer.
+11. Reduce events (implement events transaction).
+12. `Persistable` upgrade/downgrade api.
+13. RxJava support. 
 
 ## License
 ```
