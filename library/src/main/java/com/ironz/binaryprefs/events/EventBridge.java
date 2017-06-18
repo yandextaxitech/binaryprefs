@@ -29,11 +29,11 @@ public interface EventBridge {
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference update
      *
-     * @param preferences preferences, might be null (ipc)
+     * @param preferences preferences, might be null (IPC)
      * @param key         target key
-     * @param value       value for cache update (ipc)
+     * @param value       target value for cache update
      */
-    void notifyListenersUpdate(Preferences preferences, String key, byte[] value);
+    void notifyListenersUpdate(Preferences preferences, String key, Object value);
 
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference remove

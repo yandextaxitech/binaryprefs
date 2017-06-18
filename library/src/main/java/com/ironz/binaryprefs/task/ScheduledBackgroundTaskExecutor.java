@@ -3,6 +3,9 @@ package com.ironz.binaryprefs.task;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Performs all submitted tasks in one separated thread sequentially.
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
@@ -10,13 +13,13 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final ErrorExecutionHandler exceptionHandler;
+    private final PersistenceExecutionHandler exceptionHandler;
 
     public ScheduledBackgroundTaskExecutor() {
-        this(ErrorExecutionHandler.NO_OP);
+        this(PersistenceExecutionHandler.NO_OP);
     }
 
-    public ScheduledBackgroundTaskExecutor(ErrorExecutionHandler exceptionHandler) {
+    public ScheduledBackgroundTaskExecutor(PersistenceExecutionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 

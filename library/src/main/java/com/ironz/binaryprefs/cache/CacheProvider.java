@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.cache;
 
+import java.util.Map;
+
 /**
  * Describes contract which store, fetch and remove cached elements
  */
@@ -14,12 +16,12 @@ public interface CacheProvider {
     boolean contains(String key);
 
     /**
-     * Puts file to cache, value might be null
+     * Puts file to cache, value not might be null
      *
      * @param key   target key
      * @param value target value
      */
-    void put(String key, byte[] value);
+    void put(String key, Object value);
 
     /**
      * Returns all keys inside cache
@@ -34,7 +36,7 @@ public interface CacheProvider {
      * @param key target key for fetching
      * @return value or null if not exist
      */
-    byte[] get(String key);
+    Object get(String key);
 
     /**
      * Removes specific value from cache by given key
@@ -42,4 +44,12 @@ public interface CacheProvider {
      * @param name target key for remove
      */
     void remove(String name);
+
+    /**
+     * Returns all cached key/values.
+     * You should never change this map content.
+     *
+     * @return target cache key/values
+     */
+    Map<String, Object> getAll();
 }

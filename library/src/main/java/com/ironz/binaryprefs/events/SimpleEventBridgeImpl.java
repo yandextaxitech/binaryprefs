@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple preference change listener bridge
+ * Simple preference change listener bridge. Uses current thread for delivering all events.
  */
 public final class SimpleEventBridgeImpl implements EventBridge {
 
@@ -30,7 +30,7 @@ public final class SimpleEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, byte[] value) {
+    public void notifyListenersUpdate(Preferences preferences, String key, Object value) {
         cacheProvider.put(key, value);
         notifyListeners(preferences, key);
     }

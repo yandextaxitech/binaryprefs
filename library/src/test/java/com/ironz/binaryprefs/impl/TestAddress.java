@@ -1,9 +1,9 @@
 package com.ironz.binaryprefs.impl;
 
 
-import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.impl.persistable.io.DataInput;
-import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
+import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataOutput;
 
 @SuppressWarnings("WeakerAccess")
 public final class TestAddress implements Persistable {
@@ -75,6 +75,11 @@ public final class TestAddress implements Persistable {
         apt = in.readInt();
         latitude = in.readDouble();
         longitude = in.readDouble();
+    }
+
+    @Override
+    public TestAddress deepCopy() {
+        return new TestAddress(country, city, street, apt, latitude, longitude);
     }
 
     @Override

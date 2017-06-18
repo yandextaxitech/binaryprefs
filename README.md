@@ -6,41 +6,40 @@ Implementation of SharedPreferences which stores each preference in files separa
 
 ## Advantages
 
-* Saving in separate files (just byte array not XML).
-* All saved data encryption.
-* Providing custom directory.
-* Custom file adapters implementation (remote persistence, custom disk saving protocol).
-* Providing custom cache mechanisms.
-* Store all primitives include `byte`, `short`, `char` and `double`.
-* IPC support (between processes and apk if byte encryption are similar).
-* Store complex objects backward compatible (see `Persistable` class documentation).
-* Working with your own lock for read/write.
+* Lightweight. Zero dependency.
+* Super fast (faster than most others key/value solutions).
+* Small memory footprint while serialize/deserialize data.
+* Fully backward compatible with default `SharedPreferences` interface.
+* Zero copy in-memory cache (except `Set<String>` and `Persistable`).
+* Persists only binary data. Not XML or JSON.
+* All persisted data are encrypted. Default is AES encryption.
+* Define custom directory for saving.
+* Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
+* Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
+* Store all primitives include `double`, `char`, `byte` and `short`.
+* Fully optimized IPC support (between processes).
+* Store complex data objects backward-compatible (see `Persistable` class documentation).
+* Working with your own locks for read/write mechanism.
 * Using custom task executor (like RxJava, UI thread or Thread Pools).
-* Handle exception events.
-* Backward compatible with `SharedPreferences` interface.
+* Handle various exception events.
+* One or all values logcat dump for faster debugging.
 
 ## Usage
 
 #### Minimal working configuration
 
 ```java
-String prefName = "pref_1";
-ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+String prefName = "user_preferences";
+ByteEncryption byteEncryption = new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes());
 DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
+ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
 FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
 CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 PersistableRegistry persistableRegistry = new PersistableRegistry();
-persistableRegistry.register(TestUser.KEY, TestUser.class);
+persistableRegistry.register(User.KEY, User.class);
 SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-LockFactory lockFactory = new SimpleLockFactoryImpl(prefName);
-TaskExecutor executor = new ScheduledBackgroundTaskExecutor();
-ExceptionHandler exceptionHandler = new ExceptionHandler() {
-        @Override
-        public void handle(String key, Exception e) {
-            //do some metric report call
-        }
-};
+LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
+EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         
 Preferences preferences = new BinaryPreferences(
         fileAdapter,
@@ -53,25 +52,29 @@ Preferences preferences = new BinaryPreferences(
 );
 ```
 
-`Preferences.java` this is child of `SharedPreferences.java` from android
-standard library.
-That means compatibility with parent interface. Also that means you can
-use this preferences implementation instead of native preferences
-as before because behaviour and contract is fully respected.
+#### Override default directory
+
+You should re-implement your own `DirectoryProvider`, which is the provider of
+base storing directory.
+
 
 ## Roadmap
 
-1. ~~Disk I/O encrypt~~ completed.
+1. ~~Disk I/O encrypt.~~ completed.
 2. ~~IPC~~ completed.
-3. ~~Externalizable~~ completed as `Persistable`.
-4. ~~Preferences tooling (key set reading)~~ completed:
+3. ~~Externalizable.~~ completed as `Persistable`.
+4. ~~Preferences tooling (key set reading).~~ completed:
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`.
-5. ~~Custom serializers~~ completed.
-6. ~~Synchronous commits~~ completed.
-7. ~~Store all primitives (like byte, short, char, double)~~ completed.
-8. ~~Lock free (avoid locks)~~ completed as `LockFactory`.
-9. Exact background tasks for each serialization strategies.
-10. RxJava support. 
+5. ~~Custom serializers.~~ completed.
+6. ~~Synchronous commits.~~ completed.
+7. ~~Store all primitives (like byte, short, char, double).~~ completed.
+8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
+9. ~~Exact background tasks for each serialization strategies.~~ completed.
+10. Concurrent preferences initializer.
+11. Reduce events (implement events transaction).
+12. `Persistable` upgrade/downgrade api.
+13. Simplify api.
+14. RxJava support. 
 
 ## License
 ```

@@ -9,38 +9,45 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Concrete file adapter which implements NIO file operations
+ * File adapter implementation which performs NIO file operations.
+ * This implementation support IPC locks and makes back-up for
+ * each file before new data will be written. See {@link #backupAndSave(String, byte[])}.
+ * After success write backup file will be removed.
+ * If adapter detects backup file it will be replaced
+ * to original file. See {@link #fetchBackupOrOriginal(String)}.
  */
 public final class NioFileAdapter implements FileAdapter {
 
+    private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
     private static final String BACKUP_EXTENSION = ".bak";
-
-    private static final String READ_MODE = "r";
+    private static final String R_MODE = "r";
     private static final String RWD_MODE = "rwd";
 
     private final File srcDir;
     private final ByteEncryption encryption;
-    private final SuccessPersistenceHandler persistenceHandler;
+    private final PersistenceHandler persistenceHandler;
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP, SuccessPersistenceHandler.NO_OP);
+        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP, PersistenceHandler.NO_OP);
     }
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption) {
-        this(directoryProvider.getBaseDirectory(), encryption, SuccessPersistenceHandler.NO_OP);
+        this(directoryProvider.getBaseDirectory(), encryption, PersistenceHandler.NO_OP);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption, SuccessPersistenceHandler successPersistenceHandler) {
-        this(directoryProvider.getBaseDirectory(), encryption, successPersistenceHandler);
+    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption, PersistenceHandler persistenceHandler) {
+        this(directoryProvider.getBaseDirectory(), encryption, persistenceHandler);
     }
 
     @SuppressWarnings("WeakerAccess")
-    private NioFileAdapter(File srcDir, ByteEncryption encryption, SuccessPersistenceHandler persistenceHandler) {
+    private NioFileAdapter(File srcDir, ByteEncryption encryption, PersistenceHandler persistenceHandler) {
         this.srcDir = srcDir;
         this.encryption = encryption;
         this.persistenceHandler = persistenceHandler;
@@ -53,10 +60,21 @@ public final class NioFileAdapter implements FileAdapter {
 
     private String[] namesInternal() {
         String[] list = srcDir.list();
-        if (list != null) {
-            return list;
+
+        if (list == null) {
+            return EMPTY_STRING_NAMES_ARRAY;
         }
-        return new String[0];
+
+        final List<String> names = new ArrayList<>();
+
+        for (String name : list) {
+            if (name.contains(".")) {
+                continue;
+            }
+            names.add(name);
+        }
+
+        return names.toArray(EMPTY_STRING_NAMES_ARRAY);
     }
 
     @Override
@@ -85,7 +103,7 @@ public final class NioFileAdapter implements FileAdapter {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            randomAccessFile = new RandomAccessFile(file, READ_MODE);
+            randomAccessFile = new RandomAccessFile(file, R_MODE);
             channel = randomAccessFile.getChannel();
             int size = (int) randomAccessFile.length();
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);

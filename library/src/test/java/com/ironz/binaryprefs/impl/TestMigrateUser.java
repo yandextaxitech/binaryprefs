@@ -1,8 +1,8 @@
 package com.ironz.binaryprefs.impl;
 
-import com.ironz.binaryprefs.serialization.impl.persistable.Persistable;
-import com.ironz.binaryprefs.serialization.impl.persistable.io.DataInput;
-import com.ironz.binaryprefs.serialization.impl.persistable.io.DataOutput;
+import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
+import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataInput;
+import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,6 @@ public final class TestMigrateUser implements Persistable {
 
     @Override
     public void writeExternal(DataOutput out) {
-
         out.writeString(name);
         out.writeByte(age);
         out.writeChar(sex);
@@ -82,7 +81,6 @@ public final class TestMigrateUser implements Persistable {
 
     @Override
     public void readExternal(DataInput in) {
-
         name = in.readString();
         age = in.readByte();
         sex = in.readChar();
@@ -98,6 +96,24 @@ public final class TestMigrateUser implements Persistable {
             address.readExternal(in);
             addresses.add(address);
         }
+    }
+
+    @Override
+    public TestMigrateUser deepCopy() {
+        TestMigrateUser value = new TestMigrateUser();
+        value.setName(name);
+        value.setAge(age);
+        value.setSex(sex);
+        value.setMarried(married);
+        value.setPostal(postal);
+        value.setChild(child);
+        value.setWeight(weight);
+        value.setHeight(height);
+        for (TestAddress address : addresses) {
+            TestAddress persistable = address.deepCopy();
+            value.addAddresses(persistable);
+        }
+        return value;
     }
 
     @Override
