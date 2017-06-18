@@ -52,7 +52,7 @@ Preferences preferences = new BinaryPreferences(
 );
 ```
 
-#### Override string directory
+#### Override default directory
 
 You should re-implement your own `DirectoryProvider`, which is the provider of
 base storing directory.
