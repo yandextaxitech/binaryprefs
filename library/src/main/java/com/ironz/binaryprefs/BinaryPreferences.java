@@ -251,7 +251,6 @@ public final class BinaryPreferences implements Preferences {
                     writeLock,
                     globalLockFactory
             );
-
         } finally {
             readLock.unlock();
         }
