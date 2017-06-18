@@ -50,18 +50,19 @@ public final class BinaryPreferencesTest {
                 return folder;
             }
         };
+        ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl();
+        LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 
         preferences = new BinaryPreferences(
                 prefName,
                 fileAdapter,
-                ExceptionHandler.IGNORE,
+                exceptionHandler,
                 eventsBridge,
                 cacheProvider,
                 TaskExecutor.DEFAULT,

@@ -22,10 +22,9 @@ import java.util.List;
  */
 public final class NioFileAdapter implements FileAdapter {
 
-    private static final String BACKUP_EXTENSION = ".bak";
     private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
-
-    private static final String READ_MODE = "r";
+    private static final String BACKUP_EXTENSION = ".bak";
+    private static final String R_MODE = "r";
     private static final String RWD_MODE = "rwd";
 
     private final File srcDir;
@@ -69,7 +68,7 @@ public final class NioFileAdapter implements FileAdapter {
         final List<String> names = new ArrayList<>();
 
         for (String name : list) {
-            if (name.endsWith(BACKUP_EXTENSION)) {
+            if (name.contains(".")) {
                 continue;
             }
             names.add(name);
@@ -104,7 +103,7 @@ public final class NioFileAdapter implements FileAdapter {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            randomAccessFile = new RandomAccessFile(file, READ_MODE);
+            randomAccessFile = new RandomAccessFile(file, R_MODE);
             channel = randomAccessFile.getChannel();
             int size = (int) randomAccessFile.length();
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);

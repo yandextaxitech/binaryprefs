@@ -4,6 +4,7 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.lock.global.GlobalLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 @SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
@@ -30,7 +32,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
-    private final Object lock;
+    private final Lock writeLock;
+    private final GlobalLockFactory globalLockFactory;
 
     private boolean clearFlag;
 
@@ -41,7 +44,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Object lock) {
+                            Lock writeLock,
+                            GlobalLockFactory globalLockFactory) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -49,7 +53,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
-        this.lock = lock;
+        this.writeLock = writeLock;
+        this.globalLockFactory = globalLockFactory;
     }
 
     @Override
@@ -57,10 +62,13 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         if (value == null) {
             return remove(key);
         }
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new StringSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -69,46 +77,61 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         if (value == null) {
             return remove(key);
         }
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new StringSetSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putInt(String key, int value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new IntegerSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putLong(String key, long value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new LongSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putFloat(String key, float value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new FloatSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putBoolean(String key, boolean value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new BooleanSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -117,68 +140,90 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         if (value == null) {
             return remove(key);
         }
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new PersistableSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putByte(String key, byte value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new ByteSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putShort(String key, short value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new ShortSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putChar(String key, char value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new CharSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor putDouble(String key, double value) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             SerializationStrategy strategy = new DoubleSerializationStrategyImpl(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
+        } finally {
+            writeLock.lock();
         }
     }
 
     @Override
     public PreferencesEditor remove(String key) {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             removeSet.add(key);
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public PreferencesEditor clear() {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             clearFlag = true;
             return this;
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public void apply() {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             clearCache();
             removeCache();
             storeCache();
@@ -188,20 +233,27 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                     saveAll();
                 }
             });
+        } finally {
+            writeLock.unlock();
         }
     }
 
     @Override
     public boolean commit() {
-        synchronized (lock) {
+        writeLock.lock();
+        try {
             clearCache();
             removeCache();
             storeCache();
             return saveAll();
+        } finally {
+            writeLock.unlock();
         }
     }
 
     private boolean saveAll() {
+        Lock lock = globalLockFactory.getLock();
+        lock.lock();
         try {
             clearPersistence();
             removePersistence();
@@ -209,6 +261,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(SAVE, e);
+        } finally {
+            lock.unlock();
         }
         return false;
     }
