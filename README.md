@@ -73,7 +73,8 @@ as before because behaviour and contract is fully respected.
 10. Concurrent preferences initializer.
 11. Reduce events (implement events transaction).
 12. `Persistable` upgrade/downgrade api.
-13. RxJava support. 
+13. Simplify api.
+14. RxJava support. 
 
 ## License
 ```
