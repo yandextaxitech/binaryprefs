@@ -4,7 +4,6 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.lock.global.GlobalLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
@@ -33,7 +32,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
-    private final GlobalLockFactory globalLockFactory;
 
     private boolean clearFlag;
 
@@ -44,8 +42,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Lock writeLock,
-                            GlobalLockFactory globalLockFactory) {
+                            Lock writeLock) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -54,7 +51,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
-        this.globalLockFactory = globalLockFactory;
     }
 
     @Override
@@ -252,8 +248,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private boolean saveAll() {
-        Lock lock = globalLockFactory.getLock();
-        lock.lock();
         try {
             clearPersistence();
             removePersistence();
@@ -261,8 +255,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(SAVE, e);
-        } finally {
-            lock.unlock();
         }
         return false;
     }

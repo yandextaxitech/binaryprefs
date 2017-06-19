@@ -10,14 +10,11 @@ import android.os.Process;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.lock.LockFactory;
-import com.ironz.binaryprefs.lock.global.GlobalLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -45,7 +42,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final FileAdapter fileAdapter;
     private final SerializerFactory serializerFactory;
     private final TaskExecutor taskExecutor;
-    private final GlobalLockFactory globalLockFactory;
+    private final String updateActionName;
+    private final String removeActionName;
 
     private Preferences preferences;
 
@@ -54,27 +52,27 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                                     CacheProvider cacheProvider,
                                     FileAdapter fileAdapter,
                                     SerializerFactory serializerFactory,
-                                    TaskExecutor taskExecutor,
-                                    LockFactory globalLockFactory) {
+                                    TaskExecutor taskExecutor) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
         this.fileAdapter = fileAdapter;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
-        this.globalLockFactory = globalLockFactory.getGlobalLockFactory();
+        this.updateActionName = context.getPackageName() + "_" + ACTION_PREFERENCE_UPDATED;
+        this.removeActionName = context.getPackageName() + "_" + ACTION_PREFERENCE_REMOVED;
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 notifyUpdate(intent);
             }
-        }, new IntentFilter(ACTION_PREFERENCE_UPDATED));
+        }, new IntentFilter(updateActionName));
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 notifyRemove(intent);
             }
-        }, new IntentFilter(ACTION_PREFERENCE_REMOVED));
+        }, new IntentFilter(removeActionName));
     }
 
     private void notifyUpdate(final Intent intent) {
@@ -115,35 +113,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private Object fetchObject(String key) {
-        Lock lock = globalLockFactory.getLock();
-        lock.lock();
-        try {
-            byte[] bytes = fileAdapter.fetch(key);
-            return serializerFactory.deserialize(key, bytes);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private void update(String key, Object value) {
-        cacheProvider.put(key, value);
-        notifyListeners(key);
-    }
-
-    private void remove(String key) {
-        cacheProvider.remove(key);
-        notifyListeners(key);
-    }
-
-    private void notifyListeners(final String key) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                for (OnSharedPreferenceChangeListener listener : listeners) {
-                    listener.onSharedPreferenceChanged(preferences, key);
-                }
-            }
-        });
+        byte[] bytes = fileAdapter.fetch(key);
+        return serializerFactory.deserialize(key, bytes);
     }
 
     public void definePreferences(Preferences preferences) {
@@ -172,8 +143,29 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         sendRemoveIntent(key);
     }
 
+    private void update(String key, Object value) {
+        cacheProvider.put(key, value);
+        notifyListeners(key);
+    }
+
+    private void remove(String key) {
+        cacheProvider.remove(key);
+        notifyListeners(key);
+    }
+
+    private void notifyListeners(final String key) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnSharedPreferenceChangeListener listener : listeners) {
+                    listener.onSharedPreferenceChanged(preferences, key);
+                }
+            }
+        });
+    }
+
     private void sendUpdateIntent(String key) {
-        Intent intent = new Intent(ACTION_PREFERENCE_UPDATED);
+        Intent intent = new Intent(updateActionName);
         intent.putExtra(PREFERENCE_PROCESS_ID, Process.myPid());
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
@@ -181,7 +173,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private void sendRemoveIntent(String key) {
-        Intent intent = new Intent(ACTION_PREFERENCE_REMOVED);
+        Intent intent = new Intent(removeActionName);
         intent.putExtra(PREFERENCE_PROCESS_ID, Process.myPid());
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);

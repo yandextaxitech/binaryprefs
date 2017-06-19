@@ -56,7 +56,7 @@ public final class BinaryPreferencesTest {
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
+        LockFactory lockFactory = new SimpleLockFactoryImpl();
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 
         preferences = new BinaryPreferences(
@@ -91,8 +91,13 @@ public final class BinaryPreferencesTest {
 
         Map<String, ?> all = preferences.getAll();
 
-        assertEquals(all.get(stringKey).getClass(), String.class);
-        assertEquals(all.get(booleanKey).getClass(), Boolean.class);
+        Object str = all.get(stringKey);
+        Object bool = all.get(booleanKey);
+
+        assertEquals(str.getClass(), String.class);
+        assertEquals(bool.getClass(), Boolean.class);
+        assertEquals(str, stringValue);
+        assertEquals(true, bool);
     }
 
     @Test
