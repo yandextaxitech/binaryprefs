@@ -5,7 +5,6 @@ import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.lock.LockFactory;
-import com.ironz.binaryprefs.lock.global.GlobalLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
@@ -26,7 +25,6 @@ public final class BinaryPreferences implements Preferences {
     private final SerializerFactory serializerFactory;
     private final Lock readLock;
     private final Lock writeLock;
-    private final GlobalLockFactory globalLockFactory;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(String prefName,
@@ -45,14 +43,11 @@ public final class BinaryPreferences implements Preferences {
         this.serializerFactory = serializerFactory;
         this.readLock = lockFactory.getReadLock(prefName);
         this.writeLock = lockFactory.getWriteLock(prefName);
-        this.globalLockFactory = lockFactory.getGlobalLockFactory();
         fetchCache();
     }
 
     private void fetchCache() {
         readLock.lock();
-        Lock lock = globalLockFactory.getLock();
-        lock.lock();
         Map<String, Object> map = new HashMap<>();
         try {
             for (String name : fileAdapter.names()) {
@@ -64,7 +59,6 @@ public final class BinaryPreferences implements Preferences {
                 cacheProvider.put(name, map.get(name));
             }
         } finally {
-            lock.unlock();
             readLock.unlock();
         }
     }
@@ -248,8 +242,7 @@ public final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
-                    writeLock,
-                    globalLockFactory
+                    writeLock
             );
         } finally {
             readLock.unlock();

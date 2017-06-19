@@ -56,7 +56,7 @@ public final class BinaryPreferencesTest {
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
+        LockFactory lockFactory = new SimpleLockFactoryImpl();
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 
         preferences = new BinaryPreferences(

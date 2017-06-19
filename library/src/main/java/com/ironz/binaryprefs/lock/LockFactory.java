@@ -1,7 +1,5 @@
 package com.ironz.binaryprefs.lock;
 
-import com.ironz.binaryprefs.lock.global.GlobalLockFactory;
-
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -23,11 +21,4 @@ public interface LockFactory {
      * @return lock object, instantiated for concrete preference
      */
     Lock getWriteLock(String name);
-
-    /**
-     * Returns new global locks for bulk IPC operations.
-     *
-     * @return global lock factory instance
-     */
-    GlobalLockFactory getGlobalLockFactory();
 }
