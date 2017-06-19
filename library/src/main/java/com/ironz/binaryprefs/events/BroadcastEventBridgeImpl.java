@@ -26,8 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class BroadcastEventBridgeImpl implements EventBridge {
 
     private static final String INTENT_PREFIX = "com.ironz.binaryprefs.";
-    private static final String ACTION_PREFERENCE_UPDATED = INTENT_PREFIX + "ACTION_PREFERENCE_UPDATED";
-    private static final String ACTION_PREFERENCE_REMOVED = INTENT_PREFIX + "ACTION_PREFERENCE_REMOVED";
+    private static final String ACTION_PREFERENCE_UPDATED = INTENT_PREFIX + "ACTION_PREFERENCE_UPDATED_";
+    private static final String ACTION_PREFERENCE_REMOVED = INTENT_PREFIX + "ACTION_PREFERENCE_REMOVED_";
 
     private static final String PREFERENCE_NAME = "preference_name";
     private static final String PREFERENCE_KEY = "preference_update_key";
@@ -59,8 +59,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.fileAdapter = fileAdapter;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
-        this.updateActionName = context.getPackageName() + "_" + ACTION_PREFERENCE_UPDATED;
-        this.removeActionName = context.getPackageName() + "_" + ACTION_PREFERENCE_REMOVED;
+        this.updateActionName = ACTION_PREFERENCE_UPDATED + context.getPackageName();
+        this.removeActionName = ACTION_PREFERENCE_REMOVED + context.getPackageName();
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
