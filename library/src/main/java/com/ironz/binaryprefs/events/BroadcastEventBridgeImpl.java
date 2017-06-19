@@ -10,11 +10,14 @@ import android.os.Process;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.lock.LockFactory;
+import com.ironz.binaryprefs.lock.global.GlobalLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -42,21 +45,24 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final FileAdapter fileAdapter;
     private final SerializerFactory serializerFactory;
     private final TaskExecutor taskExecutor;
+    private final GlobalLockFactory globalLockFactory;
 
-    private  Preferences preferences;
+    private Preferences preferences;
 
     public BroadcastEventBridgeImpl(Context context,
                                     String prefName,
                                     CacheProvider cacheProvider,
                                     FileAdapter fileAdapter,
                                     SerializerFactory serializerFactory,
-                                    TaskExecutor taskExecutor) {
+                                    TaskExecutor taskExecutor,
+                                    LockFactory globalLockFactory) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
         this.fileAdapter = fileAdapter;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
+        this.globalLockFactory = globalLockFactory.getGlobalLockFactory();
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -84,8 +90,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                byte[] bytes = fileAdapter.fetch(key);
-                Object o = serializerFactory.deserialize(key, bytes);
+                Object o = fetchObject(key);
                 update(key, o);
             }
         });
@@ -107,6 +112,17 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                 remove(key);
             }
         });
+    }
+
+    private Object fetchObject(String key) {
+        Lock lock = globalLockFactory.getLock();
+        lock.lock();
+        try {
+            byte[] bytes = fileAdapter.fetch(key);
+            return serializerFactory.deserialize(key, bytes);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void update(String key, Object value) {
