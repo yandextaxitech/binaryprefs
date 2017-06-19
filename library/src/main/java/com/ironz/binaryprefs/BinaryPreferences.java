@@ -64,7 +64,7 @@ public final class BinaryPreferences implements Preferences {
                 cacheProvider.put(name, map.get(name));
             }
         } finally {
-            lock.lock();
+            lock.unlock();
             readLock.unlock();
         }
     }
