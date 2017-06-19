@@ -11,14 +11,14 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Small memory footprint while serialize/deserialize data.
 * Fully backward compatible with default `SharedPreferences` interface.
 * Zero copy in-memory cache (except `Persistable`, because is not immutable).
+* Store all primitives include `double`, `char`, `byte` and `short`.
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
+* Store complex data objects backward-compatible (see `Persistable` class documentation).
+* Fully optimized IPC support (between processes).
 * Define custom directory for saving.
 * Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
 * Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
-* Store all primitives include `double`, `char`, `byte` and `short`.
-* Fully optimized IPC support (between processes).
-* Store complex data objects backward-compatible (see `Persistable` class documentation).
 * Working with your own locks for read/write mechanism.
 * Using custom task executor (like RxJava, UI thread or Thread Pools).
 * Handle various exception events.
