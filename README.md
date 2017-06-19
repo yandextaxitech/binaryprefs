@@ -10,7 +10,7 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
 * Fully backward compatible with default `SharedPreferences` interface.
-* Zero copy in-memory cache (except `Persistable`).
+* Zero copy in-memory cache (except `Persistable`, because is not immutable).
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
 * Define custom directory for saving.
