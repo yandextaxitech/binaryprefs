@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Process;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.file.FileAdapter;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
@@ -44,6 +45,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final TaskExecutor taskExecutor;
     private final String updateActionName;
     private final String removeActionName;
+    private final ByteEncryption byteEncryption;
 
     private Preferences preferences;
 
@@ -52,7 +54,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                                     CacheProvider cacheProvider,
                                     FileAdapter fileAdapter,
                                     SerializerFactory serializerFactory,
-                                    TaskExecutor taskExecutor) {
+                                    TaskExecutor taskExecutor,
+                                    ByteEncryption byteEncryption) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
@@ -61,6 +64,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.taskExecutor = taskExecutor;
         this.updateActionName = ACTION_PREFERENCE_UPDATED + context.getPackageName();
         this.removeActionName = ACTION_PREFERENCE_REMOVED + context.getPackageName();
+        this.byteEncryption = byteEncryption;
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -114,7 +118,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     private Object fetchObject(String key) {
         byte[] bytes = fileAdapter.fetch(key);
-        return serializerFactory.deserialize(key, bytes);
+        byte[] decrypt = byteEncryption.decrypt(bytes);
+        return serializerFactory.deserialize(key, decrypt);
     }
 
     public void definePreferences(Preferences preferences) {
