@@ -70,10 +70,11 @@ base storing directory.
 7. ~~Store all primitives (like byte, short, char, double).~~ completed.
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
-10. Reduce events (implement events transaction).
-11. `Persistable` upgrade/downgrade api.
-12. Simplify api (instance creating, exception handles).
-13. RxJava support.
+10. File name encrypt.
+11. Reduce events (implement events transaction).
+12. `Persistable` upgrade/downgrade api.
+13. Simplify api (instance creating, exception handles).
+14. RxJava support.
 
 ## License
 ```
