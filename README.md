@@ -2,7 +2,7 @@
 
 ## Binary Preferences
 
-Implementation of SharedPreferences which stores each preference in files separately, performs disk IO via NIO with memory mapped file and works IPC (between processes).
+Rapidly fast implementation of SharedPreferences which stores each preference in files separately, performs disk IO via NIO with memory mapped file and works IPC (between processes).
 
 ## Advantages
 
@@ -57,6 +57,19 @@ Preferences preferences = new BinaryPreferences(
 You should re-implement your own `DirectoryProvider`, which is the provider of
 base storing directory.
 
+
+#### Dealing with `Persistable `
+
+`Persistable` contract been added for fast and flexible saving and it's
+restoring complex objects. It's pretty similar like standard java
+`Externalizable` contract but without few methods which don't need for.
+For usage you just need to implement this interface with methods on your
+data-model.
+
+Note about `deepCopy` method: you should implement full object hierarchy
+copying for fast immutable in-memory data fetching.
+
+Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L65-L117)
 
 ## Roadmap
 
