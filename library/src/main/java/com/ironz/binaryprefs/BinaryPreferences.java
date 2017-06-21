@@ -67,7 +67,14 @@ public final class BinaryPreferences implements Preferences {
     public Map<String, Object> getAll() {
         readLock.lock();
         try {
-            return cacheProvider.getAll();
+            Map<String, Object> all = cacheProvider.getAll();
+            HashMap<String, Object> copy = new HashMap<>(all.size());
+            for (String key : all.keySet()) {
+                Object value = all.get(key);
+                Object redefined = serializerFactory.redefineMutable(value);
+                copy.put(key, redefined);
+            }
+            return copy;
         } finally {
             readLock.unlock();
         }

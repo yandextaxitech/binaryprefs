@@ -2,7 +2,9 @@
 
 ## Binary Preferences
 
-Rapidly fast implementation of SharedPreferences which stores each preference in files separately, performs disk IO via NIO with memory mapped file and works IPC (between processes).
+Rapidly fast implementation of SharedPreferences which stores each preference
+in files separately, performs disk IO via NIO with memory mapped byte buffers
+and works IPC (between processes).
 
 ## Advantages
 
@@ -15,7 +17,7 @@ Rapidly fast implementation of SharedPreferences which stores each preference in
 * All persisted data are encrypted. Default is AES encryption.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
-* Fully optimized IPC support (between processes).
+* Fully optimized IPC support (preferences change listeners and memory cache works between processes).
 * Define custom directory for saving.
 * Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
 * Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
