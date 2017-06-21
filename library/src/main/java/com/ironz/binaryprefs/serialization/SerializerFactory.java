@@ -55,26 +55,17 @@ public final class SerializerFactory {
         if (booleanSerializer.isMatches(flag)) {
             return booleanSerializer.deserialize(bytes);
         }
-        if (byteSerializer.isMatches(flag)) {
-            return byteSerializer.deserialize(bytes);
-        }
-        if (charSerializer.isMatches(flag)) {
-            return charSerializer.deserialize(bytes);
-        }
-        if (doubleSerializer.isMatches(flag)) {
-            return doubleSerializer.deserialize(bytes);
-        }
-        if (floatSerializer.isMatches(flag)) {
-            return floatSerializer.deserialize(bytes);
-        }
         if (integerSerializer.isMatches(flag)) {
             return integerSerializer.deserialize(bytes);
         }
         if (longSerializer.isMatches(flag)) {
             return longSerializer.deserialize(bytes);
         }
-        if (shortSerializer.isMatches(flag)) {
-            return shortSerializer.deserialize(bytes);
+        if (doubleSerializer.isMatches(flag)) {
+            return doubleSerializer.deserialize(bytes);
+        }
+        if (floatSerializer.isMatches(flag)) {
+            return floatSerializer.deserialize(bytes);
         }
         if (stringSerializer.isMatches(flag)) {
             return stringSerializer.deserialize(bytes);
@@ -85,6 +76,15 @@ public final class SerializerFactory {
         if (persistableSerializer.isMatches(flag)) {
             return persistableSerializer.deserialize(key, bytes);
         }
+        if (shortSerializer.isMatches(flag)) {
+            return shortSerializer.deserialize(bytes);
+        }
+        if (byteSerializer.isMatches(flag)) {
+            return byteSerializer.deserialize(bytes);
+        }
+        if (charSerializer.isMatches(flag)) {
+            return charSerializer.deserialize(bytes);
+        }
         throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
     }
 
@@ -92,26 +92,17 @@ public final class SerializerFactory {
         if (o instanceof Boolean) {
             return booleanSerializer.serialize((boolean) o);
         }
-        if (o instanceof Byte) {
-            return byteSerializer.serialize((byte) o);
-        }
-        if (o instanceof Character) {
-            return charSerializer.serialize((char) o);
-        }
-        if (o instanceof Double) {
-            return doubleSerializer.serialize((double) o);
-        }
-        if (o instanceof Float) {
-            return floatSerializer.serialize((float) o);
-        }
         if (o instanceof Integer) {
             return integerSerializer.serialize((int) o);
         }
         if (o instanceof Long) {
             return longSerializer.serialize((long) o);
         }
-        if (o instanceof Short) {
-            return shortSerializer.serialize((short) o);
+        if (o instanceof Double) {
+            return doubleSerializer.serialize((double) o);
+        }
+        if (o instanceof Float) {
+            return floatSerializer.serialize((float) o);
         }
         if (o instanceof String) {
             return stringSerializer.serialize((String) o);
@@ -122,6 +113,15 @@ public final class SerializerFactory {
         }
         if (o instanceof Persistable) {
             return persistableSerializer.serialize((Persistable) o);
+        }
+        if (o instanceof Short) {
+            return shortSerializer.serialize((short) o);
+        }
+        if (o instanceof Byte) {
+            return byteSerializer.serialize((byte) o);
+        }
+        if (o instanceof Character) {
+            return charSerializer.serialize((char) o);
         }
         throw new UnsupportedClassVersionError(String.format("Unsupported serialization object format '%s'", o));
     }

@@ -68,8 +68,8 @@ public final class BinaryPreferences implements Preferences {
             HashMap<String, Object> copy = new HashMap<>(all.size());
             for (String key : all.keySet()) {
                 Object value = all.get(key);
-                Object redefined = serializerFactory.redefineMutable(value);
-                copy.put(key, redefined);
+                Object redefinedValue = serializerFactory.redefineMutable(value);
+                copy.put(key, redefinedValue);
             }
             return Collections.unmodifiableMap(copy);
         } finally {
