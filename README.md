@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs),
 
-[![Methods Count](https://img.shields.io/badge/Methods and size-503 | 60 KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.0)
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.0"><img src="https://img.shields.io/badge/Methods and size-503 | 60 KB-e91e63.svg"/></a>
 
 ## Binary Preferences
 
