@@ -313,6 +313,21 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void persistableCompareValues() {
+        String key = TestUser.KEY;
+        TestUser value = TestUser.create();
+
+        preferences.edit()
+                .putPersistable(key, value)
+                .apply();
+        TestUser restored = preferences.getPersistable(key, new TestUser());
+
+        restored.setName(restored.getName() + "modified");
+
+        assertNotEquals(value, restored);
+    }
+
+    @Test
     public void persistableNullValue() {
         String key = TestUser.KEY;
         TestUser defaultValue = new TestUser();

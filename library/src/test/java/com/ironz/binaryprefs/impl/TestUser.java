@@ -25,7 +25,7 @@ public final class TestUser implements Persistable {
     public TestUser() {
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -59,6 +59,10 @@ public final class TestUser implements Persistable {
 
     private void addAddresses(TestAddress address) {
         this.addresses.add(address);
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
