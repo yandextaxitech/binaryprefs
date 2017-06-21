@@ -11,9 +11,9 @@ Implementation of SharedPreferences which stores each preference in files separa
 * Small memory footprint while serialize/deserialize data.
 * Fully backward compatible with default `SharedPreferences` interface.
 * Zero copy in-memory cache.
-* Store all primitives include `double`, `char`, `byte` and `short`.
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
+* Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
 * Fully optimized IPC support (between processes).
 * Define custom directory for saving.
