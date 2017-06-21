@@ -40,7 +40,7 @@ public interface Persistable extends Serializable {
     /**
      * Creates and returns a deep copy of current object.
      * The object implements the copy method to making a deep copy for
-     * constructing a new object for faster caching proposes.
+     * constructing a new object for faster cache fetching proposes.
      *
      * @return new fully constructed persistable object
      */
