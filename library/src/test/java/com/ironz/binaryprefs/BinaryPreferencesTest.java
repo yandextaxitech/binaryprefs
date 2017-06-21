@@ -100,6 +100,36 @@ public final class BinaryPreferencesTest {
         assertEquals(true, bool);
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void getAllDeleteOne() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        Map<String, ?> all = preferences.getAll();
+        all.remove(stringKey);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getAllClear() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        Map<String, ?> all = preferences.getAll();
+        all.clear();
+    }
+
     @Test
     public void stringDefaultValue() {
         String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;

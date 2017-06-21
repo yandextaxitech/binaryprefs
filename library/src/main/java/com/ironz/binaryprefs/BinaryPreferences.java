@@ -9,10 +9,7 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 
 public final class BinaryPreferences implements Preferences {
@@ -74,7 +71,7 @@ public final class BinaryPreferences implements Preferences {
                 Object redefined = serializerFactory.redefineMutable(value);
                 copy.put(key, redefined);
             }
-            return copy;
+            return Collections.unmodifiableMap(copy);
         } finally {
             readLock.unlock();
         }
