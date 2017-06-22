@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Simple lock factory for providing locks by name
+ * Simple lock factory for providing lock by instance
  */
 public final class SimpleLockFactoryImpl implements LockFactory {
 
