@@ -169,6 +169,9 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     @Override
     public String readString() {
         int bytesStringSize = readInt();
+        if (bytesStringSize == -1) {
+            return null;
+        }
         checkBounds();
         byte stringFlag = buffer[offset];
         if (!stringSerializer.isMatches(stringFlag)) {
