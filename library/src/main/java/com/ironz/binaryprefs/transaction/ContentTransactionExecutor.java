@@ -1,10 +1,10 @@
 package com.ironz.binaryprefs.transaction;
 
 /**
- * Describes how file transaction will be performed
+ * Describes how serialized content transaction will be performed
  */
-public interface TransactionExecutor {
-    long beginTransaction(String key);
+public interface ContentTransactionExecutor {
+    long beginTransaction();
 
     void append(long transaction, String name, byte[] content);
 
