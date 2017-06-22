@@ -38,8 +38,8 @@ public final class BinaryPreferences implements Preferences {
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
-        this.readLock = lockFactory.getReadLock(prefName);
-        this.writeLock = lockFactory.getWriteLock(prefName);
+        this.readLock = lockFactory.getReadLock();
+        this.writeLock = lockFactory.getWriteLock();
         fetchCache();
     }
 
