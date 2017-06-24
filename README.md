@@ -74,7 +74,7 @@ data-model.
 Note about `deepCopy` method: you should implement full object hierarchy
 copying for fast immutable in-memory data fetching.
 
-Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L65-L117)
+Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
 ## Roadmap
 
