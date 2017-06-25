@@ -161,10 +161,4 @@ public final class NioFileAdapter implements FileAdapter {
             throw new FileOperationException(e);
         }
     }
-
-    @Override
-    public boolean contains(String name) {
-        File file = new File(name);
-        return file.exists();
-    }
 }

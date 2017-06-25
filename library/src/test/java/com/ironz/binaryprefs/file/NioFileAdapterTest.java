@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.file;
 
+import com.ironz.binaryprefs.exception.FileOperationException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,7 +8,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NioFileAdapterTest {
@@ -71,27 +73,26 @@ public class NioFileAdapterTest {
         assertEquals(new String(bytesTwo), new String(fetch));
     }
 
-    @Test
+    @Test(expected = FileOperationException.class)
     public void deleteOne() {
         fileAdapter.save(fileName, bytes);
-        assertTrue(fileAdapter.contains(fileName));
+        assertNotNull(fileAdapter.fetch(fileName));
 
         fileAdapter.remove(fileName);
-        assertFalse(fileAdapter.contains(fileName));
+        fileAdapter.fetch(fileName);
     }
 
-    @Test
+    @Test(expected = FileOperationException.class)
     public void deleteAll() {
         fileAdapter.save(fileName, bytes);
         fileAdapter.save(fileNameTwo, bytes);
 
-        assertTrue(fileAdapter.contains(fileName));
-        assertTrue(fileAdapter.contains(fileNameTwo));
+        assertNotNull(fileAdapter.fetch(fileName));
+        assertNotNull(fileAdapter.fetch(fileNameTwo));
 
-        fileAdapter.remove(fileName);
         fileAdapter.remove(fileNameTwo);
 
-        assertFalse(fileAdapter.contains(fileName));
-        assertFalse(fileAdapter.contains(fileNameTwo));
+        assertNotNull(fileAdapter.fetch(fileName));
+        fileAdapter.fetch(fileNameTwo);
     }
 }

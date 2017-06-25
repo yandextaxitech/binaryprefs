@@ -9,8 +9,8 @@ public interface FileAdapter {
     /**
      * Returns all names for directory.
      *
+     * @param baseDir base directory for fetching
      * @return file names with extension suffix
-     * @param baseDir
      */
     String[] names(String baseDir);
 
@@ -36,12 +36,4 @@ public interface FileAdapter {
      * @param name file name with extension
      */
     void remove(String name);
-
-    /**
-     * Returns {@code true} if file exists {@code false} otherwise.
-     *
-     * @param name exact name pattern
-     * @return true if filesystem contains false otherwise
-     */
-    boolean contains(String name);
 }
