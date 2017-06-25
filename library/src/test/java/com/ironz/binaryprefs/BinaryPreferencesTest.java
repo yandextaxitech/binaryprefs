@@ -51,7 +51,7 @@ public final class BinaryPreferencesTest {
             }
         };
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
+        FileAdapter fileAdapter = new NioFileAdapter();
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
@@ -68,7 +68,8 @@ public final class BinaryPreferencesTest {
                 TaskExecutor.DEFAULT,
                 serializerFactory,
                 lockFactory,
-                byteEncryption
+                byteEncryption,
+                directoryProvider
         );
     }
 

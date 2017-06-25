@@ -10,8 +10,9 @@ public interface FileAdapter {
      * Returns all names for directory.
      *
      * @return file names with extension suffix
+     * @param baseDir
      */
-    String[] names();
+    String[] names(String baseDir);
 
     /**
      * Returns byte array for concrete file by name or empty byte array if exception throws.

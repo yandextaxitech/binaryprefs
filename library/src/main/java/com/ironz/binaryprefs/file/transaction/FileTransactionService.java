@@ -7,6 +7,13 @@ import android.os.RemoteException;
 
 public class FileTransactionService extends Service {
 
+    public static final String DEFAULT_FILE_DIRECTORY = "DEFAULT_FILE_DIRECTORY";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return createBinder();
@@ -28,7 +35,6 @@ public class FileTransactionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         return START_STICKY;
     }
 }

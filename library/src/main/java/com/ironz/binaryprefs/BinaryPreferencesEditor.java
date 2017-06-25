@@ -11,6 +11,7 @@ import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import com.ironz.binaryprefs.serialization.strategy.impl.*;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,6 +35,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
     private final ByteEncryption byteEncryption;
+    private final String baseDir;
 
     private boolean clearFlag;
 
@@ -45,7 +47,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
                             Lock writeLock,
-                            ByteEncryption byteEncryption) {
+                            ByteEncryption byteEncryption,
+                            String baseDir) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -55,6 +58,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
         this.byteEncryption = byteEncryption;
+        this.baseDir = baseDir;
     }
 
     @Override
@@ -312,7 +316,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void removeInternal(String name) {
-        fileAdapter.remove(name);
+        File file = new File(baseDir, name);
+        String path = file.getAbsolutePath();
+        fileAdapter.remove(path);
         bridge.notifyListenersRemove(preferences, name);
     }
 
@@ -320,7 +326,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         Object value = strategy.getValue();
         byte[] bytes = strategy.serialize();
         byte[] encrypt = byteEncryption.encrypt(bytes);
-        fileAdapter.save(name, encrypt);
+        File file = new File(baseDir, name);
+        String path = file.getAbsolutePath();
+        fileAdapter.save(path, encrypt);
         bridge.notifyListenersUpdate(preferences, name, value);
     }
 }

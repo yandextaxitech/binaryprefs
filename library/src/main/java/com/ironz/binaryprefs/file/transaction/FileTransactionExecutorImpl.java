@@ -4,16 +4,18 @@ import com.ironz.binaryprefs.file.FileAdapter;
 
 public final class FileTransactionExecutorImpl implements FileTransactionExecutor {
 
+    private final String baseDir;
     private final FileAdapter fileAdapter;
 
-    public FileTransactionExecutorImpl(FileAdapter fileAdapter) {
+    public FileTransactionExecutorImpl(String baseDir, FileAdapter fileAdapter) {
+        this.baseDir = baseDir;
         this.fileAdapter = fileAdapter;
     }
 
     @Override
     public FileTransactionElement[] getAll() {
         synchronized (FileTransactionExecutor.class) {
-            String[] names = fileAdapter.names();
+            String[] names = fileAdapter.names(baseDir);
             FileTransactionElement[] elements = new FileTransactionElement[names.length];
             for (int i = 0; i < names.length; i++) {
                 String name = names[i];

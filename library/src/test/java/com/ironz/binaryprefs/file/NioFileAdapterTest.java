@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.file;
 
-import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,30 +12,29 @@ import static org.junit.Assert.*;
 @SuppressWarnings("FieldCanBeLocal")
 public class NioFileAdapterTest {
 
-    private final String fileName = "file.name";
-    private final String fileNameTwo = fileName + 2;
+    private static final String FILE_NAME = "file.name";
     private final byte[] bytes = "value".getBytes();
     private final byte[] bytesTwo = "eulav123".getBytes();
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
+
+    private String fileName;
+    private String fileNameTwo;
+
     private FileAdapter fileAdapter;
     private File srcDir;
 
     @Before
     public void setUp() throws Exception {
-        srcDir = folder.newFolder();
-        fileAdapter = new NioFileAdapter(new DirectoryProvider() {
-            @Override
-            public File getBaseDirectory() {
-                return srcDir;
-            }
-        });
-    }
 
-    @Test
-    public void directoryProvider() {
-        assertEquals(srcDir, ((NioFileAdapter) fileAdapter).getSrcDir());
+        srcDir = folder.newFolder();
+        File fileOne = new File(srcDir, FILE_NAME);
+        fileName = fileOne.getAbsolutePath();
+        File fileTwo = new File(srcDir, FILE_NAME + "2");
+        fileNameTwo = fileTwo.getAbsolutePath();
+
+        fileAdapter = new NioFileAdapter();
     }
 
     @Test
