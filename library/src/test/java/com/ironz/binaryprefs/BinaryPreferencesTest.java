@@ -41,7 +41,6 @@ public final class BinaryPreferencesTest {
 
     @Before
     public void setUp() throws Exception {
-        String prefName = "preferences";
         final File folder = this.folder.newFolder();
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         DirectoryProvider directoryProvider = new DirectoryProvider() {
@@ -60,16 +59,15 @@ public final class BinaryPreferencesTest {
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 
         preferences = new BinaryPreferences(
-                prefName,
                 fileAdapter,
+                directoryProvider,
+                byteEncryption,
                 exceptionHandler,
                 eventsBridge,
                 cacheProvider,
                 TaskExecutor.DEFAULT,
                 serializerFactory,
-                lockFactory,
-                byteEncryption,
-                directoryProvider
+                lockFactory
         );
     }
 

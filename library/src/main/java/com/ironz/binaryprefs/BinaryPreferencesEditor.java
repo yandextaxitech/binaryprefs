@@ -40,25 +40,25 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private boolean clearFlag;
 
     BinaryPreferencesEditor(Preferences preferences,
+                            String baseDir,
                             FileAdapter fileAdapter,
+                            ByteEncryption byteEncryption,
                             ExceptionHandler exceptionHandler,
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Lock writeLock,
-                            ByteEncryption byteEncryption,
-                            String baseDir) {
+                            Lock writeLock) {
         this.preferences = preferences;
+        this.baseDir = baseDir;
         this.fileAdapter = fileAdapter;
+        this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
-        this.byteEncryption = byteEncryption;
-        this.baseDir = baseDir;
     }
 
     @Override
