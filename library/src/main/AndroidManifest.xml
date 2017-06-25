@@ -6,7 +6,7 @@
                 <action android:name="com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE"/>
             </intent-filter>
         </receiver>
-        <service android:name=".file.transaction.FileTransactionService"
+        <service android:name=".file.adapter.FileTransactionService"
                  android:process=":transactions"/>
     </application>
 </manifest>

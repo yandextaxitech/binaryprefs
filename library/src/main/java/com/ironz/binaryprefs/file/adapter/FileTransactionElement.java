@@ -1,9 +1,9 @@
-package com.ironz.binaryprefs.file.transaction;
+package com.ironz.binaryprefs.file.adapter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public final class ParcelableFileTransactionElement implements Parcelable {
+public final class FileTransactionElement implements Parcelable {
 
     static final int ACTION_UPDATE = 1;
     static final int ACTION_REMOVE = 2;
@@ -12,7 +12,7 @@ public final class ParcelableFileTransactionElement implements Parcelable {
     private final String name;
     private final byte[] content;
 
-    public ParcelableFileTransactionElement(int action, String name, byte[] content) {
+    public FileTransactionElement(int action, String name, byte[] content) {
         this.action = action;
         this.name = name;
         this.content = content;
@@ -42,21 +42,21 @@ public final class ParcelableFileTransactionElement implements Parcelable {
         dest.writeByteArray(this.content);
     }
 
-    protected ParcelableFileTransactionElement(Parcel in) {
+    protected FileTransactionElement(Parcel in) {
         this.action = in.readInt();
         this.name = in.readString();
         this.content = in.createByteArray();
     }
 
-    public static final Creator<ParcelableFileTransactionElement> CREATOR = new Creator<ParcelableFileTransactionElement>() {
+    public static final Creator<FileTransactionElement> CREATOR = new Creator<FileTransactionElement>() {
         @Override
-        public ParcelableFileTransactionElement createFromParcel(Parcel source) {
-            return new ParcelableFileTransactionElement(source);
+        public FileTransactionElement createFromParcel(Parcel source) {
+            return new FileTransactionElement(source);
         }
 
         @Override
-        public ParcelableFileTransactionElement[] newArray(int size) {
-            return new ParcelableFileTransactionElement[size];
+        public FileTransactionElement[] newArray(int size) {
+            return new FileTransactionElement[size];
         }
     };
 }

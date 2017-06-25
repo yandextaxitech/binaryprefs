@@ -1,11 +1,11 @@
-package com.ironz.binaryprefs.file.transaction;
+package com.ironz.binaryprefs.file.adapter;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.file.NioFileAdapter;
+import com.ironz.binaryprefs.file.adapter.FileTransactionBridge;
 
 public class FileTransactionService extends Service {
 
@@ -36,12 +36,12 @@ public class FileTransactionService extends Service {
             }
 
             @Override
-            public boolean commit(ParcelableFileTransactionElement[] elements) throws RemoteException {
+            public boolean commit(FileTransactionElement[] elements) throws RemoteException {
                 return commitBlocking(elements);
             }
 
             @Override
-            public void apply(ParcelableFileTransactionElement[] elements) throws RemoteException {
+            public void apply(FileTransactionElement[] elements) throws RemoteException {
                 commitBlocking(elements); //result ignored
             }
         };
@@ -59,15 +59,15 @@ public class FileTransactionService extends Service {
         }
     }
 
-    private boolean commitBlocking(ParcelableFileTransactionElement[] elements) {
+    private boolean commitBlocking(FileTransactionElement[] elements) {
         synchronized (FileTransactionService.class) {
             return commitInternal(elements);
         }
     }
 
-    private boolean commitInternal(ParcelableFileTransactionElement[] elements) {
+    private boolean commitInternal(FileTransactionElement[] elements) {
         try {
-            for (ParcelableFileTransactionElement e : elements) {
+            for (FileTransactionElement e : elements) {
                 transactOne(e);
             }
             return true;
@@ -77,17 +77,17 @@ public class FileTransactionService extends Service {
         return false;
     }
 
-    private void transactOne(ParcelableFileTransactionElement e) {
+    private void transactOne(FileTransactionElement e) {
 
         int action = e.getAction();
         String name = e.getName();
         byte[] content = e.getContent();
 
-        if (action == ParcelableFileTransactionElement.ACTION_UPDATE) {
+        if (action == FileTransactionElement.ACTION_UPDATE) {
             fileAdapter.save(name, content);
         }
 
-        if (action == ParcelableFileTransactionElement.ACTION_REMOVE) {
+        if (action == FileTransactionElement.ACTION_REMOVE) {
             fileAdapter.remove(name);
         }
     }
