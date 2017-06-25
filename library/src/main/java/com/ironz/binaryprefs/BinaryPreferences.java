@@ -255,8 +255,10 @@ public final class BinaryPreferences implements Preferences {
         try {
             return new BinaryPreferencesEditor(
                     this,
-                    baseDir, fileAdapter,
-                    byteEncryption, exceptionHandler,
+                    baseDir,
+                    fileAdapter,
+                    byteEncryption,
+                    exceptionHandler,
                     eventsBridge,
                     taskExecutor,
                     serializerFactory,

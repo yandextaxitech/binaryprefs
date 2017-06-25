@@ -105,7 +105,7 @@ public final class NioFileAdapter implements FileAdapter {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupAndSave(String name, byte[] bytes) {
         File file = new File(name);
-        File backupFile = new File(file.getName() + BACKUP_EXTENSION);
+        File backupFile = new File(name + BACKUP_EXTENSION);
         swap(file, backupFile);
         saveInternal(file, bytes);
         deleteBackup(backupFile);
