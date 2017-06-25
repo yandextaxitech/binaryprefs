@@ -4,9 +4,9 @@ package com.ironz.binaryprefs.file.transaction;
  * Describes how serialized content transaction will be performed
  */
 public interface FileTransactionExecutor {
-    FileElement[] getAll();
+    FileTransactionElement[] getAll();
 
-    void update(FileElement[] elements);
+    void update(FileTransactionElement[] elements);
 
     void remove(String[] names);
 }

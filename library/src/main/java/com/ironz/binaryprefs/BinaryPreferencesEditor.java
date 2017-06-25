@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -32,6 +33,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
+    private final ByteEncryption byteEncryption;
 
     private boolean clearFlag;
 
@@ -42,7 +44,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Lock writeLock) {
+                            Lock writeLock,
+                            ByteEncryption byteEncryption) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
@@ -51,6 +54,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
+        this.byteEncryption = byteEncryption;
     }
 
     @Override
@@ -314,8 +318,9 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void storeInternal(String name, SerializationStrategy strategy) {
         Object value = strategy.getValue();
-        byte[] serialize = strategy.serialize();
-        fileAdapter.save(name, serialize);
+        byte[] bytes = strategy.serialize();
+        byte[] encrypt = byteEncryption.encrypt(bytes);
+        fileAdapter.save(name, encrypt);
         bridge.notifyListenersUpdate(preferences, name, value);
     }
 }

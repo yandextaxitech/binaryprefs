@@ -11,24 +11,24 @@ public final class FileTransactionExecutorImpl implements FileTransactionExecuto
     }
 
     @Override
-    public FileElement[] getAll() {
+    public FileTransactionElement[] getAll() {
         synchronized (FileTransactionExecutor.class) {
             String[] names = fileAdapter.names();
-            FileElement[] elements = new FileElement[names.length];
+            FileTransactionElement[] elements = new FileTransactionElement[names.length];
             for (int i = 0; i < names.length; i++) {
                 String name = names[i];
                 byte[] bytes = fileAdapter.fetch(name);
-                elements[i] = new FileElement(name, bytes);
+                elements[i] = new FileTransactionElement(name, bytes);
             }
             return elements;
         }
     }
 
     @Override
-    public void update(FileElement[] elements) {
+    public void update(FileTransactionElement[] elements) {
         synchronized (FileTransactionExecutor.class) {
             for (int i = 0; i < elements.length; i++) {
-                FileElement element = elements[i];
+                FileTransactionElement element = elements[i];
                 String name = element.getName();
                 byte[] bytes = element.getContent();
                 fileAdapter.save(name, bytes);

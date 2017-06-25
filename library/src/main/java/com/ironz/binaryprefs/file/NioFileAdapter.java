@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.file;
 
-import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.exception.FileOperationException;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
@@ -28,28 +27,21 @@ public final class NioFileAdapter implements FileAdapter {
     private static final String RWD_MODE = "rwd";
 
     private final File srcDir;
-    private final ByteEncryption encryption;
     private final PersistenceHandler persistenceHandler;
 
     @SuppressWarnings("WeakerAccess")
     public NioFileAdapter(DirectoryProvider directoryProvider) {
-        this(directoryProvider.getBaseDirectory(), ByteEncryption.NO_OP, PersistenceHandler.NO_OP);
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption) {
-        this(directoryProvider.getBaseDirectory(), encryption, PersistenceHandler.NO_OP);
+        this(directoryProvider.getBaseDirectory(), PersistenceHandler.NO_OP);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public NioFileAdapter(DirectoryProvider directoryProvider, ByteEncryption encryption, PersistenceHandler persistenceHandler) {
-        this(directoryProvider.getBaseDirectory(), encryption, persistenceHandler);
+    public NioFileAdapter(DirectoryProvider directoryProvider, PersistenceHandler persistenceHandler) {
+        this(directoryProvider.getBaseDirectory(), persistenceHandler);
     }
 
     @SuppressWarnings("WeakerAccess")
-    private NioFileAdapter(File srcDir, ByteEncryption encryption, PersistenceHandler persistenceHandler) {
+    private NioFileAdapter(File srcDir, PersistenceHandler persistenceHandler) {
         this.srcDir = srcDir;
-        this.encryption = encryption;
         this.persistenceHandler = persistenceHandler;
     }
 
@@ -79,8 +71,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     @Override
     public byte[] fetch(String name) {
-        byte[] bytes = fetchBackupOrOriginal(name);
-        return encryption.decrypt(bytes);
+        return fetchBackupOrOriginal(name);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -134,9 +125,8 @@ public final class NioFileAdapter implements FileAdapter {
     private void backupAndSave(String name, byte[] bytes) {
         File file = new File(srcDir, name);
         File backupFile = new File(srcDir, file.getName() + BACKUP_EXTENSION);
-        byte[] encrypt = encryption.encrypt(bytes);
         swap(file, backupFile);
-        saveInternal(file, encrypt);
+        saveInternal(file, bytes);
         deleteBackup(backupFile);
         persistenceHandler.onSuccess(name);
     }

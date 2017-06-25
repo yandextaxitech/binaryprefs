@@ -67,7 +67,8 @@ public final class BinaryPreferencesTest {
                 cacheProvider,
                 TaskExecutor.DEFAULT,
                 serializerFactory,
-                lockFactory
+                lockFactory,
+                byteEncryption
         );
     }
 

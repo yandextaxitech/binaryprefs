@@ -1,11 +1,11 @@
 package com.ironz.binaryprefs.file.transaction;
 
-public final class FileElement {
+public final class FileTransactionElement {
 
     private final String name;
     private final byte[] content;
 
-    public FileElement(String name, byte[] content) {
+    public FileTransactionElement(String name, byte[] content) {
         this.name = name;
         this.content = content;
     }

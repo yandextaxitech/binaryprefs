@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.FileAdapter;
@@ -22,6 +23,7 @@ public final class BinaryPreferences implements Preferences {
     private final SerializerFactory serializerFactory;
     private final Lock readLock;
     private final Lock writeLock;
+    private final ByteEncryption byteEncryption;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(String prefName,
@@ -31,7 +33,8 @@ public final class BinaryPreferences implements Preferences {
                              CacheProvider cacheProvider,
                              TaskExecutor taskExecutor,
                              SerializerFactory serializerFactory,
-                             LockFactory lockFactory) {
+                             LockFactory lockFactory,
+                             ByteEncryption byteEncryption) {
         this.fileAdapter = fileAdapter;
         this.exceptionHandler = exceptionHandler;
         this.eventsBridge = eventsBridge;
@@ -40,6 +43,7 @@ public final class BinaryPreferences implements Preferences {
         this.serializerFactory = serializerFactory;
         this.readLock = lockFactory.getReadLock();
         this.writeLock = lockFactory.getWriteLock();
+        this.byteEncryption = byteEncryption;
         fetchCache();
     }
 
@@ -49,7 +53,8 @@ public final class BinaryPreferences implements Preferences {
         try {
             for (String name : fileAdapter.names()) {
                 byte[] bytes = fileAdapter.fetch(name);
-                Object o = serializerFactory.deserialize(name, bytes);
+                byte[] decrypt = byteEncryption.decrypt(bytes);
+                Object o = serializerFactory.deserialize(name, decrypt);
                 map.put(name, o);
             }
             for (String name : map.keySet()) {
@@ -246,7 +251,8 @@ public final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
-                    writeLock
+                    writeLock,
+                    byteEncryption
             );
         } finally {
             readLock.unlock();
