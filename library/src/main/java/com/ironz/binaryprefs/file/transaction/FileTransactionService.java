@@ -17,11 +17,6 @@ public class FileTransactionService extends Service {
     private String baseDir;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
     public IBinder onBind(Intent intent) {
         baseDir = intent.getStringExtra(BASE_DIRECTORY);
         fileAdapter = new NioFileAdapter();
