@@ -1,6 +1,6 @@
-package com.ironz.binaryprefs.file.adapter;
+package com.ironz.binaryprefs.file.transaction;
 
-import com.ironz.binaryprefs.file.adapter.FileTransactionElement;
+import com.ironz.binaryprefs.file.transaction.FileTransactionElement;
 
 interface FileTransactionBridge {
     String[] names();

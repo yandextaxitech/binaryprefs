@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.file.adapter;
+package com.ironz.binaryprefs.file.transaction;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,29 +10,24 @@ import com.ironz.binaryprefs.exception.FileOperationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public final class BlockingServiceBinder {
+final class BlockingServiceBinder {
 
-    private static final String TAG = "ServiceTestRule";
-    private static IBinder mIBinder;
+    private static IBinder staticBinder;
 
     private final Context context;
-    private ServiceConnection serviceConnection;
 
-    private long timeoutValue = 5;
-    private TimeUnit timeoutUnit = TimeUnit.SECONDS;
-
-    public BlockingServiceBinder(Context context) {
+    BlockingServiceBinder(Context context) {
         this.context = context;
     }
 
-    public IBinder bindService(Intent intent) {
+    IBinder bindService(Intent intent) {
         bindServiceAndWait(intent, Context.BIND_AUTO_CREATE);
-        return mIBinder;
+        return staticBinder;
     }
 
     private void bindServiceAndWait(Intent intent, int flags) {
 
-        serviceConnection = new ProxyServiceConnection();
+        ServiceConnection serviceConnection = new ProxyServiceConnection();
 
         boolean isBound = context.bindService(intent, serviceConnection, flags);
 
@@ -44,6 +39,8 @@ public final class BlockingServiceBinder {
 
     private void waitOnLatch(CountDownLatch latch) {
         try {
+            TimeUnit timeoutUnit = TimeUnit.SECONDS;
+            long timeoutValue = 5;
             if (!latch.await(timeoutValue, timeoutUnit)) {
                 throw new FileOperationException("Waited for " + timeoutValue + " " + timeoutUnit.name() + ", but service was never connected");
             }
@@ -59,13 +56,13 @@ public final class BlockingServiceBinder {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mIBinder = service;
+            staticBinder = service;
             countDownLatch.countDown();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mIBinder = null;
+            staticBinder = null;
         }
     }
 }

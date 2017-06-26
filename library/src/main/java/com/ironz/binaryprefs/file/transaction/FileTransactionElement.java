@@ -1,9 +1,11 @@
-package com.ironz.binaryprefs.file.adapter;
+package com.ironz.binaryprefs.file.transaction;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public final class FileTransactionElement implements Parcelable {
+
+    private static final byte[] EMPTY_CONTENT = new byte[0];
 
     static final int ACTION_UPDATE = 1;
     static final int ACTION_REMOVE = 2;
@@ -16,6 +18,12 @@ public final class FileTransactionElement implements Parcelable {
         this.action = action;
         this.name = name;
         this.content = content;
+    }
+
+    public FileTransactionElement(int action, String name) {
+        this.action = action;
+        this.name = name;
+        this.content = EMPTY_CONTENT;
     }
 
     byte[] getContent() {
