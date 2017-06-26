@@ -43,13 +43,14 @@ final class BlockingServiceBinder {
         }
 
         void waitUntilConnected() {
-            if (!connected) {
-                synchronized (lock) {
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        throw new FileOperationException(e);
-                    }
+            if (connected) {
+                return;
+            }
+            synchronized (lock) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    throw new FileOperationException(e);
                 }
             }
         }
