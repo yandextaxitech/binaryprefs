@@ -7,7 +7,7 @@ import com.ironz.binaryprefs.file.transaction.TransactionElement;
 
 import java.io.File;
 
-public class TestFileTransactionImpl implements FileTransaction {
+public final class TestFileTransactionImpl implements FileTransaction {
 
     private static final String COMMIT = "commit";
 
