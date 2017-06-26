@@ -17,6 +17,11 @@ public class FileTransactionService extends Service {
     private String baseDir;
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         baseDir = intent.getStringExtra(BASE_DIRECTORY);
         fileAdapter = new NioFileAdapter();
@@ -88,10 +93,5 @@ public class FileTransactionService extends Service {
         Intent intent = new Intent(CAUGHT_EXCEPTION_EVENT);
         intent.putExtra(EXCEPTION, e);
         sendBroadcast(intent);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
     }
 }

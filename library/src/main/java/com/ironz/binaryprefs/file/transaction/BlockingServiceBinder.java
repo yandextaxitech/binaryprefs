@@ -7,12 +7,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 final class BlockingServiceBinder {
-
-    private static IBinder iBinder;
 
     private final Context context;
 
@@ -21,48 +16,42 @@ final class BlockingServiceBinder {
     }
 
     IBinder bindService(Intent intent) {
-        bindServiceAndWait(intent, Context.BIND_AUTO_CREATE);
-        return iBinder;
+        BlockingServiceConnection connection = new BlockingServiceConnection();
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        connection.waitUntilConnected();
+        return connection.binder;
     }
 
-    private void bindServiceAndWait(Intent intent, int flags) {
+    private static final class BlockingServiceConnection implements ServiceConnection {
 
-        ServiceConnection serviceConnection = new ProxyServiceConnection();
-
-        boolean isBound = context.bindService(intent, serviceConnection, flags);
-
-        if (!isBound) {
-            throw new FileOperationException("Can't establish connection with transaction service");
-        }
-        waitOnLatch(ProxyServiceConnection.latch);
-    }
-
-    private void waitOnLatch(CountDownLatch latch) {
-        try {
-            TimeUnit timeoutUnit = TimeUnit.SECONDS;
-            long timeoutValue = 5;
-            if (!latch.await(timeoutValue, timeoutUnit)) {
-                throw new FileOperationException("Waited for " + timeoutValue + " " + timeoutUnit.name() + ", but service was never connected");
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new FileOperationException("Interrupted while waiting for service to be connected");
-        }
-    }
-
-    private static class ProxyServiceConnection implements ServiceConnection {
-
-        static CountDownLatch latch = new CountDownLatch(1);
+        private boolean connected = false;
+        private final Object lock = new Object();
+        private IBinder binder;
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            iBinder = service;
-            latch.countDown();
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            connected = true;
+            synchronized (lock) {
+                this.binder = binder;
+                lock.notifyAll();
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            iBinder = null;
+            connected = false;
+        }
+
+        void waitUntilConnected() {
+            if (!connected) {
+                synchronized (lock) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        throw new FileOperationException(e);
+                    }
+                }
+            }
         }
     }
 }
