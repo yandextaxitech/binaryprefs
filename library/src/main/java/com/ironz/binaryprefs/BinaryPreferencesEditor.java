@@ -1,26 +1,23 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
+import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import com.ironz.binaryprefs.serialization.strategy.impl.*;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 
 @SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
+    private static final TransactionElement[] EMPTY_TRANSACTION_ARRAY = new TransactionElement[0];
     public static final String SAVE = "save";
 
     private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
@@ -34,15 +31,11 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
-    private final ByteEncryption byteEncryption;
-    private final String baseDir;
 
-    private boolean clearFlag;
+    private boolean clear;
 
     BinaryPreferencesEditor(Preferences preferences,
-                            String baseDir,
                             FileTransaction fileTransaction,
-                            ByteEncryption byteEncryption,
                             ExceptionHandler exceptionHandler,
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
@@ -50,9 +43,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             CacheProvider cacheProvider,
                             Lock writeLock) {
         this.preferences = preferences;
-        this.baseDir = baseDir;
         this.fileTransaction = fileTransaction;
-        this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
@@ -217,7 +208,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor clear() {
         writeLock.lock();
         try {
-            clearFlag = true;
+            clear = true;
             return this;
         } finally {
             writeLock.unlock();
@@ -234,7 +225,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    performPersistenceTransaction();
+                    transact();
                 }
             });
         } finally {
@@ -249,14 +240,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
-            return performPersistenceTransaction();
+            return transact();
         } finally {
             writeLock.unlock();
         }
     }
 
     private void clearCache() {
-        if (!clearFlag) {
+        if (!clear) {
             return;
         }
         for (String name : cacheProvider.keys()) {
@@ -265,7 +256,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private void removeCache() {
-        if (clearFlag) {
+        if (clear) {
             return;
         }
         for (String name : removeSet) {
@@ -281,54 +272,81 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private boolean performPersistenceTransaction() {
+    private boolean transact() {
+        List<TransactionElement> transaction = createTransaction();
+        boolean success = performPersistenceTransaction(transaction);
+        if (success) {
+            notifyListeners(transaction);
+        }
+        return success;
+    }
+
+    private List<TransactionElement> createTransaction() {
+        ArrayList<TransactionElement> elements = new ArrayList<>();
+        elements.addAll(clearPersistence());
+        elements.addAll(removePersistence());
+        elements.addAll(storePersistence());
+        return elements;
+    }
+
+    private List<TransactionElement> clearPersistence() {
+        if (!clear) {
+            return Collections.emptyList();
+        }
+        List<TransactionElement> elements = new ArrayList<>();
+        for (String name : cacheProvider.keys()) {
+            int action = TransactionElement.ACTION_REMOVE;
+            TransactionElement e = new TransactionElement(action, name);
+            elements.add(e);
+        }
+        return elements;
+    }
+
+    private List<TransactionElement> removePersistence() {
+        if (clear) {
+            return Collections.emptyList();
+        }
+        List<TransactionElement> elements = new ArrayList<>();
+        for (String name : removeSet) {
+            int action = TransactionElement.ACTION_REMOVE;
+            TransactionElement e = new TransactionElement(action, name);
+            elements.add(e);
+        }
+        return elements;
+    }
+
+    private List<TransactionElement> storePersistence() {
+        Set<String> strings = strategyMap.keySet();
+        List<TransactionElement> elements = new ArrayList<>(strings.size());
+        for (String key : strings) {
+            SerializationStrategy strategy = strategyMap.get(key);
+            int action = TransactionElement.ACTION_UPDATE;
+            byte[] bytes = strategy.serialize();
+            Object rawContent = strategy.getValue();
+            elements.add(new TransactionElement(action, key, bytes, rawContent));
+        }
+        return elements;
+    }
+
+    private boolean performPersistenceTransaction(List<TransactionElement> transaction) {
         try {
-            clearPersistence();
-            removePersistence();
-            storePersistence();
-            return true;
+            return fileTransaction.commit(transaction.toArray(EMPTY_TRANSACTION_ARRAY));
         } catch (Exception e) {
             exceptionHandler.handle(SAVE, e);
         }
         return false;
     }
 
-    private void clearPersistence() {
-        if (!clearFlag) {
-            return;
+    private void notifyListeners(List<TransactionElement> transaction) {
+        for (TransactionElement element : transaction) {
+            String name = element.getName();
+            Object rawContent = element.getRawContent();
+            if (element.getAction() == TransactionElement.ACTION_REMOVE) {
+                bridge.notifyListenersRemove(preferences, name);
+            }
+            if (element.getAction() == TransactionElement.ACTION_UPDATE) {
+                bridge.notifyListenersUpdate(preferences, name, rawContent);
+            }
         }
-        for (String name : cacheProvider.keys()) {
-            removeInternal(name);
-        }
-    }
-
-    private void removePersistence() {
-        for (String name : removeSet) {
-            removeInternal(name);
-        }
-    }
-
-    private void storePersistence() {
-        for (String key : strategyMap.keySet()) {
-            SerializationStrategy strategy = strategyMap.get(key);
-            storeInternal(key, strategy);
-        }
-    }
-
-    private void removeInternal(String name) {
-        File file = new File(baseDir, name);
-        String path = file.getAbsolutePath();
-//        fileTransaction.remove(path);
-        bridge.notifyListenersRemove(preferences, name);
-    }
-
-    private void storeInternal(String name, SerializationStrategy strategy) {
-        Object value = strategy.getValue();
-        byte[] bytes = strategy.serialize();
-        byte[] encrypt = byteEncryption.encrypt(bytes);
-        File file = new File(baseDir, name);
-        String path = file.getAbsolutePath();
-//        fileTransaction.save(path, encrypt);
-        bridge.notifyListenersUpdate(preferences, name, value);
     }
 }

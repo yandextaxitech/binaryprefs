@@ -6,12 +6,13 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
-public final class MultiProcessTransaction implements FileTransaction {
+@SuppressWarnings("unused")
+public final class MultiProcessTransactionImpl implements FileTransaction {
 
     private final String baseDir;
     private FileTransactionBridge transactionBridge;
 
-    public MultiProcessTransaction(Context context, String baseDir) {
+    public MultiProcessTransactionImpl(Context context, String baseDir) {
         this.baseDir = baseDir;
         init(context);
     }
@@ -31,9 +32,10 @@ public final class MultiProcessTransaction implements FileTransaction {
             TransactionElement[] elements = new TransactionElement[fileTransactionElements.length];
             for (int i = 0; i < fileTransactionElements.length; i++) {
                 FileTransactionElement element = fileTransactionElements[i];
+                int action = TransactionElement.ACTION_FETCH;
                 String name = element.getName();
                 byte[] content = element.getContent();
-                elements[i] = new TransactionElement(TransactionElement.ACTION_FETCH, name, content);
+                elements[i] = new TransactionElement(action, name, content);
             }
             return elements;
         } catch (RemoteException e) {

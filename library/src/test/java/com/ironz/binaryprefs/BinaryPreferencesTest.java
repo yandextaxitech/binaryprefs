@@ -10,7 +10,8 @@ import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
-import com.ironz.binaryprefs.file.directory.DirectoryProvider;
+import com.ironz.binaryprefs.file.transaction.FileTransaction;
+import com.ironz.binaryprefs.impl.TestFileTransactionImpl;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
@@ -41,26 +42,22 @@ public final class BinaryPreferencesTest {
 
     @Before
     public void setUp() throws Exception {
-        final File folder = this.folder.newFolder();
-        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
-        DirectoryProvider directoryProvider = new DirectoryProvider() {
-            @Override
-            public File getBaseDirectory() {
-                return folder;
-            }
-        };
-        ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+
+        File newFolder = folder.newFolder();
+        String baseDirectory = newFolder.getAbsolutePath();
         FileAdapter fileAdapter = new NioFileAdapter();
+        FileTransaction fileTransaction = new TestFileTransactionImpl(baseDirectory, fileAdapter);
+        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+        ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         LockFactory lockFactory = new SimpleLockFactoryImpl();
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
 
         preferences = new BinaryPreferences(
-                fileAdapter,
-                directoryProvider,
+                fileTransaction,
                 byteEncryption,
                 exceptionHandler,
                 eventsBridge,

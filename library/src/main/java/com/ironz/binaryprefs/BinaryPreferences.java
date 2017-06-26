@@ -4,7 +4,6 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -26,11 +25,9 @@ public final class BinaryPreferences implements Preferences {
     private final Lock writeLock;
     private final ByteEncryption byteEncryption;
     private final FileTransaction fileTransaction;
-    private final String baseDir;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(FileTransaction fileTransaction,
-                             DirectoryProvider directoryProvider,
                              ByteEncryption byteEncryption,
                              ExceptionHandler exceptionHandler,
                              EventBridge eventsBridge,
@@ -39,7 +36,6 @@ public final class BinaryPreferences implements Preferences {
                              SerializerFactory serializerFactory,
                              LockFactory lockFactory) {
         this.fileTransaction = fileTransaction;
-        this.baseDir = directoryProvider.getBaseDirectory().getAbsolutePath();
         this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
         this.eventsBridge = eventsBridge;
@@ -246,9 +242,7 @@ public final class BinaryPreferences implements Preferences {
         try {
             return new BinaryPreferencesEditor(
                     this,
-                    baseDir,
                     fileTransaction,
-                    byteEncryption,
                     exceptionHandler,
                     eventsBridge,
                     taskExecutor,
