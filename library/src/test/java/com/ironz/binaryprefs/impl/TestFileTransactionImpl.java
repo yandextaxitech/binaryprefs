@@ -1,17 +1,22 @@
 package com.ironz.binaryprefs.impl;
 
+import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 
 public class TestFileTransactionImpl implements FileTransaction {
 
+    private static final String COMMIT = "commit";
+
     private final String baseDir;
     private final FileAdapter fileAdapter;
+    private final ExceptionHandler exceptionHandler;
 
-    public TestFileTransactionImpl(String baseDir, FileAdapter fileAdapter) {
+    public TestFileTransactionImpl(String baseDir, FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
         this.baseDir = baseDir;
         this.fileAdapter = fileAdapter;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
@@ -30,11 +35,11 @@ public class TestFileTransactionImpl implements FileTransaction {
     @Override
     public boolean commit(TransactionElement[] elements) {
         try {
-            for (TransactionElement e : elements) {
+            for (TransactionElement element : elements) {
 
-                int action = e.getAction();
-                String name = e.getName();
-                byte[] content = e.getContent();
+                int action = element.getAction();
+                String name = element.getName();
+                byte[] content = element.getContent();
 
                 if (action == TransactionElement.ACTION_UPDATE) {
                     fileAdapter.save(name, content);
@@ -45,7 +50,8 @@ public class TestFileTransactionImpl implements FileTransaction {
                 }
             }
             return true;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            exceptionHandler.handle(COMMIT, e);
         }
         return false;
     }

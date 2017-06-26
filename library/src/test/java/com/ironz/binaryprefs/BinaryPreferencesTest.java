@@ -46,9 +46,9 @@ public final class BinaryPreferencesTest {
         File newFolder = folder.newFolder();
         String baseDirectory = newFolder.getAbsolutePath();
         FileAdapter fileAdapter = new NioFileAdapter();
-        FileTransaction fileTransaction = new TestFileTransactionImpl(baseDirectory, fileAdapter);
-        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+        FileTransaction fileTransaction = new TestFileTransactionImpl(baseDirectory, fileAdapter, exceptionHandler);
+        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
