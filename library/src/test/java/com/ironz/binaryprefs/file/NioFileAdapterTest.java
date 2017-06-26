@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.file;
 
 import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import org.junit.Before;
 import org.junit.Rule;

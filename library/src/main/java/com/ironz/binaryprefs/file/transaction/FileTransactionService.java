@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 
 public class FileTransactionService extends Service {

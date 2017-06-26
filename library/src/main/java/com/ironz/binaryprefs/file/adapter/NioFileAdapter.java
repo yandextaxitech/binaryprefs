@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs.file.adapter;
 
 import com.ironz.binaryprefs.exception.FileOperationException;
-import com.ironz.binaryprefs.file.FileAdapter;
 
 import java.io.File;
 import java.io.IOException;

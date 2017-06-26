@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.file;
+package com.ironz.binaryprefs.file.adapter;
 
 /**
  * Adapter abstraction which describes a file operation contract.

@@ -4,7 +4,7 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
