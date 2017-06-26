@@ -29,20 +29,24 @@ public class TestFileTransactionImpl implements FileTransaction {
 
     @Override
     public boolean commit(TransactionElement[] elements) {
-        for (TransactionElement e : elements) {
+        try {
+            for (TransactionElement e : elements) {
 
-            int action = e.getAction();
-            String name = e.getName();
-            byte[] content = e.getContent();
+                int action = e.getAction();
+                String name = e.getName();
+                byte[] content = e.getContent();
 
-            if (action == TransactionElement.ACTION_UPDATE) {
-                fileAdapter.save(name, content);
+                if (action == TransactionElement.ACTION_UPDATE) {
+                    fileAdapter.save(name, content);
+                }
+
+                if (action == TransactionElement.ACTION_REMOVE) {
+                    fileAdapter.remove(name);
+                }
             }
-
-            if (action == TransactionElement.ACTION_REMOVE) {
-                fileAdapter.remove(name);
-            }
+            return true;
+        } catch (Exception ignored) {
         }
-        return true;
+        return false;
     }
 }

@@ -9,9 +9,9 @@ import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 
 public class FileTransactionService extends Service {
 
-    public static final String BASE_DIRECTORY = "base_directory";
     public static final String CAUGHT_EXCEPTION_EVENT = "caught_exception";
-    public static final String EXCEPTION = "exception";
+    static final String BASE_DIRECTORY = "base_directory";
+    private static final String EXCEPTION = "exception";
 
     private FileAdapter fileAdapter;
     private String baseDir;
