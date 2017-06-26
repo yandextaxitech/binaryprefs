@@ -32,7 +32,7 @@ public class FileTransactionService extends Service {
         return new FileTransactionBridge.Stub() {
             @Override
             public FileTransactionElement[] fetch() throws RemoteException {
-                return fetchInternal();
+                return fetchBlocking();
             }
 
             @Override
@@ -42,18 +42,26 @@ public class FileTransactionService extends Service {
         };
     }
 
-    private FileTransactionElement[] fetchInternal() {
+    private FileTransactionElement[] fetchBlocking() {
         synchronized (FileTransactionService.class) {
-            String[] names = fileAdapter.names(baseDir);
-            FileTransactionElement[] elements = new FileTransactionElement[names.length];
-            for (int i = 0; i < names.length; i++) {
-                String name = names[i];
-                byte[] bytes = fileAdapter.fetch(name);
-                int action = FileTransactionElement.ACTION_FETCH;
-                elements[i] = new FileTransactionElement(action, name, bytes);
-            }
-            return elements;
+            return fetchInternal();
         }
+    }
+
+    private FileTransactionElement[] fetchInternal() {
+        String[] names = fileAdapter.names(baseDir);
+        FileTransactionElement[] elements = new FileTransactionElement[names.length];
+        for (int i = 0; i < names.length; i++) {
+            FileTransactionElement fileTransactionElement = fetchOne(names[i]);
+            elements[i] = fileTransactionElement;
+        }
+        return elements;
+    }
+
+    private FileTransactionElement fetchOne(String name) {
+        byte[] bytes = fileAdapter.fetch(name);
+        int action = FileTransactionElement.ACTION_FETCH;
+        return new FileTransactionElement(action, name, bytes);
     }
 
     private boolean commitBlocking(FileTransactionElement[] elements) {
@@ -75,15 +83,12 @@ public class FileTransactionService extends Service {
     }
 
     private void transactOne(FileTransactionElement e) {
-
         int action = e.getAction();
         String name = e.getName();
         byte[] content = e.getContent();
-
         if (action == FileTransactionElement.ACTION_UPDATE) {
             fileAdapter.save(name, content);
         }
-
         if (action == FileTransactionElement.ACTION_REMOVE) {
             fileAdapter.remove(name);
         }
