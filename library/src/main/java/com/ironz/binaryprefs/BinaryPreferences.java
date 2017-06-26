@@ -4,20 +4,19 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
+import com.ironz.binaryprefs.file.transaction.FileTransaction;
+import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
 public final class BinaryPreferences implements Preferences {
 
-    private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
     private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
@@ -26,10 +25,11 @@ public final class BinaryPreferences implements Preferences {
     private final Lock readLock;
     private final Lock writeLock;
     private final ByteEncryption byteEncryption;
+    private final FileTransaction fileTransaction;
     private final String baseDir;
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileAdapter fileAdapter,
+    public BinaryPreferences(FileTransaction fileTransaction,
                              DirectoryProvider directoryProvider,
                              ByteEncryption byteEncryption,
                              ExceptionHandler exceptionHandler,
@@ -38,7 +38,7 @@ public final class BinaryPreferences implements Preferences {
                              TaskExecutor taskExecutor,
                              SerializerFactory serializerFactory,
                              LockFactory lockFactory) {
-        this.fileAdapter = fileAdapter;
+        this.fileTransaction = fileTransaction;
         this.baseDir = directoryProvider.getBaseDirectory().getAbsolutePath();
         this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
@@ -53,26 +53,17 @@ public final class BinaryPreferences implements Preferences {
 
     private void fetchCache() {
         readLock.lock();
-        Map<String, Object> map = new HashMap<>();
         try {
-            for (String name : fileAdapter.names(baseDir)) {
-                String path = getFullPath(name);
-                byte[] bytes = fileAdapter.fetch(path);
+            for (TransactionElement element : fileTransaction.fetch()) {
+                String name = element.getName();
+                byte[] bytes = element.getContent();
                 byte[] decrypt = byteEncryption.decrypt(bytes);
                 Object o = serializerFactory.deserialize(name, decrypt);
-                map.put(name, o);
-            }
-            for (String name : map.keySet()) {
-                cacheProvider.put(name, map.get(name));
+                cacheProvider.put(name, o);
             }
         } finally {
             readLock.unlock();
         }
-    }
-
-    private String getFullPath(String name) {
-        File file = new File(baseDir, name);
-        return file.getAbsolutePath();
     }
 
     @Override
@@ -256,7 +247,7 @@ public final class BinaryPreferences implements Preferences {
             return new BinaryPreferencesEditor(
                     this,
                     baseDir,
-                    fileAdapter,
+                    fileTransaction,
                     byteEncryption,
                     exceptionHandler,
                     eventsBridge,

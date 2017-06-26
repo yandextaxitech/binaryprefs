@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 final class BlockingServiceBinder {
 
-    private static IBinder staticBinder;
+    private static IBinder iBinder;
 
     private final Context context;
 
@@ -22,7 +22,7 @@ final class BlockingServiceBinder {
 
     IBinder bindService(Intent intent) {
         bindServiceAndWait(intent, Context.BIND_AUTO_CREATE);
-        return staticBinder;
+        return iBinder;
     }
 
     private void bindServiceAndWait(Intent intent, int flags) {
@@ -34,7 +34,7 @@ final class BlockingServiceBinder {
         if (!isBound) {
             throw new FileOperationException("Can't establish connection with transaction service");
         }
-        waitOnLatch(ProxyServiceConnection.countDownLatch);
+        waitOnLatch(ProxyServiceConnection.latch);
     }
 
     private void waitOnLatch(CountDownLatch latch) {
@@ -46,23 +46,23 @@ final class BlockingServiceBinder {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Interrupted while waiting for service to be connected", e);
+            throw new FileOperationException("Interrupted while waiting for service to be connected");
         }
     }
 
     private static class ProxyServiceConnection implements ServiceConnection {
 
-        static CountDownLatch countDownLatch = new CountDownLatch(1);
+        static CountDownLatch latch = new CountDownLatch(1);
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            staticBinder = service;
-            countDownLatch.countDown();
+            iBinder = service;
+            latch.countDown();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            staticBinder = null;
+            iBinder = null;
         }
     }
 }

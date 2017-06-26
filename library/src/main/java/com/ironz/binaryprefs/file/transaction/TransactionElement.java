@@ -4,6 +4,7 @@ public final class TransactionElement {
 
     static final int ACTION_UPDATE = 1;
     static final int ACTION_REMOVE = 2;
+    static final int ACTION_FETCH = 3;
 
     private final int action;
     private final String name;

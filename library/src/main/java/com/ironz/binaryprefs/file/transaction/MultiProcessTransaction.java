@@ -25,33 +25,18 @@ public final class MultiProcessTransaction implements FileTransaction {
     }
 
     @Override
-    public String[] names() {
+    public TransactionElement[] fetch() {
         try {
-            return transactionBridge.names();
-        } catch (RemoteException e) {
-            throw new FileOperationException(e);
-        }
-    }
-
-    @Override
-    public byte[] fetch(String name) {
-        try {
-            return transactionBridge.fetch(name);
-        } catch (RemoteException e) {
-            throw new FileOperationException(e);
-        }
-    }
-
-    @Override
-    public void apply(TransactionElement[] elements) {
-        try {
-            FileTransactionElement[] fileTransactionElements = new FileTransactionElement[elements.length];
-            for (int i = 0; i < elements.length; i++) {
-                TransactionElement element = elements[i];
-                fileTransactionElements[i] = transform(element);
+            FileTransactionElement[] fileTransactionElements = transactionBridge.fetch();
+            TransactionElement[] elements = new TransactionElement[fileTransactionElements.length];
+            for (int i = 0; i < fileTransactionElements.length; i++) {
+                FileTransactionElement element = fileTransactionElements[i];
+                String name = element.getName();
+                byte[] content = element.getContent();
+                elements[i] = new TransactionElement(TransactionElement.ACTION_FETCH, name, content);
             }
-            transactionBridge.apply(fileTransactionElements);
-        } catch (Exception e) {
+            return elements;
+        } catch (RemoteException e) {
             throw new FileOperationException(e);
         }
     }
@@ -62,18 +47,14 @@ public final class MultiProcessTransaction implements FileTransaction {
             FileTransactionElement[] fileTransactionElements = new FileTransactionElement[elements.length];
             for (int i = 0; i < elements.length; i++) {
                 TransactionElement element = elements[i];
-                fileTransactionElements[i] = transform(element);
+                int action = element.getAction();
+                String name = element.getName();
+                byte[] content = element.getContent();
+                fileTransactionElements[i] = new FileTransactionElement(action, name, content);
             }
             return transactionBridge.commit(fileTransactionElements);
         } catch (Exception e) {
             throw new FileOperationException(e);
         }
-    }
-
-    private FileTransactionElement transform(TransactionElement element) {
-        int action = element.getAction();
-        String name = element.getName();
-        byte[] content = element.getContent();
-        return new FileTransactionElement(action, name, content);
     }
 }

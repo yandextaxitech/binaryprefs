@@ -26,36 +26,28 @@ public class FileTransactionService extends Service {
     private IBinder createBinder() {
         return new FileTransactionBridge.Stub() {
             @Override
-            public String[] names() throws RemoteException {
-                return namesInternal();
-            }
-
-            @Override
-            public byte[] fetch(String name) throws RemoteException {
-                return fetchInternal(name);
+            public FileTransactionElement[] fetch() throws RemoteException {
+                return fetchInternal();
             }
 
             @Override
             public boolean commit(FileTransactionElement[] elements) throws RemoteException {
                 return commitBlocking(elements);
             }
-
-            @Override
-            public void apply(FileTransactionElement[] elements) throws RemoteException {
-                commitBlocking(elements); //result ignored
-            }
         };
     }
 
-    private String[] namesInternal() {
+    private FileTransactionElement[] fetchInternal() {
         synchronized (FileTransactionService.class) {
-            return fileAdapter.names(baseDir);
-        }
-    }
-
-    private byte[] fetchInternal(String name) {
-        synchronized (FileTransactionService.class) {
-            return fileAdapter.fetch(name);
+            String[] names = fileAdapter.names(baseDir);
+            FileTransactionElement[] elements = new FileTransactionElement[names.length];
+            for (int i = 0; i < names.length; i++) {
+                String name = names[i];
+                byte[] bytes = fileAdapter.fetch(name);
+                int action = FileTransactionElement.ACTION_FETCH;
+                elements[i] = new FileTransactionElement(action, name, bytes);
+            }
+            return elements;
         }
     }
 

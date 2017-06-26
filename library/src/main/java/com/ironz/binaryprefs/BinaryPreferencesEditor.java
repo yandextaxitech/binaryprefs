@@ -4,7 +4,7 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.adapter.FileAdapter;
+import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
@@ -28,7 +28,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private final Preferences preferences;
     private final ExceptionHandler exceptionHandler;
-    private final FileAdapter fileAdapter;
+    private final FileTransaction fileTransaction;
     private final EventBridge bridge;
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
@@ -41,7 +41,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     BinaryPreferencesEditor(Preferences preferences,
                             String baseDir,
-                            FileAdapter fileAdapter,
+                            FileTransaction fileTransaction,
                             ByteEncryption byteEncryption,
                             ExceptionHandler exceptionHandler,
                             EventBridge bridge,
@@ -51,7 +51,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             Lock writeLock) {
         this.preferences = preferences;
         this.baseDir = baseDir;
-        this.fileAdapter = fileAdapter;
+        this.fileTransaction = fileTransaction;
         this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
@@ -234,7 +234,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    saveAll();
+                    performPersistenceTransaction();
                 }
             });
         } finally {
@@ -249,22 +249,10 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
-            return saveAll();
+            return performPersistenceTransaction();
         } finally {
             writeLock.unlock();
         }
-    }
-
-    private boolean saveAll() {
-        try {
-            clearPersistence();
-            removePersistence();
-            storePersistence();
-            return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(SAVE, e);
-        }
-        return false;
     }
 
     private void clearCache() {
@@ -293,6 +281,18 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
+    private boolean performPersistenceTransaction() {
+        try {
+            clearPersistence();
+            removePersistence();
+            storePersistence();
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(SAVE, e);
+        }
+        return false;
+    }
+
     private void clearPersistence() {
         if (!clearFlag) {
             return;
@@ -318,7 +318,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void removeInternal(String name) {
         File file = new File(baseDir, name);
         String path = file.getAbsolutePath();
-        fileAdapter.remove(path);
+//        fileTransaction.remove(path);
         bridge.notifyListenersRemove(preferences, name);
     }
 
@@ -328,7 +328,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         byte[] encrypt = byteEncryption.encrypt(bytes);
         File file = new File(baseDir, name);
         String path = file.getAbsolutePath();
-        fileAdapter.save(path, encrypt);
+//        fileTransaction.save(path, encrypt);
         bridge.notifyListenersUpdate(preferences, name, value);
     }
 }
