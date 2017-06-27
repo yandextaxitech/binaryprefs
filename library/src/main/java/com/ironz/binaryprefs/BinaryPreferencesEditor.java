@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
@@ -31,6 +32,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
+    private final ByteEncryption byteEncryption;
 
     private boolean clear;
 
@@ -41,7 +43,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Lock writeLock) {
+                            Lock writeLock,
+                            ByteEncryption byteEncryption) {
         this.preferences = preferences;
         this.fileTransaction = fileTransaction;
         this.exceptionHandler = exceptionHandler;
@@ -50,6 +53,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
+        this.byteEncryption = byteEncryption;
     }
 
     @Override
@@ -322,8 +326,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             SerializationStrategy strategy = strategyMap.get(key);
             int action = TransactionElement.ACTION_UPDATE;
             byte[] bytes = strategy.serialize();
-            Object rawContent = strategy.getValue();
-            elements.add(new TransactionElement(action, key, bytes, rawContent));
+            byte[] encrypt = byteEncryption.encrypt(bytes);
+            elements.add(new TransactionElement(action, key, encrypt));
         }
         return elements;
     }
@@ -340,12 +344,12 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void notifyListeners(List<TransactionElement> transaction) {
         for (TransactionElement element : transaction) {
             String name = element.getName();
-            Object rawContent = element.getRawContent();
+            byte[] bytes = element.getContent();
             if (element.getAction() == TransactionElement.ACTION_REMOVE) {
                 bridge.notifyListenersRemove(preferences, name);
             }
             if (element.getAction() == TransactionElement.ACTION_UPDATE) {
-                bridge.notifyListenersUpdate(preferences, name, rawContent);
+                bridge.notifyListenersUpdate(preferences, name, bytes);
             }
         }
     }

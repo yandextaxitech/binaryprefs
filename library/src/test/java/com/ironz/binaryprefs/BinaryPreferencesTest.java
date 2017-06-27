@@ -50,11 +50,17 @@ public final class BinaryPreferencesTest {
         FileTransaction fileTransaction = new TestFileTransactionImpl(baseDirectory, fileAdapter, exceptionHandler);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         LockFactory lockFactory = new SimpleLockFactoryImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl();
+        PreferencesInitializeListener initializeListener = new PreferencesInitializeListener() {
+            @Override
+            public void onCompleted() {
+
+            }
+        };
 
         preferences = new BinaryPreferences(
                 fileTransaction,
@@ -64,7 +70,8 @@ public final class BinaryPreferencesTest {
                 cacheProvider,
                 TaskExecutor.DEFAULT,
                 serializerFactory,
-                lockFactory
+                lockFactory,
+                initializeListener
         );
     }
 

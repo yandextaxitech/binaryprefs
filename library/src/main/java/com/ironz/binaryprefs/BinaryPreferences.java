@@ -16,6 +16,8 @@ import java.util.concurrent.locks.Lock;
 
 public final class BinaryPreferences implements Preferences {
 
+    private final FileTransaction fileTransaction;
+    private final ByteEncryption byteEncryption;
     private final ExceptionHandler exceptionHandler;
     private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
@@ -23,8 +25,7 @@ public final class BinaryPreferences implements Preferences {
     private final SerializerFactory serializerFactory;
     private final Lock readLock;
     private final Lock writeLock;
-    private final ByteEncryption byteEncryption;
-    private final FileTransaction fileTransaction;
+    private final PreferencesInitializeListener initializeListener;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(FileTransaction fileTransaction,
@@ -34,7 +35,8 @@ public final class BinaryPreferences implements Preferences {
                              CacheProvider cacheProvider,
                              TaskExecutor taskExecutor,
                              SerializerFactory serializerFactory,
-                             LockFactory lockFactory) {
+                             LockFactory lockFactory,
+                             PreferencesInitializeListener initializeListener) {
         this.fileTransaction = fileTransaction;
         this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
@@ -44,6 +46,7 @@ public final class BinaryPreferences implements Preferences {
         this.serializerFactory = serializerFactory;
         this.readLock = lockFactory.getReadLock();
         this.writeLock = lockFactory.getWriteLock();
+        this.initializeListener = initializeListener;
         fetchCache();
     }
 
@@ -248,7 +251,8 @@ public final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
-                    writeLock
+                    writeLock,
+                    byteEncryption
             );
         } finally {
             readLock.unlock();
