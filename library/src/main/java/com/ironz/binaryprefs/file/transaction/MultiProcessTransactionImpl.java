@@ -32,7 +32,6 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
             TransactionElement[] elements = new TransactionElement[fileTransactionElements.length];
             for (int i = 0; i < fileTransactionElements.length; i++) {
                 FileTransactionElement element = fileTransactionElements[i];
-                int action = TransactionElement.ACTION_FETCH;
                 String name = element.getName();
                 byte[] content = element.getContent();
                 elements[i] = TransactionElement.createFetchElement(name, content);
