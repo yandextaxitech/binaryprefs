@@ -12,16 +12,22 @@ public final class TransactionElement {
     private final String name;
     private final byte[] content;
 
-    public TransactionElement(int action, String name, byte[] content) {
+    public static TransactionElement createFetchElement(String name, byte[] content) {
+        return new TransactionElement(ACTION_FETCH, name, content);
+    }
+
+    public static TransactionElement createUpdateElement(String name, byte[] content) {
+        return new TransactionElement(ACTION_UPDATE, name, content);
+    }
+
+    public static TransactionElement createRemoveElement(String name) {
+        return new TransactionElement(ACTION_REMOVE, name, EMPTY_CONTENT);
+    }
+
+    private TransactionElement(int action, String name, byte[] content) {
         this.action = action;
         this.name = name;
         this.content = content;
-    }
-
-    public TransactionElement(int action, String name) {
-        this.action = action;
-        this.name = name;
-        this.content = EMPTY_CONTENT;
     }
 
     public int getAction() {

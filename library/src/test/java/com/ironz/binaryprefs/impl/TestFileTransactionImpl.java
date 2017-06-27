@@ -27,11 +27,10 @@ public final class TestFileTransactionImpl implements FileTransaction {
         TransactionElement[] elements = new TransactionElement[names.length];
         for (int i = 0; i < names.length; i++) {
             String name = names[i];
-            int action = TransactionElement.ACTION_FETCH;
             File file = new File(baseDir, name);
             String path = file.getAbsolutePath();
             byte[] bytes = fileAdapter.fetch(path);
-            elements[i] = new TransactionElement(action, name, bytes);
+            elements[i] = TransactionElement.createFetchElement(name, bytes);
         }
         return elements;
     }

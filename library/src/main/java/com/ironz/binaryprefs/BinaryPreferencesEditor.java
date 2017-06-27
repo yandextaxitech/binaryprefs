@@ -300,7 +300,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         List<TransactionElement> elements = new ArrayList<>();
         for (String name : cacheProvider.keys()) {
             int action = TransactionElement.ACTION_REMOVE;
-            TransactionElement e = new TransactionElement(action, name);
+            TransactionElement e = TransactionElement.createRemoveElement(name);
             elements.add(e);
         }
         return elements;
@@ -313,7 +313,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         List<TransactionElement> elements = new ArrayList<>();
         for (String name : removeSet) {
             int action = TransactionElement.ACTION_REMOVE;
-            TransactionElement e = new TransactionElement(action, name);
+            TransactionElement e = TransactionElement.createRemoveElement(name);
             elements.add(e);
         }
         return elements;
@@ -327,7 +327,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             int action = TransactionElement.ACTION_UPDATE;
             byte[] bytes = strategy.serialize();
             byte[] encrypt = byteEncryption.encrypt(bytes);
-            elements.add(new TransactionElement(action, key, encrypt));
+            TransactionElement e = TransactionElement.createUpdateElement(key, encrypt);
+            elements.add(e);
         }
         return elements;
     }
