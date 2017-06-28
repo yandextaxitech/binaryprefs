@@ -38,17 +38,14 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
     public boolean commit(TransactionElement[] elements) {
         try {
             for (TransactionElement element : elements) {
-
                 int action = element.getAction();
                 String name = element.getName();
                 byte[] content = element.getContent();
                 File file = new File(baseDir, name);
                 String path = file.getAbsolutePath();
-
                 if (action == TransactionElement.ACTION_UPDATE) {
                     fileAdapter.save(path, content);
                 }
-
                 if (action == TransactionElement.ACTION_REMOVE) {
                     fileAdapter.remove(path);
                 }
