@@ -1,61 +1,62 @@
 package com.ironz.binaryprefs.file.transaction;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
-import android.os.RemoteException;
-import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.file.adapter.FileAdapter;
+
+import java.io.File;
 
 @SuppressWarnings("unused")
 public final class MultiProcessTransactionImpl implements FileTransaction {
 
+    private static final String COMMIT = "commit";
+
     private final String baseDir;
-    private FileTransactionBridge transactionBridge;
+    private final FileAdapter fileAdapter;
+    private final ExceptionHandler exceptionHandler;
 
-    public MultiProcessTransactionImpl(Context context, String baseDir) {
+    public MultiProcessTransactionImpl(String baseDir, FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
         this.baseDir = baseDir;
-        init(context);
-    }
-
-    private void init(Context context) {
-        BlockingServiceBinder serviceBinder = new BlockingServiceBinder(context);
-        Intent intent = new Intent(context, FileTransactionService.class);
-        intent.putExtra(FileTransactionService.BASE_DIRECTORY, baseDir);
-        IBinder iBinder = serviceBinder.bindService(intent);
-        transactionBridge = FileTransactionBridge.Stub.asInterface(iBinder);
+        this.fileAdapter = fileAdapter;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
     public TransactionElement[] fetch() {
-        try {
-            FileTransactionElement[] fileTransactionElements = transactionBridge.fetch();
-            TransactionElement[] elements = new TransactionElement[fileTransactionElements.length];
-            for (int i = 0; i < fileTransactionElements.length; i++) {
-                FileTransactionElement element = fileTransactionElements[i];
-                String name = element.getName();
-                byte[] content = element.getContent();
-                elements[i] = TransactionElement.createFetchElement(name, content);
-            }
-            return elements;
-        } catch (RemoteException e) {
-            throw new FileOperationException(e);
+        String[] names = fileAdapter.names(baseDir);
+        TransactionElement[] elements = new TransactionElement[names.length];
+        for (int i = 0; i < names.length; i++) {
+            String name = names[i];
+            File file = new File(baseDir, name);
+            String path = file.getAbsolutePath();
+            byte[] bytes = fileAdapter.fetch(path);
+            elements[i] = TransactionElement.createFetchElement(name, bytes);
         }
+        return elements;
     }
 
     @Override
     public boolean commit(TransactionElement[] elements) {
         try {
-            FileTransactionElement[] fileTransactionElements = new FileTransactionElement[elements.length];
-            for (int i = 0; i < elements.length; i++) {
-                TransactionElement element = elements[i];
+            for (TransactionElement element : elements) {
+
                 int action = element.getAction();
                 String name = element.getName();
                 byte[] content = element.getContent();
-                fileTransactionElements[i] = new FileTransactionElement(action, name, content);
+                File file = new File(baseDir, name);
+                String path = file.getAbsolutePath();
+
+                if (action == TransactionElement.ACTION_UPDATE) {
+                    fileAdapter.save(path, content);
+                }
+
+                if (action == TransactionElement.ACTION_REMOVE) {
+                    fileAdapter.remove(path);
+                }
             }
-            return transactionBridge.commit(fileTransactionElements);
+            return true;
         } catch (Exception e) {
-            throw new FileOperationException(e);
+            exceptionHandler.handle(COMMIT, e);
         }
+        return false;
     }
 }
