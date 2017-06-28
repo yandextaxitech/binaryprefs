@@ -1,6 +1,8 @@
 package com.ironz.binaryprefs.file.transaction;
 
+import java.util.List;
+
 public interface FileTransaction {
-    TransactionElement[] fetch();
-    boolean commit(TransactionElement[] elements);
+    List<TransactionElement> fetch();
+    void commit(List<TransactionElement> elements);
 }

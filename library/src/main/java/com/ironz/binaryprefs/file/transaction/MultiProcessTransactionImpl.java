@@ -1,9 +1,10 @@
 package com.ironz.binaryprefs.file.transaction;
 
-import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public final class MultiProcessTransactionImpl implements FileTransaction {
@@ -12,48 +13,40 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
 
     private final String baseDir;
     private final FileAdapter fileAdapter;
-    private final ExceptionHandler exceptionHandler;
 
-    public MultiProcessTransactionImpl(String baseDir, FileAdapter fileAdapter, ExceptionHandler exceptionHandler) {
+    public MultiProcessTransactionImpl(String baseDir, FileAdapter fileAdapter) {
         this.baseDir = baseDir;
         this.fileAdapter = fileAdapter;
-        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
-    public TransactionElement[] fetch() {
+    public List<TransactionElement> fetch() {
         String[] names = fileAdapter.names(baseDir);
-        TransactionElement[] elements = new TransactionElement[names.length];
-        for (int i = 0; i < names.length; i++) {
-            String name = names[i];
+        List<TransactionElement> elements = new ArrayList<>();
+        for (String name : names) {
             File file = new File(baseDir, name);
             String path = file.getAbsolutePath();
             byte[] bytes = fileAdapter.fetch(path);
-            elements[i] = TransactionElement.createFetchElement(name, bytes);
+            TransactionElement element = TransactionElement.createFetchElement(name, bytes);
+            elements.add(element);
         }
         return elements;
     }
 
     @Override
-    public boolean commit(TransactionElement[] elements) {
-        try {
-            for (TransactionElement element : elements) {
-                int action = element.getAction();
-                String name = element.getName();
-                byte[] content = element.getContent();
-                File file = new File(baseDir, name);
-                String path = file.getAbsolutePath();
-                if (action == TransactionElement.ACTION_UPDATE) {
-                    fileAdapter.save(path, content);
-                }
-                if (action == TransactionElement.ACTION_REMOVE) {
-                    fileAdapter.remove(path);
-                }
+    public void commit(List<TransactionElement> elements) {
+        for (TransactionElement element : elements) {
+            int action = element.getAction();
+            String name = element.getName();
+            byte[] content = element.getContent();
+            File file = new File(baseDir, name);
+            String path = file.getAbsolutePath();
+            if (action == TransactionElement.ACTION_UPDATE) {
+                fileAdapter.save(path, content);
             }
-            return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(COMMIT, e);
+            if (action == TransactionElement.ACTION_REMOVE) {
+                fileAdapter.remove(path);
+            }
         }
-        return false;
     }
 }

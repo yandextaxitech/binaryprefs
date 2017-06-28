@@ -11,7 +11,8 @@ import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
-import com.ironz.binaryprefs.impl.TestFileTransactionImpl;
+import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
+import com.ironz.binaryprefs.impl.TestTaskExecutorImpl;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
@@ -47,9 +48,10 @@ public final class BinaryPreferencesTest {
         String baseDirectory = newFolder.getAbsolutePath();
         FileAdapter fileAdapter = new NioFileAdapter();
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-        FileTransaction fileTransaction = new TestFileTransactionImpl(baseDirectory, fileAdapter, exceptionHandler);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(baseDirectory, fileAdapter);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        TaskExecutor executor = new TestTaskExecutorImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
@@ -68,7 +70,7 @@ public final class BinaryPreferencesTest {
                 exceptionHandler,
                 eventsBridge,
                 cacheProvider,
-                TaskExecutor.DEFAULT,
+                executor,
                 serializerFactory,
                 lockFactory,
                 initializeListener

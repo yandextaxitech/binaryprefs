@@ -9,16 +9,7 @@ public interface TaskExecutor {
      * Tasks guaranteed to execute sequentially.
      *
      * @param runnable instance for task execution
+     * @return completable for task blocking
      */
-    void submit(Runnable runnable);
-
-    /**
-     * Performs task in current thread
-     */
-    TaskExecutor DEFAULT = new TaskExecutor() {
-        @Override
-        public void submit(Runnable runnable) {
-            runnable.run();
-        }
-    };
+    Completable submit(Runnable runnable);
 }

@@ -3,13 +3,13 @@ package com.ironz.binaryprefs;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import com.ironz.binaryprefs.serialization.strategy.impl.*;
+import com.ironz.binaryprefs.task.Completable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
@@ -19,13 +19,11 @@ import java.util.concurrent.locks.Lock;
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private static final TransactionElement[] EMPTY_TRANSACTION_ARRAY = new TransactionElement[0];
-    public static final String SAVE = "save";
 
     private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
     private final Set<String> removeSet = new HashSet<>(0);
 
     private final Preferences preferences;
-    private final ExceptionHandler exceptionHandler;
     private final FileTransaction fileTransaction;
     private final EventBridge bridge;
     private final TaskExecutor taskExecutor;
@@ -38,7 +36,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     BinaryPreferencesEditor(Preferences preferences,
                             FileTransaction fileTransaction,
-                            ExceptionHandler exceptionHandler,
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
@@ -47,7 +44,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             ByteEncryption byteEncryption) {
         this.preferences = preferences;
         this.fileTransaction = fileTransaction;
-        this.exceptionHandler = exceptionHandler;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
@@ -244,7 +240,13 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
-            return transact();
+            Completable submit = taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    transact();
+                }
+            });
+            return submit.completeBlocking();
         } finally {
             writeLock.unlock();
         }
@@ -276,13 +278,10 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private boolean transact() {
+    private void transact() {
         List<TransactionElement> transaction = createTransaction();
-        boolean success = performPersistenceTransaction(transaction);
-        if (success) {
-            notifyListeners(transaction);
-        }
-        return success;
+        fileTransaction.commit(transaction);
+        notifyListeners(transaction);
     }
 
     private List<TransactionElement> createTransaction() {
@@ -328,15 +327,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             elements.add(e);
         }
         return elements;
-    }
-
-    private boolean performPersistenceTransaction(List<TransactionElement> transaction) {
-        try {
-            return fileTransaction.commit(transaction.toArray(EMPTY_TRANSACTION_ARRAY));
-        } catch (Exception e) {
-            exceptionHandler.handle(SAVE, e);
-        }
-        return false;
     }
 
     private void notifyListeners(List<TransactionElement> transaction) {

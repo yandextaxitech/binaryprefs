@@ -9,6 +9,7 @@ import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
+import com.ironz.binaryprefs.task.Completable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
@@ -53,13 +54,19 @@ public final class BinaryPreferences implements Preferences {
     private void fetchCache() {
         readLock.lock();
         try {
-            for (TransactionElement element : fileTransaction.fetch()) {
-                String name = element.getName();
-                byte[] bytes = element.getContent();
-                byte[] decrypt = byteEncryption.decrypt(bytes);
-                Object o = serializerFactory.deserialize(name, decrypt);
-                cacheProvider.put(name, o);
-            }
+            Completable submit = taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    for (TransactionElement element : fileTransaction.fetch()) {
+                        String name = element.getName();
+                        byte[] bytes = element.getContent();
+                        byte[] decrypt = byteEncryption.decrypt(bytes);
+                        Object o = serializerFactory.deserialize(name, decrypt);
+                        cacheProvider.put(name, o);
+                    }
+                }
+            });
+            submit.completeUnsafe();
         } finally {
             readLock.unlock();
         }
@@ -246,7 +253,6 @@ public final class BinaryPreferences implements Preferences {
             return new BinaryPreferencesEditor(
                     this,
                     fileTransaction,
-                    exceptionHandler,
                     eventsBridge,
                     taskExecutor,
                     serializerFactory,
