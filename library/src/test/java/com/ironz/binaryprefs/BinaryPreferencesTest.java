@@ -44,6 +44,7 @@ public final class BinaryPreferencesTest {
     @Before
     public void setUp() throws Exception {
 
+        String name = "preferences";
         File newFolder = folder.newFolder();
         String baseDirectory = newFolder.getAbsolutePath();
         FileAdapter fileAdapter = new NioFileAdapter();
@@ -65,6 +66,7 @@ public final class BinaryPreferencesTest {
         };
 
         preferences = new BinaryPreferences(
+                name,
                 fileTransaction,
                 byteEncryption,
                 exceptionHandler,
