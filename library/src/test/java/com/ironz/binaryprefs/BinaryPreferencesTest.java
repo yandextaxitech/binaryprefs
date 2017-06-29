@@ -41,11 +41,12 @@ public final class BinaryPreferencesTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private Preferences preferences;
+    private File srcDir;
 
     @Before
     public void setUp() throws Exception {
         String name = "user_preferences";
-        final File srcDir = folder.newFolder("preferences");
+        srcDir = folder.newFolder("preferences");
         final File backupDir = folder.newFolder("backup");
         final File lockDir = folder.newFolder("lock");
         DirectoryProvider directoryProvider = new DirectoryProvider() {
@@ -552,7 +553,7 @@ public final class BinaryPreferencesTest {
         String value = "value";
         String undefined = "undefined";
 
-        folder.delete();
+        assertTrue(srcDir.delete());
 
         boolean commit = preferences.edit()
                 .putString(key, value)
