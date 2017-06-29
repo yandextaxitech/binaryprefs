@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.file.adapter;
 
 import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,18 +22,26 @@ import java.util.List;
 public final class NioFileAdapter implements FileAdapter {
 
     private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
+
     private static final String BACKUP_EXTENSION = ".bak";
+    private static final String LOCK_EXTENSION = ".lock";
+
     private static final String R_MODE = "r";
     private static final String RWD_MODE = "rwd";
 
-    @Override
-    public String[] names(String baseDir) {
-        return namesInternal(baseDir);
+    private final File baseDir;
+
+    public NioFileAdapter(DirectoryProvider directoryProvider) {
+        this.baseDir = directoryProvider.getBaseDirectory();
     }
 
-    private String[] namesInternal(String baseDir) {
-        File file = new File(baseDir);
-        String[] list = file.list();
+    @Override
+    public String[] names() {
+        return namesInternal();
+    }
+
+    private String[] namesInternal() {
+        String[] list = baseDir.list();
 
         if (list == null) {
             return EMPTY_STRING_NAMES_ARRAY;
@@ -41,7 +50,7 @@ public final class NioFileAdapter implements FileAdapter {
         final List<String> names = new ArrayList<>();
 
         for (String name : list) {
-            if (name.contains(".")) {
+            if (name.endsWith(BACKUP_EXTENSION) || name.endsWith(LOCK_EXTENSION)) {
                 continue;
             }
             names.add(name);
@@ -57,8 +66,8 @@ public final class NioFileAdapter implements FileAdapter {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private byte[] fetchBackupOrOriginal(String name) {
-        File backupFile = new File(name + BACKUP_EXTENSION);
-        File file = new File(name);
+        File backupFile = new File(baseDir, name + BACKUP_EXTENSION);
+        File file = new File(baseDir, name);
         if (backupFile.exists()) {
             deleteOriginal(file);
             swap(backupFile, file);
@@ -104,8 +113,8 @@ public final class NioFileAdapter implements FileAdapter {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupAndSave(String name, byte[] bytes) {
-        File file = new File(name);
-        File backupFile = new File(name + BACKUP_EXTENSION);
+        File file = new File(baseDir, name);
+        File backupFile = new File(baseDir, name + BACKUP_EXTENSION);
         swap(file, backupFile);
         saveInternal(file, bytes);
         deleteBackup(backupFile);
@@ -154,7 +163,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     private void removeInternal(String name) {
         try {
-            File file = new File(name);
+            File file = new File(baseDir, name);
             //noinspection ResultOfMethodCallIgnored
             file.delete();
         } catch (Exception e) {

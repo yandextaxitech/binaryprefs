@@ -25,6 +25,7 @@ public final class Completable {
             submit.get();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO: 6/28/17 implement logging
         }
         return false;

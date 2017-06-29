@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.lock;
 
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -12,26 +14,41 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class SimpleLockFactoryImpl implements LockFactory {
 
     private final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
+    private final String name;
+    private final DirectoryProvider directoryProvider;
 
-    @Override
-    public Lock getReadLock(String name) {
+    public SimpleLockFactoryImpl(String name, DirectoryProvider directoryProvider) {
+        this.name = name;
+        this.directoryProvider = directoryProvider;
+        init(name);
+    }
+
+    private void init(String name) {
+        initLocalLocks(name);
+        initProcessLocks(name);
+    }
+
+    private void initLocalLocks(String name) {
         if (locks.containsKey(name)) {
-            ReadWriteLock readWriteLock = locks.get(name);
-            return readWriteLock.readLock();
+            return;
         }
         ReadWriteLock lock = new ReentrantReadWriteLock(true);
         locks.put(name, lock);
-        return lock.readLock();
+    }
+
+    private void initProcessLocks(String name) {
+
     }
 
     @Override
-    public Lock getWriteLock(String name) {
-        if (locks.containsKey(name)) {
-            ReadWriteLock readWriteLock = locks.get(name);
-            return readWriteLock.writeLock();
-        }
-        ReadWriteLock lock = new ReentrantReadWriteLock(true);
-        locks.put(name, lock);
-        return lock.writeLock();
+    public Lock getReadLock() {
+        ReadWriteLock readWriteLock = locks.get(name);
+        return readWriteLock.readLock();
+    }
+
+    @Override
+    public Lock getWriteLock() {
+        ReadWriteLock readWriteLock = locks.get(name);
+        return readWriteLock.writeLock();
     }
 }

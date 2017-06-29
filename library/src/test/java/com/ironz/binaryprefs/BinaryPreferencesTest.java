@@ -10,6 +10,7 @@ import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
 import com.ironz.binaryprefs.impl.TestTaskExecutorImpl;
@@ -43,20 +44,24 @@ public final class BinaryPreferencesTest {
 
     @Before
     public void setUp() throws Exception {
-
-        String name = "preferences";
-        File newFolder = folder.newFolder();
-        String baseDirectory = newFolder.getAbsolutePath();
-        FileAdapter fileAdapter = new NioFileAdapter();
+        String name = "user_preferences";
+        final File srcDir = folder.newFolder("preferences");
+        DirectoryProvider directoryProvider = new DirectoryProvider() {
+            @Override
+            public File getBaseDirectory() {
+                return srcDir;
+            }
+        };
+        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(baseDirectory, fileAdapter);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         TaskExecutor executor = new TestTaskExecutorImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl();
+        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         EventBridge eventsBridge = new SimpleEventBridgeImpl();
 
         preferences = new BinaryPreferences(

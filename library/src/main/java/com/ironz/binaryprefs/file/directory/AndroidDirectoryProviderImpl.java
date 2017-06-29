@@ -23,7 +23,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
     }
 
     /**
-     * Creates instance for default or external (if possible) app cache directory.
+     * Creates instance for default or external (if enabled) app cache directory.
      *
      * @param context        target app context
      * @param prefName       preferences name
@@ -35,7 +35,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      */
     public AndroidDirectoryProviderImpl(Context context, String prefName, boolean saveInExternal) {
         File cacheDir = saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
-        prefs = new File(cacheDir, prefName);
+        prefs = new File(cacheDir, "/preferences/" + prefName);
         //noinspection ResultOfMethodCallIgnored
         prefs.mkdirs();
     }
