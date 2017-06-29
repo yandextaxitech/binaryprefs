@@ -17,7 +17,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     private static final String LOCK_EXTENSION = ".lock";
 
     private final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
-    private final Map<String, Lock> globalLocks = new ConcurrentHashMap<>();
+    private final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
 
     private final String name;
     private final File lockDirectory;
@@ -42,12 +42,12 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     }
 
     private void initProcessLocks(String name) {
-        if (globalLocks.containsKey(name)) {
+        if (processLocks.containsKey(name)) {
             return;
         }
         File lockFile = new File(lockDirectory, name + LOCK_EXTENSION);
         ProcessFileLock fileLock = new ProcessFileLock(lockFile);
-        globalLocks.put(name, fileLock);
+        processLocks.put(name, fileLock);
     }
 
     @Override
@@ -64,6 +64,6 @@ public final class SimpleLockFactoryImpl implements LockFactory {
 
     @Override
     public Lock getProcessLock() {
-        return globalLocks.get(name);
+        return processLocks.get(name);
     }
 }
