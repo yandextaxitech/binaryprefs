@@ -19,4 +19,11 @@ public interface LockFactory {
      * @return lock object, instantiated for concrete preference
      */
     Lock getWriteLock();
+
+    /**
+     * Returns global VM lock for synchronous file operations.
+     *
+     * @return lock object, instantiated for concrete preference
+     */
+    Lock getGlobalLock();
 }

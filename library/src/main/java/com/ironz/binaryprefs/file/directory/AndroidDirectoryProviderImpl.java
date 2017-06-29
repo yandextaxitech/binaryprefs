@@ -52,8 +52,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
     private File createStoreDirectory(File baseDir, String subDirectory, String prefName) {
         File file = new File(baseDir, "/" + subDirectory + "/" + prefName);
-        //noinspection ResultOfMethodCallIgnored
-        file.mkdirs();
+        file.mkdirs(); // TODO: 6/29/17 implement exception throwing
         return file;
     }
 

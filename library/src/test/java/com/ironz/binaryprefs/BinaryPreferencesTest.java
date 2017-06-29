@@ -66,14 +66,14 @@ public final class BinaryPreferencesTest {
         };
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter);
+        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
         TaskExecutor executor = new TestTaskExecutorImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         EventBridge eventsBridge = new SimpleEventBridgeImpl();
 
         preferences = new BinaryPreferences(
