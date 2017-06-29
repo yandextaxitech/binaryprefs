@@ -21,7 +21,7 @@ and works IPC (between processes).
 * All persisted data are encrypted. Default is AES encryption.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
-* Fully optimized IPC support (preferences change listeners and memory cache works between processes).
+* Fully optimized IPC support (preferences change listeners and in-memory cache works between processes).
 * Define custom directory for saving.
 * Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
 * Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
