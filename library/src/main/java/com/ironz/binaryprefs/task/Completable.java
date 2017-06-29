@@ -33,7 +33,7 @@ public final class Completable {
     /**
      * Complete task without exception handle and re-throws exception on higher level.
      */
-    public void completeUnsafe() {
+    public void completeBlockingUnsafe() {
         try {
             submit.get();
         } catch (Exception e) {

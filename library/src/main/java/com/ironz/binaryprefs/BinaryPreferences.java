@@ -66,7 +66,7 @@ public final class BinaryPreferences implements Preferences {
                     }
                 }
             });
-            submit.completeUnsafe();
+            submit.completeBlockingUnsafe();
         } finally {
             readLock.unlock();
         }
