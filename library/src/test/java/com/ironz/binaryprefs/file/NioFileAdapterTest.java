@@ -30,10 +30,22 @@ public class NioFileAdapterTest {
     @Before
     public void setUp() throws Exception {
         final File srcDir = folder.newFolder("preferences");
+        final File backupDir = folder.newFolder("backup");
+        final File lockDir = folder.newFolder("lock");
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
-            public File getBaseDirectory() {
+            public File getStoreDirectory() {
                 return srcDir;
+            }
+
+            @Override
+            public File getBackupDirectory() {
+                return backupDir;
+            }
+
+            @Override
+            public File getLockDirectory() {
+                return lockDir;
             }
         };
         fileAdapter = new NioFileAdapter(directoryProvider);

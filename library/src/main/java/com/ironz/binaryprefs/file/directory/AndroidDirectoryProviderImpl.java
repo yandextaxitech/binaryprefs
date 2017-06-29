@@ -10,7 +10,13 @@ import java.io.File;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
-    private final File prefs;
+    private static final String PREFERENCES = "preferences";
+    private static final String BACKUP = "backup";
+    private static final String LOCK = "lock";
+
+    private final File storeDirectory;
+    private final File backupDirectory;
+    private final File lockDirectory;
 
     /**
      * Creates instance for default app cache directory.
@@ -34,14 +40,35 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      *                       ({@link Context#getCacheDir()}).
      */
     public AndroidDirectoryProviderImpl(Context context, String prefName, boolean saveInExternal) {
-        File cacheDir = saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
-        prefs = new File(cacheDir, "/preferences/" + prefName);
+        File baseDir = defineCacheDir(context, saveInExternal);
+        storeDirectory = createStoreDirectory(baseDir, PREFERENCES, prefName);
+        backupDirectory = createStoreDirectory(baseDir, BACKUP, prefName);
+        lockDirectory = createStoreDirectory(baseDir, LOCK, prefName);
+    }
+
+    private File defineCacheDir(Context context, boolean saveInExternal) {
+        return saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
+    }
+
+    private File createStoreDirectory(File baseDir, String subDirectory, String prefName) {
+        File file = new File(baseDir, "/" + subDirectory + "/" + prefName);
         //noinspection ResultOfMethodCallIgnored
-        prefs.mkdirs();
+        file.mkdirs();
+        return file;
     }
 
     @Override
-    public File getBaseDirectory() {
-        return prefs;
+    public File getStoreDirectory() {
+        return storeDirectory;
+    }
+
+    @Override
+    public File getBackupDirectory() {
+        return backupDirectory;
+    }
+
+    @Override
+    public File getLockDirectory() {
+        return lockDirectory;
     }
 }

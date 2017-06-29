@@ -3,13 +3,27 @@ package com.ironz.binaryprefs.file.directory;
 import java.io.File;
 
 /**
- * Define directory for storing key/values
+ * Define directories for backup, storing, and locking key/values
  */
 public interface DirectoryProvider {
     /**
-     * Define concrete storing directory
+     * Define concrete store directory
      *
-     * @return Concrete storing directory which will store value files by key separately
+     * @return Concrete store directory which will store value files by key
      */
-    File getBaseDirectory();
+    File getStoreDirectory();
+
+    /**
+     * Define concrete backup directory
+     *
+     * @return Concrete backup directory which will store backup value files by key
+     */
+    File getBackupDirectory();
+
+    /**
+     * Define concrete lock directory
+     *
+     * @return Concrete lock directory which will store lock files by key
+     */
+    File getLockDirectory();
 }
