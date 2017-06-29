@@ -22,7 +22,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
 
     @Override
     public List<TransactionElement> fetch() {
-        Lock lock = lockFactory.getGlobalLock();
+        Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
             String[] names = fileAdapter.names();
@@ -40,7 +40,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
 
     @Override
     public void commit(List<TransactionElement> elements) {
-        Lock lock = lockFactory.getGlobalLock();
+        Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
             for (TransactionElement element : elements) {

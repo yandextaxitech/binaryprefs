@@ -21,9 +21,9 @@ public interface LockFactory {
     Lock getWriteLock();
 
     /**
-     * Returns global VM lock for synchronous file operations.
+     * Returns VM lock for synchronous file operations.
      *
      * @return lock object, instantiated for concrete preference
      */
-    Lock getGlobalLock();
+    Lock getProcessLock();
 }

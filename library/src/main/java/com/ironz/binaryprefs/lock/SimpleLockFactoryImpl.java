@@ -30,7 +30,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
 
     private void init(String name) {
         initLocalLocks(name);
-        initGlobalLocks(name);
+        initProcessLocks(name);
     }
 
     private void initLocalLocks(String name) {
@@ -41,12 +41,12 @@ public final class SimpleLockFactoryImpl implements LockFactory {
         locks.put(name, lock);
     }
 
-    private void initGlobalLocks(String name) {
+    private void initProcessLocks(String name) {
         if (globalLocks.containsKey(name)) {
             return;
         }
         File lockFile = new File(lockDirectory, name + LOCK_EXTENSION);
-        GlobalFileLock fileLock = new GlobalFileLock(lockFile);
+        ProcessFileLock fileLock = new ProcessFileLock(lockFile);
         globalLocks.put(name, fileLock);
     }
 
@@ -63,7 +63,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     }
 
     @Override
-    public Lock getGlobalLock() {
+    public Lock getProcessLock() {
         return globalLocks.get(name);
     }
 }

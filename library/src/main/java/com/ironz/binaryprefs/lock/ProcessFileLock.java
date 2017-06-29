@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
-public final class GlobalFileLock implements Lock {
+public final class ProcessFileLock implements Lock {
 
     private static final String RWD_MODE = "rwd";
 
@@ -21,7 +21,7 @@ public final class GlobalFileLock implements Lock {
     private FileChannel channel;
     private FileLock lock;
 
-    GlobalFileLock(File lockFile) {
+    ProcessFileLock(File lockFile) {
         this.lockFile = lockFile;
     }
 
