@@ -3,6 +3,7 @@ package com.ironz.binaryprefs.lock;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -16,29 +17,22 @@ public final class GlobalFileLock implements Lock {
 
     private final File lockFile;
 
-    private FileLock lock;
+    private RandomAccessFile randomAccessFile;
     private FileChannel channel;
+    private FileLock lock;
 
     GlobalFileLock(File lockFile) {
         this.lockFile = lockFile;
-        initRandomAccessFile();
-    }
-
-    private void initRandomAccessFile() {
-        try {
-            RandomAccessFile randomAccessFile = new RandomAccessFile(lockFile, RWD_MODE);
-            channel = randomAccessFile.getChannel();
-            if (!lockFile.exists()) {
-                randomAccessFile.write(0);
-            }
-        } catch (Exception e) {
-            throw new FileOperationException(e);
-        }
     }
 
     @Override
     public void lock() {
         try {
+            randomAccessFile = new RandomAccessFile(lockFile, RWD_MODE);
+            channel = randomAccessFile.getChannel();
+            if (!lockFile.exists()) {
+                randomAccessFile.write(0);
+            }
             lock = channel.lock();
         } catch (Exception e) {
             throw new FileOperationException(e);
@@ -51,6 +45,16 @@ public final class GlobalFileLock implements Lock {
             lock.release();
         } catch (Exception e) {
             throw new FileOperationException(e);
+        } finally {
+            try {
+                if (randomAccessFile != null) {
+                    randomAccessFile.close();
+                }
+                if (channel != null) {
+                    channel.close();
+                }
+            } catch (IOException ignored) {
+            }
         }
     }
 
