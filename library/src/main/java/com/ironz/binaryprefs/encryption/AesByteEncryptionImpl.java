@@ -24,30 +24,38 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     @Override
     public byte[] encrypt(byte[] bytes) {
         synchronized (this) {
-            try {
-                SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-                IvParameterSpec iv = new IvParameterSpec(initialVector);
-                Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-                cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
-                return cipher.doFinal(bytes);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return encryptInternal(bytes);
         }
     }
 
     @Override
     public byte[] decrypt(byte[] bytes) {
         synchronized (this) {
-            try {
-                SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-                IvParameterSpec iv = new IvParameterSpec(initialVector);
-                Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-                cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
-                return cipher.doFinal(bytes);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return decryptInternal(bytes);
+        }
+    }
+
+    private byte[] encryptInternal(byte[] bytes) {
+        try {
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
+            IvParameterSpec iv = new IvParameterSpec(initialVector);
+            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
+            return cipher.doFinal(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] decryptInternal(byte[] bytes) {
+        try {
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
+            IvParameterSpec iv = new IvParameterSpec(initialVector);
+            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
+            return cipher.doFinal(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
