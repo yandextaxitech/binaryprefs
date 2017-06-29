@@ -25,7 +25,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
 
     private void init(String name) {
         initLocalLocks(name);
-        initProcessLocks(name);
+        initGlobalLocks(name);
     }
 
     private void initLocalLocks(String name) {
@@ -36,7 +36,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
         locks.put(name, lock);
     }
 
-    private void initProcessLocks(String name) {
+    private void initGlobalLocks(String name) {
 
     }
 
