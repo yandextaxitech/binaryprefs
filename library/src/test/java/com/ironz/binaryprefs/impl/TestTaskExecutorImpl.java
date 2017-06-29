@@ -7,19 +7,19 @@ import java.util.concurrent.*;
 
 public class TestTaskExecutorImpl implements TaskExecutor {
 
-    private static final ExecutorService e = SameThreadExecutorService.getInstance();
+    private static final ExecutorService executor = CurrentThreadExecutorService.getInstance();
 
     @Override
     public Completable submit(Runnable runnable) {
-        Future<?> submit = e.submit(runnable);
+        Future<?> submit = executor.submit(runnable);
         return new Completable(submit);
     }
 
-    private static final class SameThreadExecutorService extends ThreadPoolExecutor {
+    private static final class CurrentThreadExecutorService extends ThreadPoolExecutor {
 
         private final CountDownLatch signal = new CountDownLatch(1);
 
-        private SameThreadExecutorService() {
+        private CurrentThreadExecutorService() {
             super(1, 1, 0, TimeUnit.DAYS, new SynchronousQueue<Runnable>(),
                     new ThreadPoolExecutor.CallerRunsPolicy());
         }
@@ -40,7 +40,7 @@ public class TestTaskExecutorImpl implements TaskExecutor {
 
         private static ExecutorService createInstance() {
 
-            final SameThreadExecutorService instance = new SameThreadExecutorService();
+            final CurrentThreadExecutorService instance = new CurrentThreadExecutorService();
 
             // The executor has one worker thread. Give it a Runnable that waits
             // until the executor service is shut down.

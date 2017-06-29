@@ -17,13 +17,13 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
             Thread thread = new Thread();
             thread.setName(ScheduledBackgroundTaskExecutor.class.getName().toLowerCase() + "-thread");
             thread.setDaemon(true);
-            thread.setPriority(Thread.MAX_PRIORITY);
+            thread.setPriority(Thread.NORM_PRIORITY + 2);
             return thread;
         }
     });
 
     @Override
-    public Completable submit(Runnable runnable) {
+    public synchronized Completable submit(Runnable runnable) {
         Future<?> submit = executor.submit(runnable);
         return new Completable(submit);
     }
