@@ -18,6 +18,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
 
     private final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
     private final Map<String, Lock> globalLocks = new ConcurrentHashMap<>();
+
     private final String name;
     private final DirectoryProvider directoryProvider;
 
