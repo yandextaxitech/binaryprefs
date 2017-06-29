@@ -26,7 +26,6 @@ public final class BinaryPreferences implements Preferences {
     private final SerializerFactory serializerFactory;
     private final Lock readLock;
     private final Lock writeLock;
-    private final PreferencesInitializeListener initializeListener;
 
     @SuppressWarnings("WeakerAccess")
     public BinaryPreferences(String name,
@@ -37,8 +36,7 @@ public final class BinaryPreferences implements Preferences {
                              CacheProvider cacheProvider,
                              TaskExecutor taskExecutor,
                              SerializerFactory serializerFactory,
-                             LockFactory lockFactory,
-                             PreferencesInitializeListener initializeListener) {
+                             LockFactory lockFactory) {
         this.fileTransaction = fileTransaction;
         this.byteEncryption = byteEncryption;
         this.exceptionHandler = exceptionHandler;
@@ -48,7 +46,6 @@ public final class BinaryPreferences implements Preferences {
         this.serializerFactory = serializerFactory;
         this.readLock = lockFactory.getReadLock(name);
         this.writeLock = lockFactory.getWriteLock(name);
-        this.initializeListener = initializeListener;
         fetchCache();
     }
 

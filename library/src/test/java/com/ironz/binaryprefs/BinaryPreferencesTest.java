@@ -58,12 +58,6 @@ public final class BinaryPreferencesTest {
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         LockFactory lockFactory = new SimpleLockFactoryImpl();
         EventBridge eventsBridge = new SimpleEventBridgeImpl();
-        PreferencesInitializeListener initializeListener = new PreferencesInitializeListener() {
-            @Override
-            public void onCompleted() {
-
-            }
-        };
 
         preferences = new BinaryPreferences(
                 name,
@@ -74,8 +68,7 @@ public final class BinaryPreferencesTest {
                 cacheProvider,
                 executor,
                 serializerFactory,
-                lockFactory,
-                initializeListener
+                lockFactory
         );
     }
 
