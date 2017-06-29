@@ -20,11 +20,11 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     private final Map<String, Lock> globalLocks = new ConcurrentHashMap<>();
 
     private final String name;
-    private final DirectoryProvider directoryProvider;
+    private final File lockDirectory;
 
     public SimpleLockFactoryImpl(String name, DirectoryProvider directoryProvider) {
         this.name = name;
-        this.directoryProvider = directoryProvider;
+        this.lockDirectory = directoryProvider.getLockDirectory();
         init(name);
     }
 
@@ -45,7 +45,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
         if (globalLocks.containsKey(name)) {
             return;
         }
-        File lockFile = new File(directoryProvider.getLockDirectory(), name + LOCK_EXTENSION);
+        File lockFile = new File(lockDirectory, name + LOCK_EXTENSION);
         GlobalFileLock fileLock = new GlobalFileLock(lockFile);
         globalLocks.put(name, fileLock);
     }
