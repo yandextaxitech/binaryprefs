@@ -83,7 +83,7 @@ public final class TestAddress implements Persistable {
     }
 
     @Override
-    public TestAddress deepCopy() {
+    public TestAddress deepClone() {
         return new TestAddress(country, city, street, apt, latitude, longitude);
     }
 

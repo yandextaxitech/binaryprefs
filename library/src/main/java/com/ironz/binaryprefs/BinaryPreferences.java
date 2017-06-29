@@ -176,7 +176,7 @@ public final class BinaryPreferences implements Preferences {
         try {
             if (cacheProvider.contains(key)) {
                 T t = (T) cacheProvider.get(key);
-                return (T) t.deepCopy();
+                return (T) t.deepClone();
             }
             return defValue;
         } finally {
