@@ -17,7 +17,7 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
             Thread thread = new Thread();
             thread.setName(ScheduledBackgroundTaskExecutor.class.getName().toLowerCase() + "-thread");
             thread.setDaemon(true);
-            thread.setPriority(Thread.NORM_PRIORITY + 2);
+            thread.setPriority(Thread.MAX_PRIORITY);
             return thread;
         }
     });
