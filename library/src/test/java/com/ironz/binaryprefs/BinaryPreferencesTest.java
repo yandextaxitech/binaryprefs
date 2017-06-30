@@ -43,7 +43,6 @@ public final class BinaryPreferencesTest {
 
     private Preferences preferences;
     private File srcDir;
-    private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     @Before
     public void setUp() throws Exception {
@@ -94,9 +93,6 @@ public final class BinaryPreferencesTest {
 
     @After
     public void tearDown() {
-        if (listener != null) {
-            preferences.unregisterOnSharedPreferenceChangeListener(listener);
-        }
         preferences.edit()
                 .clear()
                 .apply();
@@ -584,7 +580,7 @@ public final class BinaryPreferencesTest {
 
         final AtomicBoolean changed = new AtomicBoolean(false);
 
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 changed.set(true);
@@ -597,6 +593,8 @@ public final class BinaryPreferencesTest {
 
         assertTrue(changed.get());
         assertEquals(value, preferences.getString(key, undefined));
+
+        preferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     @Test
@@ -604,7 +602,7 @@ public final class BinaryPreferencesTest {
         String key = "key";
         String value = "value";
 
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 throw new UnsupportedOperationException("This method should never be invoked!");
