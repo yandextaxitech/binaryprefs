@@ -20,6 +20,7 @@ import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,7 +71,7 @@ public final class BinaryPreferencesTest {
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new TestTaskExecutorImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
@@ -88,6 +89,13 @@ public final class BinaryPreferencesTest {
                 serializerFactory,
                 lockFactory
         );
+    }
+
+    @After
+    public void tearDown() {
+        preferences.edit()
+                .clear()
+                .apply();
     }
 
     @Test

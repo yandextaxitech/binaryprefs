@@ -18,8 +18,6 @@ import java.util.concurrent.locks.Lock;
 @SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
-    private static final TransactionElement[] EMPTY_TRANSACTION_ARRAY = new TransactionElement[0];
-
     private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
     private final Set<String> removeSet = new HashSet<>(0);
 

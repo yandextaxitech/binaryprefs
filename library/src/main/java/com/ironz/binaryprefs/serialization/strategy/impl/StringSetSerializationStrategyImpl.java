@@ -4,6 +4,7 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.StringSetSerializer;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public final class StringSetSerializationStrategyImpl implements SerializationStrategy {
@@ -23,6 +24,6 @@ public final class StringSetSerializationStrategyImpl implements SerializationSt
 
     @Override
     public Object getValue() {
-        return value;
+        return new HashSet<>(value);
     }
 }
