@@ -156,7 +156,7 @@ public class MultipleBinaryPreferencesTest {
     }
 
     @Test
-    public void listenersChanges() {
+    public void registeredListenerChanges() {
         final String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         final String value = "value";
         final String undefined = "undefined";
@@ -178,5 +178,24 @@ public class MultipleBinaryPreferencesTest {
 
         assertTrue(changed.get());
         assertEquals(value, secondPreferencesInstance.getString(key, undefined));
+    }
+
+    @Test
+    public void unregisteredListenerChanges() {
+        String key = "key";
+        String value = "value";
+
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                throw new UnsupportedOperationException("This method should never be invoked!");
+            }
+        };
+        secondPreferencesInstance.registerOnSharedPreferenceChangeListener(listener);
+        secondPreferencesInstance.unregisterOnSharedPreferenceChangeListener(listener);
+
+        firstPreferencesInstance.edit()
+                .putString(key, value)
+                .apply();
     }
 }
