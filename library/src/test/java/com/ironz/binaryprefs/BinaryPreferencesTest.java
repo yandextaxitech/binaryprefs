@@ -43,6 +43,7 @@ public final class BinaryPreferencesTest {
 
     private Preferences preferences;
     private File srcDir;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     @Before
     public void setUp() throws Exception {
@@ -76,7 +77,7 @@ public final class BinaryPreferencesTest {
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new SimpleEventBridgeImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
 
         preferences = new BinaryPreferences(
                 name,
@@ -93,6 +94,9 @@ public final class BinaryPreferencesTest {
 
     @After
     public void tearDown() {
+        if (listener != null) {
+            preferences.unregisterOnSharedPreferenceChangeListener(listener);
+        }
         preferences.edit()
                 .clear()
                 .apply();
@@ -580,14 +584,15 @@ public final class BinaryPreferencesTest {
 
         final AtomicBoolean changed = new AtomicBoolean(false);
 
-        preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 changed.set(true);
                 assertEquals(key, s);
                 assertEquals(value, sharedPreferences.getString(key, undefined));
             }
-        });
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
         preferences.edit().putString(key, value).apply();
 
         assertTrue(changed.get());
@@ -599,7 +604,7 @@ public final class BinaryPreferencesTest {
         String key = "key";
         String value = "value";
 
-        final SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 throw new UnsupportedOperationException("This method should never be invoked!");

@@ -13,8 +13,10 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -34,7 +36,9 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_VALUE = "preference_value";
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
-    private final List<OnSharedPreferenceChangeListener> listeners = new CopyOnWriteArrayList<>();
+    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
+    private final List<OnSharedPreferenceChangeListener> listeners;
+
     private final Handler handler = new Handler();
 
     private final Context context;
@@ -78,6 +82,16 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
             }
         }, new IntentFilter(removeActionName));
         this.processId = Process.myPid();
+        this.listeners = initListeners(prefName);
+    }
+
+    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
+        if (allListeners.containsKey(prefName)) {
+            return allListeners.get(prefName);
+        }
+        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+        allListeners.put(prefName, listeners);
+        return listeners;
     }
 
     private void notifyUpdate(final Intent intent) {

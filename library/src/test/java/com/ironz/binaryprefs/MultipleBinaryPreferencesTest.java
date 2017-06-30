@@ -81,7 +81,7 @@ public class MultipleBinaryPreferencesTest {
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new SimpleEventBridgeImpl();
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
 
         return new BinaryPreferences(
                 name,
