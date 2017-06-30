@@ -10,8 +10,6 @@ import java.util.concurrent.locks.Lock;
 @SuppressWarnings("unused")
 public final class MultiProcessTransactionImpl implements FileTransaction {
 
-    private static final String COMMIT = "commit";
-
     private final FileAdapter fileAdapter;
     private final LockFactory lockFactory;
 

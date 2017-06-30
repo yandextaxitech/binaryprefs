@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.task;
 
+import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.util.concurrent.Future;
@@ -10,9 +11,11 @@ import java.util.concurrent.Future;
 public final class Completable {
 
     private final Future<?> submit;
+    private final ExceptionHandler exceptionHandler;
 
-    public Completable(Future<?> submit) {
+    public Completable(Future<?> submit, ExceptionHandler exceptionHandler) {
         this.submit = submit;
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -25,7 +28,7 @@ public final class Completable {
             submit.get();
             return true;
         } catch (Exception e) {
-            // TODO: 6/28/17 implement logging
+            exceptionHandler.handle(e);
         }
         return false;
     }
