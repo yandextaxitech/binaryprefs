@@ -577,7 +577,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void listeners() {
+    public void registerListeners() {
         final String key = "key";
         final String value = "value";
         final String undefined = "undefined";
@@ -600,7 +600,7 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void removeListeners() {
+    public void unregisterListeners() {
         String key = "key";
         String value = "value";
 
