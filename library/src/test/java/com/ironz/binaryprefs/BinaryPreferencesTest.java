@@ -589,7 +589,9 @@ public final class BinaryPreferencesTest {
             }
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
-        preferences.edit().putString(key, value).apply();
+        preferences.edit()
+                .putString(key, value)
+                .apply();
 
         assertTrue(changed.get());
         assertEquals(value, preferences.getString(key, undefined));
@@ -610,6 +612,9 @@ public final class BinaryPreferencesTest {
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
-        preferences.edit().putString(key, value).apply();
+
+        preferences.edit()
+                .putString(key, value)
+                .apply();
     }
 }

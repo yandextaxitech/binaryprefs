@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import android.content.SharedPreferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
@@ -27,9 +28,9 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class MultipleBinaryPreferencesTest {
 
@@ -152,5 +153,30 @@ public class MultipleBinaryPreferencesTest {
 
         assertFalse(firstPreferencesInstance.contains(key));
         assertFalse(secondPreferencesInstance.contains(key));
+    }
+
+    @Test
+    public void listenersChanges() {
+        final String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        final String value = "value";
+        final String undefined = "undefined";
+
+        final AtomicBoolean changed = new AtomicBoolean(false);
+
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                changed.set(true);
+                assertEquals(key, s);
+                assertEquals(value, sharedPreferences.getString(key, undefined));
+            }
+        };
+        secondPreferencesInstance.registerOnSharedPreferenceChangeListener(listener);
+        firstPreferencesInstance.edit()
+                .putString(key, value)
+                .apply();
+
+        assertTrue(changed.get());
+        assertEquals(value, secondPreferencesInstance.getString(key, undefined));
     }
 }
