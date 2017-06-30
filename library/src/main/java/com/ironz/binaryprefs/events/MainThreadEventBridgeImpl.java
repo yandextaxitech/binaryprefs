@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.events;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Handler;
 import com.ironz.binaryprefs.Preferences;
 
 import java.util.ArrayList;
@@ -9,15 +10,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Simple preference change listener bridge. Uses current thread for delivering all events.
+ * Main thread preference change listener bridge
  */
-public final class SimpleEventBridgeImpl implements EventBridge {
+@SuppressWarnings("unused")
+public final class MainThreadEventBridgeImpl implements EventBridge {
 
     private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
+    private final Handler handler = new Handler();
     private final List<OnSharedPreferenceChangeListener> listeners;
 
-    public SimpleEventBridgeImpl(String prefName) {
+    public MainThreadEventBridgeImpl(String prefName) {
         this.listeners = initListeners(prefName);
     }
 
@@ -41,7 +44,7 @@ public final class SimpleEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
+    public void notifyListenersUpdate(final Preferences preferences, final String key, byte[] bytes) {
         notifyListeners(preferences, key);
     }
 
@@ -50,9 +53,14 @@ public final class SimpleEventBridgeImpl implements EventBridge {
         notifyListeners(preferences, key);
     }
 
-    private void notifyListeners(Preferences preferences, String key) {
-        for (OnSharedPreferenceChangeListener listener : listeners) {
-            listener.onSharedPreferenceChanged(preferences, key);
-        }
+    private void notifyListeners(final Preferences preferences, final String key) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (OnSharedPreferenceChangeListener listener : listeners) {
+                    listener.onSharedPreferenceChanged(preferences, key);
+                }
+            }
+        });
     }
 }
