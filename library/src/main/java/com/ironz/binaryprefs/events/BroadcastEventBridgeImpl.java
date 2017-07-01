@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
+import android.util.Log;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
@@ -169,6 +170,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private void update(String key, Object value) {
+        Log.d("logger", "key: " + key + ", value: " + value);
         cacheProvider.put(key, value);
         notifyListeners(key);
     }
@@ -189,11 +191,11 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         });
     }
 
-    private void sendUpdateIntent(final String key, final Object value) {
+    private void sendUpdateIntent(final String key, final byte[] bytes) {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                sendUpdateIntentInternal(value, key);
+                sendUpdateIntentInternal(key, bytes);
             }
         });
     }
@@ -207,14 +209,13 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         });
     }
 
-    private void sendUpdateIntentInternal(Object value, String key) {
-        byte[] bytes = serializerFactory.serialize(value);
-        byte[] encrypt = byteEncryption.encrypt(bytes);
+    private void sendUpdateIntentInternal(String key, byte[] bytes) {
         Intent intent = new Intent(updateActionName);
         intent.putExtra(PREFERENCE_PROCESS_ID, processId);
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
-        intent.putExtra(PREFERENCE_VALUE, encrypt);
+        intent.putExtra(PREFERENCE_VALUE, bytes);
+        Log.d("logger", "send update");
         context.sendBroadcast(intent);
     }
 
@@ -223,6 +224,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         intent.putExtra(PREFERENCE_PROCESS_ID, processId);
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
+        Log.d("logger", "send remove");
         context.sendBroadcast(intent);
     }
 }
