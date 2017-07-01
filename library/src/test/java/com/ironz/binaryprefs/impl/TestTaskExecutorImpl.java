@@ -6,9 +6,10 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.concurrent.*;
 
-public class TestTaskExecutorImpl implements TaskExecutor {
+public final class TestTaskExecutorImpl implements TaskExecutor {
 
     private static final ExecutorService executor = CurrentThreadExecutorService.getInstance();
+
     private final ExceptionHandler exceptionHandler;
 
     public TestTaskExecutorImpl(ExceptionHandler exceptionHandler) {
