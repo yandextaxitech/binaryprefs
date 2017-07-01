@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
-import android.util.Log;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
@@ -170,7 +169,6 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private void update(String key, Object value) {
-        Log.d("logger", "key: " + key + ", value: " + value);
         cacheProvider.put(key, value);
         notifyListeners(key);
     }
@@ -215,7 +213,6 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
         intent.putExtra(PREFERENCE_VALUE, bytes);
-        Log.d("logger", "send update");
         context.sendBroadcast(intent);
     }
 
@@ -224,7 +221,6 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         intent.putExtra(PREFERENCE_PROCESS_ID, processId);
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
-        Log.d("logger", "send remove");
         context.sendBroadcast(intent);
     }
 }
