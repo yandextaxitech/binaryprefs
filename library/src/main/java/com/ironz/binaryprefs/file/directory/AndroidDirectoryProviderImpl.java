@@ -54,7 +54,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
     private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {
         File file = new File(baseDir, "/" + PREFERENCES + "/" + prefName + "/" + subDirectory);
-        if (!file.mkdirs()) {
+        if (!file.exists() && !file.mkdirs()) {
             throw new FileOperationException(String.format("Cannot create preferences directory in %s", file.getAbsolutePath()));
         }
         return file;
