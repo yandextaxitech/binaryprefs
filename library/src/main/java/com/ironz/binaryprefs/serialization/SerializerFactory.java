@@ -4,6 +4,7 @@ import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ public final class SerializerFactory {
     private final StringSerializer stringSerializer;
     private final StringSetSerializer stringSetSerializer;
     private final PersistableSerializer persistableSerializer;
+    private final CollectionStringSerializer collectionStringSerializer;
 
     public SerializerFactory(PersistableRegistry persistableRegistry) {
         booleanSerializer = new BooleanSerializer();
@@ -48,6 +50,7 @@ public final class SerializerFactory {
                 stringSerializer,
                 persistableRegistry
         );
+        collectionStringSerializer = new CollectionStringSerializer();
     }
 
     public Object deserialize(String key, byte[] bytes) {
@@ -84,6 +87,9 @@ public final class SerializerFactory {
         }
         if (charSerializer.isMatches(flag)) {
             return charSerializer.deserialize(bytes);
+        }
+        if(collectionStringSerializer.isMatches(flag)){
+            return collectionStringSerializer.deserialize(bytes);
         }
         throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
     }
@@ -122,6 +128,9 @@ public final class SerializerFactory {
         }
         if (o instanceof Character) {
             return charSerializer.serialize((char) o);
+        }
+        if (o instanceof Collection<?>) {
+            return collectionStringSerializer.serialize((Collection<String>) o);
         }
         throw new UnsupportedClassVersionError(String.format("Unsupported serialization object format '%s'", o));
     }
@@ -179,5 +188,9 @@ public final class SerializerFactory {
 
     public PersistableSerializer getPersistableSerializer() {
         return persistableSerializer;
+    }
+
+    public CollectionStringSerializer getCollectionStringSerializer() {
+        return collectionStringSerializer;
     }
 }

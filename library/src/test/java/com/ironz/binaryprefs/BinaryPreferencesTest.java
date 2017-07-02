@@ -1,7 +1,10 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+
+import com.ironz.binaryprefs.cache.CacheHashProvider;
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.ConcurrentCacheHashProviderImpl;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
@@ -23,6 +26,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -52,19 +58,19 @@ public final class BinaryPreferencesTest {
         };
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        CacheHashProvider cacheHashProvider = new ConcurrentCacheHashProviderImpl();
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         LockFactory lockFactory = new SimpleLockFactoryImpl();
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheHashProvider);
 
         preferences = new BinaryPreferences(
                 prefName,
                 fileAdapter,
                 exceptionHandler,
                 eventsBridge,
-                cacheProvider,
+                cacheHashProvider,
                 TaskExecutor.DEFAULT,
                 serializerFactory,
                 lockFactory
@@ -581,5 +587,69 @@ public final class BinaryPreferencesTest {
         preferences.registerOnSharedPreferenceChangeListener(listener);
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
         preferences.edit().putString(key, value).apply();
+    }
+
+    @Test
+    public void stringSetWithHashValue() {
+        String key = HashSet.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        HashSet<String> value = new HashSet<>();
+
+        value.add("One");
+        value.add("Two");
+        value.add("Third");
+
+        preferences.edit()
+                .putStringSet(key, value)
+                .apply();
+
+        value.add("Four");
+        value.add("Five");
+        value.add("Six");
+
+        Set<String> restored = preferences.getStringSet(key, Collections.<String>emptySet());
+        assertEquals(3, restored.size());
+        assertTrue(restored.contains("One"));
+        assertTrue(restored.contains("Two"));
+        assertTrue(restored.contains("Third"));
+
+        value.add("Seven");
+
+        restored = preferences.getStringSet(key, Collections.<String>emptySet());
+        assertEquals(3, restored.size());
+        assertTrue(restored.contains("One"));
+        assertTrue(restored.contains("Two"));
+        assertTrue(restored.contains("Third"));
+    }
+
+    @Test
+    public void stringArrayListValue() {
+        String key = ArrayList.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        ArrayList<String> value = new ArrayList<>();
+
+        value.add("One");
+        value.add("Two");
+        value.add("Third");
+
+        preferences.edit()
+                .putCollectionString(key, value)
+                .apply();
+
+        value.add("Four");
+        value.add("Five");
+        value.add("Six");
+        
+        Collection<String> restored = preferences.getCollectionString(key, Collections.<String>emptySet());
+        assertEquals(3, restored.size());
+        assertTrue(restored.contains("One"));
+        assertTrue(restored.contains("Two"));
+        assertTrue(restored.contains("Third"));
+
+        value.add("Seven");
+
+        restored = preferences.getCollectionString(key, Collections.<String>emptySet());
+        assertEquals(3, restored.size());
+        assertTrue(restored.contains("One"));
+        assertTrue(restored.contains("Two"));
+        assertTrue(restored.contains("Third"));
     }
 }

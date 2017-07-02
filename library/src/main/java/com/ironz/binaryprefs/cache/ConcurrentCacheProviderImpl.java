@@ -7,8 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Concurrent cache provider which locks on concrete key.
  */
-@SuppressWarnings("unused")
-public final class ConcurrentCacheProviderImpl implements CacheProvider {
+public class ConcurrentCacheProviderImpl implements CacheProvider {
 
     private final Map<String, Object> cache = new ConcurrentHashMap<>();
 
