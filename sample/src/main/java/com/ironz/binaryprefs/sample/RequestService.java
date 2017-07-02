@@ -22,8 +22,7 @@ public class RequestService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        final PreferencesConfig preferencesConfig = new PreferencesConfig();
-        final BinaryPreferences preferences = preferencesConfig.createBinaryPreferences(this);
+        final BinaryPreferences preferences = App.getPreferences();
 
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override

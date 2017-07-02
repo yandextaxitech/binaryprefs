@@ -16,10 +16,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final PreferencesConfig preferencesConfig = new PreferencesConfig();
-        final BinaryPreferences preferences = preferencesConfig.createBinaryPreferences(this);
-
         textView = (TextView) findViewById(R.id.hello);
+
+        BinaryPreferences preferences = App.getPreferences();
 
         updateTextView(preferences);
 
