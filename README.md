@@ -91,11 +91,10 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. ~~Reduce events (implement events transaction).~~ completed.
-11. `ForkJoinPool` instead of `ExecutorSevice`.
+11. Simplify api (instance creating, exception handles).
 12. File name encrypt.
 13. `Persistable` upgrade/downgrade api.
-14. Simplify api (instance creating, exception handles).
-15. RxJava support.
+14. RxJava support.
 
 ## License
 ```
