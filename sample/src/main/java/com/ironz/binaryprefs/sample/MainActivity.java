@@ -9,6 +9,8 @@ import com.ironz.binaryprefs.BinaryPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
+    private TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,16 +19,30 @@ public class MainActivity extends AppCompatActivity {
         final PreferencesConfig preferencesConfig = new PreferencesConfig();
         final BinaryPreferences preferences = preferencesConfig.createBinaryPreferences(this);
 
-        final TextView textView = (TextView) findViewById(R.id.hello);
+        textView = (TextView) findViewById(R.id.hello);
 
+        updateTextView(preferences);
+
+        listenChanges(preferences);
+
+        startServiceInAnotherProcess();
+    }
+
+    private void listenChanges(BinaryPreferences preferences) {
         preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                String time = "" + sharedPreferences.getLong("nano_time", 0L);
-                textView.setText(time);
+                updateTextView(sharedPreferences);
             }
         });
+    }
 
+    private void updateTextView(SharedPreferences sharedPreferences) {
+        String time = "" + sharedPreferences.getLong("nano_time", 0L);
+        textView.setText(time);
+    }
+
+    private void startServiceInAnotherProcess() {
         Intent intent = new Intent(this, RequestService.class);
         startService(intent);
     }

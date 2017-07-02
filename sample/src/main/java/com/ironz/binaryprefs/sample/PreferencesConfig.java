@@ -24,8 +24,8 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 final class PreferencesConfig {
 
     BinaryPreferences createBinaryPreferences(Context context) {
-        String name = "preferences";
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name);
+        String name = "user_data";
+        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, true);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = new ExceptionHandler() {
             @Override
