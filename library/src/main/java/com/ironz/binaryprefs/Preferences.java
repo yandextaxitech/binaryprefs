@@ -3,6 +3,7 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
+import java.util.Collection;
 /**
  * Extension of {@link SharedPreferences} class for using plain serialization mechanism
  */
@@ -55,4 +56,13 @@ public interface Preferences extends SharedPreferences {
      * @return Returns the preference value if it exists, or defValue.
      */
     double getDouble(String key, double defValue);
+
+    /**
+     * Retrieve an Collection<String> value from the preferences.
+     *
+     * @param key      The name of the preference to retrieve.
+     * @param defValue Value to return if this preference does not exist.
+     * @return Returns the preference value if it exists, or defValue.
+     */
+    Collection<String> getCollectionString(String key, Collection<String> defValue);
 }

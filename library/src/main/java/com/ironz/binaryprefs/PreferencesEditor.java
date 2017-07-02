@@ -3,6 +3,7 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -30,6 +31,8 @@ public interface PreferencesEditor extends SharedPreferences.Editor {
 
     @Override
     PreferencesEditor putBoolean(String key, boolean value);
+
+    PreferencesEditor putCollectionString(String key, Collection<String> value);
 
     @Override
     PreferencesEditor remove(String key);

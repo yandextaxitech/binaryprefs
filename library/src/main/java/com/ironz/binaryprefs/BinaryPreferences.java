@@ -1,5 +1,8 @@
 package com.ironz.binaryprefs;
 
+import android.util.Pair;
+
+import com.ironz.binaryprefs.cache.CacheHashProvider;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
@@ -17,7 +20,7 @@ public final class BinaryPreferences implements Preferences {
     private final FileAdapter fileAdapter;
     private final ExceptionHandler exceptionHandler;
     private final EventBridge eventsBridge;
-    private final CacheProvider cacheProvider;
+    private final CacheHashProvider cacheProvider;
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
     private final Lock readLock;
@@ -28,7 +31,7 @@ public final class BinaryPreferences implements Preferences {
                              FileAdapter fileAdapter,
                              ExceptionHandler exceptionHandler,
                              EventBridge eventsBridge,
-                             CacheProvider cacheProvider,
+                             CacheHashProvider cacheProvider,
                              TaskExecutor taskExecutor,
                              SerializerFactory serializerFactory,
                              LockFactory lockFactory) {
@@ -96,8 +99,19 @@ public final class BinaryPreferences implements Preferences {
         readLock.lock();
         try {
             if (cacheProvider.contains(key)) {
-                Set<String> strings = (Set<String>) cacheProvider.get(key);
-                return new HashSet<>(strings);
+
+                Set<String> result = (Set<String>) cacheProvider.get(key);
+
+                if (fileAdapter.contains(key)) {
+                    int hash = cacheProvider.getHash(key);
+
+                    if (result.hashCode() != hash) {
+                        result = (Set<String>) serializerFactory.deserialize(key, fileAdapter.fetch(key));
+                    }
+
+                }
+
+                return new HashSet<>(result);
             }
             return defValue;
         } finally {
@@ -217,6 +231,33 @@ public final class BinaryPreferences implements Preferences {
         try {
             if (cacheProvider.contains(key)) {
                 return (double) cacheProvider.get(key);
+            }
+            return defValue;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Collection<String> getCollectionString(String key, Collection<String> defValue) {
+        readLock.lock();
+        try {
+            if (cacheProvider.contains(key)) {
+
+
+                Collection<String> result = (Collection<String>) cacheProvider.get(key);
+
+                if (fileAdapter.contains(key)) {
+                    int hash = cacheProvider.getHash(key);
+
+                    if (result.hashCode() != hash) {
+                        result = (Collection<String>) serializerFactory.deserialize(key, fileAdapter.fetch(key));
+                    }
+
+                }
+
+                return result;
             }
             return defValue;
         } finally {

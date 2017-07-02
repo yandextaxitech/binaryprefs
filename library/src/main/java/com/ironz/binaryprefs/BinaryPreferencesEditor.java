@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.CacheHashProvider;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
@@ -10,6 +11,7 @@ import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import com.ironz.binaryprefs.serialization.strategy.impl.*;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,7 +32,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final EventBridge bridge;
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
-    private final CacheProvider cacheProvider;
+    private final CacheHashProvider cacheProvider;
     private final Lock writeLock;
 
     private boolean clearFlag;
@@ -41,7 +43,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
-                            CacheProvider cacheProvider,
+                            CacheHashProvider cacheProvider,
                             Lock writeLock) {
         this.preferences = preferences;
         this.fileAdapter = fileAdapter;
@@ -195,6 +197,18 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     @Override
+    public PreferencesEditor putCollectionString(String key, Collection<String> value) {
+        writeLock.lock();
+        try {
+            SerializationStrategy strategy = new CollectionStringSerializationStrategyImpl(value, serializerFactory);
+            strategyMap.put(key, strategy);
+            return this;
+        } finally {
+            writeLock.lock();
+        }
+    }
+
+    @Override
     public PreferencesEditor remove(String key) {
         writeLock.lock();
         try {
@@ -281,6 +295,16 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         for (String name : strategyMap.keySet()) {
             SerializationStrategy strategy = strategyMap.get(name);
             Object value = strategy.getValue();
+
+            if(strategy instanceof StringSetSerializationStrategyImpl) {
+                cacheProvider.putWithHash(name, value, value.hashCode());
+                return;
+            }
+
+            if(strategy instanceof CollectionStringSerializationStrategyImpl) {
+                cacheProvider.putWithHash(name, value, value.hashCode());
+                return;
+            }
             cacheProvider.put(name, value);
         }
     }
