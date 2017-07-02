@@ -28,7 +28,8 @@ public interface EventBridge {
 
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference update
-     *  @param preferences preferences, might be null (IPC)
+     *
+     * @param preferences target preferences instance
      * @param key         target key
      * @param bytes       target bytes
      */
@@ -37,7 +38,7 @@ public interface EventBridge {
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference remove
      *
-     * @param preferences preferences, might be null (ipc)
+     * @param preferences target preferences instance
      * @param key         target key
      */
     void notifyListenersRemove(Preferences preferences, String key);
