@@ -73,8 +73,8 @@ restoring complex objects. It's pretty similar like standard java
 For usage you just need to implement this interface with methods on your
 data-model.
 
-Note about `deepCopy` method: you should implement full object hierarchy
-copying for fast immutable in-memory data fetching.
+Note about `deepClone` method: you should implement full object hierarchy
+clone for fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 

@@ -27,8 +27,7 @@ public final class TestTaskExecutorImpl implements TaskExecutor {
         private final CountDownLatch signal = new CountDownLatch(1);
 
         private CurrentThreadExecutorService() {
-            super(1, 1, 0, TimeUnit.DAYS, new SynchronousQueue<Runnable>(),
-                    new ThreadPoolExecutor.CallerRunsPolicy());
+            super(1, 1, 0, TimeUnit.DAYS, new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.CallerRunsPolicy());
         }
 
         @Override
@@ -49,8 +48,6 @@ public final class TestTaskExecutorImpl implements TaskExecutor {
 
             final CurrentThreadExecutorService instance = new CurrentThreadExecutorService();
 
-            // The executor has one worker thread. Give it a Runnable that waits
-            // until the executor service is shut down.
             instance.submit(new Runnable() {
                 @Override
                 public void run() {

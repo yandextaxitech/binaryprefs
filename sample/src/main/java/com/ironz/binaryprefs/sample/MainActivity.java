@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
         preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                textView.setText(preferences.getString("key", "undefined"));
+                String time = "" + sharedPreferences.getLong("nano_time", 0L);
+                textView.setText(time);
             }
         });
 

@@ -7,7 +7,6 @@ import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
-import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
@@ -41,9 +40,16 @@ final class PreferencesConfig {
         TaskExecutor taskExecutor = new ScheduledBackgroundTaskExecutor(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new BroadcastEventBridgeImpl(context, name, cacheProvider, serializerFactory, taskExecutor, byteEncryption);
+        BroadcastEventBridgeImpl eventsBridge = new BroadcastEventBridgeImpl(
+                context,
+                name,
+                cacheProvider,
+                serializerFactory,
+                taskExecutor,
+                byteEncryption
+        );
 
-        return new BinaryPreferences(
+        BinaryPreferences binaryPreferences = new BinaryPreferences(
                 fileTransaction,
                 byteEncryption,
                 eventsBridge,
@@ -52,5 +58,7 @@ final class PreferencesConfig {
                 serializerFactory,
                 lockFactory
         );
+        eventsBridge.definePreferences(binaryPreferences);
+        return binaryPreferences;
     }
 }

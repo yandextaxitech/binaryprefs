@@ -28,7 +28,7 @@ public class RequestService extends Service {
         executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                preferences.edit().putString("key", "value" + System.nanoTime()).apply();
+                preferences.edit().putLong("nano_time", System.nanoTime()).apply();
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
