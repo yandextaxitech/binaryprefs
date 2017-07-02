@@ -24,12 +24,7 @@ and works IPC (between processes).
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
 * Fully optimized IPC support (preferences change listeners and in-memory cache works between processes).
 * Define custom directory for saving.
-* Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
-* Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
-* Working with your own locks for read/write mechanism.
-* Using custom task executor (like RxJava, UI thread or Thread Pools).
 * Handle various exception events.
-* One or all values logcat dump for faster debugging.
 
 ## Usage
 
