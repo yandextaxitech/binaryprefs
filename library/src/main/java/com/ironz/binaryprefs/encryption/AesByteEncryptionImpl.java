@@ -22,6 +22,32 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
         this.secretKeyBytes = secretKeyBytes;
         this.initialVector = initialVector;
+        this.encryptCipher = createEncryptCipher();
+        this.decryptCipher = createDecryptCipher();
+    }
+
+    private Cipher createEncryptCipher() {
+        try {
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
+            IvParameterSpec iv = new IvParameterSpec(initialVector);
+            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
+            return cipher;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Cipher createDecryptCipher() {
+        try {
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
+            IvParameterSpec iv = new IvParameterSpec(initialVector);
+            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
+            return cipher;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -40,8 +66,7 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     private byte[] encryptInternal(byte[] bytes) {
         try {
-            Cipher cipher = getEncryptCipher();
-            return cipher.doFinal(bytes);
+            return encryptCipher.doFinal(bytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,34 +74,9 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     private byte[] decryptInternal(byte[] bytes) {
         try {
-            Cipher cipher = getDecryptCipher();
-            return cipher.doFinal(bytes);
+            return decryptCipher.doFinal(bytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Cipher getEncryptCipher() throws Exception {
-        if (encryptCipher != null) {
-            return encryptCipher;
-        }
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-        IvParameterSpec iv = new IvParameterSpec(initialVector);
-        Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
-        encryptCipher = cipher;
-        return encryptCipher;
-    }
-
-    private Cipher getDecryptCipher() throws Exception {
-        if (decryptCipher != null) {
-            return decryptCipher;
-        }
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-        IvParameterSpec iv = new IvParameterSpec(initialVector);
-        Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
-        decryptCipher = cipher;
-        return decryptCipher;
     }
 }
