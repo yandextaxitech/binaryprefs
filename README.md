@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs)
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A%2B"><img src="https://img.shields.io/badge/Methods and size-503 | 60 KB-e91e63.svg"/></a>
+[![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A%2B"><img src="https://img.shields.io/badge/Methods count-503-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A%2B"><img src="https://img.shields.io/badge/Size-60 KB-e91e63.svg"/></a>
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
 ## Binary Preferences
 
@@ -12,13 +15,14 @@ and works IPC (between processes).
 * Lightweight. Zero dependency.
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
-* Fully backward compatible with default `SharedPreferences` interface.
+* Saves only delta, not all data from preferences.
 * Zero copy in-memory cache.
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
+* Fully backward compatible with default `SharedPreferences` interface.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
-* Fully optimized IPC support (preferences change listeners and memory cache works between processes).
+* Fully optimized IPC support (preferences change listeners and in-memory cache works between processes).
 * Define custom directory for saving.
 * Pluggable file adapters implementation (remote store, input/output stream). Default is NIO.
 * Providing custom cache mechanisms. Default is `ConcurrentHashMap<String, Object>`.
@@ -69,10 +73,10 @@ restoring complex objects. It's pretty similar like standard java
 For usage you just need to implement this interface with methods on your
 data-model.
 
-Note about `deepCopy` method: you should implement full object hierarchy
-copying for fast immutable in-memory data fetching.
+Note about `deepClone` method: you should implement full object hierarchy
+clone for fast immutable in-memory data fetching.
 
-Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L65-L117)
+Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
 ## Roadmap
 
@@ -86,12 +90,11 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 7. ~~Store all primitives (like byte, short, char, double).~~ completed.
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
-10. File name encrypt.
-11. `byte[]` saving.
-12. Reduce events (implement events transaction).
+10. ~~Reduce events (implement events transaction).~~ completed.
+11. Simplify api (instance creating, exception handles).
+12. File name encrypt.
 13. `Persistable` upgrade/downgrade api.
-14. Simplify api (instance creating, exception handles).
-15. RxJava support.
+14. RxJava support.
 
 ## License
 ```

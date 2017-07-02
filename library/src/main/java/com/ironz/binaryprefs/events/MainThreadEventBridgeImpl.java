@@ -3,10 +3,11 @@ package com.ironz.binaryprefs.events;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import com.ironz.binaryprefs.Preferences;
-import com.ironz.binaryprefs.cache.CacheProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Main thread preference change listener bridge
@@ -14,13 +15,22 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class MainThreadEventBridgeImpl implements EventBridge {
 
-    private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
+
     private final Handler handler = new Handler();
+    private final List<OnSharedPreferenceChangeListener> listeners;
 
-    private final CacheProvider cacheProvider;
+    public MainThreadEventBridgeImpl(String prefName) {
+        this.listeners = initListeners(prefName);
+    }
 
-    public MainThreadEventBridgeImpl(CacheProvider cacheProvider) {
-        this.cacheProvider = cacheProvider;
+    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
+        if (allListeners.containsKey(prefName)) {
+            return allListeners.get(prefName);
+        }
+        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+        allListeners.put(prefName, listeners);
+        return listeners;
     }
 
     @Override
@@ -34,14 +44,12 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(final Preferences preferences, final String key, Object value) {
-        cacheProvider.put(key, value);
+    public void notifyListenersUpdate(final Preferences preferences, final String key, byte[] bytes) {
         notifyListeners(preferences, key);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
-        cacheProvider.remove(key);
         notifyListeners(preferences, key);
     }
 

@@ -45,4 +45,9 @@ public final class DumpReceiver extends BroadcastReceiver {
     public static void register(String name, Preferences preferences) {
         BINARY_PREFERENCES_HASH_MAP.put(name, preferences);
     }
+
+    @SuppressWarnings("unused")
+    public static void unregister(String name) {
+        BINARY_PREFERENCES_HASH_MAP.remove(name);
+    }
 }

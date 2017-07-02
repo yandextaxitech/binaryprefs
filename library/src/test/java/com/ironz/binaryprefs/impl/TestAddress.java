@@ -11,6 +11,7 @@ public final class TestAddress implements Persistable {
     private String country;
     private String city;
     private String street;
+    private String nullString = null;
     private int apt;
     private double latitude;
     private double longitude;
@@ -39,7 +40,8 @@ public final class TestAddress implements Persistable {
         if (Double.compare(that.longitude, longitude) != 0) return false;
         if (country != null ? !country.equals(that.country) : that.country != null) return false;
         if (city != null ? !city.equals(that.city) : that.city != null) return false;
-        return street != null ? street.equals(that.street) : that.street == null;
+        if (street != null ? !street.equals(that.street) : that.street != null) return false;
+        return nullString != null ? nullString.equals(that.nullString) : that.nullString == null;
     }
 
     @Override
@@ -49,6 +51,7 @@ public final class TestAddress implements Persistable {
         result = country != null ? country.hashCode() : 0;
         result = 31 * result + (city != null ? city.hashCode() : 0);
         result = 31 * result + (street != null ? street.hashCode() : 0);
+        result = 31 * result + (nullString != null ? nullString.hashCode() : 0);
         result = 31 * result + apt;
         temp = Double.doubleToLongBits(latitude);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
@@ -62,6 +65,7 @@ public final class TestAddress implements Persistable {
         out.writeString(country);
         out.writeString(city);
         out.writeString(street);
+        out.writeString(nullString);
         out.writeInt(apt);
         out.writeDouble(latitude);
         out.writeDouble(longitude);
@@ -72,13 +76,14 @@ public final class TestAddress implements Persistable {
         country = in.readString();
         city = in.readString();
         street = in.readString();
+        nullString = in.readString();
         apt = in.readInt();
         latitude = in.readDouble();
         longitude = in.readDouble();
     }
 
     @Override
-    public TestAddress deepCopy() {
+    public TestAddress deepClone() {
         return new TestAddress(country, city, street, apt, latitude, longitude);
     }
 
@@ -88,6 +93,7 @@ public final class TestAddress implements Persistable {
                 "country='" + country + '\'' + '\n' +
                 ", city='" + city + '\'' + '\n' +
                 ", street='" + street + '\'' + '\n' +
+                ", nullString='" + nullString + '\'' + '\n' +
                 ", apt=" + apt + '\n' +
                 ", latitude=" + latitude + '\n' +
                 ", longitude=" + longitude + '\n' +

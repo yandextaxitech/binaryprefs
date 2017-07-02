@@ -2,21 +2,32 @@ package com.ironz.binaryprefs.events;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import com.ironz.binaryprefs.Preferences;
-import com.ironz.binaryprefs.cache.CacheProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Simple preference change listener bridge. Uses current thread for delivering all events.
  */
 public final class SimpleEventBridgeImpl implements EventBridge {
 
-    private final List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
-    private final CacheProvider cacheProvider;
+    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
-    public SimpleEventBridgeImpl(CacheProvider cacheProvider) {
-        this.cacheProvider = cacheProvider;
+    private final List<OnSharedPreferenceChangeListener> listeners;
+
+    public SimpleEventBridgeImpl(String prefName) {
+        this.listeners = initListeners(prefName);
+    }
+
+    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
+        if (allListeners.containsKey(prefName)) {
+            return allListeners.get(prefName);
+        }
+        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+        allListeners.put(prefName, listeners);
+        return listeners;
     }
 
     @Override
@@ -30,14 +41,12 @@ public final class SimpleEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, Object value) {
-        cacheProvider.put(key, value);
+    public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
         notifyListeners(preferences, key);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
-        cacheProvider.remove(key);
         notifyListeners(preferences, key);
     }
 

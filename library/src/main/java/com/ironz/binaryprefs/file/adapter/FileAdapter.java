@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.file;
+package com.ironz.binaryprefs.file.adapter;
 
 /**
  * Adapter abstraction which describes a file operation contract.
@@ -35,12 +35,4 @@ public interface FileAdapter {
      * @param name file name with extension
      */
     void remove(String name);
-
-    /**
-     * Returns {@code true} if file exists {@code false} otherwise.
-     *
-     * @param name exact name pattern
-     * @return true if filesystem contains false otherwise
-     */
-    boolean contains(String name);
 }

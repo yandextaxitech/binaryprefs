@@ -1,16 +1,23 @@
 package com.ironz.binaryprefs.file.directory;
 
 import android.content.Context;
+import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.io.File;
 
 /**
  * Provides default android cache directory or external (if possible) cache directory.
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
-    private final File prefs;
+    private static final String PREFERENCES = "preferences";
+    private static final String VALUES = "values";
+    private static final String BACKUP = "backup";
+    private static final String LOCK = "lock";
+
+    private final File storeDirectory;
+    private final File backupDirectory;
+    private final File lockDirectory;
 
     /**
      * Creates instance for default app cache directory.
@@ -18,12 +25,13 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      * @param context  target app context
      * @param prefName preferences name
      */
+    @SuppressWarnings("unused")
     public AndroidDirectoryProviderImpl(Context context, String prefName) {
         this(context, prefName, false);
     }
 
     /**
-     * Creates instance for default or external (if possible) app cache directory.
+     * Creates instance for default or external (if enabled) persistent cache directory.
      *
      * @param context        target app context
      * @param prefName       preferences name
@@ -34,14 +42,36 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      *                       ({@link Context#getCacheDir()}).
      */
     public AndroidDirectoryProviderImpl(Context context, String prefName, boolean saveInExternal) {
-        File cacheDir = saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
-        prefs = new File(cacheDir, prefName);
-        //noinspection ResultOfMethodCallIgnored
-        prefs.mkdirs();
+        File baseDir = defineCacheDir(context, saveInExternal);
+        storeDirectory = createStoreDirectory(baseDir, prefName, VALUES);
+        backupDirectory = createStoreDirectory(baseDir, prefName, BACKUP);
+        lockDirectory = createStoreDirectory(baseDir, prefName, LOCK);
+    }
+
+    private File defineCacheDir(Context context, boolean saveInExternal) {
+        return saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
+    }
+
+    private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {
+        File file = new File(baseDir, "/" + PREFERENCES + "/" + prefName + "/" + subDirectory);
+        if (!file.exists() && !file.mkdirs()) {
+            throw new FileOperationException(String.format("Cannot create preferences directory in %s", file.getAbsolutePath()));
+        }
+        return file;
     }
 
     @Override
-    public File getBaseDirectory() {
-        return prefs;
+    public File getStoreDirectory() {
+        return storeDirectory;
+    }
+
+    @Override
+    public File getBackupDirectory() {
+        return backupDirectory;
+    }
+
+    @Override
+    public File getLockDirectory() {
+        return lockDirectory;
     }
 }

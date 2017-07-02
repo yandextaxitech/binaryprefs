@@ -13,8 +13,10 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -34,7 +36,9 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_VALUE = "preference_value";
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
-    private final List<OnSharedPreferenceChangeListener> listeners = new CopyOnWriteArrayList<>();
+    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
+    private final List<OnSharedPreferenceChangeListener> listeners;
+
     private final Handler handler = new Handler();
 
     private final Context context;
@@ -65,6 +69,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
         this.updateActionName = ACTION_PREFERENCE_UPDATED + context.getPackageName();
         this.removeActionName = ACTION_PREFERENCE_REMOVED + context.getPackageName();
+        this.listeners = initListeners(prefName);
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -80,6 +85,15 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.processId = Process.myPid();
     }
 
+    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
+        if (allListeners.containsKey(prefName)) {
+            return allListeners.get(prefName);
+        }
+        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+        allListeners.put(prefName, listeners);
+        return listeners;
+    }
+
     private void notifyUpdate(final Intent intent) {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
@@ -88,18 +102,18 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
             return;
         }
 
+        final String key = intent.getStringExtra(PREFERENCE_KEY);
+        final byte[] value = intent.getByteArrayExtra(PREFERENCE_VALUE);
+
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                notifyUpdateInternal(intent);
+                notifyUpdateInternal(key, value);
             }
         });
     }
 
-    private void notifyUpdateInternal(Intent intent) {
-        final String key = intent.getStringExtra(PREFERENCE_KEY);
-        byte[] value = intent.getByteArrayExtra(PREFERENCE_VALUE);
-
+    private void notifyUpdateInternal(String key, byte[] value) {
         Object o = fetchObject(key, value);
         update(key, o);
     }
@@ -145,9 +159,10 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, Object value) {
-        update(key, value);
-        sendUpdateIntent(key, value);
+    public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
+        Object o = fetchObject(key, bytes);
+        update(key, o);
+        sendUpdateIntent(key, bytes);
     }
 
     @Override
@@ -177,11 +192,11 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         });
     }
 
-    private void sendUpdateIntent(final String key, final Object value) {
+    private void sendUpdateIntent(final String key, final byte[] bytes) {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                sendUpdateIntentInternal(value, key);
+                sendUpdateIntentInternal(key, bytes);
             }
         });
     }
@@ -195,14 +210,12 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         });
     }
 
-    private void sendUpdateIntentInternal(Object value, String key) {
-        byte[] bytes = serializerFactory.serialize(value);
-        byte[] encrypt = byteEncryption.encrypt(bytes);
+    private void sendUpdateIntentInternal(String key, byte[] bytes) {
         Intent intent = new Intent(updateActionName);
         intent.putExtra(PREFERENCE_PROCESS_ID, processId);
         intent.putExtra(PREFERENCE_NAME, prefName);
         intent.putExtra(PREFERENCE_KEY, key);
-        intent.putExtra(PREFERENCE_VALUE, encrypt);
+        intent.putExtra(PREFERENCE_VALUE, bytes);
         context.sendBroadcast(intent);
     }
 

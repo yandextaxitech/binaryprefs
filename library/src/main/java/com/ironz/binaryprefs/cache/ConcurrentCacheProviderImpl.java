@@ -10,35 +10,50 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unused")
 public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
-    private final Map<String, Object> cache = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Object>> caches = new ConcurrentHashMap<>();
+
+    private final Map<String, Object> currentCache;
+
+    public ConcurrentCacheProviderImpl(String name) {
+        currentCache = initCaches(name);
+    }
+
+    private Map<String, Object> initCaches(String name) {
+        if (caches.containsKey(name)) {
+            return caches.get(name);
+        }
+        Map<String, Object> map = new ConcurrentHashMap<>();
+        caches.put(name, map);
+        return map;
+    }
 
     @Override
     public boolean contains(String key) {
-        return cache.containsKey(key);
+        return currentCache.containsKey(key);
     }
 
     @Override
     public void put(String key, Object value) {
-        cache.put(key, value);
+        currentCache.put(key, value);
     }
 
     @Override
     public String[] keys() {
-        return cache.keySet().toArray(new String[0]);
+        return currentCache.keySet().toArray(new String[0]);
     }
 
     @Override
     public Object get(String key) {
-        return cache.get(key);
+        return currentCache.get(key);
     }
 
     @Override
     public void remove(String name) {
-        cache.remove(name);
+        currentCache.remove(name);
     }
 
     @Override
     public Map<String, Object> getAll() {
-        return Collections.unmodifiableMap(cache);
+        return Collections.unmodifiableMap(currentCache);
     }
 }

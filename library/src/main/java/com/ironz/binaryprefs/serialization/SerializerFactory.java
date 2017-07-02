@@ -132,7 +132,7 @@ public final class SerializerFactory {
             return Collections.unmodifiableSet((Set<String>) o);
         }
         if (o instanceof Persistable) {
-            return ((Persistable) o).deepCopy();
+            return ((Persistable) o).deepClone();
         }
         return o;
     }

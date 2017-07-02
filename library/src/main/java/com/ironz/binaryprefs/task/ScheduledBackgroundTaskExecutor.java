@@ -1,7 +1,10 @@
 package com.ironz.binaryprefs.task;
 
+import com.ironz.binaryprefs.exception.ExceptionHandler;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Performs all submitted tasks in one separated thread sequentially.
@@ -9,26 +12,19 @@ import java.util.concurrent.Executors;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
-    public static final String SHARED_PREFERENCES_ERROR = "shared_preferences_error";
+    private final ExceptionHandler exceptionHandler;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final PersistenceExecutionHandler exceptionHandler;
-
-    public ScheduledBackgroundTaskExecutor() {
-        this(PersistenceExecutionHandler.NO_OP);
-    }
-
-    public ScheduledBackgroundTaskExecutor(PersistenceExecutionHandler exceptionHandler) {
+    public ScheduledBackgroundTaskExecutor(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 
     @Override
-    public void submit(Runnable runnable) {
-        try {
-            executor.submit(runnable);
-        } catch (Exception e) {
-            exceptionHandler.onFail(SHARED_PREFERENCES_ERROR, e);
+    public Completable submit(Runnable runnable) {
+        synchronized (ScheduledBackgroundTaskExecutor.class) {
+            Future<?> submit = executor.submit(runnable);
+            return new Completable(submit, exceptionHandler);
         }
     }
 }

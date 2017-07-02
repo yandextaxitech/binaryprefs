@@ -96,9 +96,11 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     @Override
     public void writeString(String s) {
         if (s == null) {
-            throw new NullPointerException("String for serialization cannot be null");
+            writeInt(-1);
+            return;
         }
-        writeInt(s.length());
+        int length = s.getBytes().length;
+        writeInt(length);
         write(stringSerializer.serialize(s));
     }
 

@@ -9,16 +9,21 @@ public interface LockFactory {
     /**
      * Returns read lock object for synchronous operations.
      *
-     * @param name given preferences name
      * @return lock object, instantiated for concrete preference
      */
-    Lock getReadLock(String name);
+    Lock getReadLock();
 
     /**
      * Returns write lock object for synchronous operations.
      *
-     * @param name given preferences name
      * @return lock object, instantiated for concrete preference
      */
-    Lock getWriteLock(String name);
+    Lock getWriteLock();
+
+    /**
+     * Returns VM lock for synchronous file operations.
+     *
+     * @return lock object, instantiated for concrete preference
+     */
+    Lock getProcessLock();
 }

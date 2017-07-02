@@ -38,11 +38,11 @@ public interface Persistable extends Serializable {
     void readExternal(DataInput in);
 
     /**
-     * Creates and returns a deep copy of current object.
-     * The object implements the copy method to making a deep copy for
+     * Creates and returns a deep cloned version of current object.
+     * The object implements the clone method to making a deep copy for
      * constructing a new object for faster cache fetching proposes.
      *
      * @return new fully constructed persistable object
      */
-    Persistable deepCopy();
+    Persistable deepClone();
 }

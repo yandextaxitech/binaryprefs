@@ -22,6 +22,6 @@ public final class PersistableSerializationStrategyImpl implements Serialization
 
     @Override
     public Object getValue() {
-        return value;
+        return value.deepClone();
     }
 }

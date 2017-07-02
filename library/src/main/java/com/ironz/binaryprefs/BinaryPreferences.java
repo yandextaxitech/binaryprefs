@@ -1,12 +1,14 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.FileAdapter;
+import com.ironz.binaryprefs.file.transaction.FileTransaction;
+import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
+import com.ironz.binaryprefs.task.Completable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
@@ -14,8 +16,8 @@ import java.util.concurrent.locks.Lock;
 
 public final class BinaryPreferences implements Preferences {
 
-    private final FileAdapter fileAdapter;
-    private final ExceptionHandler exceptionHandler;
+    private final FileTransaction fileTransaction;
+    private final ByteEncryption byteEncryption;
     private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
@@ -24,37 +26,40 @@ public final class BinaryPreferences implements Preferences {
     private final Lock writeLock;
 
     @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(String prefName,
-                             FileAdapter fileAdapter,
-                             ExceptionHandler exceptionHandler,
+    public BinaryPreferences(FileTransaction fileTransaction,
+                             ByteEncryption byteEncryption,
                              EventBridge eventsBridge,
                              CacheProvider cacheProvider,
                              TaskExecutor taskExecutor,
                              SerializerFactory serializerFactory,
                              LockFactory lockFactory) {
-        this.fileAdapter = fileAdapter;
-        this.exceptionHandler = exceptionHandler;
+        this.fileTransaction = fileTransaction;
+        this.byteEncryption = byteEncryption;
         this.eventsBridge = eventsBridge;
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
-        this.readLock = lockFactory.getReadLock(prefName);
-        this.writeLock = lockFactory.getWriteLock(prefName);
+        this.readLock = lockFactory.getReadLock();
+        this.writeLock = lockFactory.getWriteLock();
         fetchCache();
     }
 
     private void fetchCache() {
         readLock.lock();
-        Map<String, Object> map = new HashMap<>();
         try {
-            for (String name : fileAdapter.names()) {
-                byte[] bytes = fileAdapter.fetch(name);
-                Object o = serializerFactory.deserialize(name, bytes);
-                map.put(name, o);
-            }
-            for (String name : map.keySet()) {
-                cacheProvider.put(name, map.get(name));
-            }
+            Completable submit = taskExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    for (TransactionElement element : fileTransaction.fetch()) {
+                        String name = element.getName();
+                        byte[] bytes = element.getContent();
+                        byte[] decrypt = byteEncryption.decrypt(bytes);
+                        Object o = serializerFactory.deserialize(name, decrypt);
+                        cacheProvider.put(name, o);
+                    }
+                }
+            });
+            submit.completeBlockingUnsafe();
         } finally {
             readLock.unlock();
         }
@@ -65,13 +70,13 @@ public final class BinaryPreferences implements Preferences {
         readLock.lock();
         try {
             Map<String, Object> all = cacheProvider.getAll();
-            HashMap<String, Object> copy = new HashMap<>(all.size());
+            HashMap<String, Object> clone = new HashMap<>(all.size());
             for (String key : all.keySet()) {
                 Object value = all.get(key);
                 Object redefinedValue = serializerFactory.redefineMutable(value);
-                copy.put(key, redefinedValue);
+                clone.put(key, redefinedValue);
             }
-            return Collections.unmodifiableMap(copy);
+            return Collections.unmodifiableMap(clone);
         } finally {
             readLock.unlock();
         }
@@ -164,7 +169,7 @@ public final class BinaryPreferences implements Preferences {
         try {
             if (cacheProvider.contains(key)) {
                 T t = (T) cacheProvider.get(key);
-                return (T) t.deepCopy();
+                return (T) t.deepClone();
             }
             return defValue;
         } finally {
@@ -240,13 +245,13 @@ public final class BinaryPreferences implements Preferences {
         try {
             return new BinaryPreferencesEditor(
                     this,
-                    fileAdapter,
-                    exceptionHandler,
+                    fileTransaction,
                     eventsBridge,
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
-                    writeLock
+                    writeLock,
+                    byteEncryption
             );
         } finally {
             readLock.unlock();

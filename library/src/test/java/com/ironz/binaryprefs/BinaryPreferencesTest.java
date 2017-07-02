@@ -8,15 +8,19 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.FileAdapter;
-import com.ironz.binaryprefs.file.NioFileAdapter;
+import com.ironz.binaryprefs.file.adapter.FileAdapter;
+import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
+import com.ironz.binaryprefs.file.transaction.FileTransaction;
+import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
+import com.ironz.binaryprefs.impl.TestTaskExecutorImpl;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,37 +42,58 @@ public final class BinaryPreferencesTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private Preferences preferences;
+    private File srcDir;
 
     @Before
     public void setUp() throws Exception {
-        String prefName = "preferences";
-        final File folder = this.folder.newFolder();
-        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+        String name = "user_preferences";
+        srcDir = folder.newFolder("preferences");
+        final File backupDir = folder.newFolder("backup");
+        final File lockDir = folder.newFolder("lock");
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
-            public File getBaseDirectory() {
-                return folder;
+            public File getStoreDirectory() {
+                return srcDir;
+            }
+
+            @Override
+            public File getBackupDirectory() {
+                return backupDir;
+            }
+
+            @Override
+            public File getLockDirectory() {
+                return lockDir;
             }
         };
+        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
+        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
+        ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
+        TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        LockFactory lockFactory = new SimpleLockFactoryImpl();
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
+        EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
 
         preferences = new BinaryPreferences(
-                prefName,
-                fileAdapter,
-                exceptionHandler,
+                fileTransaction,
+                byteEncryption,
                 eventsBridge,
                 cacheProvider,
-                TaskExecutor.DEFAULT,
+                executor,
                 serializerFactory,
                 lockFactory
         );
+    }
+
+    @After
+    public void tearDown() {
+        preferences.edit()
+                .clear()
+                .apply();
     }
 
     @Test
@@ -534,7 +559,7 @@ public final class BinaryPreferencesTest {
         String value = "value";
         String undefined = "undefined";
 
-        folder.delete();
+        assertTrue(srcDir.delete());
 
         boolean commit = preferences.edit()
                 .putString(key, value)
@@ -546,33 +571,38 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void listeners() {
+    public void registeredListenerChanges() {
         final String key = "key";
         final String value = "value";
         final String undefined = "undefined";
 
         final AtomicBoolean changed = new AtomicBoolean(false);
 
-        preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 changed.set(true);
                 assertEquals(key, s);
                 assertEquals(value, sharedPreferences.getString(key, undefined));
             }
-        });
-        preferences.edit().putString(key, value).apply();
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
+        preferences.edit()
+                .putString(key, value)
+                .apply();
 
         assertTrue(changed.get());
         assertEquals(value, preferences.getString(key, undefined));
+
+        preferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     @Test
-    public void removeListeners() {
+    public void unregisteredListenerChanges() {
         String key = "key";
         String value = "value";
 
-        final SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 throw new UnsupportedOperationException("This method should never be invoked!");
@@ -580,6 +610,9 @@ public final class BinaryPreferencesTest {
         };
         preferences.registerOnSharedPreferenceChangeListener(listener);
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
-        preferences.edit().putString(key, value).apply();
+
+        preferences.edit()
+                .putString(key, value)
+                .apply();
     }
 }
