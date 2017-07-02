@@ -13,10 +13,10 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -89,7 +89,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }
-        List<OnSharedPreferenceChangeListener> listeners = new CopyOnWriteArrayList<>();
+        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
         allListeners.put(prefName, listeners);
         return listeners;
     }

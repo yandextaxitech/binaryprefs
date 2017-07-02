@@ -70,13 +70,13 @@ public final class BinaryPreferences implements Preferences {
         readLock.lock();
         try {
             Map<String, Object> all = cacheProvider.getAll();
-            HashMap<String, Object> copy = new HashMap<>(all.size());
+            HashMap<String, Object> clone = new HashMap<>(all.size());
             for (String key : all.keySet()) {
                 Object value = all.get(key);
                 Object redefinedValue = serializerFactory.redefineMutable(value);
-                copy.put(key, redefinedValue);
+                clone.put(key, redefinedValue);
             }
-            return Collections.unmodifiableMap(copy);
+            return Collections.unmodifiableMap(clone);
         } finally {
             readLock.unlock();
         }
