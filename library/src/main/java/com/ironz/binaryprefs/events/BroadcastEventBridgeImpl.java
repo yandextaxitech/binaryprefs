@@ -160,11 +160,14 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
+        Object o = fetchObject(key, bytes);
+        update(key, o);
         sendUpdateIntent(key, bytes);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
+        remove(key);
         sendRemoveIntent(key);
     }
 
