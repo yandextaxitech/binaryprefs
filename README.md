@@ -60,7 +60,7 @@ You should re-implement your own `DirectoryProvider`, which is the provider of
 base storing directory.
 
 
-#### Dealing with `Persistable `
+#### Dealing with `Persistable`
 
 `Persistable` contract been added for fast and flexible saving and it's
 restoring complex objects. It's pretty similar like standard java
