@@ -13,10 +13,10 @@ import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -69,6 +69,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
         this.updateActionName = ACTION_PREFERENCE_UPDATED + context.getPackageName();
         this.removeActionName = ACTION_PREFERENCE_REMOVED + context.getPackageName();
+        this.listeners = initListeners(prefName);
         this.context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -82,14 +83,13 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
             }
         }, new IntentFilter(removeActionName));
         this.processId = Process.myPid();
-        this.listeners = initListeners(prefName);
     }
 
     private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }
-        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
+        List<OnSharedPreferenceChangeListener> listeners = new CopyOnWriteArrayList<>();
         allListeners.put(prefName, listeners);
         return listeners;
     }
@@ -102,18 +102,18 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
             return;
         }
 
+        final String key = intent.getStringExtra(PREFERENCE_KEY);
+        final byte[] value = intent.getByteArrayExtra(PREFERENCE_VALUE);
+
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
-                notifyUpdateInternal(intent);
+                notifyUpdateInternal(key, value);
             }
         });
     }
 
-    private void notifyUpdateInternal(Intent intent) {
-        final String key = intent.getStringExtra(PREFERENCE_KEY);
-        byte[] value = intent.getByteArrayExtra(PREFERENCE_VALUE);
-
+    private void notifyUpdateInternal(String key, byte[] value) {
         Object o = fetchObject(key, value);
         update(key, o);
     }
