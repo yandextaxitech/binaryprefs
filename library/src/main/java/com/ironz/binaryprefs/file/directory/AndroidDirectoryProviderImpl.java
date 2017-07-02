@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.file.directory;
 
 import android.content.Context;
+import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.io.File;
 
@@ -24,6 +25,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      * @param context  target app context
      * @param prefName preferences name
      */
+    @SuppressWarnings("unused")
     public AndroidDirectoryProviderImpl(Context context, String prefName) {
         this(context, prefName, false);
     }
@@ -52,7 +54,9 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
     private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {
         File file = new File(baseDir, "/" + PREFERENCES + "/" + prefName + "/" + subDirectory);
-        file.mkdirs(); // TODO: 6/29/17 implement exception throwing
+        if (!file.mkdirs()) {
+            throw new FileOperationException(String.format("Cannot create preferences directory in %s", file.getAbsolutePath()));
+        }
         return file;
     }
 
