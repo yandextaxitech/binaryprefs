@@ -15,7 +15,7 @@ and works IPC (between processes).
 * Lightweight. Zero dependency.
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
-* Persists only delta, not full data set from preferences.
+* Persists only delta, not full preferences data set.
 * Zero copy in-memory cache.
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
