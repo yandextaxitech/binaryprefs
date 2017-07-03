@@ -87,9 +87,10 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. ~~Reduce events (implement events transaction).~~ completed.
 11. Simplify api (instance creating, exception handles).
-12. File name encrypt.
-13. `Persistable` upgrade/downgrade api.
-14. RxJava support.
+12. Finalize serialization contract.
+13. File name encrypt.
+14. `Persistable` upgrade/downgrade api.
+15. RxJava support.
 
 ## License
 ```
