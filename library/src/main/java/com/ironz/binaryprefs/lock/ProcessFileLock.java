@@ -35,7 +35,7 @@ public final class ProcessFileLock implements Lock {
             }
             lock = channel.lock();
         } catch (Exception e) {
-            throw new FileOperationException(e);
+            throw new FileOperationException("Exception while acquire lock", e);
         }
     }
 
@@ -44,7 +44,7 @@ public final class ProcessFileLock implements Lock {
         try {
             lock.release();
         } catch (Exception e) {
-            throw new FileOperationException(e);
+            throw new FileOperationException("Exception while release lock", e);
         } finally {
             try {
                 if (randomAccessFile != null) {
