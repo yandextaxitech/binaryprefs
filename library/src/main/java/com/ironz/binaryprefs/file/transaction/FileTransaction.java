@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Transaction contract which describes one file event mechanism.
  * Contract guarantees what disk changes will be performed
- * successful or rolled back on old values.
+ * successful or rolled back to old values.
  */
 public interface FileTransaction {
     /**
