@@ -19,7 +19,8 @@ public final class Completable {
     }
 
     /**
-     * Returns task execution result
+     * Returns task execution result.
+     * Also this method will call exception handle method if task execution fails.
      *
      * @return {@code true} if task completed successfully {@code false} otherwise
      */
