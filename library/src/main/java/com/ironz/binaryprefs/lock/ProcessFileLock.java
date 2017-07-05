@@ -31,6 +31,7 @@ public final class ProcessFileLock implements Lock {
             randomAccessFile = new RandomAccessFile(lockFile, RWD_MODE);
             channel = randomAccessFile.getChannel();
             if (!lockFile.exists()) {
+                randomAccessFile.seek(0);
                 randomAccessFile.write(0);
             }
             lock = channel.lock();
