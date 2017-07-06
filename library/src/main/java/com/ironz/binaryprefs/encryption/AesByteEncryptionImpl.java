@@ -37,7 +37,8 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     private byte[] encryptInternal(byte[] bytes) {
         try {
-            return createEncryptCipher().doFinal(bytes);
+            Cipher encryptCipher = createEncryptCipher();
+            return encryptCipher.doFinal(bytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -45,7 +46,8 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     private byte[] decryptInternal(byte[] bytes) {
         try {
-            return createDecryptCipher().doFinal(bytes);
+            Cipher decryptCipher = createDecryptCipher();
+            return decryptCipher.doFinal(bytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
