@@ -130,11 +130,21 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     private void swap(File from, File to) {
+        if (!from.exists()) {
+            return;
+        }
+        if (to.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            to.delete();
+        }
         //noinspection ResultOfMethodCallIgnored
         from.renameTo(to);
     }
 
     private void delete(File file) {
+        if (!file.exists()) {
+            return;
+        }
         //noinspection ResultOfMethodCallIgnored
         file.delete();
     }
