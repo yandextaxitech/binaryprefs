@@ -57,15 +57,10 @@ public final class NioFileAdapter implements FileAdapter {
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         File file = new File(baseDir, name);
         if (backupFile.exists()) {
-            deleteOriginal(file);
+            delete(file);
             swap(backupFile, file);
         }
         return fetchInternal(file);
-    }
-
-    private void deleteOriginal(File file) {
-        //noinspection ResultOfMethodCallIgnored
-        file.delete();
     }
 
     private byte[] fetchInternal(File file) {
@@ -105,17 +100,7 @@ public final class NioFileAdapter implements FileAdapter {
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         swap(file, backupFile);
         saveInternal(file, bytes);
-        deleteBackup(backupFile);
-    }
-
-    private void deleteBackup(File backupFile) {
-        //noinspection ResultOfMethodCallIgnored
-        backupFile.delete();
-    }
-
-    private void swap(File from, File to) {
-        //noinspection ResultOfMethodCallIgnored
-        from.renameTo(to);
+        delete(backupFile);
     }
 
     private void saveInternal(File file, byte[] bytes) {
@@ -142,6 +127,16 @@ public final class NioFileAdapter implements FileAdapter {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private void swap(File from, File to) {
+        //noinspection ResultOfMethodCallIgnored
+        from.renameTo(to);
+    }
+
+    private void delete(File file) {
+        //noinspection ResultOfMethodCallIgnored
+        file.delete();
     }
 
     @Override
