@@ -6,8 +6,8 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
+import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
 import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
@@ -31,8 +31,8 @@ public class BinaryPreferencesBuilder {
     private static final String DEFAULT_NAME = "default";
     private final Context context;
     private final Map<String, Class<? extends Persistable>> persistableByToken = new HashMap<>();
-    private String secret;
-    private String initialVector;
+    private byte[] secret;
+    private byte[] initialVector;
     private String name = DEFAULT_NAME;
     private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
 
@@ -40,7 +40,7 @@ public class BinaryPreferencesBuilder {
         this.context = context;
     }
 
-    public BinaryPreferencesBuilder encryption(String secret, String initialVector) {
+    public BinaryPreferencesBuilder encryption(byte[] secret, byte[] initialVector) {
         this.secret = secret;
         this.initialVector = initialVector;
         return this;
@@ -72,7 +72,6 @@ public class BinaryPreferencesBuilder {
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = getByteEncryption();
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
@@ -82,12 +81,13 @@ public class BinaryPreferencesBuilder {
             }
         }
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
+        EventBridge eventsBridge = new BroadcastEventBridgeImpl(context, name, cacheProvider, serializerFactory, executor, byteEncryption);
         return new BinaryPreferences(fileTransaction, byteEncryption, eventsBridge, cacheProvider, executor, serializerFactory, lockFactory);
     }
 
     private ByteEncryption getByteEncryption() {
         if (secret != null && initialVector != null) {
-            return new AesByteEncryptionImpl(secret.getBytes(), initialVector.getBytes());
+            return new AesByteEncryptionImpl(secret, initialVector);
         } else {
             return ByteEncryption.NO_OP;
         }
