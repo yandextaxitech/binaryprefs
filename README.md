@@ -15,7 +15,6 @@ and works IPC (between processes).
 * Lightweight. Zero dependency.
 * Super fast (faster than most others key/value solutions).
 * Small memory footprint while serialize/deserialize data.
-* Persists only delta, not full preferences data set.
 * Zero copy in-memory cache.
 * Persists only binary data. Not XML or JSON.
 * All persisted data are encrypted. Default is AES encryption.
@@ -87,7 +86,7 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. ~~Reduce events (implement events transaction).~~ completed.
 11. Simplify api (instance creating, exception handles).
-12. Finalize serialization contract.
+12. Finalize serialization and persistence contract.
 13. File name encrypt.
 14. `Persistable` upgrade/downgrade api.
 15. RxJava support.

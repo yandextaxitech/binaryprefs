@@ -15,15 +15,42 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private final byte[] secretKeyBytes;
     private final byte[] initialVector;
 
-    private Cipher encryptCipher;
-    private Cipher decryptCipher;
-
     @SuppressWarnings("WeakerAccess")
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
         this.secretKeyBytes = secretKeyBytes;
         this.initialVector = initialVector;
-        this.encryptCipher = createEncryptCipher();
-        this.decryptCipher = createDecryptCipher();
+    }
+
+    @Override
+    public byte[] encrypt(byte[] bytes) {
+        synchronized (AesByteEncryptionImpl.class) {
+            return encryptInternal(bytes);
+        }
+    }
+
+    @Override
+    public byte[] decrypt(byte[] bytes) {
+        synchronized (AesByteEncryptionImpl.class) {
+            return decryptInternal(bytes);
+        }
+    }
+
+    private byte[] encryptInternal(byte[] bytes) {
+        try {
+            Cipher encryptCipher = createEncryptCipher();
+            return encryptCipher.doFinal(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] decryptInternal(byte[] bytes) {
+        try {
+            Cipher decryptCipher = createDecryptCipher();
+            return decryptCipher.doFinal(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Cipher createEncryptCipher() {
@@ -45,36 +72,6 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
             Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
             return cipher;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public byte[] encrypt(byte[] bytes) {
-        synchronized (AesByteEncryptionImpl.class) {
-            return encryptInternal(bytes);
-        }
-    }
-
-    @Override
-    public byte[] decrypt(byte[] bytes) {
-        synchronized (AesByteEncryptionImpl.class) {
-            return decryptInternal(bytes);
-        }
-    }
-
-    private byte[] encryptInternal(byte[] bytes) {
-        try {
-            return encryptCipher.doFinal(bytes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private byte[] decryptInternal(byte[] bytes) {
-        try {
-            return decryptCipher.doFinal(bytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -10,6 +10,10 @@ public final class FileOperationException extends RuntimeException {
         super(message);
     }
 
+    public FileOperationException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
+
     public FileOperationException(Throwable cause) {
         super(cause);
     }

@@ -31,11 +31,12 @@ public final class ProcessFileLock implements Lock {
             randomAccessFile = new RandomAccessFile(lockFile, RWD_MODE);
             channel = randomAccessFile.getChannel();
             if (!lockFile.exists()) {
+                randomAccessFile.seek(0);
                 randomAccessFile.write(0);
             }
             lock = channel.lock();
         } catch (Exception e) {
-            throw new FileOperationException(e);
+            throw new FileOperationException("Exception while acquire lock", e);
         }
     }
 
@@ -44,7 +45,7 @@ public final class ProcessFileLock implements Lock {
         try {
             lock.release();
         } catch (Exception e) {
-            throw new FileOperationException(e);
+            throw new FileOperationException("Exception while release lock", e);
         } finally {
             try {
                 if (randomAccessFile != null) {

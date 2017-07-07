@@ -8,6 +8,7 @@ import java.io.File;
 /**
  * Provides default android cache directory or external (if possible) cache directory.
  */
+@SuppressWarnings("unused")
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
     private static final String PREFERENCES = "preferences";
@@ -41,6 +42,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      *                       if <code>false</code> - will use standard app cache directory
      *                       ({@link Context#getCacheDir()}).
      */
+    @SuppressWarnings("WeakerAccess")
     public AndroidDirectoryProviderImpl(Context context, String prefName, boolean saveInExternal) {
         File baseDir = defineCacheDir(context, saveInExternal);
         storeDirectory = createStoreDirectory(baseDir, prefName, VALUES);

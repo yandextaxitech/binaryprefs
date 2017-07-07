@@ -57,7 +57,7 @@ public final class TestUser implements Persistable {
         this.height = height;
     }
 
-    private void addAddresses(TestAddress address) {
+    private void addAddress(TestAddress address) {
         this.addresses.add(address);
     }
 
@@ -115,7 +115,7 @@ public final class TestUser implements Persistable {
         value.setHeight(height);
         for (TestAddress address : addresses) {
             TestAddress persistable = address.deepClone();
-            value.addAddresses(persistable);
+            value.addAddress(persistable);
         }
         return value;
     }
@@ -177,8 +177,8 @@ public final class TestUser implements Persistable {
         value.setChild((byte) 19);
         value.setWeight(74.2f);
         value.setHeight(1.78f);
-        value.addAddresses(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
-        value.addAddresses(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
+        value.addAddress(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));
+        value.addAddress(new TestAddress("Russia", "Moscow", "Red Square", 1, 53.123, 35.098));
         return value;
     }
 }
