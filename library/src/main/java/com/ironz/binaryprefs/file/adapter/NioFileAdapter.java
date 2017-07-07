@@ -157,6 +157,9 @@ public final class NioFileAdapter implements FileAdapter {
     private void removeInternal(String name) {
         try {
             File file = new File(baseDir, name);
+            if (!file.exists()) {
+                return;
+            }
             //noinspection ResultOfMethodCallIgnored
             file.delete();
         } catch (Exception e) {
