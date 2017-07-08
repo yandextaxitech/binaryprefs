@@ -173,9 +173,9 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
             return null;
         }
         checkBounds();
-        byte stringFlag = buffer[offset];
-        if (!stringSerializer.isMatches(stringFlag)) {
-            throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", stringFlag));
+        byte flag = buffer[offset];
+        if (!stringSerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
         }
         String s = stringSerializer.deserialize(buffer, offset, bytesStringSize);
         offset += stringSerializer.bytesLength() + bytesStringSize;
@@ -184,13 +184,13 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     private void checkBounds() {
         if (offset >= buffer.length - 1) {
-            throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array");
+            throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array. May be your read/write contract isn't mirror-implemented?");
         }
     }
 
     private void checkBytes() {
         if (buffer.length < 1) {
-            throw new UnsupportedOperationException("Cannot deserialize empty byte array!");
+            throw new UnsupportedOperationException("Cannot deserialize empty byte array! May be your read/write contract isn't mirror-implemented?");
         }
     }
 

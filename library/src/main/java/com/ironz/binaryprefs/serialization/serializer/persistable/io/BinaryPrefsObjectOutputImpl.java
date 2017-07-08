@@ -7,6 +7,7 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
+
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
     private final CharSerializer charSerializer;
@@ -55,53 +56,62 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     @Override
     public void writeBoolean(boolean value) {
-        write(booleanSerializer.serialize(value));
+        byte[] serialize = booleanSerializer.serialize(value);
+        write(serialize);
     }
 
     @Override
     public void writeByte(int value) {
-        write(byteSerializer.serialize((byte) value));
+        byte[] serialize = byteSerializer.serialize((byte) value);
+        write(serialize);
     }
 
     @Override
     public void writeShort(int value) {
-        write(shortSerializer.serialize((short) value));
+        byte[] serialize = shortSerializer.serialize((short) value);
+        write(serialize);
     }
 
     @Override
     public void writeChar(int value) {
-        write(charSerializer.serialize((char) value));
+        byte[] serialize = charSerializer.serialize((char) value);
+        write(serialize);
     }
 
     @Override
     public void writeInt(int value) {
-        write(integerSerializer.serialize(value));
+        byte[] serialize = integerSerializer.serialize(value);
+        write(serialize);
     }
 
     @Override
     public void writeLong(long value) {
-        write(longSerializer.serialize(value));
+        byte[] serialize = longSerializer.serialize(value);
+        write(serialize);
     }
 
     @Override
     public void writeFloat(float value) {
-        write(floatSerializer.serialize(value));
+        byte[] serialize = floatSerializer.serialize(value);
+        write(serialize);
     }
 
     @Override
     public void writeDouble(double value) {
-        write(doubleSerializer.serialize(value));
+        byte[] serialize = doubleSerializer.serialize(value);
+        write(serialize);
     }
 
     @Override
-    public void writeString(String s) {
-        if (s == null) {
+    public void writeString(String value) {
+        if (value == null) {
             writeInt(-1);
             return;
         }
-        int length = s.getBytes().length;
+        byte[] serialize = stringSerializer.serialize(value);
+        int length = serialize.length - stringSerializer.bytesLength();
         writeInt(length);
-        write(stringSerializer.serialize(s));
+        write(serialize);
     }
 
     private void write(byte[] value) {
