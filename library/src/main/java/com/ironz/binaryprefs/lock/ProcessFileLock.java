@@ -3,7 +3,6 @@ package com.ironz.binaryprefs.lock;
 import com.ironz.binaryprefs.exception.LockOperationException;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -54,7 +53,7 @@ public final class ProcessFileLock implements Lock {
                 if (channel != null) {
                     channel.close();
                 }
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         }
     }

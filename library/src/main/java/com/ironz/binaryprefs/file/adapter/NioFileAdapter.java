@@ -84,7 +84,7 @@ public final class NioFileAdapter implements FileAdapter {
                 if (channel != null) {
                     channel.close();
                 }
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         }
     }
