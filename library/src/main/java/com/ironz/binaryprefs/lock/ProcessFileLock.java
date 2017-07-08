@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.lock;
 
-import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.exception.LockOperationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public final class ProcessFileLock implements Lock {
             }
             lock = channel.lock();
         } catch (Exception e) {
-            throw new FileOperationException("Exception while acquire lock", e);
+            throw new LockOperationException(e);
         }
     }
 
@@ -45,7 +45,7 @@ public final class ProcessFileLock implements Lock {
         try {
             lock.release();
         } catch (Exception e) {
-            throw new FileOperationException("Exception while release lock", e);
+            throw new LockOperationException(e);
         } finally {
             try {
                 if (randomAccessFile != null) {

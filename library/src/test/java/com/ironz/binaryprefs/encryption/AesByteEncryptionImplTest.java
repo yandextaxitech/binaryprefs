@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.encryption;
 
+import com.ironz.binaryprefs.exception.EncryptionException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class AesByteEncryptionImplTest {
         assertEquals(original, restored);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = EncryptionException.class)
     public void badDecrypt() {
         String original = "some string";
         byte[] encrypt = aesByteEncryption.encrypt(original.getBytes());
