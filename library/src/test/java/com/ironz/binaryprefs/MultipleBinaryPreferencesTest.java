@@ -39,23 +39,25 @@ public class MultipleBinaryPreferencesTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private Preferences firstPreferencesInstance;
-    private Preferences secondPreferencesInstance;
     private File srcDir;
     private File backupDir;
     private File lockDir;
+
+    private Preferences firstPreferencesInstance;
+    private Preferences secondPreferencesInstance;
+    private Preferences thirdPreferencesInstance;
 
     @Before
     public void setUp() throws Exception {
         srcDir = folder.newFolder("preferences");
         backupDir = folder.newFolder("backup");
         lockDir = folder.newFolder("lock");
-        firstPreferencesInstance = createPreferences();
-        secondPreferencesInstance = createPreferences();
+        firstPreferencesInstance = createPreferences("user_preferences");
+        secondPreferencesInstance = createPreferences("user_preferences");
+        thirdPreferencesInstance = createPreferences("user_preferences_2");
     }
 
-    private BinaryPreferences createPreferences() throws IOException {
-        String name = "user_preferences";
+    private BinaryPreferences createPreferences(String name) throws IOException {
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
             public File getStoreDirectory() {
@@ -195,5 +197,25 @@ public class MultipleBinaryPreferencesTest {
         firstPreferencesInstance.edit()
                 .putString(key, value)
                 .apply();
+    }
+
+    @Test
+    public void anotherPreferences() {
+        String key = "key";
+        String value = "value";
+
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                throw new UnsupportedOperationException("This method should never be invoked!");
+            }
+        };
+        thirdPreferencesInstance.registerOnSharedPreferenceChangeListener(listener);
+
+        firstPreferencesInstance.edit()
+                .putString(key, value)
+                .apply();
+
+        thirdPreferencesInstance.unregisterOnSharedPreferenceChangeListener(listener);
     }
 }
