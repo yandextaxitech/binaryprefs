@@ -38,7 +38,9 @@ public final class ProcessFileLock implements Lock {
     @Override
     public void unlock() {
         try {
-            lock.release();
+            if (lock != null && lock.isValid()) {
+                lock.release();
+            }
         } catch (Exception e) {
             throw new LockOperationException(e);
         } finally {
