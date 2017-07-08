@@ -1,9 +1,6 @@
 package com.ironz.binaryprefs.events;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
@@ -160,14 +157,13 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
-        Object o = fetchObject(key, bytes);
-        update(key, o);
+        notifyListenersInternal(key);
         sendUpdateIntent(key, bytes);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
-        remove(key);
+        notifyListenersInternal(key);
         sendRemoveIntent(key);
     }
 
@@ -185,11 +181,15 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for (OnSharedPreferenceChangeListener listener : listeners) {
-                    listener.onSharedPreferenceChanged(preferences, key);
-                }
+                notifyListenersInternal(key);
             }
         });
+    }
+
+    private void notifyListenersInternal(String key) {
+        for (OnSharedPreferenceChangeListener listener : listeners) {
+            listener.onSharedPreferenceChanged(preferences, key);
+        }
     }
 
     private void sendUpdateIntent(final String key, final byte[] bytes) {
