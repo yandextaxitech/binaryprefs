@@ -26,7 +26,7 @@ public class PersistableSerializerTest {
     }
 
     @Test
-    public void persistableConvert() {
+    public void convert() {
         TestUser value = TestUser.create();
 
         byte[] bytes = serializer.serialize(value);
@@ -37,7 +37,7 @@ public class PersistableSerializerTest {
     }
 
     @Test
-    public void persistableIncorrectFlag() {
+    public void incorrectFlag() {
         TestUser value = TestUser.create();
 
         byte[] bytes = serializer.serialize(value);
@@ -48,7 +48,7 @@ public class PersistableSerializerTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void persistableIncorrectReadConvert() {
+    public void incorrectReadConvert() {
         TestUser value = TestUser.create();
 
         byte[] bytes = serializer.serialize(value);
@@ -57,11 +57,24 @@ public class PersistableSerializerTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void persistableIncorrectReadBackConvert() {
+    public void incorrectReadBackConvert() {
         TestMigrateUser value = TestMigrateUser.create();
 
         byte[] bytes = serializer.serialize(value);
 
         serializer.deserialize(TestUser.KEY, bytes);
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void outOfBounds() {
+        TestUser value = TestUser.create();
+
+        byte[] bytes = serializer.serialize(value);
+
+        int trimmedLength = bytes.length - 1;
+        byte[] trimmed = new byte[trimmedLength];
+        System.arraycopy(bytes, 0, trimmed, 0, trimmedLength);
+
+        serializer.deserialize(TestUser.KEY, trimmed);
     }
 }

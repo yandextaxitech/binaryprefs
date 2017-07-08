@@ -78,8 +78,11 @@ public interface DataInput {
     double readDouble();
 
     /**
-     * Reads input bytes and returns
+     * Reads input string's length and string bytes and returns
      * a <code>java.lang.String</code> value.
+     * <p>
+     * Please note that before string will be read it's length will be read by {@link #readInt()} method.
+     * </p>
      *
      * @return the <code>java.lang.String</code> value read.
      */

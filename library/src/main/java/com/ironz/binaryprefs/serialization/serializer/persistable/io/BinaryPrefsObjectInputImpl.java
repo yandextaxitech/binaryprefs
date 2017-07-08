@@ -64,12 +64,13 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public boolean readBoolean() {
-        checkBounds();
+        int length = booleanSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!booleanSerializer.isMatches(flag)) {
-            throw new ClassCastException(String.format("boolean cannot be deserialized in '%s' flag type", flag));
+            throw new ClassCastException(
+                    String.format("boolean cannot be deserialized in '%s' flag type", flag));
         }
-        int length = booleanSerializer.bytesLength();
         boolean b = booleanSerializer.deserialize(buffer, offset);
         offset += length;
         return b;
@@ -77,12 +78,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public byte readByte() {
-        checkBounds();
+        int length = byteSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!byteSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("byte cannot be deserialized in '%s' flag type", flag));
         }
-        int length = byteSerializer.bytesLength();
         byte b = byteSerializer.deserialize(buffer, offset);
         offset += length;
         return b;
@@ -90,12 +91,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public short readShort() {
-        checkBounds();
+        int length = shortSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!shortSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("short cannot be deserialized in '%s' flag type", flag));
         }
-        int length = shortSerializer.bytesLength();
         short s = shortSerializer.deserialize(buffer, offset);
         offset += length;
         return s;
@@ -103,12 +104,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public char readChar() {
-        checkBounds();
+        int length = charSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!charSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("char cannot be deserialized in '%s' flag type", flag));
         }
-        int length = charSerializer.bytesLength();
         char c = charSerializer.deserialize(buffer, offset);
         offset += length;
         return c;
@@ -116,12 +117,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public int readInt() {
-        checkBounds();
+        int length = integerSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!integerSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("int cannot be deserialized in '%s' flag type", flag));
         }
-        int length = integerSerializer.bytesLength();
         int i = integerSerializer.deserialize(buffer, offset);
         offset += length;
         return i;
@@ -129,12 +130,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public long readLong() {
-        checkBounds();
+        int length = longSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!longSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("long cannot be deserialized in '%s' flag type", flag));
         }
-        int length = longSerializer.bytesLength();
         long l = longSerializer.deserialize(buffer, offset);
         offset += length;
         return l;
@@ -142,12 +143,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public float readFloat() {
-        checkBounds();
+        int length = floatSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!floatSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("float cannot be deserialized in '%s' flag type", flag));
         }
-        int length = floatSerializer.bytesLength();
         float f = floatSerializer.deserialize(buffer, offset);
         offset += length;
         return f;
@@ -155,12 +156,12 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
     @Override
     public double readDouble() {
-        checkBounds();
+        int length = doubleSerializer.bytesLength();
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!doubleSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("double cannot be deserialized in '%s' flag type", flag));
         }
-        int length = doubleSerializer.bytesLength();
         double d = doubleSerializer.deserialize(buffer, offset);
         offset += length;
         return d;
@@ -172,25 +173,36 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
         if (bytesStringSize == -1) {
             return null;
         }
-        checkBounds();
+        int length = stringSerializer.bytesLength() + bytesStringSize;
+        checkBounds(length);
         byte flag = buffer[offset];
         if (!stringSerializer.isMatches(flag)) {
             throw new ClassCastException(String.format("String cannot be deserialized in '%s' flag type", flag));
         }
         String s = stringSerializer.deserialize(buffer, offset, bytesStringSize);
-        offset += stringSerializer.bytesLength() + bytesStringSize;
+        offset += length;
         return s;
     }
 
-    private void checkBounds() {
-        if (offset >= buffer.length - 1) {
-            throw new ArrayIndexOutOfBoundsException("Can't read out of bounds array. May be your read/write contract isn't mirror-implemented?");
+    private void checkBounds(int requiredLength) {
+        int requiredBound = offset + requiredLength;
+        int length = buffer.length;
+        if (requiredBound > length) {
+            throw new ArrayIndexOutOfBoundsException(
+                    String.format(
+                            "Can't read out of bounds array (%s > %s). May be your read/write contract isn't mirror-implemented?",
+                            requiredBound,
+                            length
+                    )
+            );
         }
     }
 
     private void checkBytes() {
         if (buffer.length < 1) {
-            throw new UnsupportedOperationException("Cannot deserialize empty byte array! May be your read/write contract isn't mirror-implemented?");
+            throw new UnsupportedOperationException(
+                    "Cannot deserialize empty byte array! May be your read/write contract isn't mirror-implemented?"
+            );
         }
     }
 
