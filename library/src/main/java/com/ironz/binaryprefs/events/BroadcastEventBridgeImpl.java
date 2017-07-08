@@ -102,6 +102,10 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         final String key = intent.getStringExtra(PREFERENCE_KEY);
         final byte[] value = intent.getByteArrayExtra(PREFERENCE_VALUE);
 
+        notifyUpdateTask(key, value);
+    }
+
+    private void notifyUpdateTask(final String key, final byte[] value) {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -115,6 +119,11 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         update(key, o);
     }
 
+    private Object fetchObject(String key, byte[] bytes) {
+        byte[] decrypt = byteEncryption.decrypt(bytes);
+        return serializerFactory.deserialize(key, decrypt);
+    }
+
     private void notifyRemove(final Intent intent) {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
@@ -123,6 +132,10 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
             return;
         }
 
+        notifyRemoveTask(intent);
+    }
+
+    private void notifyRemoveTask(final Intent intent) {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -134,11 +147,6 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private void notifyRemoveInternal(Intent intent) {
         final String key = intent.getStringExtra(PREFERENCE_KEY);
         remove(key);
-    }
-
-    private Object fetchObject(String key, byte[] bytes) {
-        byte[] decrypt = byteEncryption.decrypt(bytes);
-        return serializerFactory.deserialize(key, decrypt);
     }
 
     public void definePreferences(Preferences preferences) {
