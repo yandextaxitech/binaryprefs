@@ -1,5 +1,8 @@
 package com.ironz.binaryprefs.exception;
 
+/**
+ * Exception will be thrown if encrypted data will not be performed correctly
+ */
 public final class EncryptionException extends RuntimeException {
 
     public EncryptionException(Throwable cause) {

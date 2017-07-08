@@ -23,6 +23,7 @@ public interface ByteEncryption {
     /**
      * Returns byte arrays as is.
      */
+    @SuppressWarnings("unused")
     ByteEncryption NO_OP = new ByteEncryption() {
         @Override
         public byte[] encrypt(byte[] bytes) {
