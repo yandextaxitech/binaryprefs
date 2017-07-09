@@ -21,6 +21,7 @@ public final class PersistableRegistry {
         return map.get(token);
     }
 
+    @SuppressWarnings("unused")
     public void remove(String token) {
         map.remove(token);
     }

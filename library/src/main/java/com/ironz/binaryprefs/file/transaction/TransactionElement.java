@@ -6,13 +6,13 @@ public final class TransactionElement {
 
     public static final int ACTION_UPDATE = 1;
     public static final int ACTION_REMOVE = 2;
-    public static final int ACTION_FETCH = 3;
+    private static final int ACTION_FETCH = 3;
 
     private final int action;
     private final String name;
     private final byte[] content;
 
-    public static TransactionElement createFetchElement(String name, byte[] content) {
+    static TransactionElement createFetchElement(String name, byte[] content) {
         return new TransactionElement(ACTION_FETCH, name, content);
     }
 

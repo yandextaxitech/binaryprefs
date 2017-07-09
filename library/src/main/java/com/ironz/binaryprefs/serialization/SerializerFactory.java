@@ -88,44 +88,6 @@ public final class SerializerFactory {
         throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
     }
 
-    public byte[] serialize(Object o) {
-        if (o instanceof Boolean) {
-            return booleanSerializer.serialize((boolean) o);
-        }
-        if (o instanceof Integer) {
-            return integerSerializer.serialize((int) o);
-        }
-        if (o instanceof Long) {
-            return longSerializer.serialize((long) o);
-        }
-        if (o instanceof Double) {
-            return doubleSerializer.serialize((double) o);
-        }
-        if (o instanceof Float) {
-            return floatSerializer.serialize((float) o);
-        }
-        if (o instanceof String) {
-            return stringSerializer.serialize((String) o);
-        }
-        if (o instanceof Set) {
-            //noinspection unchecked
-            return stringSetSerializer.serialize((Set<String>) o);
-        }
-        if (o instanceof Persistable) {
-            return persistableSerializer.serialize((Persistable) o);
-        }
-        if (o instanceof Short) {
-            return shortSerializer.serialize((short) o);
-        }
-        if (o instanceof Byte) {
-            return byteSerializer.serialize((byte) o);
-        }
-        if (o instanceof Character) {
-            return charSerializer.serialize((char) o);
-        }
-        throw new UnsupportedClassVersionError(String.format("Unsupported serialization object format '%s'", o));
-    }
-
     public Object redefineMutable(Object o) {
         if (o instanceof Set) {
             //noinspection unchecked

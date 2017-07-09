@@ -16,10 +16,6 @@ public final class PersistableSerializer {
      * Uses for detecting byte array primitive type of {@link Persistable}
      */
     public static final byte FLAG = -11;
-    /**
-     * Minimum size primitive type of {@link Persistable}
-     */
-    private static final int SIZE = 1;
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
@@ -103,9 +99,5 @@ public final class PersistableSerializer {
 
     public boolean isMatches(byte flag) {
         return flag == FLAG;
-    }
-
-    public int bytesLength() {
-        return SIZE;
     }
 }
