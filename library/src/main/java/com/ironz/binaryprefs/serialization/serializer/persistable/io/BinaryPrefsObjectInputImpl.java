@@ -190,7 +190,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
         if (requiredBound > length) {
             throw new ArrayIndexOutOfBoundsException(
                     String.format(
-                            "Can't read out of bounds array (%s > %s). May be your read/write contract isn't mirror-implemented?",
+                            "Can't read out of bounds array (%s bytes > %s bytes). May be your read/write contract isn't mirror-implemented?",
                             requiredBound,
                             length
                     )
