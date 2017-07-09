@@ -31,6 +31,15 @@ public final class ProcessFileLock implements Lock {
             channel = randomAccessFile.getChannel();
             lock = channel.lock();
         } catch (Exception e) {
+            try {
+                if (randomAccessFile != null) {
+                    randomAccessFile.close();
+                }
+                if (channel != null) {
+                    channel.close();
+                }
+            } catch (Exception ignored) {
+            }
             throw new LockOperationException(e);
         }
     }
