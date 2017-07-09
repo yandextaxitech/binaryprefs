@@ -46,7 +46,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
             return;
         }
         File lockFile = new File(lockDirectory, name + LOCK_EXTENSION);
-        ProcessFileLock fileLock = new ProcessFileLock(lockFile);
+        Lock fileLock = new ProcessFileLock(lockFile);
         processLocks.put(name, fileLock);
     }
 

@@ -168,27 +168,27 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
-        notifyListenersInternal(key);
+        notifyListenersHandler(key);
         sendUpdateIntent(key, bytes);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
-        notifyListenersInternal(key);
+        notifyListenersHandler(key);
         sendRemoveIntent(key);
     }
 
     private void update(String key, Object value) {
         cacheProvider.put(key, value);
-        notifyListeners(key);
+        notifyListenersHandler(key);
     }
 
     private void remove(String key) {
         cacheProvider.remove(key);
-        notifyListeners(key);
+        notifyListenersHandler(key);
     }
 
-    private void notifyListeners(final String key) {
+    private void notifyListenersHandler(final String key) {
         handler.post(new Runnable() {
             @Override
             public void run() {
