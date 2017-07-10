@@ -15,6 +15,11 @@ public final class StringSerializer {
     private static final int SIZE = 1;
 
     /**
+     * Describes flag offset size
+     */
+    private static final int FLAG_OFFSET = 1;
+
+    /**
      * Serialize {@code String} into byte array with following scheme:
      * [{@link #FLAG}] + [string_byte_array].
      *
@@ -23,10 +28,9 @@ public final class StringSerializer {
      */
     public byte[] serialize(String s) {
         byte[] stringBytes = s.getBytes();
-        int flagSize = 1;
-        byte[] b = new byte[stringBytes.length + flagSize];
+        byte[] b = new byte[stringBytes.length + FLAG_OFFSET];
         b[0] = FLAG;
-        System.arraycopy(stringBytes, 0, b, flagSize, stringBytes.length);
+        System.arraycopy(stringBytes, 0, b, FLAG_OFFSET, stringBytes.length);
         return b;
     }
 
@@ -49,8 +53,7 @@ public final class StringSerializer {
      * @return deserialized String
      */
     public String deserialize(byte[] bytes, int offset, int length) {
-        int flagOffset = 1;
-        return new String(bytes, flagOffset + offset, length);
+        return new String(bytes, FLAG_OFFSET + offset, length);
     }
 
     public boolean isMatches(byte flag) {
