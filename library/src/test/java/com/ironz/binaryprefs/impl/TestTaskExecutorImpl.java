@@ -4,16 +4,29 @@ import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.task.Completable;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.util.Map;
 import java.util.concurrent.*;
 
 public final class TestTaskExecutorImpl implements TaskExecutor {
 
-    private static final ExecutorService executor = CurrentThreadExecutorService.getInstance();
-
     private final ExceptionHandler exceptionHandler;
 
-    public TestTaskExecutorImpl(ExceptionHandler exceptionHandler) {
+    private static final Map<String, ExecutorService> executorsMap = new ConcurrentHashMap<>();
+
+    private final ExecutorService executor;
+
+    public TestTaskExecutorImpl(String prefName, ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
+        executor = initExecutor(prefName);
+    }
+
+    private ExecutorService initExecutor(String prefName) {
+        if (executorsMap.containsKey(prefName)) {
+            return executorsMap.get(prefName);
+        }
+        ExecutorService service = CurrentThreadExecutorService.newExecutor();
+        executorsMap.put(prefName, service);
+        return service;
     }
 
     @Override
@@ -36,15 +49,7 @@ public final class TestTaskExecutorImpl implements TaskExecutor {
             signal.countDown();
         }
 
-        static ExecutorService getInstance() {
-            return SingletonHolder.instance;
-        }
-
-        private static class SingletonHolder {
-            static ExecutorService instance = createInstance();
-        }
-
-        private static ExecutorService createInstance() {
+        private static ExecutorService newExecutor() {
 
             final CurrentThreadExecutorService instance = new CurrentThreadExecutorService();
 

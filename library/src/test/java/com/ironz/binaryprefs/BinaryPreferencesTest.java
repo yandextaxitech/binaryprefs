@@ -72,7 +72,7 @@ public final class BinaryPreferencesTest {
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
+        TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);

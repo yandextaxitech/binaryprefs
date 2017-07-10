@@ -2,6 +2,8 @@ package com.ironz.binaryprefs.task;
 
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -14,10 +16,22 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private final ExceptionHandler exceptionHandler;
 
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final Map<String, ExecutorService> executorsMap = new ConcurrentHashMap<>();
 
-    public ScheduledBackgroundTaskExecutor(ExceptionHandler exceptionHandler) {
+    private final ExecutorService executor;
+
+    public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
+        executor = initExecutor(prefName);
+    }
+
+    private ExecutorService initExecutor(String prefName) {
+        if (executorsMap.containsKey(prefName)) {
+            return executorsMap.get(prefName);
+        }
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        executorsMap.put(prefName, service);
+        return service;
     }
 
     @Override
