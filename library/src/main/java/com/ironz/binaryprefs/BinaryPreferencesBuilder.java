@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs;
 
 import android.content.Context;
-
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
@@ -22,6 +21,7 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableReg
 import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+@SuppressWarnings("unused")
 public final class BinaryPreferencesBuilder {
 
     private static final String DEFAULT_NAME = "default";
@@ -61,7 +61,7 @@ public final class BinaryPreferencesBuilder {
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(exceptionHandler);
+        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = new BroadcastEventBridgeImpl(context, name, cacheProvider, serializerFactory, executor, byteEncryption);
         return new BinaryPreferences(fileTransaction, byteEncryption, eventsBridge, cacheProvider, executor, serializerFactory, lockFactory);
