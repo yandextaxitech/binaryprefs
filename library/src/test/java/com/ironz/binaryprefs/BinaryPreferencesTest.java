@@ -28,6 +28,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -101,6 +102,63 @@ public final class BinaryPreferencesTest {
         Map<String, ?> all = preferences.getAll();
 
         assertTrue(all.isEmpty());
+    }
+
+    @Test
+    public void getKeysEmpty() {
+        List<String> keys = preferences.keys();
+        assertTrue(keys.isEmpty());
+    }
+
+    @Test
+    public void getKeys() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        List<String> keys = preferences.keys();
+
+        assertTrue(keys.contains(stringKey));
+        assertTrue(keys.contains(booleanKey));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getKeysModifyLocal() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        List<String> keys = preferences.keys();
+        keys.clear();
+    }
+
+    @Test
+    public void getKeysRemoved() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        preferences.edit()
+                .clear()
+                .apply();
+
+        List<String> keys = preferences.keys();
+        assertTrue(keys.isEmpty());
     }
 
     @Test

@@ -258,6 +258,11 @@ public final class BinaryPreferences implements Preferences {
     }
 
     @Override
+    public List<String> keys() {
+        return Arrays.asList(cacheProvider.keys());
+    }
+
+    @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
