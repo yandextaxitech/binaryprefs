@@ -25,8 +25,10 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 public final class BinaryPreferencesBuilder {
 
     private static final String DEFAULT_NAME = "default";
+
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
+
     private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
     private String name = DEFAULT_NAME;
     private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
@@ -35,8 +37,8 @@ public final class BinaryPreferencesBuilder {
         this.context = context;
     }
 
-    public BinaryPreferencesBuilder encryption(ByteEncryption encryption) {
-        this.byteEncryption = encryption;
+    public BinaryPreferencesBuilder name(String name) {
+        this.name = name;
         return this;
     }
 
@@ -45,8 +47,8 @@ public final class BinaryPreferencesBuilder {
         return this;
     }
 
-    public BinaryPreferencesBuilder name(String name) {
-        this.name = name;
+    public BinaryPreferencesBuilder encryption(ByteEncryption byteEncryption) {
+        this.byteEncryption = byteEncryption;
         return this;
     }
 
