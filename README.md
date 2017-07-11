@@ -19,7 +19,7 @@ public api may be changed prior `1.0.0`.
 ## Advantages
 
 * Lightweight. Zero dependency.
-* Super fast (faster than most others key/value solutions).
+* Super fast (faster than any other key/value solutions).
 * Small memory footprint while serialize/deserialize data.
 * Zero copy in-memory cache.
 * Persists only binary data. Not XML or JSON.
