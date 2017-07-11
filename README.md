@@ -49,12 +49,6 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Please, use only one instance of preferences by name, this saves you from
 non-reasoned allocations.
 
-#### Override default directory
-
-You should re-implement your own `DirectoryProvider`, which is the provider of
-base storing directory.
-
-
 #### Dealing with `Persistable`
 
 `Persistable` contract been added for fast and flexible saving and it's
