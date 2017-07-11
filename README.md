@@ -30,27 +30,18 @@ and works IPC (between processes).
 #### Minimal working configuration
 
 ```java
-String prefName = "user_preferences";
-ByteEncryption byteEncryption = new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes());
-DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
-ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-PersistableRegistry persistableRegistry = new PersistableRegistry();
-persistableRegistry.register(User.KEY, User.class);
-SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
-EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
-        
-Preferences preferences = new BinaryPreferences(
-        fileAdapter,
-        exceptionHandler,
-        eventsBridge,
-        cacheProvider,
-        executor,
-        serializerFactory,
-        lockFactory
-);
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .name("user")
+                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
+                .exceptionHandler(new ExceptionHandler() {
+                    @Override
+                    public void handle(Exception e) {
+                        //some error handle action
+                    }
+                })
+                .registerPersistableByKey(TestUser.KEY, TestUser.class)
+                .build();
+
 ```
 
 #### Override default directory
@@ -85,11 +76,13 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. ~~Reduce events (implement events transaction).~~ completed.
-11. Simplify api (instance creating, exception handles).
+11. ~~Simplify api (instance creating, exception handles).~~ completed.
 12. Finalize serialization and persistence contract.
-13. File name encrypt.
-14. `Persistable` upgrade/downgrade api.
-15. RxJava support.
+13. Background initializer.
+14. `byte[]` support.
+15. File name encrypt.
+16. `Persistable` upgrade/downgrade api.
+17. RxJava support.
 
 ## License
 ```
