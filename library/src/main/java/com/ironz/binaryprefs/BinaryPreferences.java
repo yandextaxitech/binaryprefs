@@ -14,7 +14,7 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
-public final class BinaryPreferences implements Preferences {
+final class BinaryPreferences implements Preferences {
 
     private final FileTransaction fileTransaction;
     private final ByteEncryption byteEncryption;
