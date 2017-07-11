@@ -7,6 +7,7 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
     //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
+    private static final int VERSION_STUB = 1; // TODO: 7/11/17 implement version migration
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
@@ -46,6 +47,8 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     public <T extends Persistable> byte[] serialize(T value) {
 
         write(new byte[]{PersistableSerializer.FLAG});
+
+        writeInt(VERSION_STUB);
 
         value.writeExternal(this);
 

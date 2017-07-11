@@ -48,6 +48,9 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
 
         offset++;
 
+        //noinspection unused
+        int versionStub = readInt(); // TODO: 7/11/17 implement version migration
+
         T instance = newInstance(clazz);
         instance.readExternal(this);
 
