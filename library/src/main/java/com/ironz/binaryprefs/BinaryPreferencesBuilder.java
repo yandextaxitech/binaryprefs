@@ -33,7 +33,7 @@ public final class BinaryPreferencesBuilder {
     private String name = DEFAULT_NAME;
     private boolean externalStorage = false;
     private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
-    private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+    private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
 
     public BinaryPreferencesBuilder(Context context) {
         this.context = context;

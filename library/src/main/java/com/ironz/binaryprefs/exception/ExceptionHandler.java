@@ -20,4 +20,11 @@ public interface ExceptionHandler {
 
         }
     };
+
+    ExceptionHandler PRINT = new ExceptionHandler() {
+        @Override
+        public void handle(Exception e) {
+            e.printStackTrace();
+        }
+    };
 }
