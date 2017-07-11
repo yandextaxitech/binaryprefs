@@ -10,6 +10,11 @@ Rapidly fast implementation of SharedPreferences which stores each preference
 in files separately, performs disk IO via NIO with memory mapped byte buffers
 and works IPC (between processes).
 
+## Api finalization status
+
+Please note that api is not fully finished and serialization contract or
+public api may be changed prior `1.0.0`.
+
 ## Advantages
 
 * Lightweight. Zero dependency.
