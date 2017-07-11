@@ -1,18 +1,19 @@
 [![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs)
 [![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.8"><img src="https://img.shields.io/badge/Methods count-556-e91e63.svg"/></a>
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.8"><img src="https://img.shields.io/badge/Size-67 KB-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9"><img src="https://img.shields.io/badge/Methods count-556-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9"><img src="https://img.shields.io/badge/Size-67 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
 ## Binary Preferences
 
-Rapidly fast implementation of SharedPreferences which stores each preference
-in files separately, performs disk IO via NIO with memory mapped byte buffers
-and works IPC (between processes).
+Rapidly fast re-implementation of SharedPreferences which stores each
+preference in files separately, performs disk IO via NIO
+with memory mapped byte buffers and works IPC (between processes).
+Written from scratch.
 
 ## Api finalization status
 
-Please note that api is not fully finished and serialization contract or
+Please note that api is not finished yet and serialization contract or
 public api may be changed prior `1.0.0`.
 
 ## Advantages
