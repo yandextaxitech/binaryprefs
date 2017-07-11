@@ -13,6 +13,7 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     private static final String AES = "AES";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5PADDING";
+    private static final int KEY_LENGTH = 16;
 
     private final byte[] secretKeyBytes;
     private final byte[] initialVector;
@@ -20,6 +21,13 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
         this.secretKeyBytes = secretKeyBytes;
         this.initialVector = initialVector;
+        checkLength();
+    }
+
+    private void checkLength() {
+        if (secretKeyBytes.length != KEY_LENGTH || initialVector.length != KEY_LENGTH) {
+            throw new EncryptionException("Secret and initial vector must be 16 bytes");
+        }
     }
 
     @Override

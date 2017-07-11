@@ -8,4 +8,8 @@ public final class EncryptionException extends RuntimeException {
     public EncryptionException(Throwable cause) {
         super(cause);
     }
+
+    public EncryptionException(String msg) {
+        super(msg);
+    }
 }

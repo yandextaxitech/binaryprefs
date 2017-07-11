@@ -32,4 +32,9 @@ public class AesByteEncryptionImplTest {
         byte[] encrypt = aesByteEncryption.encrypt(original.getBytes());
         badAesByteEncryption.decrypt(encrypt);
     }
+
+    @Test(expected = EncryptionException.class)
+    public void incorrectKeySize() {
+        new AesByteEncryptionImpl(new byte[0], new byte[0]);
+    }
 }
