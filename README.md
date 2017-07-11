@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs)
 [![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A%2B"><img src="https://img.shields.io/badge/Methods count-503-e91e63.svg"/></a>
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A%2B"><img src="https://img.shields.io/badge/Size-60 KB-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.8"><img src="https://img.shields.io/badge/Methods count-556-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.8"><img src="https://img.shields.io/badge/Size-67 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
 ## Binary Preferences
@@ -10,6 +10,11 @@ Rapidly fast implementation of SharedPreferences which stores each preference
 in files separately, performs disk IO via NIO with memory mapped byte buffers
 and works IPC (between processes).
 
+## Api finalization status
+
+Please note that api is not fully finished and serialization contract or
+public api may be changed prior `1.0.0`.
+
 ## Advantages
 
 * Lightweight. Zero dependency.
@@ -17,7 +22,7 @@ and works IPC (between processes).
 * Small memory footprint while serialize/deserialize data.
 * Zero copy in-memory cache.
 * Persists only binary data. Not XML or JSON.
-* All persisted data are encrypted. Default is AES encryption.
+* Out of box data encryption support.
 * Fully backward compatible with default `SharedPreferences` interface.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
@@ -30,28 +35,18 @@ and works IPC (between processes).
 #### Minimal working configuration
 
 ```java
-String prefName = "user_preferences";
-ByteEncryption byteEncryption = new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes());
-DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, prefName);
-ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-FileAdapter fileAdapter = new NioFileAdapter(directoryProvider, byteEncryption);
-CacheProvider cacheProvider = new ConcurrentCacheProviderImpl();
-PersistableRegistry persistableRegistry = new PersistableRegistry();
-persistableRegistry.register(User.KEY, User.class);
-SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-LockFactory lockFactory = new SimpleLockFactoryImpl(directoryProvider, exceptionHandler);
-EventBridge eventsBridge = new SimpleEventBridgeImpl(cacheProvider);
-        
-Preferences preferences = new BinaryPreferences(
-        fileAdapter,
-        exceptionHandler,
-        eventsBridge,
-        cacheProvider,
-        executor,
-        serializerFactory,
-        lockFactory
-);
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .name("user_data")
+                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
+                .exceptionHandler(ExceptionHandler.PRINT)
+                .registerPersistable(TestUser.KEY, TestUser.class)
+                .registerPersistable(TestOrder.KEY, TestOrder.class)
+                .build();
+
 ```
+
+Please, use only one instance of preferences by name, this saves you from
+non-reasoned allocations.
 
 #### Override default directory
 
@@ -85,11 +80,13 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
 9. ~~Exact background tasks for each serialization strategies.~~ completed.
 10. ~~Reduce events (implement events transaction).~~ completed.
-11. Simplify api (instance creating, exception handles).
+11. ~~Simplify api (instance creating, exception handles).~~ completed.
 12. Finalize serialization and persistence contract.
-13. File name encrypt.
-14. `Persistable` upgrade/downgrade api.
-15. RxJava support.
+13. Background initializer.
+14. `byte[]` support.
+15. File name encrypt.
+16. `Persistable` upgrade/downgrade api.
+17. RxJava support.
 
 ## License
 ```

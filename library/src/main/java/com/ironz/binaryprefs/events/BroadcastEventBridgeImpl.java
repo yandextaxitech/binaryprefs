@@ -51,6 +51,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final String updateActionName;
     private final String removeActionName;
     private final int processId;
+    private final BroadcastReceiver updateReceiver;
+    private final BroadcastReceiver removeReceiver;
 
     private Preferences preferences;
 
@@ -66,23 +68,20 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
         this.byteEncryption = byteEncryption;
-
-        this.updateActionName = ACTION_PREFERENCE_UPDATED + context.getPackageName();
-        this.removeActionName = ACTION_PREFERENCE_REMOVED + context.getPackageName();
+        this.updateActionName = createUpdateActionName(context);
+        this.removeActionName = createRemoveActionName(context);
         this.listeners = initListeners(prefName);
-        this.context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                notifyUpdate(intent);
-            }
-        }, new IntentFilter(updateActionName));
-        this.context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                notifyRemove(intent);
-            }
-        }, new IntentFilter(removeActionName));
+        this.updateReceiver = createUpdateReceiver();
+        this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();
+    }
+
+    private String createUpdateActionName(Context context) {
+        return ACTION_PREFERENCE_UPDATED + context.getPackageName();
+    }
+
+    private String createRemoveActionName(Context context) {
+        return ACTION_PREFERENCE_REMOVED + context.getPackageName();
     }
 
     private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
@@ -92,6 +91,29 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
         allListeners.put(prefName, listeners);
         return listeners;
+    }
+
+    private BroadcastReceiver createRemoveReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyRemove(intent);
+            }
+        };
+    }
+
+    private BroadcastReceiver createUpdateReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyUpdate(intent);
+            }
+        };
+    }
+
+    private void subscribeReceivers() {
+        this.context.registerReceiver(updateReceiver, new IntentFilter(updateActionName));
+        this.context.registerReceiver(removeReceiver, new IntentFilter(removeActionName));
     }
 
     private void notifyUpdate(final Intent intent) {
@@ -105,6 +127,10 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         final String key = intent.getStringExtra(PREFERENCE_KEY);
         final byte[] value = intent.getByteArrayExtra(PREFERENCE_VALUE);
 
+        notifyUpdateTask(key, value);
+    }
+
+    private void notifyUpdateTask(final String key, final byte[] value) {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -118,6 +144,11 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         update(key, o);
     }
 
+    private Object fetchObject(String key, byte[] bytes) {
+        byte[] decrypt = byteEncryption.decrypt(bytes);
+        return serializerFactory.deserialize(key, decrypt);
+    }
+
     private void notifyRemove(final Intent intent) {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
@@ -126,6 +157,10 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
             return;
         }
 
+        notifyRemoveTask(intent);
+    }
+
+    private void notifyRemoveTask(final Intent intent) {
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
@@ -139,57 +174,66 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         remove(key);
     }
 
-    private Object fetchObject(String key, byte[] bytes) {
-        byte[] decrypt = byteEncryption.decrypt(bytes);
-        return serializerFactory.deserialize(key, decrypt);
-    }
-
     public void definePreferences(Preferences preferences) {
         this.preferences = preferences;
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+        if (listeners.isEmpty()) {
+            subscribeReceivers();
+        }
         listeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         listeners.remove(listener);
+        if (listeners.isEmpty()) {
+            unSubscribeReceivers();
+        }
+    }
+
+    private void unSubscribeReceivers() {
+        context.unregisterReceiver(updateReceiver);
+        context.unregisterReceiver(removeReceiver);
     }
 
     @Override
     public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
-        Object o = fetchObject(key, bytes);
-        update(key, o);
+        notifyListenersHandler(key);
         sendUpdateIntent(key, bytes);
     }
 
     @Override
     public void notifyListenersRemove(Preferences preferences, String key) {
-        remove(key);
+        notifyListenersHandler(key);
         sendRemoveIntent(key);
     }
 
     private void update(String key, Object value) {
         cacheProvider.put(key, value);
-        notifyListeners(key);
+        notifyListenersHandler(key);
     }
 
     private void remove(String key) {
         cacheProvider.remove(key);
-        notifyListeners(key);
+        notifyListenersHandler(key);
     }
 
-    private void notifyListeners(final String key) {
+    private void notifyListenersHandler(final String key) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for (OnSharedPreferenceChangeListener listener : listeners) {
-                    listener.onSharedPreferenceChanged(preferences, key);
-                }
+                notifyListenersInternal(key);
             }
         });
+    }
+
+    private void notifyListenersInternal(String key) {
+        for (OnSharedPreferenceChangeListener listener : listeners) {
+            listener.onSharedPreferenceChanged(preferences, key);
+        }
     }
 
     private void sendUpdateIntent(final String key, final byte[] bytes) {

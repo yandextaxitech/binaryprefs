@@ -1,13 +1,13 @@
 package com.ironz.binaryprefs;
 
 import android.content.Context;
-
+import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
-import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProviderImpl;
@@ -22,21 +22,35 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableReg
 import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+@SuppressWarnings("unused")
 public final class BinaryPreferencesBuilder {
 
     private static final String DEFAULT_NAME = "default";
+
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
-    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
+
     private String name = DEFAULT_NAME;
-    private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+    private boolean externalStorage = false;
+    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
+    private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
 
     public BinaryPreferencesBuilder(Context context) {
         this.context = context;
     }
 
-    public BinaryPreferencesBuilder encryption(ByteEncryption encryption) {
-        this.byteEncryption = encryption;
+    public BinaryPreferencesBuilder name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public BinaryPreferencesBuilder externalStorage(boolean value) {
+        this.externalStorage = value;
+        return this;
+    }
+
+    public BinaryPreferencesBuilder encryption(ByteEncryption byteEncryption) {
+        this.byteEncryption = byteEncryption;
         return this;
     }
 
@@ -45,25 +59,44 @@ public final class BinaryPreferencesBuilder {
         return this;
     }
 
-    public BinaryPreferencesBuilder name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public BinaryPreferencesBuilder registerPersistableByKey(String token, Class<? extends Persistable> persistable) {
-        persistableRegistry.register(token, persistable);
+    public BinaryPreferencesBuilder registerPersistable(String key, Class<? extends Persistable> persistable) {
+        persistableRegistry.register(key, persistable);
         return this;
     }
 
     public Preferences build() {
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name);
+
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new PreferencesInitializationException("Preferences instantiated not in the main thread.");
+        }
+
+        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, externalStorage);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(exceptionHandler);
+        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new BroadcastEventBridgeImpl(context, name, cacheProvider, serializerFactory, executor, byteEncryption);
-        return new BinaryPreferences(fileTransaction, byteEncryption, eventsBridge, cacheProvider, executor, serializerFactory, lockFactory);
+        BroadcastEventBridgeImpl eventsBridge = new BroadcastEventBridgeImpl(
+                context,
+                name,
+                cacheProvider,
+                serializerFactory,
+                executor,
+                byteEncryption
+        );
+        Preferences preferences = new BinaryPreferences(
+                fileTransaction,
+                byteEncryption,
+                eventsBridge,
+                cacheProvider,
+                executor,
+                serializerFactory,
+                lockFactory
+        );
+
+        eventsBridge.definePreferences(preferences);
+
+        return preferences;
     }
 }

@@ -3,6 +3,8 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
+import java.util.List;
+
 /**
  * Extension of {@link SharedPreferences} class for using plain serialization mechanism
  */
@@ -10,6 +12,13 @@ public interface Preferences extends SharedPreferences {
 
     @Override
     PreferencesEditor edit();
+
+    /**
+     * Returns all keys list for values which exists in current preferences set.
+     *
+     * @return key list for current preferences set.
+     */
+    List<String> keys();
 
     /**
      * Retrieve an {@link Persistable} value from the preferences.

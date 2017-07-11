@@ -6,13 +6,13 @@ import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
+import com.ironz.binaryprefs.impl.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.impl.TestTaskExecutorImpl;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -28,6 +28,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -72,7 +73,7 @@ public final class BinaryPreferencesTest {
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
+        TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
@@ -101,6 +102,63 @@ public final class BinaryPreferencesTest {
         Map<String, ?> all = preferences.getAll();
 
         assertTrue(all.isEmpty());
+    }
+
+    @Test
+    public void getKeysEmpty() {
+        List<String> keys = preferences.keys();
+        assertTrue(keys.isEmpty());
+    }
+
+    @Test
+    public void getKeys() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        List<String> keys = preferences.keys();
+
+        assertTrue(keys.contains(stringKey));
+        assertTrue(keys.contains(booleanKey));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getKeysModifyLocal() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        List<String> keys = preferences.keys();
+        keys.clear();
+    }
+
+    @Test
+    public void getKeysRemoved() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        preferences.edit()
+                .clear()
+                .apply();
+
+        List<String> keys = preferences.keys();
+        assertTrue(keys.isEmpty());
     }
 
     @Test
@@ -346,10 +404,11 @@ public final class BinaryPreferencesTest {
                 .putPersistable(key, value)
                 .apply();
         TestUser restored = preferences.getPersistable(key, new TestUser());
-
+        TestUser restored2 = preferences.getPersistable(key, new TestUser());
         restored.setName(restored.getName() + "modified");
 
         assertNotEquals(value, restored);
+        assertNotEquals(restored, restored2);
     }
 
     @Test

@@ -14,7 +14,7 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
-public final class BinaryPreferences implements Preferences {
+final class BinaryPreferences implements Preferences {
 
     private final FileTransaction fileTransaction;
     private final ByteEncryption byteEncryption;
@@ -25,14 +25,13 @@ public final class BinaryPreferences implements Preferences {
     private final Lock readLock;
     private final Lock writeLock;
 
-    @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileTransaction fileTransaction,
-                             ByteEncryption byteEncryption,
-                             EventBridge eventsBridge,
-                             CacheProvider cacheProvider,
-                             TaskExecutor taskExecutor,
-                             SerializerFactory serializerFactory,
-                             LockFactory lockFactory) {
+    BinaryPreferences(FileTransaction fileTransaction,
+                      ByteEncryption byteEncryption,
+                      EventBridge eventsBridge,
+                      CacheProvider cacheProvider,
+                      TaskExecutor taskExecutor,
+                      SerializerFactory serializerFactory,
+                      LockFactory lockFactory) {
         this.fileTransaction = fileTransaction;
         this.byteEncryption = byteEncryption;
         this.eventsBridge = eventsBridge;
@@ -50,6 +49,9 @@ public final class BinaryPreferences implements Preferences {
             Completable submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    if (cacheProvider.keys().length != 0) {
+                        return;
+                    }
                     for (TransactionElement element : fileTransaction.fetch()) {
                         String name = element.getName();
                         byte[] bytes = element.getContent();
@@ -256,6 +258,11 @@ public final class BinaryPreferences implements Preferences {
         } finally {
             readLock.unlock();
         }
+    }
+
+    @Override
+    public List<String> keys() {
+        return Arrays.asList(cacheProvider.keys());
     }
 
     @Override

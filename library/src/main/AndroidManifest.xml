@@ -1,7 +1,10 @@
-<manifest package="com.ironz.binaryprefs" xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.ironz.binaryprefs">
     <application>
         <receiver android:name="com.ironz.binaryprefs.dump.DumpReceiver"
-                  android:exported="true">
+                  android:exported="true"
+                  tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE"/>
             </intent-filter>

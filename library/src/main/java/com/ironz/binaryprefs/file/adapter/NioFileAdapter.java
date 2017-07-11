@@ -4,7 +4,6 @@ import com.ironz.binaryprefs.exception.FileOperationException;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -57,15 +56,10 @@ public final class NioFileAdapter implements FileAdapter {
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         File file = new File(baseDir, name);
         if (backupFile.exists()) {
-            deleteOriginal(file);
+            delete(file);
             swap(backupFile, file);
         }
         return fetchInternal(file);
-    }
-
-    private void deleteOriginal(File file) {
-        //noinspection ResultOfMethodCallIgnored
-        file.delete();
     }
 
     private byte[] fetchInternal(File file) {
@@ -89,7 +83,7 @@ public final class NioFileAdapter implements FileAdapter {
                 if (channel != null) {
                     channel.close();
                 }
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -105,17 +99,7 @@ public final class NioFileAdapter implements FileAdapter {
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         swap(file, backupFile);
         saveInternal(file, bytes);
-        deleteBackup(backupFile);
-    }
-
-    private void deleteBackup(File backupFile) {
-        //noinspection ResultOfMethodCallIgnored
-        backupFile.delete();
-    }
-
-    private void swap(File from, File to) {
-        //noinspection ResultOfMethodCallIgnored
-        from.renameTo(to);
+        delete(backupFile);
     }
 
     private void saveInternal(File file, byte[] bytes) {
@@ -144,6 +128,26 @@ public final class NioFileAdapter implements FileAdapter {
         }
     }
 
+    private void swap(File from, File to) {
+        if (!from.exists()) {
+            return;
+        }
+        if (to.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            to.delete();
+        }
+        //noinspection ResultOfMethodCallIgnored
+        from.renameTo(to);
+    }
+
+    private void delete(File file) {
+        if (!file.exists()) {
+            return;
+        }
+        //noinspection ResultOfMethodCallIgnored
+        file.delete();
+    }
+
     @Override
     public void remove(String name) {
         removeInternal(name);
@@ -152,6 +156,9 @@ public final class NioFileAdapter implements FileAdapter {
     private void removeInternal(String name) {
         try {
             File file = new File(baseDir, name);
+            if (!file.exists()) {
+                return;
+            }
             //noinspection ResultOfMethodCallIgnored
             file.delete();
         } catch (Exception e) {

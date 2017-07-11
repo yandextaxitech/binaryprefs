@@ -1,8 +1,8 @@
-package com.ironz.binaryprefs.events;
+package com.ironz.binaryprefs.impl;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Handler;
 import com.ironz.binaryprefs.Preferences;
+import com.ironz.binaryprefs.events.EventBridge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +10,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Main thread preference change listener bridge
+ * Simple preference change listener bridge. Uses current thread for delivering all events.
  */
-@SuppressWarnings("unused")
-public final class MainThreadEventBridgeImpl implements EventBridge {
+public final class SimpleEventBridgeImpl implements EventBridge {
 
     private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
-    private final Handler handler = new Handler();
     private final List<OnSharedPreferenceChangeListener> listeners;
 
-    public MainThreadEventBridgeImpl(String prefName) {
+    public SimpleEventBridgeImpl(String prefName) {
         this.listeners = initListeners(prefName);
     }
 
@@ -44,7 +42,7 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(final Preferences preferences, final String key, byte[] bytes) {
+    public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
         notifyListeners(preferences, key);
     }
 
@@ -53,14 +51,9 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
         notifyListeners(preferences, key);
     }
 
-    private void notifyListeners(final Preferences preferences, final String key) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                for (OnSharedPreferenceChangeListener listener : listeners) {
-                    listener.onSharedPreferenceChanged(preferences, key);
-                }
-            }
-        });
+    private void notifyListeners(Preferences preferences, String key) {
+        for (OnSharedPreferenceChangeListener listener : listeners) {
+            listener.onSharedPreferenceChanged(preferences, key);
+        }
     }
 }

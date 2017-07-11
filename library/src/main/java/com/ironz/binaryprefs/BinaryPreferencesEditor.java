@@ -15,7 +15,6 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
-@SuppressWarnings("WeakerAccess")
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
@@ -283,7 +282,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private List<TransactionElement> createTransaction() {
-        ArrayList<TransactionElement> elements = new ArrayList<>();
+        List<TransactionElement> elements = new ArrayList<>();
         elements.addAll(clearPersistence());
         elements.addAll(removePersistence());
         elements.addAll(storePersistence());

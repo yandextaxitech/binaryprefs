@@ -1,9 +1,8 @@
 package com.ironz.binaryprefs.lock;
 
-import com.ironz.binaryprefs.exception.FileOperationException;
+import com.ironz.binaryprefs.exception.LockOperationException;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -11,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
-public final class ProcessFileLock implements Lock {
+final class ProcessFileLock implements Lock {
 
     private static final String RWD_MODE = "rwd";
 
@@ -30,22 +29,29 @@ public final class ProcessFileLock implements Lock {
         try {
             randomAccessFile = new RandomAccessFile(lockFile, RWD_MODE);
             channel = randomAccessFile.getChannel();
-            if (!lockFile.exists()) {
-                randomAccessFile.seek(0);
-                randomAccessFile.write(0);
-            }
             lock = channel.lock();
         } catch (Exception e) {
-            throw new FileOperationException("Exception while acquire lock", e);
+            try {
+                if (randomAccessFile != null) {
+                    randomAccessFile.close();
+                }
+                if (channel != null) {
+                    channel.close();
+                }
+            } catch (Exception ignored) {
+            }
+            throw new LockOperationException(e);
         }
     }
 
     @Override
     public void unlock() {
         try {
-            lock.release();
+            if (lock != null && lock.isValid()) {
+                lock.release();
+            }
         } catch (Exception e) {
-            throw new FileOperationException("Exception while release lock", e);
+            throw new LockOperationException(e);
         } finally {
             try {
                 if (randomAccessFile != null) {
@@ -54,7 +60,7 @@ public final class ProcessFileLock implements Lock {
                 if (channel != null) {
                     channel.close();
                 }
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         }
     }

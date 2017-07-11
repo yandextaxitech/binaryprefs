@@ -6,13 +6,13 @@ import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.events.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
+import com.ironz.binaryprefs.impl.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.impl.TestTaskExecutorImpl;
 import com.ironz.binaryprefs.impl.TestUser;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -39,23 +39,25 @@ public class MultipleBinaryPreferencesTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private Preferences firstPreferencesInstance;
-    private Preferences secondPreferencesInstance;
     private File srcDir;
     private File backupDir;
     private File lockDir;
+
+    private Preferences firstPreferencesInstance;
+    private Preferences secondPreferencesInstance;
+    private Preferences thirdPreferencesInstance;
 
     @Before
     public void setUp() throws Exception {
         srcDir = folder.newFolder("preferences");
         backupDir = folder.newFolder("backup");
         lockDir = folder.newFolder("lock");
-        firstPreferencesInstance = createPreferences();
-        secondPreferencesInstance = createPreferences();
+        firstPreferencesInstance = createPreferences("user_preferences");
+        secondPreferencesInstance = createPreferences("user_preferences");
+        thirdPreferencesInstance = createPreferences("user_preferences_2");
     }
 
-    private BinaryPreferences createPreferences() throws IOException {
-        String name = "user_preferences";
+    private BinaryPreferences createPreferences(String name) throws IOException {
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
             public File getStoreDirectory() {
@@ -78,7 +80,7 @@ public class MultipleBinaryPreferencesTest {
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
+        TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
@@ -195,5 +197,25 @@ public class MultipleBinaryPreferencesTest {
         firstPreferencesInstance.edit()
                 .putString(key, value)
                 .apply();
+    }
+
+    @Test
+    public void anotherPreferences() {
+        String key = "key";
+        String value = "value";
+
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                throw new UnsupportedOperationException("This method should never be invoked!");
+            }
+        };
+        thirdPreferencesInstance.registerOnSharedPreferenceChangeListener(listener);
+
+        firstPreferencesInstance.edit()
+                .putString(key, value)
+                .apply();
+
+        thirdPreferencesInstance.unregisterOnSharedPreferenceChangeListener(listener);
     }
 }

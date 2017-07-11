@@ -20,4 +20,14 @@ public interface ExceptionHandler {
 
         }
     };
+
+    /**
+     * Prints stacktrace in logcat
+     */
+    ExceptionHandler PRINT = new ExceptionHandler() {
+        @Override
+        public void handle(Exception e) {
+            e.printStackTrace();
+        }
+    };
 }
