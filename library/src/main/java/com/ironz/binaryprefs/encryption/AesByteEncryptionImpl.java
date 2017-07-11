@@ -17,7 +17,6 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private final byte[] secretKeyBytes;
     private final byte[] initialVector;
 
-    @SuppressWarnings("WeakerAccess")
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
         this.secretKeyBytes = secretKeyBytes;
         this.initialVector = initialVector;
