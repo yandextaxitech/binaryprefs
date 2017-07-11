@@ -28,7 +28,6 @@ public api may be changed prior `1.0.0`.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).
 * Fully optimized IPC support (preferences change listeners and in-memory cache works between processes).
-* Define custom directory for saving.
 * Handle various exception events.
 
 ## Usage
