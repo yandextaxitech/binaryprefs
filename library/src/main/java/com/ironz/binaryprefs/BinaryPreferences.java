@@ -49,6 +49,9 @@ final class BinaryPreferences implements Preferences {
             Completable submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    if (cacheProvider.keys().length != 0) {
+                        return;
+                    }
                     for (TransactionElement element : fileTransaction.fetch()) {
                         String name = element.getName();
                         byte[] bytes = element.getContent();
