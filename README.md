@@ -38,12 +38,7 @@ public api may be changed prior `1.0.0`.
 Preferences preferences = new BinaryPreferencesBuilder(context)
                 .name("user_data")
                 .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
-                .exceptionHandler(new ExceptionHandler() {
-                    @Override
-                    public void handle(Exception e) {
-                        //some error handle action
-                    }
-                })
+                .exceptionHandler(ExceptionHandler.PRINT)
                 .registerPersistable(TestUser.KEY, TestUser.class)
                 .registerPersistable(TestOrder.KEY, TestOrder.class)
                 .build();
