@@ -404,10 +404,11 @@ public final class BinaryPreferencesTest {
                 .putPersistable(key, value)
                 .apply();
         TestUser restored = preferences.getPersistable(key, new TestUser());
-
+        TestUser restored2 = preferences.getPersistable(key, new TestUser());
         restored.setName(restored.getName() + "modified");
 
         assertNotEquals(value, restored);
+        assertNotEquals(restored, restored2);
     }
 
     @Test
