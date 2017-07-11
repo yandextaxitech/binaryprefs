@@ -40,6 +40,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                     }
                 })
                 .registerPersistableByKey(TestUser.KEY, TestUser.class)
+                .registerPersistableByKey(TestOrder.KEY, TestOrder.class)
                 .build();
 
 ```
