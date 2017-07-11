@@ -32,8 +32,9 @@ public final class BinaryPreferencesBuilder {
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
 
     private String name = DEFAULT_NAME;
-    private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+    private boolean externalStorage = false;
     private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
+    private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
 
     public BinaryPreferencesBuilder(Context context) {
         this.context = context;
@@ -44,13 +45,18 @@ public final class BinaryPreferencesBuilder {
         return this;
     }
 
-    public BinaryPreferencesBuilder exceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
+    public BinaryPreferencesBuilder externalStorage(boolean value) {
+        this.externalStorage = value;
         return this;
     }
 
     public BinaryPreferencesBuilder encryption(ByteEncryption byteEncryption) {
         this.byteEncryption = byteEncryption;
+        return this;
+    }
+
+    public BinaryPreferencesBuilder exceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
         return this;
     }
 
@@ -65,7 +71,7 @@ public final class BinaryPreferencesBuilder {
             throw new PreferencesInitializationException("Preferences instantiated not in the main thread.");
         }
 
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name);
+        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, externalStorage);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
