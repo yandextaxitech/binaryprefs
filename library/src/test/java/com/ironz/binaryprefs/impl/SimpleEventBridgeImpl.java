@@ -1,7 +1,8 @@
-package com.ironz.binaryprefs.events;
+package com.ironz.binaryprefs.impl;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import com.ironz.binaryprefs.Preferences;
+import com.ironz.binaryprefs.events.EventBridge;
 
 import java.util.ArrayList;
 import java.util.List;
