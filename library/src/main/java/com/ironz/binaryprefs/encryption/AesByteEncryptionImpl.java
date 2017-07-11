@@ -18,6 +18,12 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private final byte[] secretKeyBytes;
     private final byte[] initialVector;
 
+    /**
+     * Creates byte encryption instance which performs AES vice versa encryption operation.
+     *
+     * @param secretKeyBytes 16 bytes secret key
+     * @param initialVector  16 bytes initial vector
+     */
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
         this.secretKeyBytes = secretKeyBytes;
         this.initialVector = initialVector;
