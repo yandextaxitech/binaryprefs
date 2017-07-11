@@ -25,14 +25,13 @@ public final class BinaryPreferences implements Preferences {
     private final Lock readLock;
     private final Lock writeLock;
 
-    @SuppressWarnings("WeakerAccess")
-    public BinaryPreferences(FileTransaction fileTransaction,
-                             ByteEncryption byteEncryption,
-                             EventBridge eventsBridge,
-                             CacheProvider cacheProvider,
-                             TaskExecutor taskExecutor,
-                             SerializerFactory serializerFactory,
-                             LockFactory lockFactory) {
+    BinaryPreferences(FileTransaction fileTransaction,
+                      ByteEncryption byteEncryption,
+                      EventBridge eventsBridge,
+                      CacheProvider cacheProvider,
+                      TaskExecutor taskExecutor,
+                      SerializerFactory serializerFactory,
+                      LockFactory lockFactory) {
         this.fileTransaction = fileTransaction;
         this.byteEncryption = byteEncryption;
         this.eventsBridge = eventsBridge;

@@ -7,22 +7,17 @@ public final class PersistableRegistry {
 
     private final Map<String, Class<? extends Persistable>> map = new HashMap<>();
 
-    public void register(String token, Class<? extends Persistable> clazz) {
-        if (map.containsKey(token)) {
-            throw new UnsupportedOperationException(String.format("Registry already contains '%s' class for '%s' token.", clazz.getName(), token));
+    public void register(String key, Class<? extends Persistable> clazz) {
+        if (map.containsKey(key)) {
+            throw new UnsupportedOperationException(String.format("Registry already contains '%s' class for '%s' key.", clazz.getName(), key));
         }
-        map.put(token, clazz);
+        map.put(key, clazz);
     }
 
-    public Class<? extends Persistable> get(String token) {
-        if (!map.containsKey(token)) {
-            throw new UnsupportedClassVersionError(String.format("Cannot find class type for '%s' token. Please, add token and type in 'register' method.", token));
+    public Class<? extends Persistable> get(String key) {
+        if (!map.containsKey(key)) {
+            throw new UnsupportedClassVersionError(String.format("Cannot find class type for '%s' key. Please, add key and type in 'register' method.", key));
         }
-        return map.get(token);
-    }
-
-    @SuppressWarnings("unused")
-    public void remove(String token) {
-        map.remove(token);
+        return map.get(key);
     }
 }

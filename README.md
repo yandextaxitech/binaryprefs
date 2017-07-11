@@ -17,7 +17,7 @@ and works IPC (between processes).
 * Small memory footprint while serialize/deserialize data.
 * Zero copy in-memory cache.
 * Persists only binary data. Not XML or JSON.
-* All persisted data are encrypted. Default is AES encryption.
+* Out of box data encryption support.
 * Fully backward compatible with default `SharedPreferences` interface.
 * Store all primitives include `double`, `char`, `byte` and `short`.
 * Store complex data objects backward-compatible (see `Persistable` class documentation).

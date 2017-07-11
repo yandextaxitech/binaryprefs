@@ -1,12 +1,14 @@
 package com.ironz.binaryprefs;
 
 import android.content.Context;
+import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProviderImpl;
@@ -29,9 +31,9 @@ public final class BinaryPreferencesBuilder {
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
 
-    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
     private String name = DEFAULT_NAME;
     private ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
 
     public BinaryPreferencesBuilder(Context context) {
         this.context = context;
@@ -52,12 +54,17 @@ public final class BinaryPreferencesBuilder {
         return this;
     }
 
-    public BinaryPreferencesBuilder registerPersistableByKey(String token, Class<? extends Persistable> persistable) {
-        persistableRegistry.register(token, persistable);
+    public BinaryPreferencesBuilder registerPersistableByKey(String key, Class<? extends Persistable> persistable) {
+        persistableRegistry.register(key, persistable);
         return this;
     }
 
     public Preferences build() {
+
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new PreferencesInitializationException("Preferences instantiated not in the main thread.");
+        }
+
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
