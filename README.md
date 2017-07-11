@@ -39,8 +39,8 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                         //some error handle action
                     }
                 })
-                .registerPersistableByKey(TestUser.KEY, TestUser.class)
-                .registerPersistableByKey(TestOrder.KEY, TestOrder.class)
+                .registerPersistable(TestUser.KEY, TestUser.class)
+                .registerPersistable(TestOrder.KEY, TestOrder.class)
                 .build();
 
 ```

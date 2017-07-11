@@ -54,7 +54,7 @@ public final class BinaryPreferencesBuilder {
         return this;
     }
 
-    public BinaryPreferencesBuilder registerPersistableByKey(String key, Class<? extends Persistable> persistable) {
+    public BinaryPreferencesBuilder registerPersistable(String key, Class<? extends Persistable> persistable) {
         persistableRegistry.register(key, persistable);
         return this;
     }
