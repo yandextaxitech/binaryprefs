@@ -34,17 +34,17 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
     /**
      * Creates instance for default or external (if enabled) persistent cache directory.
      *
-     * @param context        target app context
-     * @param prefName       preferences name
-     * @param saveInExternal all data will be saved inside external cache directory
-     *                       if <code>true</code> value is passed
-     *                       ({@link Context#getExternalCacheDir()}),
-     *                       if <code>false</code> - will use standard app cache directory
-     *                       ({@link Context#getCacheDir()}).
+     * @param context         target app context
+     * @param prefName        preferences name
+     * @param externalStorage all data will be saved inside external cache directory
+     *                        if <code>true</code> value is passed
+     *                        ({@link Context#getExternalCacheDir()}),
+     *                        if <code>false</code> - will use standard app cache directory
+     *                        ({@link Context#getCacheDir()}).
      */
     @SuppressWarnings("WeakerAccess")
-    public AndroidDirectoryProviderImpl(Context context, String prefName, boolean saveInExternal) {
-        File baseDir = defineCacheDir(context, saveInExternal);
+    public AndroidDirectoryProviderImpl(Context context, String prefName, boolean externalStorage) {
+        File baseDir = defineCacheDir(context, externalStorage);
         storeDirectory = createStoreDirectory(baseDir, prefName, VALUES);
         backupDirectory = createStoreDirectory(baseDir, prefName, BACKUP);
         lockDirectory = createStoreDirectory(baseDir, prefName, LOCK);
