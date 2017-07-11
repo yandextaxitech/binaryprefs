@@ -6,7 +6,6 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
-import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
@@ -78,7 +77,26 @@ public final class BinaryPreferencesBuilder {
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new BroadcastEventBridgeImpl(context, name, cacheProvider, serializerFactory, executor, byteEncryption);
-        return new BinaryPreferences(fileTransaction, byteEncryption, eventsBridge, cacheProvider, executor, serializerFactory, lockFactory);
+        BroadcastEventBridgeImpl eventsBridge = new BroadcastEventBridgeImpl(
+                context,
+                name,
+                cacheProvider,
+                serializerFactory,
+                executor,
+                byteEncryption
+        );
+        Preferences preferences = new BinaryPreferences(
+                fileTransaction,
+                byteEncryption,
+                eventsBridge,
+                cacheProvider,
+                executor,
+                serializerFactory,
+                lockFactory
+        );
+
+        eventsBridge.definePreferences(preferences);
+
+        return preferences;
     }
 }

@@ -36,7 +36,7 @@ public api may be changed prior `1.0.0`.
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
-                .name("user")
+                .name("user_data")
                 .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
                 .exceptionHandler(new ExceptionHandler() {
                     @Override
@@ -49,6 +49,9 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 
 ```
+
+Please, use only one instance of preferences by name, this saves you from
+non-reasoned allocations.
 
 #### Override default directory
 

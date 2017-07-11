@@ -51,6 +51,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final String updateActionName;
     private final String removeActionName;
     private final int processId;
+    private final BroadcastReceiver updateReceiver;
+    private final BroadcastReceiver removeReceiver;
 
     private Preferences preferences;
 
@@ -66,23 +68,20 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
         this.byteEncryption = byteEncryption;
-
-        this.updateActionName = ACTION_PREFERENCE_UPDATED + context.getPackageName();
-        this.removeActionName = ACTION_PREFERENCE_REMOVED + context.getPackageName();
+        this.updateActionName = createUpdateActionName(context);
+        this.removeActionName = createRemoveActionName(context);
         this.listeners = initListeners(prefName);
-        this.context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                notifyUpdate(intent);
-            }
-        }, new IntentFilter(updateActionName));
-        this.context.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                notifyRemove(intent);
-            }
-        }, new IntentFilter(removeActionName));
+        this.updateReceiver = createUpdateReceiver();
+        this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();
+    }
+
+    private String createUpdateActionName(Context context) {
+        return ACTION_PREFERENCE_UPDATED + context.getPackageName();
+    }
+
+    private String createRemoveActionName(Context context) {
+        return ACTION_PREFERENCE_REMOVED + context.getPackageName();
     }
 
     private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
@@ -92,6 +91,29 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
         allListeners.put(prefName, listeners);
         return listeners;
+    }
+
+    private BroadcastReceiver createRemoveReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyRemove(intent);
+            }
+        };
+    }
+
+    private BroadcastReceiver createUpdateReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                notifyUpdate(intent);
+            }
+        };
+    }
+
+    private void subscribeReceivers() {
+        this.context.registerReceiver(updateReceiver, new IntentFilter(updateActionName));
+        this.context.registerReceiver(removeReceiver, new IntentFilter(removeActionName));
     }
 
     private void notifyUpdate(final Intent intent) {
@@ -158,12 +180,23 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+        if (listeners.isEmpty()) {
+            subscribeReceivers();
+        }
         listeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         listeners.remove(listener);
+        if (listeners.isEmpty()) {
+            unSubscribeReceivers();
+        }
+    }
+
+    private void unSubscribeReceivers() {
+        context.unregisterReceiver(updateReceiver);
+        context.unregisterReceiver(removeReceiver);
     }
 
     @Override
