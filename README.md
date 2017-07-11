@@ -79,9 +79,10 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 12. Finalize serialization and persistence contract.
 13. Background initializer.
 14. `byte[]` support.
-15. File name encrypt.
-16. `Persistable` upgrade/downgrade api.
-17. RxJava support.
+15. Default preferences migration mechanism.
+16. File name encrypt.
+17. `Persistable` upgrade/downgrade api.
+18. RxJava support.
 
 ## License
 ```
