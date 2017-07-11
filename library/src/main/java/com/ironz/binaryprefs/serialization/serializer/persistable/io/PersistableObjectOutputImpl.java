@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.serialization.serializer.persistable.io;
 import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
-public final class BinaryPrefsObjectOutputImpl implements DataOutput {
+public final class PersistableObjectOutputImpl implements DataOutput {
 
     //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
@@ -22,7 +22,7 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
-    public BinaryPrefsObjectOutputImpl(BooleanSerializer booleanSerializer,
+    public PersistableObjectOutputImpl(BooleanSerializer booleanSerializer,
                                        ByteSerializer byteSerializer,
                                        CharSerializer charSerializer,
                                        DoubleSerializer doubleSerializer,
@@ -48,7 +48,7 @@ public final class BinaryPrefsObjectOutputImpl implements DataOutput {
 
         write(new byte[]{PersistableSerializer.FLAG});
 
-        writeInt(VERSION_STUB);
+        writeInt(VERSION_STUB); // TODO: 7/11/17 implement version migration
 
         value.writeExternal(this);
 

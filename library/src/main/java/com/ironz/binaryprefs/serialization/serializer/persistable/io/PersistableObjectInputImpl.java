@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.serialization.serializer.persistable.io;
 import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
-public final class BinaryPrefsObjectInputImpl implements DataInput {
+public final class PersistableObjectInputImpl implements DataInput {
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
@@ -18,7 +18,7 @@ public final class BinaryPrefsObjectInputImpl implements DataInput {
     private int offset = 0;
     private byte[] buffer;
 
-    public BinaryPrefsObjectInputImpl(BooleanSerializer booleanSerializer,
+    public PersistableObjectInputImpl(BooleanSerializer booleanSerializer,
                                       ByteSerializer byteSerializer,
                                       CharSerializer charSerializer,
                                       DoubleSerializer doubleSerializer,
