@@ -24,16 +24,12 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
 
     @Override
     public byte[] encrypt(byte[] bytes) {
-        synchronized (AesByteEncryptionImpl.class) {
-            return encryptInternal(bytes);
-        }
+        return encryptInternal(bytes);
     }
 
     @Override
     public byte[] decrypt(byte[] bytes) {
-        synchronized (AesByteEncryptionImpl.class) {
-            return decryptInternal(bytes);
-        }
+        return decryptInternal(bytes);
     }
 
     private byte[] encryptInternal(byte[] bytes) {
