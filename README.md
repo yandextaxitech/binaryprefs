@@ -13,7 +13,7 @@ Written from scratch.
 
 ## Api finalization status
 
-Please note that api is not finished yet and serialization contract or
+Please note that api is not finalized yet and serialization contract or
 public api may be changed prior `1.0.0`.
 
 ## Advantages
