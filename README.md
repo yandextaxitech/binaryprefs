@@ -6,9 +6,9 @@
 
 ## Binary Preferences
 
-Rapidly fast re-implementation of SharedPreferences which stores each
-preference in files separately, performs disk IO via NIO
-with memory mapped byte buffers and works IPC (between processes).
+Rapidly fast and lightweight re-implementation of SharedPreferences 
+which stores each preference in files separately, performs disk operations 
+via NIO with memory mapped byte buffers and works IPC (between processes). 
 Written from scratch.
 
 ## Api finalization status
