@@ -6,7 +6,7 @@ import com.ironz.binaryprefs.exception.FileOperationException;
 import java.util.concurrent.Future;
 
 /**
- * Meta object which holds current task state for it's blocking await.
+ * Meta object which holds current task state and allows blocking await.
  */
 public final class Completable {
 
