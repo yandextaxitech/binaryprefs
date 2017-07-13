@@ -13,21 +13,21 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private final ExceptionHandler exceptionHandler;
 
-    private static final Map<String, ExecutorService> executorsMap = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
 
-    private final ExecutorService executor;
+    private final ExecutorService currentExecutor;
 
     public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
-        executor = initExecutor(prefName);
+        currentExecutor = initExecutor(prefName);
     }
 
     private ExecutorService initExecutor(final String prefName) {
-        if (executorsMap.containsKey(prefName)) {
-            return executorsMap.get(prefName);
+        if (executors.containsKey(prefName)) {
+            return executors.get(prefName);
         }
         ExecutorService service = Executors.newFixedThreadPool(1, createThreadFactory(prefName));
-        executorsMap.put(prefName, service);
+        executors.put(prefName, service);
         return service;
     }
 
@@ -49,7 +49,7 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     @Override
     public synchronized Completable submit(Runnable runnable) {
-        Future<?> submit = executor.submit(runnable);
+        Future<?> submit = currentExecutor.submit(runnable);
         return new Completable(submit, exceptionHandler);
     }
 }
