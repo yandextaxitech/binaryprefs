@@ -7,20 +7,20 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class AesByteEncryptionImplTest {
+public class XorByteEncryptionImplTest {
 
     private static final byte[] SECRET_KEY_BYTES = "LZN8KKF7KH816D0U".getBytes();
-    private static final byte[] INITIAL_VECTOR = "AG6PJGG7AZJD8QPH".getBytes();
+    private static final byte[] SALT_BYTES = "AG6PJGG7AZJD8QPH".getBytes();
     private static final byte[] BAD_SECRET_KEY_BYTES = "0000000000000000".getBytes();
-    private static final byte[] BAD_INITIAL_VECTOR = "0000000000000000".getBytes();
+    private static final byte[] BAD_SALT = "0000000000000000".getBytes();
 
     private ByteEncryption byteEncryption;
     private ByteEncryption badByteEncryption;
 
     @Before
     public void setUp() {
-        byteEncryption = new AesByteEncryptionImpl(SECRET_KEY_BYTES, INITIAL_VECTOR);
-        badByteEncryption = new AesByteEncryptionImpl(BAD_SECRET_KEY_BYTES, BAD_INITIAL_VECTOR);
+        byteEncryption = new XorByteEncryptionImpl(SECRET_KEY_BYTES, SALT_BYTES);
+        badByteEncryption = new XorByteEncryptionImpl(BAD_SECRET_KEY_BYTES, BAD_SALT);
     }
 
     @Test
@@ -37,18 +37,21 @@ public class AesByteEncryptionImplTest {
         assertEquals(original, restored);
     }
 
-    @Test(expected = EncryptionException.class)
+    @Test
     public void badDecrypt() {
         String original = "some string";
         byte[] originalBytes = original.getBytes();
 
         byte[] encrypt = byteEncryption.encrypt(originalBytes);
 
-        badByteEncryption.decrypt(encrypt);
+        byte[] decrypt = badByteEncryption.decrypt(encrypt);
+        String result = new String(decrypt);
+
+        assertNotEquals(original, result);
     }
 
     @Test(expected = EncryptionException.class)
     public void incorrectKeySize() {
-        new AesByteEncryptionImpl(new byte[0], new byte[0]);
+        new XorByteEncryptionImpl(new byte[0], new byte[0]);
     }
 }
