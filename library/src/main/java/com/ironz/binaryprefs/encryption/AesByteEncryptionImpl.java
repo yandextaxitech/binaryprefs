@@ -32,17 +32,17 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
         this.iv = new IvParameterSpec(initialVector);
     }
 
+    private void checkLength(byte[] secretKeyBytes, byte[] initialVector) {
+        if (secretKeyBytes.length != KEY_LENGTH || initialVector.length != KEY_LENGTH) {
+            throw new EncryptionException("Secret and initial vector must be 16 bytes");
+        }
+    }
+
     private Cipher getCipherInstance() {
         try {
             return Cipher.getInstance(AES_CBC_PKCS5_PADDING);
         } catch (Exception e) {
             throw new EncryptionException(e);
-        }
-    }
-
-    private void checkLength(byte[] secretKeyBytes, byte[] initialVector) {
-        if (secretKeyBytes.length != KEY_LENGTH || initialVector.length != KEY_LENGTH) {
-            throw new EncryptionException("Secret and initial vector must be 16 bytes");
         }
     }
 
