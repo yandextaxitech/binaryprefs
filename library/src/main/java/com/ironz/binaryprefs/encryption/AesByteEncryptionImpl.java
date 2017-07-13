@@ -15,8 +15,9 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5PADDING";
     private static final int KEY_LENGTH = 16;
 
-    private final byte[] secretKeyBytes;
-    private final byte[] initialVector;
+    private final Cipher cipher;
+    private final SecretKeySpec keySpec;
+    private final IvParameterSpec iv;
 
     /**
      * Creates byte encryption instance which performs AES vice versa encryption operation.
@@ -25,12 +26,21 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
      * @param initialVector  16 bytes initial vector
      */
     public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
-        this.secretKeyBytes = secretKeyBytes;
-        this.initialVector = initialVector;
-        checkLength();
+        checkLength(secretKeyBytes, initialVector);
+        this.cipher = getCipherInstance();
+        this.keySpec = new SecretKeySpec(secretKeyBytes, AES);
+        this.iv = new IvParameterSpec(initialVector);
     }
 
-    private void checkLength() {
+    private Cipher getCipherInstance() {
+        try {
+            return Cipher.getInstance(AES_CBC_PKCS5_PADDING);
+        } catch (Exception e) {
+            throw new EncryptionException(e);
+        }
+    }
+
+    private void checkLength(byte[] secretKeyBytes, byte[] initialVector) {
         if (secretKeyBytes.length != KEY_LENGTH || initialVector.length != KEY_LENGTH) {
             throw new EncryptionException("Secret and initial vector must be 16 bytes");
         }
@@ -65,18 +75,12 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     }
 
     private Cipher createEncryptCipher() throws Exception {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-        IvParameterSpec iv = new IvParameterSpec(initialVector);
-        Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
         return cipher;
     }
 
     private Cipher createDecryptCipher() throws Exception {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, AES);
-        IvParameterSpec iv = new IvParameterSpec(initialVector);
-        Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
         return cipher;
     }
 }
