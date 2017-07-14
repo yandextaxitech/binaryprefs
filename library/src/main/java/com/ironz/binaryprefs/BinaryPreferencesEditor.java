@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
@@ -27,7 +26,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
-    private final ByteEncryption byteEncryption;
 
     private boolean clear;
 
@@ -37,8 +35,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Lock writeLock,
-                            ByteEncryption byteEncryption) {
+                            Lock writeLock) {
         this.preferences = preferences;
         this.fileTransaction = fileTransaction;
         this.bridge = bridge;
@@ -46,7 +43,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
-        this.byteEncryption = byteEncryption;
     }
 
     @Override
@@ -319,8 +315,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         for (String name : strings) {
             SerializationStrategy strategy = strategyMap.get(name);
             byte[] bytes = strategy.serialize();
-            byte[] encrypt = byteEncryption.encrypt(bytes);
-            TransactionElement e = TransactionElement.createUpdateElement(name, encrypt);
+            TransactionElement e = TransactionElement.createUpdateElement(name, bytes);
             elements.add(e);
         }
         return elements;

@@ -77,8 +77,8 @@ public class MultipleBinaryPreferencesTest {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();

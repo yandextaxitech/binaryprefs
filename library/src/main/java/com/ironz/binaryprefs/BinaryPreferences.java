@@ -252,8 +252,7 @@ final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
-                    writeLock,
-                    byteEncryption
+                    writeLock
             );
         } finally {
             readLock.unlock();

@@ -153,7 +153,7 @@ public final class BinaryPreferencesBuilder {
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, externalStorage);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
