@@ -39,7 +39,6 @@ cache works between processes).
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
-
 ```
 
 Please, use only one instance of preferences by name, this saves you from
