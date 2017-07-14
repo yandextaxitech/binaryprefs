@@ -46,8 +46,9 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Please, use only one instance of preferences by name, it saves you from
-non-reasoned allocations. You can store it in application class or event
-better use one instance from IoC like Dagger or some another DI framework.
+non-reasoned allocations. You can store one instance in application class
+or event better use one instance from IoC like Dagger or some another
+DI framework.
 
 All parameters are optional and chain-buildable.
 
