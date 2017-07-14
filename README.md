@@ -168,8 +168,8 @@ Example for only `user_id` dump:
 
 
 Please note that if you create multiple instances of one preferences class
-(e.g. in `Activity#onCreate` method) you should unregister dump in
-`Activity#onDestroy` method like this:
+(e.g. in `Activity#onCreate`) you should unregister dump
+(e.g. in `Activity#onDestroy`) like this:
 
 ```java
 DumpReceiver.unregister(name);
