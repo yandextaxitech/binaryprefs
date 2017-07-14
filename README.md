@@ -26,8 +26,10 @@ public api may be changed prior `1.0.0`.
 * Out of box data encryption support.
 * Fully backward compatible with default `SharedPreferences` interface.
 * Store all primitives include `double`, `char`, `byte` and `short`.
-* Store complex data objects backward-compatible (see `Persistable` class documentation).
-* Fully optimized IPC support (preferences change listeners and in-memory cache works between processes).
+* Store complex data objects backward-compatible (see `Persistable` class
+documentation).
+* Fully optimized IPC support (preferences change listeners and in-memory
+cache works between processes).
 * Handle various exception events.
 
 ## Usage
@@ -36,17 +38,58 @@ public api may be changed prior `1.0.0`.
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
-                .name("user_data")
-                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
-                .exceptionHandler(ExceptionHandler.PRINT)
-                .registerPersistable(TestUser.KEY, TestUser.class)
-                .registerPersistable(TestOrder.KEY, TestOrder.class)
                 .build();
 
 ```
 
 Please, use only one instance of preferences by name, this saves you from
-non-reasoned allocations.
+non-reasoned allocations. You can store it in application class or event
+better use one instance from IoC like Dagger or some another DI framework.
+
+All parameters are optional and chain-buildable.
+
+#### Custom preferences name
+
+Builder contains method which defines desirable preferences name.
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .name("user_data")
+                .build();
+```
+
+Default is "default" name.
+
+#### Encryption
+
+You can define your own file vice-versa encryption for disk IO or use default.
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
+                .build();
+```
+
+Default is no-op encryption.
+
+#### Exception handler
+
+You can listen exceptions which comes during disk IO, serialization,
+task execution operations.
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .exceptionHandler(new ExceptionHandler() {
+                    @Override
+                    public void handle(Exception e) {
+                        //perform metrica report
+                    }
+                })
+                .build();
+```
+
+Default is print handler which performs `e.printStacktrace()` if
+exception event are comes.
 
 #### Dealing with `Persistable`
 
@@ -55,6 +98,18 @@ restoring complex objects. It's pretty similar like standard java
 `Externalizable` contract but without few methods which don't need for.
 For usage you just need to implement this interface with methods on your
 data-model.
+
+All Persistable data-objects should be registered for understanding
+de/serialization contract during cache initialization.
+
+#### How to register `Persistable`.
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .registerPersistable(TestUser.KEY, TestUser.class)
+                .registerPersistable(TestOrder.KEY, TestOrder.class)
+                .build();
+```
 
 Note about `deepClone` method: you should implement full object hierarchy
 clone for fast immutable in-memory data fetching.
