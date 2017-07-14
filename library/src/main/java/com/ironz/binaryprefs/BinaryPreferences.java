@@ -262,7 +262,12 @@ final class BinaryPreferences implements Preferences {
 
     @Override
     public List<String> keys() {
-        return Arrays.asList(cacheProvider.keys());
+        readLock.lock();
+        try {
+            return Arrays.asList(cacheProvider.keys());
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
