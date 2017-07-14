@@ -4,6 +4,7 @@
 <a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9"><img src="https://img.shields.io/badge/Size-67 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
+
 ## Binary Preferences
 
 Rapidly fast and lightweight re-implementation of SharedPreferences 
@@ -11,10 +12,12 @@ which stores each preference in files separately, performs disk operations
 via NIO with memory mapped byte buffers and works IPC (between processes). 
 Written from scratch.
 
+
 ## Api finalization status
 
 Please note that api is not finalized yet and serialization contract or
 public api may be changed prior `1.0.0`.
+
 
 ## Advantages
 
@@ -31,6 +34,7 @@ documentation).
 * Fully optimized IPC support (preferences change listeners and in-memory
 cache works between processes).
 * Handle various exception events.
+
 
 ## Usage
 
@@ -49,7 +53,7 @@ All parameters are optional and chain-buildable.
 
 #### Custom preferences name
 
-Builder contains method which defines desirable preferences name.
+Builder contains method which defines desirable preferences name:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
@@ -59,9 +63,10 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 
 Default is "default" name.
 
+
 #### Encryption
 
-You can define your own file vice-versa encryption for disk IO or use default.
+You can define your own file vice-versa encryption or use default:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
@@ -71,10 +76,11 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 
 Default is no-op encryption.
 
+
 #### Exception handler
 
 You can listen exceptions which comes during disk IO, serialization,
-task execution operations.
+task execution operations:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
@@ -90,6 +96,23 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Default is print handler which performs `e.printStacktrace()` if
 exception event are comes.
 
+
+### IPC mode
+
+If your app architecture is process based (services works in separate processes)
+and you would like to get preferences updates and use consistent
+inter-process cache you can enable this feature:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .supportInterProcess(true)
+                .build();
+```
+
+Please, note that one key change delta should be less than 1 (one) megabyte
+because IPC data transferring is limited by this capacity.
+
+
 #### Dealing with `Persistable`
 
 `Persistable` contract been added for fast and flexible saving and it's
@@ -100,6 +123,7 @@ data-model.
 
 All Persistable data-objects should be registered for understanding
 de/serialization contract during cache initialization.
+
 
 #### How to register `Persistable`.
 
@@ -114,6 +138,8 @@ Note about `deepClone` method: you should implement full object hierarchy
 clone for fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
+
+
 
 ## Roadmap
 
@@ -136,6 +162,8 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 16. File name encrypt.
 17. `Persistable` upgrade/downgrade api.
 18. RxJava support.
+
+
 
 ## License
 ```
