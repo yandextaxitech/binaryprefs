@@ -160,9 +160,10 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 13. Background initializer.
 14. `byte[]` support.
 15. Default preferences migration mechanism.
-16. File name encrypt.
-17. `Persistable` upgrade/downgrade api.
-18. RxJava support.
+16. IPC transaction without limits.
+17. File name encrypt.
+18. `Persistable` upgrade/downgrade api.
+19. RxJava support.
 
 
 
