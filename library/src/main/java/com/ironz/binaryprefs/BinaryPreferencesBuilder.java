@@ -6,6 +6,8 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
+import com.ironz.binaryprefs.events.EventBridge;
+import com.ironz.binaryprefs.events.MainThreadEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
@@ -32,6 +34,7 @@ public final class BinaryPreferencesBuilder {
 
     private String name = DEFAULT_NAME;
     private boolean externalStorage = false;
+    private boolean supportInterProcess = false;
     private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
 
@@ -46,6 +49,11 @@ public final class BinaryPreferencesBuilder {
 
     public BinaryPreferencesBuilder externalStorage(boolean value) {
         this.externalStorage = value;
+        return this;
+    }
+
+    public BinaryPreferencesBuilder supportInterProcess() {
+        this.supportInterProcess = true;
         return this;
     }
 
@@ -77,14 +85,17 @@ public final class BinaryPreferencesBuilder {
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        BroadcastEventBridgeImpl eventsBridge = new BroadcastEventBridgeImpl(
+
+
+        EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
                 context,
                 name,
                 cacheProvider,
                 serializerFactory,
                 executor,
                 byteEncryption
-        );
+        ) : new MainThreadEventBridgeImpl(name);
+
         Preferences preferences = new BinaryPreferences(
                 fileTransaction,
                 byteEncryption,
@@ -95,7 +106,9 @@ public final class BinaryPreferencesBuilder {
                 lockFactory
         );
 
-        eventsBridge.definePreferences(preferences);
+        if (eventsBridge instanceof BroadcastEventBridgeImpl) { //shit happens
+            ((BroadcastEventBridgeImpl) eventsBridge).definePreferences(preferences);
+        }
 
         return preferences;
     }
