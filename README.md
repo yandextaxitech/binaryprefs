@@ -160,7 +160,7 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 13. Background initializer.
 14. `byte[]` support.
 15. Default preferences migration mechanism.
-16. IPC transaction without limits.
+16. IPC transactions without 1mb limit.
 17. File name encrypt.
 18. `Persistable` upgrade/downgrade api.
 19. RxJava support.
