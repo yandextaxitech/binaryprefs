@@ -112,6 +112,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Please, note that one key change delta should be less than 1 (one) megabyte
 because IPC data transferring is limited by this capacity.
 
+Details here: [Documentation](https://developer.android.com/reference/android/os/TransactionTooLargeException.html)
 
 #### Dealing with `Persistable`
 
