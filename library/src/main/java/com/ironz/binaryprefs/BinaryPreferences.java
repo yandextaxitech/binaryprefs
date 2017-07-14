@@ -44,9 +44,6 @@ final class BinaryPreferences implements Preferences {
     }
 
     private void fetchCache() {
-        Preferences preferences = new BinaryPreferencesBuilder(context)
-                .supportInterProcess(true)
-                .build();
         readLock.lock();
         try {
             Completable submit = taskExecutor.submit(new Runnable() {
