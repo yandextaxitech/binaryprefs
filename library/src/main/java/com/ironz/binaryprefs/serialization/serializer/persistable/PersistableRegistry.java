@@ -5,18 +5,22 @@ import java.util.Map;
 
 public final class PersistableRegistry {
 
+    private static final String CANNOT_FIND_MESSAGE = "Cannot find Persistable type for '%s' key. " +
+            "Please, add it through 'registerPersistable' builder method.";
+    private static final String ALREADY_REGISTERED_MESSAGE = "Registry already contains '%s' class for '%s' key.";
+
     private final Map<String, Class<? extends Persistable>> map = new HashMap<>();
 
     public void register(String key, Class<? extends Persistable> clazz) {
         if (map.containsKey(key)) {
-            throw new UnsupportedOperationException(String.format("Registry already contains '%s' class for '%s' key.", clazz.getName(), key));
+            throw new UnsupportedOperationException(String.format(ALREADY_REGISTERED_MESSAGE, clazz.getName(), key));
         }
         map.put(key, clazz);
     }
 
     public Class<? extends Persistable> get(String key) {
         if (!map.containsKey(key)) {
-            throw new UnsupportedClassVersionError(String.format("Cannot find class type for '%s' key. Please, add key and type in 'register' method.", key));
+            throw new UnsupportedClassVersionError(String.format(CANNOT_FIND_MESSAGE, key));
         }
         return map.get(key);
     }

@@ -20,7 +20,7 @@ public final class TransactionElement {
         return new TransactionElement(ACTION_UPDATE, name, content);
     }
 
-    public static TransactionElement createRemoveElement(String name) {
+    public static TransactionElement createRemovalElement(String name) {
         return new TransactionElement(ACTION_REMOVE, name, EMPTY_CONTENT);
     }
 
