@@ -100,8 +100,8 @@ exception event are comes.
 #### IPC mode
 
 If your app architecture is process based (services works in separate processes)
-and you would like to get preferences updates and use consistent
-inter-process cache you can enable this feature:
+and you would like to get preferences updates with consistent cache state
+you can enable this feature:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
