@@ -97,7 +97,7 @@ Default is print handler which performs `e.printStacktrace()` if
 exception event are comes.
 
 
-### IPC mode
+#### IPC mode
 
 If your app architecture is process based (services works in separate processes)
 and you would like to get preferences updates and use consistent
