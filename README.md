@@ -159,7 +159,7 @@ DumpReceiver.register(name, preferences);
 
 Fully working example of all values dump:
 
-`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data"
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data"`
 
 
 Example for only `user_id` dump:
