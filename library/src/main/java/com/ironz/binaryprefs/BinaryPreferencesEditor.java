@@ -222,7 +222,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    transact();
+                    commitTransaction();
                 }
             });
         } finally {
@@ -240,7 +240,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             Completable submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    transact();
+                    commitTransaction();
                 }
             });
             return submit.completeBlocking();
@@ -275,7 +275,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void transact() {
+    private void commitTransaction() {
         List<TransactionElement> transaction = createTransaction();
         fileTransaction.commit(transaction);
         notifyListeners(transaction);
