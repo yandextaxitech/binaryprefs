@@ -20,6 +20,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
 
+    private static final String ZERO_BYTES_MESSAGE = "%s key has zero bytes for saving";
     private static final String BACKUP_EXTENSION = ".bak";
 
     private static final String R_MODE = "r";
@@ -93,8 +94,10 @@ public final class NioFileAdapter implements FileAdapter {
         backupAndSave(name, bytes);
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void backupAndSave(String name, byte[] bytes) {
+        if (bytes.length == 0) {
+            throw new FileOperationException(String.format(ZERO_BYTES_MESSAGE, name));
+        }
         File file = new File(baseDir, name);
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         swap(file, backupFile);
