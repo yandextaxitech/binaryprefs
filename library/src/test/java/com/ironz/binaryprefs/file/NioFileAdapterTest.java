@@ -56,6 +56,11 @@ public class NioFileAdapterTest {
         fileAdapter.save(FILE_NAME, bytes);
     }
 
+    @Test(expected = FileOperationException.class)
+    public void savingEmptyBytes() {
+        fileAdapter.save(FILE_NAME, new byte[0]);
+    }
+
     @Test
     public void restore() {
         fileAdapter.save(FILE_NAME, bytes);
