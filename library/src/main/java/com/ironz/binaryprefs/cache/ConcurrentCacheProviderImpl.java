@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.cache;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,7 +39,8 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
     @Override
     public String[] keys() {
-        return currentCache.keySet().toArray(new String[0]);
+        Set<String> keySet = currentCache.keySet();
+        return keySet.toArray(new String[0]);
     }
 
     @Override
