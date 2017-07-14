@@ -144,18 +144,18 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 
 You can dump your preferences with adb console command right in logcat:
 
-```java
-DumpReceiver.register(name, preferences);
-```
-
-After this you can use adb for preferences dump:
-
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
 
 where:
 
 `your_pref_name` - is your `name` which you define in `register` method.
 `your_pref_key` - is your preference key, this is optional value.
+
+How to register preferences by name:
+
+```java
+DumpReceiver.register(name, preferences);
+```
 
 Fully working example of all values dump:
 
