@@ -126,7 +126,7 @@ All Persistable data-objects should be registered for understanding
 de/serialization contract during cache initialization.
 
 
-#### How to register `Persistable`.
+#### How to register `Persistable`
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
@@ -139,6 +139,41 @@ Note about `deepClone` method: you should implement full object hierarchy
 clone for fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
+
+## Logcat preferences dump
+
+You can dump your preferences with adb console command right in logcat:
+
+```java
+DumpReceiver.register(name, preferences);
+```
+
+After this you can use adb for preferences dump:
+
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
+
+where:
+
+`your_pref_name` - is your `name` which you define in `register` method.
+`your_pref_key` - is your preference key, this is optional value.
+
+Fully working example of all values dump:
+
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data"
+
+
+Example for only `user_id` dump:
+
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data" --es "pref_key" "user_id"`
+
+
+Please note that if you create multiple instances of one preferences class
+(e.g. in `Activity#onCreate` method) you should unregister dump in
+`Activity#onDestroy` method like this:
+
+```java
+DumpReceiver.unregister(name);
+```
 
 
 ## Roadmap

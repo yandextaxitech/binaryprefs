@@ -11,10 +11,11 @@ import java.util.concurrent.*;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
-    private final ExceptionHandler exceptionHandler;
+    private static final int THREADS_COUNT = 1;
 
     private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
 
+    private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
 
     public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler) {
@@ -26,7 +27,8 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
         if (executors.containsKey(prefName)) {
             return executors.get(prefName);
         }
-        ExecutorService service = Executors.newFixedThreadPool(1, createThreadFactory(prefName));
+        ThreadFactory threadFactory = createThreadFactory(prefName);
+        ExecutorService service = Executors.newFixedThreadPool(THREADS_COUNT, threadFactory);
         executors.put(prefName, service);
         return service;
     }
