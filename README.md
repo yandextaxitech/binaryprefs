@@ -141,7 +141,6 @@ clone for fast immutable in-memory data fetching.
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
 
-
 ## Roadmap
 
 1. ~~Disk I/O encrypt.~~ completed.
@@ -164,7 +163,6 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 17. File name encrypt.
 18. `Persistable` upgrade/downgrade api.
 19. RxJava support.
-
 
 
 ## License
