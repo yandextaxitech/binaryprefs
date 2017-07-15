@@ -75,7 +75,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Default is no-op encryption.
+Default is no-op encryption. Library also provides `AesByteEncryptionImpl` implementation.
 
 
 #### Exception handler
@@ -120,10 +120,10 @@ Details here: [Documentation](https://developer.android.com/reference/android/os
 `Persistable` contract been added for fast and flexible saving and it's
 restoring complex objects. It's pretty similar like standard java
 `Externalizable` contract but without few methods which don't need for.
-For usage you just need to implement this interface with methods on your
+For usage you just need to implement this interface with methods in your
 data-model.
 
-All Persistable data-objects should be registered for understanding
+All Persistable data-objects should be registered by key for understanding
 de/serialization contract during cache initialization.
 
 
@@ -136,8 +136,8 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Note about `deepClone` method: you should implement full object hierarchy
-clone for fast immutable in-memory data fetching.
+Note about `deepClone` method: you should implement full object hierarchy for 
+fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
@@ -149,7 +149,7 @@ You can dump your preferences with adb console command right in logcat:
 
 where:
 
-`your_pref_name` - is your `name` which you define in `register` method.
+`your_pref_name` - is your preferences name which is defined in `register` method.
 `your_pref_key` - is your preference key, this is optional value.
 
 How to register preferences by name:
@@ -163,12 +163,12 @@ Fully working example of all values dump:
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data"`
 
 
-Example for only `user_id` dump:
+Example for only `user_id` key dump:
 
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data" --es "pref_key" "user_id"`
 
 
-Please note that if you create multiple instances of one preferences class
+Please note that if you create multiple instances of one preferences
 (e.g. in `Activity#onCreate`) you should unregister dump
 (e.g. in `Activity#onDestroy`) like this:
 
