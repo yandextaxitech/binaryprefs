@@ -170,7 +170,6 @@ public final class BinaryPreferencesBuilder {
 
         Preferences preferences = new BinaryPreferences(
                 fileTransaction,
-                byteEncryption,
                 eventsBridge,
                 cacheProvider,
                 executor,
@@ -179,7 +178,7 @@ public final class BinaryPreferencesBuilder {
         );
 
         // TODO: 7/14/17 redesign this workaround in future
-        if (eventsBridge instanceof BroadcastEventBridgeImpl) { //shit happens
+        if (eventsBridge instanceof BroadcastEventBridgeImpl) { //workaround happens
             ((BroadcastEventBridgeImpl) eventsBridge).definePreferences(preferences);
         }
 

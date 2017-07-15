@@ -81,7 +81,6 @@ public final class BinaryPreferencesTest {
 
         preferences = new BinaryPreferences(
                 fileTransaction,
-                byteEncryption,
                 eventsBridge,
                 cacheProvider,
                 executor,

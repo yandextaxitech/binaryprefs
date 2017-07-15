@@ -88,7 +88,6 @@ public class MultipleBinaryPreferencesTest {
 
         return new BinaryPreferences(
                 fileTransaction,
-                byteEncryption,
                 eventsBridge,
                 cacheProvider,
                 executor,
