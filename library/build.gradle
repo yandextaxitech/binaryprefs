@@ -55,12 +55,12 @@ bintray {
 }
 
 artifactory {
-    contextUrl = "${artifactory_url}"
+    contextUrl = project.findProperty("artifactory_url") ?: ""
     publish {
         repository {
-            repoKey = "${artifactory_release_key}"
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            repoKey = project.findProperty("artifactory_release_key") ?: ""
+            username = project.findProperty("artifactory_user") ?: ""
+            password = project.findProperty("artifactory_password") ?: ""
         }
         defaults {
             publishConfigs('archives')
