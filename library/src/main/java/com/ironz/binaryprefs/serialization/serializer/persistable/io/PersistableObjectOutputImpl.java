@@ -5,7 +5,7 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
 public final class PersistableObjectOutputImpl implements DataOutput {
 
-    //bytes for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
+    //bytes capacity for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
     private static final int VERSION_STUB = 1; // TODO: 7/11/17 implement version migration
 
