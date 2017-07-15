@@ -52,7 +52,7 @@ public final class PersistableSerializer {
 
     /**
      * Serialize {@code Persistable} into byte array with following scheme:
-     * [{@link PersistableSerializer#FLAG}] + [boolean_bytes].
+     * [{@link PersistableSerializer#FLAG}] + [sequential primitives bytes].
      *
      * @param value target persistable to serialize.
      * @return specific byte array with scheme.
