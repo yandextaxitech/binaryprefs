@@ -106,6 +106,7 @@ public final class BinaryPreferencesTest {
     @Test
     public void getKeysEmpty() {
         List<String> keys = preferences.keys();
+
         assertTrue(keys.isEmpty());
     }
 
