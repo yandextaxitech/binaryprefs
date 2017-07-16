@@ -3,6 +3,11 @@ package com.ironz.binaryprefs.events;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
+/**
+ * Wrapped {@link OnSharedPreferenceChangeListener} class which holds current preferences instance for delivering
+ * correct {@link com.ironz.binaryprefs.Preferences} instance to 2'st argument in
+ * {@link OnSharedPreferenceChangeListener#onSharedPreferenceChanged(SharedPreferences, String)} method.
+ */
 public final class OnSharedPreferenceChangeListenerWrapper implements OnSharedPreferenceChangeListener {
 
     private final SharedPreferences currentPreferences;
