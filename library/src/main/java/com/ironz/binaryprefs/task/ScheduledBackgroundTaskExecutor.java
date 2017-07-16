@@ -14,6 +14,7 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     private static final int THREADS_COUNT = 1;
 
     private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
+    private static final String THREAD_NAME_PREFIX = "binaryprefs-pool-";
 
     private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
@@ -44,7 +45,7 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private Thread createThread(Runnable r, String prefName) {
         Thread thread = new Thread(r);
-        thread.setName("binaryprefs-pool-" + prefName);
+        thread.setName(THREAD_NAME_PREFIX + prefName);
         thread.setPriority(Thread.MAX_PRIORITY);
         return thread;
     }
