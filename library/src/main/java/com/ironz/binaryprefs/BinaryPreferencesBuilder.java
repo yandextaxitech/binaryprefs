@@ -158,7 +158,6 @@ public final class BinaryPreferencesBuilder {
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
 
-
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
                 context,
                 name,
