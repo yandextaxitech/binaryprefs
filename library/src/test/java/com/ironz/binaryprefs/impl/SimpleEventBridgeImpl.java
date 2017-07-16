@@ -3,6 +3,7 @@ package com.ironz.binaryprefs.impl;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.events.EventBridge;
+import com.ironz.binaryprefs.events.OnSharedPreferenceChangeListenerWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +33,12 @@ public final class SimpleEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
         listeners.remove(listener);
     }
 

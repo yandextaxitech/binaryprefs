@@ -2,6 +2,7 @@ package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.events.EventBridge;
+import com.ironz.binaryprefs.events.OnSharedPreferenceChangeListenerWrapper;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -268,7 +269,8 @@ final class BinaryPreferences implements Preferences {
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
-            eventsBridge.registerOnSharedPreferenceChangeListener(listener);
+            OnSharedPreferenceChangeListenerWrapper wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
+            eventsBridge.registerOnSharedPreferenceChangeListener(wrapper);
         } finally {
             writeLock.unlock();
         }
@@ -278,7 +280,8 @@ final class BinaryPreferences implements Preferences {
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
-            eventsBridge.unregisterOnSharedPreferenceChangeListener(listener);
+            OnSharedPreferenceChangeListenerWrapper wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
+            eventsBridge.unregisterOnSharedPreferenceChangeListener(wrapper);
         } finally {
             writeLock.unlock();
         }

@@ -15,7 +15,7 @@ public interface EventBridge {
      *
      * @param listener listener
      */
-    void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener);
+    void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener);
 
     /**
      * Behaves exactly like in
@@ -24,7 +24,7 @@ public interface EventBridge {
      *
      * @param listener listener
      */
-    void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener);
+    void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener);
 
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference update

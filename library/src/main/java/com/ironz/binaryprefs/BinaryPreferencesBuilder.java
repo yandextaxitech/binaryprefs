@@ -168,7 +168,7 @@ public final class BinaryPreferencesBuilder {
                 byteEncryption
         ) : new MainThreadEventBridgeImpl(name);
 
-        Preferences preferences = new BinaryPreferences(
+        return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,
                 cacheProvider,
@@ -176,12 +176,5 @@ public final class BinaryPreferencesBuilder {
                 serializerFactory,
                 lockFactory
         );
-
-        // TODO: 7/14/17 redesign this workaround in future
-        if (eventsBridge instanceof BroadcastEventBridgeImpl) { //workaround happens
-            ((BroadcastEventBridgeImpl) eventsBridge).definePreferences(preferences);
-        }
-
-        return preferences;
     }
 }
