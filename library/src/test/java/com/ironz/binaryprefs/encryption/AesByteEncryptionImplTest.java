@@ -5,32 +5,46 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class AesByteEncryptionImplTest {
 
-    private AesByteEncryptionImpl aesByteEncryption;
-    private AesByteEncryptionImpl badAesByteEncryption;
+    private static final byte[] SECRET_KEY_BYTES = "LZN8KKF7KH816D0U".getBytes();
+    private static final byte[] INITIAL_VECTOR = "AG6PJGG7AZJD8QPH".getBytes();
+    private static final byte[] BAD_SECRET_KEY_BYTES = "0000000000000000".getBytes();
+    private static final byte[] BAD_INITIAL_VECTOR = "0000000000000000".getBytes();
+
+    private ByteEncryption byteEncryption;
+    private ByteEncryption badByteEncryption;
 
     @Before
     public void setUp() {
-        aesByteEncryption = new AesByteEncryptionImpl("LZN8KKF7KH816D0U".getBytes(), "AG6PJGG7AZJD8QPH".getBytes());
-        badAesByteEncryption = new AesByteEncryptionImpl("0000000000000000".getBytes(), "0000000000000000".getBytes());
+        byteEncryption = new AesByteEncryptionImpl(SECRET_KEY_BYTES, INITIAL_VECTOR);
+        badByteEncryption = new AesByteEncryptionImpl(BAD_SECRET_KEY_BYTES, BAD_INITIAL_VECTOR);
     }
 
     @Test
     public void encryptDecrypt() {
         String original = "some string";
-        byte[] encrypt = aesByteEncryption.encrypt(original.getBytes());
-        byte[] decrypt = aesByteEncryption.decrypt(encrypt);
+        byte[] originalBytes = original.getBytes();
+
+        byte[] encrypt = byteEncryption.encrypt(originalBytes);
+        byte[] decrypt = byteEncryption.decrypt(encrypt);
+        String encryptedString = new String(encrypt);
         String restored = new String(decrypt);
+
+        assertNotEquals(original, encryptedString);
         assertEquals(original, restored);
     }
 
     @Test(expected = EncryptionException.class)
     public void badDecrypt() {
         String original = "some string";
-        byte[] encrypt = aesByteEncryption.encrypt(original.getBytes());
-        badAesByteEncryption.decrypt(encrypt);
+        byte[] originalBytes = original.getBytes();
+
+        byte[] encrypt = byteEncryption.encrypt(originalBytes);
+
+        badByteEncryption.decrypt(encrypt);
     }
 
     @Test(expected = EncryptionException.class)

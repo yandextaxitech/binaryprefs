@@ -15,8 +15,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class SimpleLockFactoryImpl implements LockFactory {
 
     private static final String LOCK_EXTENSION = ".lock";
-
     private static final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
+
     private final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
 
     private final String name;

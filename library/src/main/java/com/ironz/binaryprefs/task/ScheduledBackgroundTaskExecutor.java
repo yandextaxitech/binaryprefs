@@ -3,10 +3,7 @@ package com.ironz.binaryprefs.task;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Performs all submitted tasks in one separated thread sequentially.
@@ -14,29 +11,48 @@ import java.util.concurrent.Future;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
+    private static final int THREADS_COUNT = 1;
+
+    private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
+    private static final String THREAD_NAME_PREFIX = "binaryprefs-pool-";
+
     private final ExceptionHandler exceptionHandler;
-
-    private static final Map<String, ExecutorService> executorsMap = new ConcurrentHashMap<>();
-
-    private final ExecutorService executor;
+    private final ExecutorService currentExecutor;
 
     public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
-        executor = initExecutor(prefName);
+        currentExecutor = initExecutor(prefName);
     }
 
-    private ExecutorService initExecutor(String prefName) {
-        if (executorsMap.containsKey(prefName)) {
-            return executorsMap.get(prefName);
+    private ExecutorService initExecutor(final String prefName) {
+        if (executors.containsKey(prefName)) {
+            return executors.get(prefName);
         }
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        executorsMap.put(prefName, service);
+        ThreadFactory threadFactory = createThreadFactory(prefName);
+        ExecutorService service = Executors.newFixedThreadPool(THREADS_COUNT, threadFactory);
+        executors.put(prefName, service);
         return service;
+    }
+
+    private ThreadFactory createThreadFactory(final String prefName) {
+        return new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                return createThread(r, prefName);
+            }
+        };
+    }
+
+    private Thread createThread(Runnable r, String prefName) {
+        Thread thread = new Thread(r);
+        thread.setName(THREAD_NAME_PREFIX + prefName);
+        thread.setPriority(Thread.MAX_PRIORITY);
+        return thread;
     }
 
     @Override
     public synchronized Completable submit(Runnable runnable) {
-        Future<?> submit = executor.submit(runnable);
+        Future<?> submit = currentExecutor.submit(runnable);
         return new Completable(submit, exceptionHandler);
     }
 }

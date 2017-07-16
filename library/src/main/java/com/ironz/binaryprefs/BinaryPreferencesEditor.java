@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
@@ -27,7 +26,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
     private final Lock writeLock;
-    private final ByteEncryption byteEncryption;
 
     private boolean clear;
 
@@ -37,8 +35,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
-                            Lock writeLock,
-                            ByteEncryption byteEncryption) {
+                            Lock writeLock) {
         this.preferences = preferences;
         this.fileTransaction = fileTransaction;
         this.bridge = bridge;
@@ -46,7 +43,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
         this.writeLock = writeLock;
-        this.byteEncryption = byteEncryption;
     }
 
     @Override
@@ -222,7 +218,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    transact();
+                    commitTransaction();
                 }
             });
         } finally {
@@ -240,7 +236,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             Completable submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    transact();
+                    commitTransaction();
                 }
             });
             return submit.completeBlocking();
@@ -275,7 +271,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
     }
 
-    private void transact() {
+    private void commitTransaction() {
         List<TransactionElement> transaction = createTransaction();
         fileTransaction.commit(transaction);
         notifyListeners(transaction);
@@ -295,7 +291,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
         List<TransactionElement> elements = new ArrayList<>();
         for (String name : cacheProvider.keys()) {
-            TransactionElement e = TransactionElement.createRemoveElement(name);
+            TransactionElement e = TransactionElement.createRemovalElement(name);
             elements.add(e);
         }
         return elements;
@@ -307,7 +303,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
         List<TransactionElement> elements = new ArrayList<>();
         for (String name : removeSet) {
-            TransactionElement e = TransactionElement.createRemoveElement(name);
+            TransactionElement e = TransactionElement.createRemovalElement(name);
             elements.add(e);
         }
         return elements;
@@ -316,11 +312,10 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private List<TransactionElement> storePersistence() {
         Set<String> strings = strategyMap.keySet();
         List<TransactionElement> elements = new ArrayList<>(strings.size());
-        for (String key : strings) {
-            SerializationStrategy strategy = strategyMap.get(key);
+        for (String name : strings) {
+            SerializationStrategy strategy = strategyMap.get(name);
             byte[] bytes = strategy.serialize();
-            byte[] encrypt = byteEncryption.encrypt(bytes);
-            TransactionElement e = TransactionElement.createUpdateElement(key, encrypt);
+            TransactionElement e = TransactionElement.createUpdateElement(name, bytes);
             elements.add(e);
         }
         return elements;

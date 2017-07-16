@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.serialization;
 
+import com.ironz.binaryprefs.exception.SerializationException;
 import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
@@ -12,6 +13,8 @@ import java.util.Set;
  * This is non-public api class.
  */
 public final class SerializerFactory {
+
+    private static final String ZERO_BYTES_MESSAGE = "%s key's value is zero bytes for deserialize";
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
@@ -51,6 +54,11 @@ public final class SerializerFactory {
     }
 
     public Object deserialize(String key, byte[] bytes) {
+
+        if (bytes.length == 0) {
+            throw new SerializationException(String.format(ZERO_BYTES_MESSAGE, key));
+        }
+
         byte flag = bytes[0];
         if (booleanSerializer.isMatches(flag)) {
             return booleanSerializer.deserialize(bytes);

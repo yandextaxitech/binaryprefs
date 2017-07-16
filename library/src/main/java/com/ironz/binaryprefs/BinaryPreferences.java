@@ -1,8 +1,8 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
 import com.ironz.binaryprefs.events.EventBridge;
+import com.ironz.binaryprefs.events.OnSharedPreferenceChangeListenerWrapper;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -17,7 +17,6 @@ import java.util.concurrent.locks.Lock;
 final class BinaryPreferences implements Preferences {
 
     private final FileTransaction fileTransaction;
-    private final ByteEncryption byteEncryption;
     private final EventBridge eventsBridge;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
@@ -26,14 +25,12 @@ final class BinaryPreferences implements Preferences {
     private final Lock writeLock;
 
     BinaryPreferences(FileTransaction fileTransaction,
-                      ByteEncryption byteEncryption,
                       EventBridge eventsBridge,
                       CacheProvider cacheProvider,
                       TaskExecutor taskExecutor,
                       SerializerFactory serializerFactory,
                       LockFactory lockFactory) {
         this.fileTransaction = fileTransaction;
-        this.byteEncryption = byteEncryption;
         this.eventsBridge = eventsBridge;
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
@@ -55,8 +52,7 @@ final class BinaryPreferences implements Preferences {
                     for (TransactionElement element : fileTransaction.fetch()) {
                         String name = element.getName();
                         byte[] bytes = element.getContent();
-                        byte[] decrypt = byteEncryption.decrypt(bytes);
-                        Object o = serializerFactory.deserialize(name, decrypt);
+                        Object o = serializerFactory.deserialize(name, bytes);
                         cacheProvider.put(name, o);
                     }
                 }
@@ -252,8 +248,7 @@ final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
-                    writeLock,
-                    byteEncryption
+                    writeLock
             );
         } finally {
             readLock.unlock();
@@ -262,14 +257,20 @@ final class BinaryPreferences implements Preferences {
 
     @Override
     public List<String> keys() {
-        return Arrays.asList(cacheProvider.keys());
+        readLock.lock();
+        try {
+            return Arrays.asList(cacheProvider.keys());
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
-            eventsBridge.registerOnSharedPreferenceChangeListener(listener);
+            OnSharedPreferenceChangeListenerWrapper wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
+            eventsBridge.registerOnSharedPreferenceChangeListener(wrapper);
         } finally {
             writeLock.unlock();
         }
@@ -279,7 +280,8 @@ final class BinaryPreferences implements Preferences {
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
-            eventsBridge.unregisterOnSharedPreferenceChangeListener(listener);
+            OnSharedPreferenceChangeListenerWrapper wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
+            eventsBridge.unregisterOnSharedPreferenceChangeListener(wrapper);
         } finally {
             writeLock.unlock();
         }

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: "com.jfrog.artifactory"
 
 group = "com.ironz.binaryprefs"
 version = "0.9.9"
@@ -50,5 +51,21 @@ bintray {
         publicDownloadNumbers = true
         licenses = ["Apache-2.0"]
         publish = true
+    }
+}
+
+artifactory {
+    contextUrl = project.findProperty("artifactory_url") ?: ""
+    publish {
+        repository {
+            repoKey = project.findProperty("artifactory_release_key") ?: ""
+            username = project.findProperty("artifactory_user") ?: ""
+            password = project.findProperty("artifactory_password") ?: ""
+        }
+        defaults {
+            publishConfigs('archives')
+            publishPom = true
+            publishIvy = false
+        }
     }
 }

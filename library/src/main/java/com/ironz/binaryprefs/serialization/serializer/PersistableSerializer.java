@@ -52,7 +52,7 @@ public final class PersistableSerializer {
 
     /**
      * Serialize {@code Persistable} into byte array with following scheme:
-     * [{@link PersistableSerializer#FLAG}] + [boolean_bytes].
+     * [{@link PersistableSerializer#FLAG}] + [sequential primitives bytes].
      *
      * @param value target persistable to serialize.
      * @return specific byte array with scheme.
@@ -82,7 +82,6 @@ public final class PersistableSerializer {
      * @return deserialized {@link Persistable}
      */
     public Persistable deserialize(String key, byte[] bytes) {
-        Class<? extends Persistable> clazz = persistableRegistry.get(key);
         DataInput input = new PersistableObjectInputImpl(
                 booleanSerializer,
                 byteSerializer,
@@ -94,6 +93,7 @@ public final class PersistableSerializer {
                 shortSerializer,
                 stringSerializer
         );
+        Class<? extends Persistable> clazz = persistableRegistry.get(key);
         return input.deserialize(bytes, clazz);
     }
 

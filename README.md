@@ -4,6 +4,7 @@
 <a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9"><img src="https://img.shields.io/badge/Size-67 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
+
 ## Binary Preferences
 
 Rapidly fast and lightweight re-implementation of SharedPreferences 
@@ -11,10 +12,12 @@ which stores each preference in files separately, performs disk operations
 via NIO with memory mapped byte buffers and works IPC (between processes). 
 Written from scratch.
 
+
 ## Api finalization status
 
 Please note that api is not finalized yet and serialization contract or
 public api may be changed prior `1.0.0`.
+
 
 ## Advantages
 
@@ -26,9 +29,12 @@ public api may be changed prior `1.0.0`.
 * Out of box data encryption support.
 * Fully backward compatible with default `SharedPreferences` interface.
 * Store all primitives include `double`, `char`, `byte` and `short`.
-* Store complex data objects backward-compatible (see `Persistable` class documentation).
-* Fully optimized IPC support (preferences change listeners and in-memory cache works between processes).
+* Store complex data objects backward-compatible (see `Persistable` class
+documentation).
+* Fully optimized IPC support (preferences change listeners and in-memory
+cache works between processes).
 * Handle various exception events.
+
 
 ## Usage
 
@@ -36,30 +42,140 @@ public api may be changed prior `1.0.0`.
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
-                .name("user_data")
-                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
-                .exceptionHandler(ExceptionHandler.PRINT)
-                .registerPersistable(TestUser.KEY, TestUser.class)
-                .registerPersistable(TestOrder.KEY, TestOrder.class)
                 .build();
-
 ```
 
-Please, use only one instance of preferences by name, this saves you from
-non-reasoned allocations.
+Please, use only one instance of preferences by name, it saves you from
+non-reasoned allocations. You can store one instance of preferences
+in application class or event better use one instance from IoC like
+Dagger or some another DI framework.
+
+All parameters are optional and chain-buildable.
+
+#### Custom preferences name
+
+Builder contains method which defines desirable preferences name:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .name("user_data")
+                .build();
+```
+
+Default is "default" name.
+
+
+#### Encryption
+
+You can define your own file vice versa encryption or use default:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
+                .build();
+```
+
+Default is no-op encryption. Library also provides `AesByteEncryptionImpl` implementation.
+
+
+#### Exception handler
+
+You can listen exceptions which comes during disk IO, serialization,
+task execution operations:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .exceptionHandler(new ExceptionHandler() {
+                    @Override
+                    public void handle(Exception e) {
+                        //perform metrica report
+                    }
+                })
+                .build();
+```
+
+Default is print handler which performs `e.printStacktrace()` if
+exception event are comes.
+
+
+#### IPC mode
+
+If your app architecture is process based (services works in separate processes)
+and you would like to get preferences updates with consistent cache state
+you can enable this feature:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .supportInterProcess(true)
+                .build();
+```
+
+Please, note that one key change delta should be less than 1 (one) megabyte
+because IPC data transferring is limited by this capacity.
+
+Details here: [Documentation](https://developer.android.com/reference/android/os/TransactionTooLargeException.html)
 
 #### Dealing with `Persistable`
 
 `Persistable` contract been added for fast and flexible saving and it's
 restoring complex objects. It's pretty similar like standard java
 `Externalizable` contract but without few methods which don't need for.
-For usage you just need to implement this interface with methods on your
+For usage you just need to implement this interface with methods in your
 data-model.
 
-Note about `deepClone` method: you should implement full object hierarchy
-clone for fast immutable in-memory data fetching.
+All Persistable data-objects should be registered by key for understanding
+de/serialization contract during cache initialization.
+
+
+#### How to register `Persistable`
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .registerPersistable(TestUser.KEY, TestUser.class)
+                .registerPersistable(TestOrder.KEY, TestOrder.class)
+                .build();
+```
+
+Note about `deepClone` method: you should implement full object hierarchy for 
+fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
+
+## Logcat preferences dump
+
+You can dump your preferences with adb console command right in logcat:
+
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
+
+where:
+
+`your_pref_name` - is your preferences name which is defined in `register` method.
+`your_pref_key` - is your preference key, this is optional value.
+
+How to register preferences by name:
+
+```java
+DumpReceiver.register(name, preferences);
+```
+
+Fully working example of all values dump:
+
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data"`
+
+
+Example for only `user_id` key dump:
+
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data" --es "pref_key" "user_id"`
+
+
+Please note that if you create multiple instances of one preferences
+(e.g. in `Activity#onCreate`) you should unregister dump
+(e.g. in `Activity#onDestroy`) like this:
+
+```java
+DumpReceiver.unregister(name);
+```
+
 
 ## Roadmap
 
@@ -79,9 +195,11 @@ Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/
 13. Background initializer.
 14. `byte[]` support.
 15. Default preferences migration mechanism.
-16. File name encrypt.
-17. `Persistable` upgrade/downgrade api.
-18. RxJava support.
+16. IPC transactions without 1mb limit.
+17. File name encrypt.
+18. `Persistable` upgrade/downgrade api.
+19. RxJava support.
+
 
 ## License
 ```
