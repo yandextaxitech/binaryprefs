@@ -97,14 +97,14 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
-    public void getAllDefaultValue() {
-        Map<String, ?> all = preferences.getAll();
+    public void getKeysEmpty() {
+        List<String> keys = preferences.keys();
 
-        assertTrue(all.isEmpty());
+        assertTrue(keys.isEmpty());
     }
 
     @Test
-    public void getKeysEmpty() {
+    public void getKeysDefaultValue() {
         List<String> keys = preferences.keys();
 
         assertTrue(keys.isEmpty());
@@ -128,7 +128,22 @@ public final class BinaryPreferencesTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void getKeysModifyLocal() {
+    public void getKeysDeleteOne() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        List<String> keys = preferences.keys();
+        keys.remove(stringKey);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void getKeysClear() {
         String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
         String stringValue = "value";
         String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
@@ -159,6 +174,13 @@ public final class BinaryPreferencesTest {
 
         List<String> keys = preferences.keys();
         assertTrue(keys.isEmpty());
+    }
+
+    @Test
+    public void getAllDefaultValue() {
+        Map<String, ?> all = preferences.getAll();
+
+        assertTrue(all.isEmpty());
     }
 
     @Test
@@ -211,6 +233,25 @@ public final class BinaryPreferencesTest {
 
         Map<String, ?> all = preferences.getAll();
         all.clear();
+    }
+
+    @Test
+    public void getAllRemoved() {
+        String stringKey = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String stringValue = "value";
+        String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+
+        preferences.edit()
+                .putString(stringKey, stringValue)
+                .putBoolean(booleanKey, true)
+                .apply();
+
+        preferences.edit()
+                .clear()
+                .apply();
+
+        Map<String, ?> all = preferences.getAll();
+        assertTrue(all.isEmpty());
     }
 
     @Test
