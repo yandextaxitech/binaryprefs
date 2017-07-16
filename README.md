@@ -136,8 +136,8 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Note about `deepClone` method: you should implement full object hierarchy for 
-fast immutable in-memory data fetching.
+Note about `deepClone` method: you should implement full object hierarchy copying 
+for fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
@@ -163,7 +163,7 @@ Fully working example of all values dump:
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data"`
 
 
-Example for only `user_id` key dump:
+Example only for `user_id` key dump:
 
 `adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "user_data" --es "pref_key" "user_id"`
 
