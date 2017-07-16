@@ -99,7 +99,7 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
-     * Defines encryption implementation which performs vice-versa byte encryption operations.
+     * Defines encryption implementation which performs vice versa byte encryption operations.
      * Default value is {@link ByteEncryption#NO_OP}
      *
      * @param byteEncryption byte encryption implementation

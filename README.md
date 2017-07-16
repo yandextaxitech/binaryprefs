@@ -67,7 +67,7 @@ Default is "default" name.
 
 #### Encryption
 
-You can define your own file vice-versa encryption or use default:
+You can define your own file vice versa encryption or use default:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)

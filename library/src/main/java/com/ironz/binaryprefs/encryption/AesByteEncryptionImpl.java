@@ -20,7 +20,7 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
     private final IvParameterSpec iv;
 
     /**
-     * Creates byte encryption instance which performs AES vice versa-encryption operation.
+     * Creates byte encryption instance which performs AES vice versa encryption operation.
      *
      * @param secretKeyBytes 16 bytes secret key
      * @param initialVector  16 bytes initial vector
