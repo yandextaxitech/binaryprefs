@@ -82,7 +82,6 @@ public final class PersistableSerializer {
      * @return deserialized {@link Persistable}
      */
     public Persistable deserialize(String key, byte[] bytes) {
-        Class<? extends Persistable> clazz = persistableRegistry.get(key);
         DataInput input = new PersistableObjectInputImpl(
                 booleanSerializer,
                 byteSerializer,
@@ -94,6 +93,7 @@ public final class PersistableSerializer {
                 shortSerializer,
                 stringSerializer
         );
+        Class<? extends Persistable> clazz = persistableRegistry.get(key);
         return input.deserialize(bytes, clazz);
     }
 
