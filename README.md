@@ -198,7 +198,7 @@ DumpReceiver.unregister(name);
 17. File name encrypt
 18. `Persistable` upgrade/downgrade api
 19. RxJava support
-20. `sun.misc.Unsafe` for api 21+
+20. `sun.misc.Unsafe` serialization mode for api 21+
 
 
 ## License
