@@ -178,26 +178,27 @@ DumpReceiver.unregister(name);
 
 ## Roadmap
 
-1. ~~Disk I/O encrypt.~~ completed.
-2. ~~IPC~~ completed.
-3. ~~Externalizable.~~ completed as `Persistable`.
+1. ~~Disk I/O encrypt.~~ completed
+2. ~~IPC~~ completed
+3. ~~Externalizable.~~ completed as `Persistable`
 4. ~~Preferences tooling (key set reading).~~ completed:
-`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`.
-5. ~~Custom serializers.~~ completed.
-6. ~~Synchronous commits.~~ completed.
-7. ~~Store all primitives (like byte, short, char, double).~~ completed.
+`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
+5. ~~Custom serializers.~~ completed
+6. ~~Synchronous commits.~~ completed
+7. ~~Store all primitives (like byte, short, char, double).~~ completed
 8. ~~Lock free (avoid locks).~~ completed as `LockFactory`.
-9. ~~Exact background tasks for each serialization strategies.~~ completed.
+9. ~~Exact background tasks for each serialization strategies.~~ completed
 10. ~~Reduce events (implement events transaction).~~ completed.
-11. ~~Simplify api (instance creating, exception handles).~~ completed.
-12. Finalize serialization and persistence contract.
-13. Background initializer.
-14. `byte[]` support.
-15. Default preferences migration mechanism.
-16. IPC transactions without 1mb limit.
-17. File name encrypt.
-18. `Persistable` upgrade/downgrade api.
-19. RxJava support.
+11. ~~Simplify api (instance creating, exception handles).~~ completed
+12. Finalize serialization and persistence contract
+13. Background initializer
+14. `byte[]` support
+15. Default preferences migration mechanism
+16. IPC transactions without 1mb limit
+17. File name encrypt
+18. `Persistable` upgrade/downgrade api
+19. RxJava support
+20. `sun.misc.Unsafe` for api 21+
 
 
 ## License
