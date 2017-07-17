@@ -15,6 +15,7 @@ import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProviderImpl;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
+import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
@@ -43,6 +44,7 @@ public final class BinaryPreferencesBuilder {
     private boolean externalStorage = false;
     private boolean supportInterProcess = false;
     private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
+    private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
 
     /**
@@ -123,6 +125,18 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
+     * Defines key encryption implementation which performs vice versa byte encryption operations.
+     * Default value is {@link KeyEncryption#NO_OP}
+     *
+     * @param keyEncryption keyEncryption implementation
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder keyEncryption(KeyEncryption keyEncryption) {
+        this.keyEncryption = keyEncryption;
+        return this;
+    }
+
+    /**
      * Registers {@link Persistable} data-object for de/serialization process.
      * All {@link Persistable} data-objects should be registered for understanding
      * de/serialization contract during cache initialization.
@@ -153,7 +167,7 @@ public final class BinaryPreferencesBuilder {
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, externalStorage);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption, keyEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);

@@ -5,6 +5,7 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
 import com.ironz.binaryprefs.encryption.ByteEncryption;
+import com.ironz.binaryprefs.encryption.XorKeyEncryptionImpl;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
@@ -71,7 +72,8 @@ public final class BinaryPreferencesTest {
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         ByteEncryption byteEncryption = new AesByteEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption);
+        XorKeyEncryptionImpl keyEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption, keyEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
