@@ -21,19 +21,19 @@ public api may be changed prior `1.0.0`.
 
 ## Advantages
 
-* Lightweight. Zero dependency.
-* Super fast (faster than any other key/value solutions).
-* Small memory footprint while serialize/deserialize data.
-* Zero copy in-memory cache.
-* Persists only binary data. Not XML or JSON.
-* Out of box data encryption support.
-* Fully backward compatible with default `SharedPreferences` interface.
-* Store all primitives include `double`, `char`, `byte` and `short`.
+* Lightweight. Zero dependency
+* Super fast (faster than any other key/value solutions)
+* Small memory footprint while serialize/deserialize data
+* Zero copy in-memory cache
+* Persists only binary data. Not XML or JSON
+* Out of box data encryption support
+* Fully backward compatible with default `SharedPreferences` interface
+* Store all primitives include `double`, `char`, `byte` and `short`
 * Store complex data objects backward-compatible (see `Persistable` class
-documentation).
+documentation)
 * Fully optimized IPC support (preferences change listeners and in-memory
-cache works between processes).
-* Handle various exception events.
+cache works between processes)
+* Handle various exception events
 
 
 ## Usage
