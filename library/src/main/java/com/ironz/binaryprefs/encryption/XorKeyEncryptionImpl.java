@@ -27,19 +27,22 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
     }
 
     private String xorName(String name) {
-        byte[] beforeXor = name.getBytes();
-        int beforeXorLength = beforeXor.length;
-        int xorLength = xor.length;
-        byte[] afterXor = new byte[beforeXorLength];
-        for (int beforeXorIndex = 0; beforeXorIndex < beforeXorLength; beforeXorIndex++) {
-            byte afterXorItem = beforeXor[beforeXorIndex];
-            for (int xorIndex = 0; xorIndex < xorLength; xorIndex++) {
-                afterXorItem ^= xor[xorIndex];
-            }
-            afterXor[beforeXorIndex] = afterXorItem;
+        byte[] original = name.getBytes();
+        int originalLength = original.length;
+        byte[] xored = new byte[originalLength];
+        for (int index = 0; index < originalLength; index++) {
+            xored[index] = xorByte(original[index]);
         }
+        return new String(xored);
+    }
 
-        return new String(afterXor);
+    private byte xorByte(final byte beforeXorItem) {
+        byte afterXorItem = beforeXorItem;
+        int xorLength = xor.length;
+        for (int index = 0; index < xorLength; index++) {
+            afterXorItem ^= xor[index];
+        }
+        return afterXorItem;
     }
 
     private void checkMirror() {
