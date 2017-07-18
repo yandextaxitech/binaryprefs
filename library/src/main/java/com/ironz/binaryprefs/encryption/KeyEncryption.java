@@ -1,9 +1,5 @@
 package com.ironz.binaryprefs.encryption;
 
-/**
- * @author Sergey Boishtyan
- */
-
 public interface KeyEncryption {
 
     KeyEncryption NO_OP = new KeyEncryption() {

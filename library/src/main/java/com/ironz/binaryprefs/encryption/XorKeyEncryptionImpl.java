@@ -4,10 +4,6 @@ import com.ironz.binaryprefs.exception.EncryptionException;
 
 import java.util.Arrays;
 
-/**
- * @author Sergey Boishtyan
- */
-
 public final class XorKeyEncryptionImpl implements KeyEncryption {
 
     private static final int KEY_LENGTH = 16;

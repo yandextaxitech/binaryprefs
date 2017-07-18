@@ -5,9 +5,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-/**
- * @author Sergey Boishtyan
- */
 public class XorKeyEncryptionImplTest {
 
     private final XorKeyEncryptionImpl xorKeyEncryption = new XorKeyEncryptionImpl("111111111111111011".getBytes());
