@@ -26,7 +26,7 @@ import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 /**
- * Describes public api for building preferences instance.
+ * Class for building preferences instance.
  */
 @SuppressWarnings("unused")
 public final class BinaryPreferencesBuilder {
