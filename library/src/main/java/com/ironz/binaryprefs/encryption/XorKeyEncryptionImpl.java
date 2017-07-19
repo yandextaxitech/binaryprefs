@@ -39,7 +39,7 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
         return new String(result);
     }
 
-    private byte xorByte(final byte raw) {
+    private byte xorByte(byte raw) {
         byte temp = raw;
         for (byte b : xor) {
             temp ^= b;
