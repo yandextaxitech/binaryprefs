@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
-import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
+import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
 import com.ironz.binaryprefs.events.EventBridge;
 import com.ironz.binaryprefs.events.MainThreadEventBridgeImpl;
@@ -154,8 +154,8 @@ public final class BinaryPreferencesBuilder {
     /**
      * Builds preferences instance with predefined or default parameters.
      * Note: if current process already has created preferences by this name it
-     * will be returned regardless new or changed parameters like {@link ByteEncryption},
-     * {@link ExceptionHandler}, IPC mode or store directory.
+     * will be returned regardless new or changed parameters like {@link KeyEncryption},
+     * {@link ExceptionHandler}, {@link ValueEncryption} IPC mode or store directory.
      * This method will fails if invocation performed not in the main thread.
      *
      * @return preferences instance with predefined or default parameters.
