@@ -76,7 +76,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Default is no-op encryption. Library also provides `AesByteEncryptionImpl` implementation.
+Default is no-op encryption for key/value.
 
 
 #### Exception handler
