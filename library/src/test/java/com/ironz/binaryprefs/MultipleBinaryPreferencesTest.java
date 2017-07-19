@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
-
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.AesByteEncryptionImpl;
@@ -22,7 +21,6 @@ import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

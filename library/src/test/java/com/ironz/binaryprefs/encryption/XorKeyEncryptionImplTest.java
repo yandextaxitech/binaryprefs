@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs.encryption;
 
 import com.ironz.binaryprefs.exception.EncryptionException;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
