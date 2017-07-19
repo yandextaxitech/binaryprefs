@@ -43,31 +43,21 @@ public class XorKeyEncryptionImplTest {
 
     @Test
     public void oddSize() {
-        String withOddSize = "11111111111111111";
-        new XorKeyEncryptionImpl(withOddSize.getBytes());
+        new XorKeyEncryptionImpl("11111111111111111".getBytes());
     }
 
     @Test(expected = EncryptionException.class)
     public void evenAndMirrored() {
-        String evenWithMirror = "0101010101010101";
-        new XorKeyEncryptionImpl(evenWithMirror.getBytes());
+        new XorKeyEncryptionImpl("0101010101010101".getBytes());
     }
 
     @Test
     public void evenNotMirrored() {
-        String evenWithMirror = "1111111111111110";
-        new XorKeyEncryptionImpl(evenWithMirror.getBytes());
+        new XorKeyEncryptionImpl("1111111111111110".getBytes());
     }
 
     @Test(expected = EncryptionException.class)
-    public void shortXorLength() {
-        String withSizeLessThenSixteen = "";
-        new XorKeyEncryptionImpl(withSizeLessThenSixteen.getBytes());
-    }
-
-    @Test
-    public void longXorLength() {
-        String withSizeGreaterThenFifthTeen = "11111111111111111";
-        new XorKeyEncryptionImpl(withSizeGreaterThenFifthTeen.getBytes());
+    public void incorrectKeySize() {
+        new XorKeyEncryptionImpl("".getBytes());
     }
 }
