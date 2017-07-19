@@ -8,65 +8,65 @@ import static org.junit.Assert.assertNotEquals;
 
 public class XorKeyEncryptionImplTest {
 
-    private final XorKeyEncryptionImpl xorKeyEncryption = new XorKeyEncryptionImpl("LZN8KKF7KH816D0U".getBytes());
+    private final XorKeyEncryptionImpl encryption = new XorKeyEncryptionImpl("LZN8KKF7KH816D0U".getBytes());
+    private final XorKeyEncryptionImpl badEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
 
     @Test
     public void decrypt() {
         String origin = "origin";
-        String decrypt = xorKeyEncryption.decrypt(origin);
+        String decrypt = encryption.decrypt(origin);
         assertNotEquals(origin, decrypt);
 
-        String encrypt = xorKeyEncryption.encrypt(decrypt);
+        String encrypt = encryption.encrypt(decrypt);
         assertEquals(origin, encrypt);
     }
 
     @Test
     public void encrypt() {
         String origin = "origin";
-        String encrypted = xorKeyEncryption.encrypt(origin);
+        String encrypted = encryption.encrypt(origin);
         assertNotEquals(origin, encrypted);
 
-        String decrypt = xorKeyEncryption.decrypt(encrypted);
+        String decrypt = encryption.decrypt(encrypted);
         assertEquals(origin, decrypt);
     }
 
     @Test
-    public void incorrectDecryptWithAnotherEncryption() {
+    public void anotherEncryption() {
         String origin = "origin";
-        String encrypted = xorKeyEncryption.encrypt(origin);
+        String encrypted = encryption.encrypt(origin);
 
-        XorKeyEncryptionImpl anotherEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
-        String decryptByAnother = anotherEncryption.decrypt(encrypted);
+        String decryptByAnother = badEncryption.decrypt(encrypted);
 
         assertNotEquals(origin, decryptByAnother);
     }
 
     @Test
-    public void givenXorOddSizeThenNoEncryptionException() {
+    public void oddSize() {
         String withOddSize = "11111111111111111";
         new XorKeyEncryptionImpl(withOddSize.getBytes());
     }
 
     @Test(expected = EncryptionException.class)
-    public void givenXorEvenSizeAndMirroredThenEncryptionException() {
+    public void evenAndMirrored() {
         String evenWithMirror = "0101010101010101";
         new XorKeyEncryptionImpl(evenWithMirror.getBytes());
     }
 
     @Test
-    public void givenXorEvenSizeAndNotMirroredThenNoEncryptionException() {
+    public void evenNotMirrored() {
         String evenWithMirror = "1111111111111110";
         new XorKeyEncryptionImpl(evenWithMirror.getBytes());
     }
 
     @Test(expected = EncryptionException.class)
-    public void givenXorSizeLessThenSixteenThenEncryptionException() {
+    public void shortXorLength() {
         String withSizeLessThenSixteen = "";
         new XorKeyEncryptionImpl(withSizeLessThenSixteen.getBytes());
     }
 
     @Test
-    public void givenXorSizeGreaterThenFifthTeenThenNoEncryptionException() {
+    public void longXorLength() {
         String withSizeGreaterThenFifthTeen = "11111111111111111";
         new XorKeyEncryptionImpl(withSizeGreaterThenFifthTeen.getBytes());
     }

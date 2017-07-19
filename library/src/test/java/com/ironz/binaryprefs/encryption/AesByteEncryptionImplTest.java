@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs.encryption;
 
 import com.ironz.binaryprefs.exception.EncryptionException;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,22 +13,16 @@ public class AesByteEncryptionImplTest {
     private static final byte[] BAD_SECRET_KEY_BYTES = "0000000000000000".getBytes();
     private static final byte[] BAD_INITIAL_VECTOR = "0000000000000000".getBytes();
 
-    private ByteEncryption byteEncryption;
-    private ByteEncryption badByteEncryption;
-
-    @Before
-    public void setUp() {
-        byteEncryption = new AesByteEncryptionImpl(SECRET_KEY_BYTES, INITIAL_VECTOR);
-        badByteEncryption = new AesByteEncryptionImpl(BAD_SECRET_KEY_BYTES, BAD_INITIAL_VECTOR);
-    }
+    private final ByteEncryption encryption = new AesByteEncryptionImpl(SECRET_KEY_BYTES, INITIAL_VECTOR);
+    private final ByteEncryption badEncryption = new AesByteEncryptionImpl(BAD_SECRET_KEY_BYTES, BAD_INITIAL_VECTOR);
 
     @Test
     public void encryptDecrypt() {
         String original = "some string";
         byte[] originalBytes = original.getBytes();
 
-        byte[] encrypt = byteEncryption.encrypt(originalBytes);
-        byte[] decrypt = byteEncryption.decrypt(encrypt);
+        byte[] encrypt = encryption.encrypt(originalBytes);
+        byte[] decrypt = encryption.decrypt(encrypt);
         String encryptedString = new String(encrypt);
         String restored = new String(decrypt);
 
@@ -42,9 +35,9 @@ public class AesByteEncryptionImplTest {
         String original = "some string";
         byte[] originalBytes = original.getBytes();
 
-        byte[] encrypt = byteEncryption.encrypt(originalBytes);
+        byte[] encrypt = encryption.encrypt(originalBytes);
 
-        badByteEncryption.decrypt(encrypt);
+        badEncryption.decrypt(encrypt);
     }
 
     @Test(expected = EncryptionException.class)
