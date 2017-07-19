@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
+import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
 import com.ironz.binaryprefs.events.EventBridge;
@@ -44,7 +44,7 @@ public final class BinaryPreferencesBuilder {
     private boolean externalStorage = false;
     private boolean supportInterProcess = false;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
-    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
+    private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
 
     /**
@@ -113,14 +113,14 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
-     * Defines encryption implementation which performs vice versa byte encryption operations.
-     * Default value is {@link ByteEncryption#NO_OP}
+     * Defines value encryption implementation which performs vice versa byte encryption operations.
+     * Default value is {@link ValueEncryption#NO_OP}
      *
-     * @param byteEncryption byte encryption implementation
+     * @param valueEncryption byte encryption implementation
      * @return current builder instance
      */
-    public BinaryPreferencesBuilder valueEncryption(ByteEncryption byteEncryption) {
-        this.byteEncryption = byteEncryption;
+    public BinaryPreferencesBuilder valueEncryption(ValueEncryption valueEncryption) {
+        this.valueEncryption = valueEncryption;
         return this;
     }
 
@@ -167,7 +167,7 @@ public final class BinaryPreferencesBuilder {
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, externalStorage);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, byteEncryption, keyEncryption);
+        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
@@ -178,7 +178,7 @@ public final class BinaryPreferencesBuilder {
                 cacheProvider,
                 serializerFactory,
                 executor,
-                byteEncryption
+                valueEncryption
         ) : new MainThreadEventBridgeImpl(name);
 
         return new BinaryPreferences(

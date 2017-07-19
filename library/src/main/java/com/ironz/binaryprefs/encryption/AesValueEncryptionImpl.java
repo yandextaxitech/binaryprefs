@@ -7,9 +7,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Implementation of {@link ByteEncryption} class which uses AES for <code>byte[]</code> data encryption.
+ * Implementation of {@link ValueEncryption} class which uses AES for <code>byte[]</code> data encryption.
  */
-public final class AesByteEncryptionImpl implements ByteEncryption {
+public final class AesValueEncryptionImpl implements ValueEncryption {
 
     private static final String AES = "AES";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5PADDING";
@@ -25,7 +25,7 @@ public final class AesByteEncryptionImpl implements ByteEncryption {
      * @param secretKeyBytes 16 bytes secret key
      * @param initialVector  16 bytes initial vector
      */
-    public AesByteEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
+    public AesValueEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
         checkLength(secretKeyBytes, initialVector);
         this.cipher = getCipherInstance();
         this.keySpec = new SecretKeySpec(secretKeyBytes, AES);

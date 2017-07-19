@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs.encryption;
 
 /**
- * Contract which describe how name will be converted
+ * Contract which describe how key will be converted
  */
 public interface KeyEncryption {
 

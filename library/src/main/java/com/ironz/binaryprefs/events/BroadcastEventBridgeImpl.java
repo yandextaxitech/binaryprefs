@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.os.Process;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.encryption.ByteEncryption;
+import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
@@ -45,7 +45,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final CacheProvider cacheProvider;
     private final SerializerFactory serializerFactory;
     private final TaskExecutor taskExecutor;
-    private final ByteEncryption byteEncryption;
+    private final ValueEncryption valueEncryption;
 
     private final String updateActionName;
     private final String removeActionName;
@@ -58,13 +58,13 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                                     CacheProvider cacheProvider,
                                     SerializerFactory serializerFactory,
                                     TaskExecutor taskExecutor,
-                                    ByteEncryption byteEncryption) {
+                                    ValueEncryption valueEncryption) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
-        this.byteEncryption = byteEncryption;
+        this.valueEncryption = valueEncryption;
         this.updateActionName = createUpdateActionName(context);
         this.removeActionName = createRemoveActionName(context);
         this.listeners = initListeners(prefName);
@@ -142,7 +142,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private Object fetchObject(String key, byte[] bytes) {
-        byte[] decrypt = byteEncryption.decrypt(bytes);
+        byte[] decrypt = valueEncryption.decrypt(bytes);
         return serializerFactory.deserialize(key, decrypt);
     }
 

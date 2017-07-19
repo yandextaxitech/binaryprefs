@@ -1,9 +1,9 @@
 package com.ironz.binaryprefs.encryption;
 
 /**
- * Contract which describe how byte array will be converted
+ * Contract which describe how value will be converted
  */
-public interface ByteEncryption {
+public interface ValueEncryption {
     /**
      * Encrypts bytes from original to encrypted
      *
@@ -24,7 +24,7 @@ public interface ByteEncryption {
      * Returns byte arrays as is.
      */
     @SuppressWarnings("unused")
-    ByteEncryption NO_OP = new ByteEncryption() {
+    ValueEncryption NO_OP = new ValueEncryption() {
         @Override
         public byte[] encrypt(byte[] bytes) {
             return bytes;

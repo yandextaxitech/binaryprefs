@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.file.transaction;
 
-import com.ironz.binaryprefs.encryption.ByteEncryption;
+import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -14,13 +14,13 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
 
     private final FileAdapter fileAdapter;
     private final LockFactory lockFactory;
-    private final ByteEncryption byteEncryption;
+    private final ValueEncryption valueEncryption;
     private final KeyEncryption keyEncryption;
 
-    public MultiProcessTransactionImpl(FileAdapter fileAdapter, LockFactory lockFactory, ByteEncryption byteEncryption, KeyEncryption keyEncryption) {
+    public MultiProcessTransactionImpl(FileAdapter fileAdapter, LockFactory lockFactory, ValueEncryption valueEncryption, KeyEncryption keyEncryption) {
         this.fileAdapter = fileAdapter;
         this.lockFactory = lockFactory;
-        this.byteEncryption = byteEncryption;
+        this.valueEncryption = valueEncryption;
         this.keyEncryption = keyEncryption;
     }
 
@@ -51,7 +51,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
         List<TransactionElement> elements = new ArrayList<>(names.length);
         for (String name : names) {
             byte[] bytes = fileAdapter.fetch(name);
-            byte[] decrypt = byteEncryption.decrypt(bytes);
+            byte[] decrypt = valueEncryption.decrypt(bytes);
             String encryptName = keyEncryption.encrypt(name);
             TransactionElement element = TransactionElement.createFetchElement(encryptName, decrypt);
             elements.add(element);
@@ -64,7 +64,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
             int action = element.getAction();
             String encryptedName = keyEncryption.encrypt(element.getName());
             byte[] content = element.getContent();
-            byte[] encrypt = byteEncryption.encrypt(content);
+            byte[] encrypt = valueEncryption.encrypt(content);
             if (action == TransactionElement.ACTION_UPDATE) {
                 fileAdapter.save(encryptedName, content);
             }
