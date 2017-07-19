@@ -67,11 +67,12 @@ Default is "default" name.
 
 #### Encryption
 
-You can define your own file vice versa encryption or use default:
+You can define your own key/value vice versa encryption or use default:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
-                .encryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
+                .keyEncryption(new XorKeyEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes())))
+                .valueEncryption(new AesByteEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
                 .build();
 ```
 
@@ -190,12 +191,12 @@ DumpReceiver.unregister(name);
 9. ~~Exact background tasks for each serialization strategies.~~ completed
 10. ~~Reduce events (implement events transaction).~~ completed.
 11. ~~Simplify api (instance creating, exception handles).~~ completed
-12. Finalize serialization and persistence contract
-13. Background initializer
-14. `byte[]` support
-15. Default preferences migration mechanism
-16. IPC transactions without 1mb limit
-17. File name encrypt
+12. ~~File name encrypt~~ completed
+13. Finalize serialization and persistence contract
+14. Background initializer
+15. `byte[]` support
+16. Default preferences migration mechanism
+17. IPC transactions without 1mb limit
 18. `Persistable` upgrade/downgrade api
 19. RxJava support
 20. `sun.misc.Unsafe` serialization mode for api 21+

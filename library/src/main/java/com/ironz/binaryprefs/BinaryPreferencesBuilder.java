@@ -43,8 +43,8 @@ public final class BinaryPreferencesBuilder {
     private String name = DEFAULT_NAME;
     private boolean externalStorage = false;
     private boolean supportInterProcess = false;
-    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
+    private ByteEncryption byteEncryption = ByteEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
 
     /**
@@ -101,13 +101,25 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
+     * Defines key encryption implementation which performs vice versa byte encryption operations.
+     * Default value is {@link KeyEncryption#NO_OP}
+     *
+     * @param keyEncryption keyEncryption implementation
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder keyEncryption(KeyEncryption keyEncryption) {
+        this.keyEncryption = keyEncryption;
+        return this;
+    }
+
+    /**
      * Defines encryption implementation which performs vice versa byte encryption operations.
      * Default value is {@link ByteEncryption#NO_OP}
      *
      * @param byteEncryption byte encryption implementation
      * @return current builder instance
      */
-    public BinaryPreferencesBuilder encryption(ByteEncryption byteEncryption) {
+    public BinaryPreferencesBuilder valueEncryption(ByteEncryption byteEncryption) {
         this.byteEncryption = byteEncryption;
         return this;
     }
@@ -121,18 +133,6 @@ public final class BinaryPreferencesBuilder {
      */
     public BinaryPreferencesBuilder exceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
-        return this;
-    }
-
-    /**
-     * Defines key encryption implementation which performs vice versa byte encryption operations.
-     * Default value is {@link KeyEncryption#NO_OP}
-     *
-     * @param keyEncryption keyEncryption implementation
-     * @return current builder instance
-     */
-    public BinaryPreferencesBuilder keyEncryption(KeyEncryption keyEncryption) {
-        this.keyEncryption = keyEncryption;
         return this;
     }
 
