@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.file.directory;
 
-import android.content.Context;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.io.File;
@@ -8,10 +7,10 @@ import java.io.File;
 /**
  * Provides default android cache directory or external (if possible) cache directory.
  */
-@SuppressWarnings("unused")
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
     private static final String PREFERENCES = "preferences";
+
     private static final String VALUES = "values";
     private static final String BACKUP = "backup";
     private static final String LOCK = "lock";
@@ -21,37 +20,15 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
     private final File lockDirectory;
 
     /**
-     * Creates instance for default app cache directory.
-     *
-     * @param context  target app context
-     * @param prefName preferences name
-     */
-    @SuppressWarnings("unused")
-    public AndroidDirectoryProviderImpl(Context context, String prefName) {
-        this(context, prefName, false);
-    }
-
-    /**
      * Creates instance for default or external (if enabled) persistent cache directory.
      *
-     * @param context         target app context
-     * @param prefName        preferences name
-     * @param externalStorage all data will be saved inside external cache directory
-     *                        if <code>true</code> value is passed
-     *                        ({@link Context#getExternalCacheDir()}),
-     *                        if <code>false</code> - will use standard app cache directory
-     *                        ({@link Context#getCacheDir()}).
+     * @param prefName preferences name
+     * @param baseDir  all data will be saved inside this directory.
      */
-    @SuppressWarnings("WeakerAccess")
-    public AndroidDirectoryProviderImpl(Context context, String prefName, boolean externalStorage) {
-        File baseDir = defineCacheDir(context, externalStorage);
+    public AndroidDirectoryProviderImpl(String prefName, File baseDir) {
         storeDirectory = createStoreDirectory(baseDir, prefName, VALUES);
         backupDirectory = createStoreDirectory(baseDir, prefName, BACKUP);
         lockDirectory = createStoreDirectory(baseDir, prefName, LOCK);
-    }
-
-    private File defineCacheDir(Context context, boolean saveInExternal) {
-        return saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
     }
 
     private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {

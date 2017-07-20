@@ -25,6 +25,8 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableReg
 import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
+import java.io.File;
+
 /**
  * Class for building preferences instance.
  */
@@ -40,8 +42,8 @@ public final class BinaryPreferencesBuilder {
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
 
+    private File baseDir;
     private String name = DEFAULT_NAME;
-    private boolean externalStorage = false;
     private boolean supportInterProcess = false;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
@@ -59,6 +61,7 @@ public final class BinaryPreferencesBuilder {
      */
     public BinaryPreferencesBuilder(Context context) {
         this.context = context;
+        this.baseDir = context.getCacheDir();
     }
 
     /**
@@ -76,11 +79,27 @@ public final class BinaryPreferencesBuilder {
      * Defines usage of external directory for preferences saving.
      * Default value is {@code false}.
      *
-     * @param value {@code true} if would use external storage, {@code false} otherwise
+     * @param value all data will be saved inside external cache directory
+     *              if <code>true</code> value is passed
+     *              ({@link Context#getExternalCacheDir()}),
+     *              if <code>false</code> - will use standard app cache directory
+     *              ({@link Context#getCacheDir()}).
      * @return current builder instance
      */
     public BinaryPreferencesBuilder externalStorage(boolean value) {
-        this.externalStorage = value;
+        this.baseDir = value ? context.getExternalCacheDir() : context.getCacheDir();
+        return this;
+    }
+
+    /**
+     * * Defines usage of custom directory for preferences saving.
+     *
+     * @param baseDir base directory for saving.
+     *                This is useful for data restoring after
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder customDirectory(File baseDir) {
+        this.baseDir = baseDir;
         return this;
     }
 
@@ -167,7 +186,7 @@ public final class BinaryPreferencesBuilder {
             throw new PreferencesInitializationException("Preferences instantiated not in the main thread.");
         }
 
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(context, name, externalStorage);
+        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
