@@ -7,7 +7,7 @@ import java.io.File;
 /**
  * Provides default android cache directory or external (if possible) cache directory.
  */
-public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
+public final class AndroidDirectoryProviderImpl implements DirectoryProvider { // TODO: 7/20/17 write tests
 
     private static final String PREFERENCES = "preferences";
 
