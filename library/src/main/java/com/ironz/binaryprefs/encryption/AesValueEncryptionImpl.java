@@ -11,6 +11,8 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public final class AesValueEncryptionImpl implements ValueEncryption {
 
+    private static final String SHORT_KEYS_MESSAGE = "Secret and initial vector must be 16 bytes";
+
     private static final String AES = "AES";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5PADDING";
     private static final int KEY_LENGTH = 16;
@@ -34,7 +36,7 @@ public final class AesValueEncryptionImpl implements ValueEncryption {
 
     private void checkLength(byte[] secretKeyBytes, byte[] initialVector) {
         if (secretKeyBytes.length != KEY_LENGTH || initialVector.length != KEY_LENGTH) {
-            throw new EncryptionException("Secret and initial vector must be 16 bytes");
+            throw new EncryptionException(SHORT_KEYS_MESSAGE);
         }
     }
 

@@ -9,6 +9,8 @@ import java.io.File;
  */
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider { // TODO: 7/20/17 write tests
 
+    private static final String CANNOT_CREATE_DIR_MESSAGE = "Can't create preferences directory in %s";
+
     private static final String PREFERENCES = "preferences";
 
     private static final String VALUES = "values";
@@ -36,7 +38,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider { /
         File prefNameDir = new File(prefsDir, prefName);
         File targetDirectory = new File(prefNameDir, subDirectory);
         if (!targetDirectory.exists() && !targetDirectory.mkdirs()) {
-            throw new FileOperationException(String.format("Cannot create preferences directory in %s", targetDirectory.getAbsolutePath()));
+            throw new FileOperationException(String.format(CANNOT_CREATE_DIR_MESSAGE, targetDirectory));
         }
         return targetDirectory;
     }
