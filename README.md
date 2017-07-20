@@ -98,6 +98,18 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Default is print handler which performs `e.printStacktrace()` if
 exception event are comes.
 
+#### Custom file directory
+
+You can save preferences inside custom directory as well:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .customDirectory(Environment.getExternalStorageDirectory())
+                .build();
+```
+
+Be careful: write into external directory required appropriate
+runtime and manifest permissions.
 
 #### IPC mode
 
