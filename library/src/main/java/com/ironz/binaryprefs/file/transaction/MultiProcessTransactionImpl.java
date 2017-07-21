@@ -17,7 +17,10 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
     private final ValueEncryption valueEncryption;
     private final KeyEncryption keyEncryption;
 
-    public MultiProcessTransactionImpl(FileAdapter fileAdapter, LockFactory lockFactory, ValueEncryption valueEncryption, KeyEncryption keyEncryption) {
+    public MultiProcessTransactionImpl(FileAdapter fileAdapter,
+                                       LockFactory lockFactory,
+                                       ValueEncryption valueEncryption,
+                                       KeyEncryption keyEncryption) {
         this.fileAdapter = fileAdapter;
         this.lockFactory = lockFactory;
         this.valueEncryption = valueEncryption;
