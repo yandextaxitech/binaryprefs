@@ -23,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * This bridge optimized even if broadcast comes in local process.
  * Uses UI thread for delivering key changes.
  */
-@SuppressWarnings("unused")
 public final class BroadcastEventBridgeImpl implements EventBridge {
 
     private static final String INTENT_PREFIX = "com.ironz.binaryprefs.";
@@ -36,7 +35,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
     private static final Map<String, List<OnSharedPreferenceChangeListenerWrapper>> allListeners = new ConcurrentHashMap<>();
-    private final List<OnSharedPreferenceChangeListenerWrapper> listeners;
+
+    private final List<OnSharedPreferenceChangeListenerWrapper> currentListeners;
 
     private final Handler handler = new Handler();
 
@@ -67,7 +67,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.valueEncryption = valueEncryption;
         this.updateActionName = createUpdateActionName(context);
         this.removeActionName = createRemoveActionName(context);
-        this.listeners = initListeners(prefName);
+        this.currentListeners = initListeners(prefName);
         this.updateReceiver = createUpdateReceiver();
         this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();
@@ -173,16 +173,16 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
-        if (listeners.isEmpty()) {
+        if (currentListeners.isEmpty()) {
             subscribeReceivers();
         }
-        listeners.add(listener);
+        currentListeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
-        listeners.remove(listener);
-        if (listeners.isEmpty()) {
+        currentListeners.remove(listener);
+        if (currentListeners.isEmpty()) {
             unSubscribeReceivers();
         }
     }
@@ -224,7 +224,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private void notifyListenersInternal(String key) {
-        for (OnSharedPreferenceChangeListenerWrapper listener : listeners) {
+        for (OnSharedPreferenceChangeListenerWrapper listener : currentListeners) {
             listener.onSharedPreferenceChanged(null, key);
         }
     }

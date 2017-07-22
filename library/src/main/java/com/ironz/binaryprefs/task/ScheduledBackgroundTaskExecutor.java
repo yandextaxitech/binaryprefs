@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Performs all submitted tasks in one separated thread sequentially.
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private static final int THREADS_COUNT = 1;

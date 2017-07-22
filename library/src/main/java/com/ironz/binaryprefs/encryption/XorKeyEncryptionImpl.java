@@ -8,6 +8,7 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
 
     private static final String SMALL_XOR_MESSAGE = "XOR must be at least 16 bytes";
     private static final String MIRRORED_XOR_MESSAGE = "XOR must not be mirrored";
+
     private static final int KEY_LENGTH = 16;
 
     private final byte[] xor;

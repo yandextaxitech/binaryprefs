@@ -12,16 +12,16 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Main thread preference change listener bridge
  */
-@SuppressWarnings("unused")
 public final class MainThreadEventBridgeImpl implements EventBridge {
 
     private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
+    private final List<OnSharedPreferenceChangeListener> currentListeners;
+
     private final Handler handler = new Handler();
-    private final List<OnSharedPreferenceChangeListener> listeners;
 
     public MainThreadEventBridgeImpl(String prefName) {
-        this.listeners = initListeners(prefName);
+        this.currentListeners = initListeners(prefName);
     }
 
     private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
@@ -35,12 +35,12 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
-        listeners.add(listener);
+        currentListeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
-        listeners.remove(listener);
+        currentListeners.remove(listener);
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for (OnSharedPreferenceChangeListener listener : listeners) {
+                for (OnSharedPreferenceChangeListener listener : currentListeners) {
                     listener.onSharedPreferenceChanged(preferences, key);
                 }
             }
