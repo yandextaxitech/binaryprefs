@@ -33,6 +33,8 @@ import java.io.File;
 @SuppressWarnings("unused")
 public final class BinaryPreferencesBuilder {
 
+    private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
+
     /**
      * Default name of preferences which name has not been defined.
      */
@@ -183,7 +185,7 @@ public final class BinaryPreferencesBuilder {
     public Preferences build() {
 
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw new PreferencesInitializationException("Preferences instantiated not in the main thread.");
+            throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
 
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
