@@ -100,7 +100,7 @@ exception event are comes.
 
 #### Custom file directory
 
-You can save preferences inside custom directory as well:
+You can save preferences inside custom directory:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
