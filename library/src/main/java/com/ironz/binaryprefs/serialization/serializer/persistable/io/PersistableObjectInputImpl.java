@@ -5,19 +5,21 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
 public final class PersistableObjectInputImpl implements DataInput {
 
-    private static final String INCORRECT_BOOLEAN_MESSAGE = "boolean cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_BYTE_MESSAGE = "byte cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_SHORT_MESSAGE = "short cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_CHAR_MESSAGE = "char cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_INT_MESSAGE = "int cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_LONG_MESSAGE = "long cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_FLOAT_MESSAGE = "float cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_DOUBLE_MESSAGE = "double cannot be deserialized in '%s' flag type";
-    private static final String INCORRECT_STRING_MESSAGE = "String cannot be deserialized in '%s' flag type";
+    private static final String BASE_INCORRECT_TYPE_MESSAGE = "cannot be deserialized in '%s' flag type";
+    private static final String BASE_NOT_MIRRORED_MESSAGE = "May be your read/write contract isn't mirror-implemented?";
+    private static final String INCORRECT_BOOLEAN_MESSAGE = "boolean " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_BYTE_MESSAGE = "byte " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_SHORT_MESSAGE = "short " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_CHAR_MESSAGE = "char " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_INT_MESSAGE = "int " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_LONG_MESSAGE = "long " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_FLOAT_MESSAGE = "float " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_DOUBLE_MESSAGE = "double " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_STRING_MESSAGE = "String " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String OUT_OF_BOUNDS_MESSAGE = "Can't read out of bounds array (%s bytes > %s bytes). " +
-            "May be your read/write contract isn't mirror-implemented?";
+            BASE_NOT_MIRRORED_MESSAGE;
     private static final String EMPTY_BYTE_ARRAY_MESSAGE = "Cannot deserialize empty byte array! " +
-            "May be your read/write contract isn't mirror-implemented?";
+            BASE_NOT_MIRRORED_MESSAGE;
     private static final String NULL_OBJECT_MESSAGE = "Can't serialize null object";
 
     private final BooleanSerializer booleanSerializer;
