@@ -63,7 +63,7 @@ public final class BinaryPreferencesBuilder {
      */
     public BinaryPreferencesBuilder(Context context) {
         this.context = context;
-        this.baseDir = context.getCacheDir();
+        this.baseDir = context.getFilesDir();
     }
 
     /**
@@ -83,13 +83,13 @@ public final class BinaryPreferencesBuilder {
      *
      * @param value all data will be saved inside external cache directory
      *              if <code>true</code> value is passed
-     *              ({@link Context#getExternalCacheDir()}),
+     *              ({@link Context#getExternalFilesDir(String)}),
      *              if <code>false</code> - will use standard app cache directory
-     *              ({@link Context#getCacheDir()}).
+     *              ({@link Context#getFilesDir()}).
      * @return current builder instance
      */
     public BinaryPreferencesBuilder externalStorage(boolean value) {
-        this.baseDir = value ? context.getExternalCacheDir() : context.getCacheDir();
+        this.baseDir = value ? context.getExternalFilesDir(null) : context.getFilesDir();
         return this;
     }
 
