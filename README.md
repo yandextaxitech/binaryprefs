@@ -98,7 +98,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Default is print handler which performs `e.printStacktrace()` if
 exception event are comes.
 
-#### Custom file directory
+#### Custom save directory
 
 You can save preferences inside custom directory:
 
