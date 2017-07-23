@@ -22,9 +22,9 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     private final String name;
     private final File lockDirectory;
 
-    public SimpleLockFactoryImpl(String name, DirectoryProvider directoryProvider) {
+    public SimpleLockFactoryImpl(String name, DirectoryProvider provider) {
         this.name = name;
-        this.lockDirectory = directoryProvider.getLockDirectory();
+        this.lockDirectory = provider.getLockDirectory();
         init(name);
     }
 
