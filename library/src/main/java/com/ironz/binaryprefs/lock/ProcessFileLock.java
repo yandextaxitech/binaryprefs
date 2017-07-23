@@ -27,10 +27,6 @@ final class ProcessFileLock implements Lock {
     @Override
     public void lock() {
         try {
-            if (!lockFile.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                lockFile.createNewFile();
-            }
             randomAccessFile = new RandomAccessFile(lockFile, RWD_MODE);
             channel = randomAccessFile.getChannel();
             lock = channel.lock();
