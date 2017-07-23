@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.util.Log;
 import com.ironz.binaryprefs.Preferences;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class DumpReceiver extends BroadcastReceiver {
 
     private static final String PREF_NAME = "pref_name";
     private static final String PREF_KEY = "pref_key";
 
-    private static final Map<String, Preferences> BINARY_PREFERENCES_HASH_MAP = new HashMap<>();
+    private static final Map<String, Preferences> BINARY_PREFERENCES_HASH_MAP = new ConcurrentHashMap<>();
 
     @Override
     public void onReceive(Context context, Intent intent) {

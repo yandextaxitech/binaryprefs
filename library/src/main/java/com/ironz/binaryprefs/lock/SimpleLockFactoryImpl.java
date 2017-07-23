@@ -22,9 +22,9 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     private final String name;
     private final File lockDirectory;
 
-    public SimpleLockFactoryImpl(String name, DirectoryProvider directoryProvider) {
+    public SimpleLockFactoryImpl(String name, DirectoryProvider provider) {
         this.name = name;
-        this.lockDirectory = directoryProvider.getLockDirectory();
+        this.lockDirectory = provider.getLockDirectory();
         init(name);
     }
 
@@ -45,9 +45,9 @@ public final class SimpleLockFactoryImpl implements LockFactory {
         if (processLocks.containsKey(name)) {
             return;
         }
-        File lockFile = new File(lockDirectory, name + LOCK_EXTENSION);
-        Lock fileLock = new ProcessFileLock(lockFile);
-        processLocks.put(name, fileLock);
+        File file = new File(lockDirectory, name + LOCK_EXTENSION);
+        Lock lock = new ProcessFileLock(file);
+        processLocks.put(name, lock);
     }
 
     @Override

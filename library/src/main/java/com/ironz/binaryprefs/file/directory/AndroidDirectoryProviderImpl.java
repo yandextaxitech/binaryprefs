@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.file.directory;
 
-import android.content.Context;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.io.File;
@@ -8,60 +7,44 @@ import java.io.File;
 /**
  * Provides default android cache directory or external (if possible) cache directory.
  */
-@SuppressWarnings("unused")
 public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
 
-    private static final String PREFERENCES = "preferences";
-    private static final String VALUES = "values";
-    private static final String BACKUP = "backup";
-    private static final String LOCK = "lock";
+    private static final String CANNOT_CREATE_DIR_MESSAGE = "Can't create preferences directory in %s";
+
+    static final String PREFERENCES_ROOT_DIRECTORY_NAME = "preferences";
+
+    static final String STORE_DIRECTORY_NAME = "values";
+    static final String BACKUP_DIRECTORY_NAME = "backup";
+    static final String LOCK_DIRECTORY_NAME = "lock";
 
     private final File storeDirectory;
     private final File backupDirectory;
     private final File lockDirectory;
 
     /**
-     * Creates instance for default app cache directory.
-     *
-     * @param context  target app context
-     * @param prefName preferences name
-     */
-    @SuppressWarnings("unused")
-    public AndroidDirectoryProviderImpl(Context context, String prefName) {
-        this(context, prefName, false);
-    }
-
-    /**
      * Creates instance for default or external (if enabled) persistent cache directory.
      *
-     * @param context         target app context
-     * @param prefName        preferences name
-     * @param externalStorage all data will be saved inside external cache directory
-     *                        if <code>true</code> value is passed
-     *                        ({@link Context#getExternalCacheDir()}),
-     *                        if <code>false</code> - will use standard app cache directory
-     *                        ({@link Context#getCacheDir()}).
+     * @param prefName preferences name
+     * @param baseDir  all data will be saved inside this directory.
      */
-    @SuppressWarnings("WeakerAccess")
-    public AndroidDirectoryProviderImpl(Context context, String prefName, boolean externalStorage) {
-        File baseDir = defineCacheDir(context, externalStorage);
-        storeDirectory = createStoreDirectory(baseDir, prefName, VALUES);
-        backupDirectory = createStoreDirectory(baseDir, prefName, BACKUP);
-        lockDirectory = createStoreDirectory(baseDir, prefName, LOCK);
-    }
-
-    private File defineCacheDir(Context context, boolean saveInExternal) {
-        return saveInExternal ? context.getExternalCacheDir() : context.getCacheDir();
+    public AndroidDirectoryProviderImpl(String prefName, File baseDir) {
+        storeDirectory = createStoreDirectory(baseDir, prefName, STORE_DIRECTORY_NAME);
+        backupDirectory = createStoreDirectory(baseDir, prefName, BACKUP_DIRECTORY_NAME);
+        lockDirectory = createStoreDirectory(baseDir, prefName, LOCK_DIRECTORY_NAME);
     }
 
     private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {
-        File prefsDir = new File(baseDir, PREFERENCES);
-        File prefNameDir = new File(prefsDir, prefName);
-        File targetDirectory = new File(prefNameDir, subDirectory);
+        File targetDirectory = createTargetDirectory(baseDir, prefName, subDirectory);
         if (!targetDirectory.exists() && !targetDirectory.mkdirs()) {
-            throw new FileOperationException(String.format("Cannot create preferences directory in %s", targetDirectory.getAbsolutePath()));
+            throw new FileOperationException(String.format(CANNOT_CREATE_DIR_MESSAGE, targetDirectory));
         }
         return targetDirectory;
+    }
+
+    private File createTargetDirectory(File baseDir, String prefName, String subDirectory) {
+        File prefsDir = new File(baseDir, PREFERENCES_ROOT_DIRECTORY_NAME);
+        File prefNameDir = new File(prefsDir, prefName);
+        return new File(prefNameDir, subDirectory);
     }
 
     @Override

@@ -18,13 +18,13 @@ import java.nio.channels.FileChannel;
  */
 public final class NioFileAdapter implements FileAdapter {
 
+    private static final String ZERO_BYTES_MESSAGE = "%s key's value is zero bytes for saving";
+
     private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
 
-    private static final String ZERO_BYTES_MESSAGE = "%s key's value is zero bytes for saving";
     private static final String BACKUP_EXTENSION = ".bak";
-
     private static final String R_MODE = "r";
-    private static final String RWD_MODE = "rwd";
+    private static final String RW_MODE = "rw";
 
     private final File baseDir;
     private final File backupDir;
@@ -52,7 +52,6 @@ public final class NioFileAdapter implements FileAdapter {
         return fetchBackupOrOriginal(name);
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private byte[] fetchBackupOrOriginal(String name) {
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         File file = new File(baseDir, name);
@@ -109,7 +108,7 @@ public final class NioFileAdapter implements FileAdapter {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
-            randomAccessFile = new RandomAccessFile(file, RWD_MODE);
+            randomAccessFile = new RandomAccessFile(file, RW_MODE);
             randomAccessFile.setLength(0);
             channel = randomAccessFile.getChannel();
             MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);

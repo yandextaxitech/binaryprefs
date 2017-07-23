@@ -44,8 +44,8 @@ public final class BinaryPreferencesTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    private Preferences preferences;
     private File srcDir;
+    private Preferences preferences;
 
     @Before
     public void setUp() throws Exception {

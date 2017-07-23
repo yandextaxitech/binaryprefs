@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs.file.transaction;
 
-import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
+import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.lock.LockFactory;
 
@@ -17,7 +17,10 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
     private final ValueEncryption valueEncryption;
     private final KeyEncryption keyEncryption;
 
-    public MultiProcessTransactionImpl(FileAdapter fileAdapter, LockFactory lockFactory, ValueEncryption valueEncryption, KeyEncryption keyEncryption) {
+    public MultiProcessTransactionImpl(FileAdapter fileAdapter,
+                                       LockFactory lockFactory,
+                                       ValueEncryption valueEncryption,
+                                       KeyEncryption keyEncryption) {
         this.fileAdapter = fileAdapter;
         this.lockFactory = lockFactory;
         this.valueEncryption = valueEncryption;
