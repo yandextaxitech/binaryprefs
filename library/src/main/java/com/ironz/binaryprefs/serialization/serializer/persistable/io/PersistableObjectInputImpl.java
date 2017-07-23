@@ -66,7 +66,7 @@ public final class PersistableObjectInputImpl implements DataInput {
         offset++;
 
         //noinspection unused
-        int versionStub = readInt(); // TODO: 7/11/17 implement version migration
+        int versionStub = readInt(); // TODO: 7/11/17 implement v.2 serialization protocol migration
 
         T instance = newInstance(clazz);
         instance.readExternal(this);

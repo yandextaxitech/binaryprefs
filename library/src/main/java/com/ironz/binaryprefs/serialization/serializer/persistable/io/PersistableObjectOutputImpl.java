@@ -7,7 +7,7 @@ public final class PersistableObjectOutputImpl implements DataOutput {
 
     //bytes capacity for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
-    private static final int VERSION_STUB = 1; // TODO: 7/11/17 implement version migration
+    private static final int VERSION_STUB = 1; // TODO: 7/11/17 implement v.2 serialization protocol migration
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
