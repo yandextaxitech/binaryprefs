@@ -174,9 +174,6 @@ public final class BinaryPreferencesBuilder {
 
     /**
      * Builds preferences instance with predefined or default parameters.
-     * Note: if current process already has created preferences by this name it
-     * will be returned regardless new or changed parameters like {@link KeyEncryption},
-     * {@link ValueEncryption}, {@link ExceptionHandler} IPC mode or store directory.
      * This method will fails if invocation performed not in the main thread.
      *
      * @return preferences instance with predefined or default parameters.
