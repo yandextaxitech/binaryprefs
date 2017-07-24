@@ -2,7 +2,7 @@ package com.ironz.binaryprefs.encryption;
 
 import java.io.ByteArrayOutputStream;
 
-public final class Base64 {
+final class Base64 {
 
     private static final char[] CHAR_TABLE = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -28,7 +28,7 @@ public final class Base64 {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
     };
 
-    public static String encode(byte[] data) {
+    static String encode(byte[] data) {
 
         StringBuilder buffer = new StringBuilder();
         int pad = 0;
@@ -59,7 +59,7 @@ public final class Base64 {
         return buffer.toString();
     }
 
-    public static byte[] decode(String data) {
+    static byte[] decode(String data) {
         byte[] bytes = data.getBytes();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         for (int i = 0; i < bytes.length; ) {
