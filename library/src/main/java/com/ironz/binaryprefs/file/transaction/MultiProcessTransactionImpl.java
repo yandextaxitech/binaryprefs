@@ -54,8 +54,8 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
         List<TransactionElement> elements = new ArrayList<>(names.length);
         for (String name : names) {
             byte[] bytes = fileAdapter.fetch(name);
+            String encryptName = keyEncryption.decrypt(name);
             byte[] decrypt = valueEncryption.decrypt(bytes);
-            String encryptName = keyEncryption.encrypt(name);
             TransactionElement element = TransactionElement.createFetchElement(encryptName, decrypt);
             elements.add(element);
         }
@@ -65,11 +65,12 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
     private void commitInternal(List<TransactionElement> elements) {
         for (TransactionElement element : elements) {
             int action = element.getAction();
-            String encryptedName = keyEncryption.encrypt(element.getName());
+            String name = element.getName();
+            String encryptedName = keyEncryption.encrypt(name);
             byte[] content = element.getContent();
             byte[] encrypt = valueEncryption.encrypt(content);
             if (action == TransactionElement.ACTION_UPDATE) {
-                fileAdapter.save(encryptedName, content);
+                fileAdapter.save(encryptedName, encrypt);
             }
             if (action == TransactionElement.ACTION_REMOVE) {
                 fileAdapter.remove(encryptedName);
