@@ -20,24 +20,27 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
     }
 
     @Override
-    public String decrypt(String name) {
-        return xorName(name);
+    public String encrypt(String name) {
+        byte[] original = name.getBytes();
+        byte[] bytes = xorName(original);
+        return Base64.encode(bytes);
     }
 
     @Override
-    public String encrypt(String name) {
-        return xorName(name);
+    public String decrypt(String name) {
+        byte[] decode = Base64.decode(name);
+        byte[] bytes = xorName(decode);
+        return new String(bytes);
     }
 
-    private String xorName(String name) {
-        byte[] original = name.getBytes();
+    private byte[] xorName(byte[] original) {
         int length = original.length;
         byte[] result = new byte[length];
         for (int index = 0; index < length; index++) {
             byte b = original[index];
             result[index] = xorByte(b);
         }
-        return new String(result);
+        return result;
     }
 
     private byte xorByte(byte raw) {

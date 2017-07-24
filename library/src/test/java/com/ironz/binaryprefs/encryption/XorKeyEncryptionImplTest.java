@@ -12,23 +12,14 @@ public class XorKeyEncryptionImplTest {
     private final XorKeyEncryptionImpl badEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
 
     @Test
-    public void decrypt() {
-        String origin = "origin";
-        String decrypt = encryption.decrypt(origin);
-        assertNotEquals(origin, decrypt);
+    public void encryptDecrypt() {
+        String original = "some string";
 
-        String encrypt = encryption.encrypt(decrypt);
-        assertEquals(origin, encrypt);
-    }
+        String encrypt = encryption.encrypt(original);
+        String decrypt = encryption.decrypt(encrypt);
 
-    @Test
-    public void encrypt() {
-        String origin = "origin";
-        String encrypted = encryption.encrypt(origin);
-        assertNotEquals(origin, encrypted);
-
-        String decrypt = encryption.decrypt(encrypted);
-        assertEquals(origin, decrypt);
+        assertNotEquals(original, encrypt);
+        assertEquals(original, decrypt);
     }
 
     @Test
