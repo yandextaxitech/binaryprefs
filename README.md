@@ -71,7 +71,7 @@ You can define your own key/value vice versa encryption or use default:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
-                .keyEncryption(new XorKeyEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes())))
+                .keyEncryption(new XorKeyEncryptionImpl("16 bytes secret key".getBytes())))
                 .valueEncryption(new AesValueEncryptionImpl("16 bytes secret key".getBytes(), "16 bytes initial vector".getBytes()))
                 .build();
 ```
