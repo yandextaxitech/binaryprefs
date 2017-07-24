@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs)
 [![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9.9"><img src="https://img.shields.io/badge/Methods and size-613 | 76 KB-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9.9"><img src="https://img.shields.io/badge/Methods count-613-e91e63.svg"/></a>
 <a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9.9"><img src="https://img.shields.io/badge/Size-76 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
