@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
-@SuppressWarnings("unused")
 public final class MultiProcessTransactionImpl implements FileTransaction {
 
     private final FileAdapter fileAdapter;

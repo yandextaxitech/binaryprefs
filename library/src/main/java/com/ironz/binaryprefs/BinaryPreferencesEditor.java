@@ -326,10 +326,10 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             String name = element.getName();
             byte[] bytes = element.getContent();
             if (element.getAction() == TransactionElement.ACTION_REMOVE) {
-                bridge.notifyListenersRemove(preferences, name);
+                bridge.notifyListenersRemove(name);
             }
             if (element.getAction() == TransactionElement.ACTION_UPDATE) {
-                bridge.notifyListenersUpdate(preferences, name, bytes);
+                bridge.notifyListenersUpdate(name, bytes);
             }
         }
     }

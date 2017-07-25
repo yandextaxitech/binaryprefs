@@ -2,7 +2,6 @@ package com.ironz.binaryprefs.events;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
-import com.ironz.binaryprefs.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,31 +33,31 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
+    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         currentListeners.add(listener);
     }
 
     @Override
-    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
+    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         currentListeners.remove(listener);
     }
 
     @Override
-    public void notifyListenersUpdate(final Preferences preferences, final String key, byte[] bytes) {
-        notifyListeners(preferences, key);
+    public void notifyListenersUpdate(final String key, byte[] bytes) {
+        notifyListeners(key);
     }
 
     @Override
-    public void notifyListenersRemove(Preferences preferences, String key) {
-        notifyListeners(preferences, key);
+    public void notifyListenersRemove(String key) {
+        notifyListeners(key);
     }
 
-    private void notifyListeners(final Preferences preferences, final String key) {
+    private void notifyListeners(final String key) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 for (OnSharedPreferenceChangeListener listener : currentListeners) {
-                    listener.onSharedPreferenceChanged(preferences, key);
+                    listener.onSharedPreferenceChanged(null, key);
                 }
             }
         });

@@ -4,9 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
-import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
@@ -34,9 +34,9 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_VALUE = "preference_value";
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
-    private static final Map<String, List<OnSharedPreferenceChangeListenerWrapper>> allListeners = new ConcurrentHashMap<>();
+    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
-    private final List<OnSharedPreferenceChangeListenerWrapper> currentListeners;
+    private final List<OnSharedPreferenceChangeListener> currentListeners;
 
     private final Handler handler = new Handler();
 
@@ -81,11 +81,11 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         return ACTION_PREFERENCE_REMOVED + context.getPackageName();
     }
 
-    private List<OnSharedPreferenceChangeListenerWrapper> initListeners(String prefName) {
+    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }
-        List<OnSharedPreferenceChangeListenerWrapper> listeners = new ArrayList<>();
+        List<OnSharedPreferenceChangeListener> listeners = new ArrayList<>();
         allListeners.put(prefName, listeners);
         return listeners;
     }
@@ -172,7 +172,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
+    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         if (currentListeners.isEmpty()) {
             subscribeReceivers();
         }
@@ -180,7 +180,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener) {
+    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         currentListeners.remove(listener);
         if (currentListeners.isEmpty()) {
             unSubscribeReceivers();
@@ -193,13 +193,13 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     @Override
-    public void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes) {
+    public void notifyListenersUpdate(String key, byte[] bytes) {
         notifyListenersHandler(key);
         sendUpdateIntent(key, bytes);
     }
 
     @Override
-    public void notifyListenersRemove(Preferences preferences, String key) {
+    public void notifyListenersRemove(String key) {
         notifyListenersHandler(key);
         sendRemoveIntent(key);
     }
@@ -224,7 +224,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     }
 
     private void notifyListenersInternal(String key) {
-        for (OnSharedPreferenceChangeListenerWrapper listener : currentListeners) {
+        for (OnSharedPreferenceChangeListener listener : currentListeners) {
             listener.onSharedPreferenceChanged(null, key);
         }
     }

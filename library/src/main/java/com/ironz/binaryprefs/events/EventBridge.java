@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs.events;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import com.ironz.binaryprefs.Preferences;
 
 /**
  * Describes contract for preferences change events
@@ -15,7 +14,7 @@ public interface EventBridge {
      *
      * @param listener listener
      */
-    void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener);
+    void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener);
 
     /**
      * Behaves exactly like in
@@ -24,24 +23,21 @@ public interface EventBridge {
      *
      * @param listener listener
      */
-    void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListenerWrapper listener);
+    void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener);
 
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference update
-     *
-     * @param preferences target preferences instance
-     * @param key         target key
+     *  @param key         target key
      * @param bytes       target bytes
      */
-    void notifyListenersUpdate(Preferences preferences, String key, byte[] bytes);
+    void notifyListenersUpdate(String key, byte[] bytes);
 
     /**
      * Notifies all listeners which has been subscribed on preferences changes about preference remove
      *
-     * @param preferences target preferences instance
      * @param key         target key
      */
-    void notifyListenersRemove(Preferences preferences, String key);
+    void notifyListenersRemove(String key);
 
 
 }
