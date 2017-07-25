@@ -36,7 +36,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
     private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {
         File targetDirectory = createTargetDirectory(baseDir, prefName, subDirectory);
         if (!targetDirectory.exists() && !targetDirectory.mkdirs()) {
-            throw new FileOperationException(String.format(CANNOT_CREATE_DIR_MESSAGE, targetDirectory));
+            throw new FileOperationException(String.format(CANNOT_CREATE_DIR_MESSAGE, targetDirectory.getAbsolutePath()));
         }
         return targetDirectory;
     }
