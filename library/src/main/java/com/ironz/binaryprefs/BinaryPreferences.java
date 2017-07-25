@@ -242,7 +242,6 @@ final class BinaryPreferences implements Preferences {
         readLock.lock();
         try {
             return new BinaryPreferencesEditor(
-                    this,
                     fileTransaction,
                     eventsBridge,
                     taskExecutor,

@@ -19,7 +19,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
     private final Set<String> removeSet = new HashSet<>(0);
 
-    private final Preferences preferences;
     private final FileTransaction fileTransaction;
     private final EventBridge bridge;
     private final TaskExecutor taskExecutor;
@@ -29,14 +28,12 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private boolean clear;
 
-    BinaryPreferencesEditor(Preferences preferences,
-                            FileTransaction fileTransaction,
+    BinaryPreferencesEditor(FileTransaction fileTransaction,
                             EventBridge bridge,
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
                             Lock writeLock) {
-        this.preferences = preferences;
         this.fileTransaction = fileTransaction;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
