@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
@@ -169,6 +170,25 @@ public final class BinaryPreferencesBuilder {
      */
     public BinaryPreferencesBuilder registerPersistable(String key, Class<? extends Persistable> persistable) {
         persistableRegistry.register(key, persistable);
+        return this;
+    }
+
+
+    /**
+     * Performs migration from any implementation of preferences
+     * to this implementation.
+     * Appropriate transaction will be created for all migrated
+     * values. After successful migration all data in migrated
+     * preferences will be removed.
+     * Please note that all existing values in this implementation
+     * will be rewritten to value which migrates into. Also type
+     * information will be rewritten and lost too without any
+     * exception.
+     *
+     * @param preferences any implementation for migrate.
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder migrateFrom(SharedPreferences preferences) {
         return this;
     }
 
