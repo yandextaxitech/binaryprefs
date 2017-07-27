@@ -20,6 +20,7 @@ import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
+import com.ironz.binaryprefs.migration.MigrateProcessor;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
@@ -27,6 +28,8 @@ import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class for building preferences instance.
@@ -44,6 +47,8 @@ public final class BinaryPreferencesBuilder {
 
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
+    private final Map<String, Object> migration = new HashMap<>();
+    private final MigrateProcessor migrateProcessor = new MigrateProcessor();
 
     private File baseDir;
     private String name = DEFAULT_NAME;
@@ -189,6 +194,7 @@ public final class BinaryPreferencesBuilder {
      * @return current builder instance
      */
     public BinaryPreferencesBuilder migrateFrom(SharedPreferences preferences) {
+        migrateProcessor.migrate(preferences);
         return this;
     }
 
