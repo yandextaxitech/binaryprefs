@@ -28,8 +28,6 @@ import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class for building preferences instance.
@@ -47,7 +45,6 @@ public final class BinaryPreferencesBuilder {
 
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
-    private final Map<String, Object> migration = new HashMap<>();
     private final MigrateProcessor migrateProcessor = new MigrateProcessor();
 
     private File baseDir;
@@ -186,15 +183,18 @@ public final class BinaryPreferencesBuilder {
      * values. After successful migration all data in migrated
      * preferences will be removed.
      * Please note that all existing values in this implementation
-     * will be rewritten to value which migrates into. Also type
+     * will be rewritten to values which migrates into. Also type
      * information will be rewritten and lost too without any
      * exception.
+     * If this method will be called multiple times for two or more
+     * different instances of preferences which has keys collision
+     * then last preferences values will be applied.
      *
-     * @param preferences any implementation for migrate.
+     * @param preferences any implementation for migration.
      * @return current builder instance
      */
     public BinaryPreferencesBuilder migrateFrom(SharedPreferences preferences) {
-        migrateProcessor.migrate(preferences);
+        migrateProcessor.add(preferences);
         return this;
     }
 
@@ -211,6 +211,14 @@ public final class BinaryPreferencesBuilder {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
 
+        BinaryPreferences preferences = createInstance();
+
+        migrateProcessor.migrateTo(preferences);
+
+        return preferences;
+    }
+
+    private BinaryPreferences createInstance() {
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);

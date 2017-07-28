@@ -10,11 +10,11 @@ import java.util.concurrent.Future;
  */
 public final class Completable {
 
-    private final Future<?> submit;
+    private final Future<?> future;
     private final ExceptionHandler exceptionHandler;
 
-    public Completable(Future<?> submit, ExceptionHandler exceptionHandler) {
-        this.submit = submit;
+    public Completable(Future<?> future, ExceptionHandler exceptionHandler) {
+        this.future = future;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -26,7 +26,7 @@ public final class Completable {
      */
     public boolean completeBlocking() {
         try {
-            submit.get();
+            future.get();
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(e);
@@ -39,7 +39,7 @@ public final class Completable {
      */
     public void completeBlockingUnsafe() {
         try {
-            submit.get();
+            future.get();
         } catch (Exception e) {
             throw new FileOperationException(e);
         }
