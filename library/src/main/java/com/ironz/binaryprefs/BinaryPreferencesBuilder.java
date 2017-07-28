@@ -175,7 +175,6 @@ public final class BinaryPreferencesBuilder {
         return this;
     }
 
-
     /**
      * Performs migration from any implementation of preferences
      * to this implementation.
