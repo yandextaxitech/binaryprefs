@@ -2,6 +2,7 @@ package com.ironz.binaryprefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
@@ -47,7 +48,7 @@ public final class BinaryPreferencesBuilder {
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
     private final MigrateProcessor migrateProcessor = new MigrateProcessor();
 
-    private File baseDir;
+    private File baseDir = Environment.getDataDirectory();
     private String name = DEFAULT_NAME;
     private boolean supportInterProcess = false;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
