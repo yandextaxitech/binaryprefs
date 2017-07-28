@@ -5,7 +5,8 @@ package com.ironz.binaryprefs.exception;
  */
 public interface ExceptionHandler {
     /**
-     * Calls while exception are coming (file IO, etc)
+     * Calls while exception are coming (file IO, etc).
+     * This method may be called not in the main thread.
      *
      * @param e exception
      */
