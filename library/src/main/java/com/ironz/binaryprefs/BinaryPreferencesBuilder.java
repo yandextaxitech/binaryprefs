@@ -99,9 +99,10 @@ public final class BinaryPreferencesBuilder {
 
     /**
      * * Defines usage of custom directory for preferences saving.
+     * Be careful: write into external directory required appropriate
+     * runtime and manifest permissions.
      *
      * @param baseDir base directory for saving.
-     *                This is useful for data restoring after
      * @return current builder instance
      */
     public BinaryPreferencesBuilder customDirectory(File baseDir) {
@@ -129,7 +130,7 @@ public final class BinaryPreferencesBuilder {
      * Defines key encryption implementation which performs vice versa byte encryption operations.
      * Default value is {@link KeyEncryption#NO_OP}
      *
-     * @param keyEncryption keyEncryption implementation
+     * @param keyEncryption key encryption implementation
      * @return current builder instance
      */
     public BinaryPreferencesBuilder keyEncryption(KeyEncryption keyEncryption) {
@@ -141,7 +142,7 @@ public final class BinaryPreferencesBuilder {
      * Defines value encryption implementation which performs vice versa byte encryption operations.
      * Default value is {@link ValueEncryption#NO_OP}
      *
-     * @param valueEncryption byte encryption implementation
+     * @param valueEncryption value encryption implementation
      * @return current builder instance
      */
     public BinaryPreferencesBuilder valueEncryption(ValueEncryption valueEncryption) {
@@ -233,7 +234,8 @@ public final class BinaryPreferencesBuilder {
                 cacheProvider,
                 serializerFactory,
                 executor,
-                valueEncryption
+                valueEncryption,
+                directoryProvider
         ) : new MainThreadEventBridgeImpl(name);
 
         return new BinaryPreferences(
