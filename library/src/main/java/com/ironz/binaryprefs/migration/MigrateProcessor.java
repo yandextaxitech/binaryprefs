@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Migrates all {@link SharedPreferences} list into {@link Preferences}.
+ * Migrates all {@link SharedPreferences} instances into {@link Preferences}.
  */
 public final class MigrateProcessor {
 
