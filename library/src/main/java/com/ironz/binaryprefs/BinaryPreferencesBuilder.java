@@ -207,15 +207,11 @@ public final class BinaryPreferencesBuilder {
      * @see PreferencesInitializationException
      */
     public Preferences build() {
-
         if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
-
         BinaryPreferences preferences = createInstance();
-
         migrateProcessor.migrateTo(preferences);
-
         return preferences;
     }
 
@@ -227,7 +223,6 @@ public final class BinaryPreferencesBuilder {
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
                 context,
                 name,
