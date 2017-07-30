@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/iamironz/binaryprefs.svg?branch=master)](https://travis-ci.org/iamironz/binaryprefs)
 [![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9.9"><img src="https://img.shields.io/badge/Methods count-613-e91e63.svg"/></a>
-<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A0.9.9.9"><img src="https://img.shields.io/badge/Size-76 KB-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A1.0.0-ALPHA-1"><img src="https://img.shields.io/badge/Methods count-627-e91e63.svg"/></a>
+<a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A1.0.0-ALPHA-1"><img src="https://img.shields.io/badge/Size-78 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
 
 
@@ -218,9 +218,9 @@ DumpReceiver.unregister(name);
 11. ~~Simplify api (instance creating, exception handles).~~ completed
 12. ~~File name encrypt~~ completed
 13. ~~Finalize serialization and persistence contract~~ completed
-14. Background initializer
-15. `byte[]` support
-16. Default preferences migration mechanism
+14. ~~Default preferences migration mechanism~~ complete
+15. Background initializer
+16. `byte[]` support
 17. IPC transactions without 1mb limit
 18. RxJava support
 19. `sun.misc.Unsafe` serialization mode for api 21+
