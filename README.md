@@ -218,9 +218,9 @@ DumpReceiver.unregister(name);
 11. ~~Simplify api (instance creating, exception handles).~~ completed
 12. ~~File name encrypt~~ completed
 13. ~~Finalize serialization and persistence contract~~ completed
-14. Background initializer
-15. `byte[]` support
-16. Default preferences migration mechanism
+14. ~~Default preferences migration mechanism~~ complete
+15. Background initializer
+16. `byte[]` support
 17. IPC transactions without 1mb limit
 18. RxJava support
 19. `sun.misc.Unsafe` serialization mode for api 21+
