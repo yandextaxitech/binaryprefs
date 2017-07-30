@@ -84,7 +84,7 @@ public class MigrateProcessorTest {
     }
 
     @Test
-    public void oneDifferentType() {
+    public void oneDifferentTypesCollision() {
         Preferences fromPreferences = creator.create("from", folder);
         Preferences toPreferences = creator.create("to", folder);
         String key = "key";
@@ -107,6 +107,70 @@ public class MigrateProcessorTest {
         Map<String, ?> fromAll = fromPreferences.getAll();
 
         assertTrue(fromAll.isEmpty());
+
+        fromPreferences.edit().clear().commit();
+        toPreferences.edit().clear().commit();
+    }
+
+    @Test
+    public void multipleCollision() {
+        Preferences fromPreferences = creator.create("from", folder);
+        Preferences fromPreferences2 = creator.create("from2", folder);
+        Preferences toPreferences = creator.create("to", folder);
+        String key = "key";
+        String value = "value";
+
+        fromPreferences.edit().putString(key, value).commit();
+        fromPreferences2.edit().putString(key, value).commit();
+
+        migrateProcessor.add(fromPreferences);
+        migrateProcessor.add(fromPreferences2);
+        migrateProcessor.migrateTo(toPreferences);
+
+        Map<String, ?> toAll = toPreferences.getAll();
+
+        assertFalse(toAll.isEmpty());
+        assertEquals(1, toAll.size());
+        assertEquals(value, toAll.get(key));
+
+        Map<String, ?> fromAll = fromPreferences.getAll();
+        Map<String, ?> fromAll2 = fromPreferences2.getAll();
+
+        assertTrue(fromAll.isEmpty());
+        assertTrue(fromAll2.isEmpty());
+
+        fromPreferences.edit().clear().commit();
+        toPreferences.edit().clear().commit();
+    }
+
+    @Test
+    public void multipleDifferentTypeCollision() {
+        Preferences fromPreferences = creator.create("from", folder);
+        Preferences fromPreferences2 = creator.create("from2", folder);
+        Preferences toPreferences = creator.create("to", folder);
+        String key = "key";
+        String value = "value";
+        String key1 = "key";
+        int value1 = 1;
+
+        fromPreferences.edit().putString(key, value).commit();
+        fromPreferences2.edit().putInt(key1, value1).commit();
+
+        migrateProcessor.add(fromPreferences);
+        migrateProcessor.add(fromPreferences2);
+        migrateProcessor.migrateTo(toPreferences);
+
+        Map<String, ?> toAll = toPreferences.getAll();
+
+        assertFalse(toAll.isEmpty());
+        assertEquals(1, toAll.size());
+        assertEquals(value1, toAll.get(key));
+
+        Map<String, ?> fromAll = fromPreferences.getAll();
+        Map<String, ?> fromAll2 = fromPreferences2.getAll();
+
+        assertTrue(fromAll.isEmpty());
+        assertTrue(fromAll2.isEmpty());
 
         fromPreferences.edit().clear().commit();
         toPreferences.edit().clear().commit();

@@ -67,7 +67,6 @@ public final class PreferencesCreator {
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
-
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,

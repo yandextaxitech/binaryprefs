@@ -5,16 +5,14 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.Preferences;
 import com.ironz.binaryprefs.PreferencesEditor;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Migrates all {@link SharedPreferences} instances into {@link Preferences}.
  */
 public final class MigrateProcessor {
 
-    private final Set<SharedPreferences> migrate = new HashSet<>();
+    private final List<SharedPreferences> migrate = new ArrayList<>();
 
     public void add(SharedPreferences preferences) {
         migrate.add(preferences);
