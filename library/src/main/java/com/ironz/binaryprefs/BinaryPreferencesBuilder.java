@@ -1,6 +1,8 @@
 package com.ironz.binaryprefs;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
@@ -19,6 +21,7 @@ import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
+import com.ironz.binaryprefs.migration.MigrateProcessor;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
@@ -43,8 +46,9 @@ public final class BinaryPreferencesBuilder {
 
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
+    private final MigrateProcessor migrateProcessor = new MigrateProcessor();
 
-    private File baseDir;
+    private File baseDir = Environment.getDataDirectory();
     private String name = DEFAULT_NAME;
     private boolean supportInterProcess = false;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
@@ -95,9 +99,10 @@ public final class BinaryPreferencesBuilder {
 
     /**
      * * Defines usage of custom directory for preferences saving.
+     * Be careful: write into external directory required appropriate
+     * runtime and manifest permissions.
      *
      * @param baseDir base directory for saving.
-     *                This is useful for data restoring after
      * @return current builder instance
      */
     public BinaryPreferencesBuilder customDirectory(File baseDir) {
@@ -125,7 +130,7 @@ public final class BinaryPreferencesBuilder {
      * Defines key encryption implementation which performs vice versa byte encryption operations.
      * Default value is {@link KeyEncryption#NO_OP}
      *
-     * @param keyEncryption keyEncryption implementation
+     * @param keyEncryption key encryption implementation
      * @return current builder instance
      */
     public BinaryPreferencesBuilder keyEncryption(KeyEncryption keyEncryption) {
@@ -137,7 +142,7 @@ public final class BinaryPreferencesBuilder {
      * Defines value encryption implementation which performs vice versa byte encryption operations.
      * Default value is {@link ValueEncryption#NO_OP}
      *
-     * @param valueEncryption byte encryption implementation
+     * @param valueEncryption value encryption implementation
      * @return current builder instance
      */
     public BinaryPreferencesBuilder valueEncryption(ValueEncryption valueEncryption) {
@@ -173,6 +178,28 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
+     * Performs migration from any implementation of preferences
+     * to this implementation.
+     * Appropriate transaction will be created for all migrated
+     * values. After successful migration all data in migrated
+     * preferences will be removed.
+     * Please note that all existing values in this implementation
+     * will be rewritten to values which migrates into. Also type
+     * information will be rewritten and lost too without any
+     * exception.
+     * If this method will be called multiple times for two or more
+     * different instances of preferences which has keys collision
+     * then last preferences values will be applied.
+     *
+     * @param preferences any implementation for migration.
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder migrateFrom(SharedPreferences preferences) {
+        migrateProcessor.add(preferences);
+        return this;
+    }
+
+    /**
      * Builds preferences instance with predefined or default parameters.
      * This method will fails if invocation performed not in the main thread.
      *
@@ -180,11 +207,15 @@ public final class BinaryPreferencesBuilder {
      * @see PreferencesInitializationException
      */
     public Preferences build() {
-
         if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
+        BinaryPreferences preferences = createInstance();
+        migrateProcessor.migrateTo(preferences);
+        return preferences;
+    }
 
+    private BinaryPreferences createInstance() {
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
@@ -192,14 +223,14 @@ public final class BinaryPreferencesBuilder {
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
                 context,
                 name,
                 cacheProvider,
                 serializerFactory,
                 executor,
-                valueEncryption
+                valueEncryption,
+                directoryProvider
         ) : new MainThreadEventBridgeImpl(name);
 
         return new BinaryPreferences(

@@ -20,7 +20,7 @@ public final class NioFileAdapter implements FileAdapter {
 
     private static final String ZERO_BYTES_MESSAGE = "%s key's value is zero bytes for saving";
 
-    private static final String[] EMPTY_STRING_NAMES_ARRAY = new String[0];
+    private static final String[] EMPTY_STRING_NAMES_ARRAY = {};
 
     private static final String BACKUP_EXTENSION = ".bak";
     private static final String R_MODE = "r";

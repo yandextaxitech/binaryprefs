@@ -2,7 +2,7 @@ package com.ironz.binaryprefs.file.transaction;
 
 public final class TransactionElement {
 
-    private static final byte[] EMPTY_CONTENT = new byte[0];
+    private static final byte[] EMPTY_CONTENT = {};
 
     public static final int ACTION_UPDATE = 1;
     public static final int ACTION_REMOVE = 2;

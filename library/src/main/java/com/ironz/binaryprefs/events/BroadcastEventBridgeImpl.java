@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Process;
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
+import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
@@ -58,27 +59,28 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                                     CacheProvider cacheProvider,
                                     SerializerFactory serializerFactory,
                                     TaskExecutor taskExecutor,
-                                    ValueEncryption valueEncryption) {
+                                    ValueEncryption valueEncryption,
+                                    DirectoryProvider directoryProvider) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
         this.valueEncryption = valueEncryption;
-        this.updateActionName = createUpdateActionName(context);
-        this.removeActionName = createRemoveActionName(context);
+        this.updateActionName = createUpdateActionName(directoryProvider);
+        this.removeActionName = createRemoveActionName(directoryProvider);
         this.currentListeners = initListeners(prefName);
         this.updateReceiver = createUpdateReceiver();
         this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();
     }
 
-    private String createUpdateActionName(Context context) {
-        return ACTION_PREFERENCE_UPDATED + context.getPackageName();
+    private String createUpdateActionName(DirectoryProvider directoryProvider) {
+        return ACTION_PREFERENCE_UPDATED + directoryProvider.getStoreDirectory().getAbsolutePath();
     }
 
-    private String createRemoveActionName(Context context) {
-        return ACTION_PREFERENCE_REMOVED + context.getPackageName();
+    private String createRemoveActionName(DirectoryProvider directoryProvider) {
+        return ACTION_PREFERENCE_REMOVED + directoryProvider.getStoreDirectory().getAbsolutePath();
     }
 
     private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
