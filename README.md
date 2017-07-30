@@ -146,7 +146,7 @@ for fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
-#### Migration from default or another implementation
+#### Migration from another implementations
 
 Builder have simple api for existing preferences migration:
 
