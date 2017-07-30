@@ -38,7 +38,7 @@ public final class MigrateProcessor {
         PreferencesEditor editor = to.edit();
 
         for (String key : all.keySet()) {
-            migrateOneValue(all, editor, key);
+            migrateValue(all, editor, key);
         }
         boolean commit = editor.commit();
 
@@ -47,7 +47,7 @@ public final class MigrateProcessor {
         }
     }
 
-    private void migrateOneValue(Map<String, ?> all, PreferencesEditor editor, String key) {
+    private void migrateValue(Map<String, ?> all, PreferencesEditor editor, String key) {
         Object value = all.get(key);
         if (value instanceof String) {
             editor.putString(key, (String) value);

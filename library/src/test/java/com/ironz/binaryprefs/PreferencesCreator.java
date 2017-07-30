@@ -29,9 +29,9 @@ public final class PreferencesCreator {
 
     public Preferences create(String name, TemporaryFolder folder) {
         try {
-            final File srcDir = folder.newFolder("preferences");
-            final File backupDir = folder.newFolder("backup");
-            final File lockDir = folder.newFolder("lock");
+            final File srcDir = folder.newFolder();
+            final File backupDir = folder.newFolder();
+            final File lockDir = folder.newFolder();
             DirectoryProvider directoryProvider = new DirectoryProvider() {
                 @Override
                 public File getStoreDirectory() {
@@ -54,7 +54,7 @@ public final class PreferencesCreator {
         }
     }
 
-    public Preferences create(String name, DirectoryProvider directoryProvider) {
+    Preferences create(String name, DirectoryProvider directoryProvider) {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);

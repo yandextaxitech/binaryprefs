@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.impl.TestUser;
@@ -54,11 +55,12 @@ public final class BinaryPreferencesTest {
         preferences = creator.create(name, directoryProvider);
     }
 
+    @SuppressLint("ApplySharedPref")
     @After
     public void tearDown() {
         preferences.edit()
                 .clear()
-                .apply();
+                .commit();
     }
 
     @Test

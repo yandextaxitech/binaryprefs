@@ -1,27 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
-import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
-import com.ironz.binaryprefs.encryption.AesValueEncryptionImpl;
-import com.ironz.binaryprefs.encryption.KeyEncryption;
-import com.ironz.binaryprefs.encryption.ValueEncryption;
-import com.ironz.binaryprefs.encryption.XorKeyEncryptionImpl;
-import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.file.adapter.FileAdapter;
-import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
-import com.ironz.binaryprefs.file.transaction.FileTransaction;
-import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
-import com.ironz.binaryprefs.impl.SimpleEventBridgeImpl;
-import com.ironz.binaryprefs.impl.TestTaskExecutorImpl;
-import com.ironz.binaryprefs.impl.TestUser;
-import com.ironz.binaryprefs.lock.LockFactory;
-import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
-import com.ironz.binaryprefs.serialization.SerializerFactory;
-import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
-import com.ironz.binaryprefs.task.TaskExecutor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,7 +39,7 @@ public class MultipleBinaryPreferencesTest {
         thirdPreferencesInstance = createPreferences("user_preferences_2");
     }
 
-    private BinaryPreferences createPreferences(String name) throws IOException {
+    private Preferences createPreferences(String name) throws IOException {
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
             public File getStoreDirectory() {
@@ -76,27 +56,8 @@ public class MultipleBinaryPreferencesTest {
                 return lockDir;
             }
         };
-        FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
-        ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
-        ValueEncryption valueEncryption = new AesValueEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
-        KeyEncryption keyEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
-        PersistableRegistry persistableRegistry = new PersistableRegistry();
-        persistableRegistry.register(TestUser.KEY, TestUser.class);
-        SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
-
-        return new BinaryPreferences(
-                fileTransaction,
-                eventsBridge,
-                cacheProvider,
-                executor,
-                serializerFactory,
-                lockFactory
-        );
+        PreferencesCreator creator = new PreferencesCreator();
+        return creator.create(name, directoryProvider);
     }
 
     @After
