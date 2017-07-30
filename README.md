@@ -153,6 +153,26 @@ for fast immutable in-memory data fetching.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
+## Migration from default or another implementation
+
+Builder have simple api for existing preferences migration:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .migrateFrom(oldPreferences)
+                .migrateFrom(oldPreferences2)
+                .build();
+```
+
+You can add one or more preferences for migration and it's will be merged into
+this one implementation.
+After successful migration all data in migrated preferences will be removed. 
+Please note that all existing values in this implementation will be rewritten 
+to values which migrates into. 
+Also type information will be rewritten and lost too without any exception. 
+If this method will be called multiple times for two or more different instances 
+of preferences which has keys collision then last preferences values will be applied.
+
 ## Logcat preferences dump
 
 You can dump your preferences with adb console command right in logcat:
