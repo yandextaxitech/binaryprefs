@@ -3,6 +3,7 @@
 <a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A1.0.0-ALPHA-1"><img src="https://img.shields.io/badge/Methods count-627-e91e63.svg"/></a>
 <a href="http://www.methodscount.com/?lib=com.github.iamironz%3Abinaryprefs%3A1.0.0-ALPHA-1"><img src="https://img.shields.io/badge/Size-78 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
+[![](https://jitpack.io/v/iamironz/binaryprefs.svg)](https://jitpack.io/#iamironz/binaryprefs)
 
 
 ## Binary Preferences
@@ -31,7 +32,7 @@ cache works between processes)
 
 ## Usage
 
-Add it in your root build.gradle at the end of repositories:
+Add jitpack to repositories closure. For example, you can add it to root build.gradle like this:
 
 ```groovy
 
@@ -43,12 +44,12 @@ allprojects {
 }
 ```
 	 
-Add the dependency
+Add the dependency:
 
 ```groovy
 
 dependencies {
-   compile "com.github.iamironz:binaryprefs:1.0.0-ALPHA-1"
+   compile "com.github.iamironz:binaryprefs:$version"
 }
 ```
 
