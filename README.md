@@ -31,6 +31,27 @@ cache works between processes)
 
 ## Usage
 
+Add it in your root build.gradle at the end of repositories:
+
+```groovy
+
+allprojects {
+  repositories {
+    ...
+    maven { url "https://jitpack.io" }
+  }
+}
+```
+	 
+Add the dependency
+
+```groovy
+
+dependencies {
+   compile "com.github.iamironz:binaryprefs:1.0.0-ALPHA-1"
+}
+```
+
 #### Minimal working configuration
 
 ```java
