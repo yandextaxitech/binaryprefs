@@ -99,7 +99,7 @@ Default is no-op encryption for key/value.
 
 #### Exception handler
 
-You can listen exceptions which comes during disk IO, serialization,
+You can listen exceptions which throws during disk IO, serialization,
 task execution operations:
 
 ```java
@@ -114,7 +114,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Default is print handler which performs `e.printStacktrace()` if
-exception event are comes.
+exception event comes.
 
 #### Custom save directory
 
