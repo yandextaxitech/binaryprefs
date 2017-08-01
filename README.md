@@ -32,6 +32,8 @@ cache works between processes)
 
 ## Usage
 
+#### Add in project
+
 Add jitpack to repositories closure. For example, you can add it to root build.gradle like this:
 
 ```groovy
@@ -92,6 +94,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Default is no-op encryption for key/value.
+
 
 
 #### Exception handler
