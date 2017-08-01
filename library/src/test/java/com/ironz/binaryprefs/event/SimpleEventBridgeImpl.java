@@ -1,7 +1,6 @@
-package com.ironz.binaryprefs.events;
+package com.ironz.binaryprefs.event;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,18 +8,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Main thread preference change listener bridge
+ * Simple preference change listener bridge. Uses current thread for delivering all events.
  */
-public final class MainThreadEventBridgeImpl implements EventBridge {
+public final class SimpleEventBridgeImpl implements EventBridge {
 
     private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
-    private final List<OnSharedPreferenceChangeListener> currentListeners;
+    private final List<OnSharedPreferenceChangeListener> listeners;
 
-    private final Handler handler = new Handler();
-
-    public MainThreadEventBridgeImpl(String prefName) {
-        this.currentListeners = initListeners(prefName);
+    public SimpleEventBridgeImpl(String prefName) {
+        this.listeners = initListeners(prefName);
     }
 
     private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
@@ -34,16 +31,16 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
 
     @Override
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        currentListeners.add(listener);
+        listeners.add(listener);
     }
 
     @Override
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
-        currentListeners.remove(listener);
+        listeners.remove(listener);
     }
 
     @Override
-    public void notifyListenersUpdate(final String key, byte[] bytes) {
+    public void notifyListenersUpdate(String key, byte[] bytes) {
         notifyListeners(key);
     }
 
@@ -52,14 +49,9 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
         notifyListeners(key);
     }
 
-    private void notifyListeners(final String key) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                for (OnSharedPreferenceChangeListener listener : currentListeners) {
-                    listener.onSharedPreferenceChanged(null, key);
-                }
-            }
-        });
+    private void notifyListeners(String key) {
+        for (OnSharedPreferenceChangeListener listener : listeners) {
+            listener.onSharedPreferenceChanged(null, key);
+        }
     }
 }

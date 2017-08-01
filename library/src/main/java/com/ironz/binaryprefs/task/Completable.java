@@ -13,7 +13,7 @@ public final class Completable {
     private final Future<?> future;
     private final ExceptionHandler exceptionHandler;
 
-    public Completable(Future<?> future, ExceptionHandler exceptionHandler) {
+    Completable(Future<?> future, ExceptionHandler exceptionHandler) {
         this.future = future;
         this.exceptionHandler = exceptionHandler;
     }
