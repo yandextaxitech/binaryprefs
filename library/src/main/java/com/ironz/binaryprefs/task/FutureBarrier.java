@@ -8,12 +8,12 @@ import java.util.concurrent.Future;
 /**
  * Meta object which holds current task state and allows blocking await.
  */
-public final class Completable {
+public final class FutureBarrier {
 
     private final Future<?> future;
     private final ExceptionHandler exceptionHandler;
 
-    Completable(Future<?> future, ExceptionHandler exceptionHandler) {
+    FutureBarrier(Future<?> future, ExceptionHandler exceptionHandler) {
         this.future = future;
         this.exceptionHandler = exceptionHandler;
     }

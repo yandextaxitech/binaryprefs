@@ -8,7 +8,7 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import com.ironz.binaryprefs.serialization.strategy.impl.*;
-import com.ironz.binaryprefs.task.Completable;
+import com.ironz.binaryprefs.task.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
@@ -230,7 +230,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
-            Completable submit = taskExecutor.submit(new Runnable() {
+            FutureBarrier submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
                     commitTransaction();

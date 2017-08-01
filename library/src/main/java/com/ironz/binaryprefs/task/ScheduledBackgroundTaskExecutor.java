@@ -52,8 +52,8 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     }
 
     @Override
-    public synchronized Completable submit(final Runnable runnable) {
+    public synchronized FutureBarrier submit(final Runnable runnable) {
         Future<?> submit = currentExecutor.submit(runnable);
-        return new Completable(submit, handler);
+        return new FutureBarrier(submit, handler);
     }
 }

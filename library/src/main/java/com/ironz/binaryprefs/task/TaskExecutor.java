@@ -9,7 +9,7 @@ public interface TaskExecutor {
      * Tasks guaranteed to execute sequentially.
      *
      * @param runnable instance for task execution
-     * @return completable for task blocking
+     * @return future barrier for task blocking
      */
-    Completable submit(Runnable runnable);
+    FutureBarrier submit(Runnable runnable);
 }
