@@ -14,16 +14,16 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
     private final Map<String, Object> currentCache;
 
-    public ConcurrentCacheProviderImpl(String name) {
-        currentCache = initCaches(name);
+    public ConcurrentCacheProviderImpl(String prefName) {
+        currentCache = initCaches(prefName);
     }
 
-    private Map<String, Object> initCaches(String name) {
-        if (caches.containsKey(name)) {
-            return caches.get(name);
+    private Map<String, Object> initCaches(String prefName) {
+        if (caches.containsKey(prefName)) {
+            return caches.get(prefName);
         }
         Map<String, Object> map = new ConcurrentHashMap<>();
-        caches.put(name, map);
+        caches.put(prefName, map);
         return map;
     }
 
