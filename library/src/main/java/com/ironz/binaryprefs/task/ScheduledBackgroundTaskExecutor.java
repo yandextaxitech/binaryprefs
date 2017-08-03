@@ -17,11 +17,11 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
     private static final AtomicInteger threadId = new AtomicInteger();
 
-    private final ExceptionHandler handler;
+    private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
 
-    public ScheduledBackgroundTaskExecutor(final String prefName, final ExceptionHandler handler) {
-        this.handler = handler;
+    public ScheduledBackgroundTaskExecutor(final String prefName, final ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
         this.currentExecutor = createExecutor(prefName);
     }
 
@@ -54,6 +54,6 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     @Override
     public FutureBarrier submit(final Runnable runnable) {
         Future<?> submit = currentExecutor.submit(runnable);
-        return new FutureBarrier(submit, handler);
+        return new FutureBarrier(submit, exceptionHandler);
     }
 }
