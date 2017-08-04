@@ -4,7 +4,6 @@ import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
 import java.io.File;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -16,21 +15,21 @@ public final class SimpleLockFactoryImpl implements LockFactory {
 
     private static final String LOCK_EXTENSION = ".lock";
 
-    private static final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
-    private final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
-
     private final File lockDirectory;
 
     private final ReadWriteLock readWriteLock;
     private final Lock processLock;
 
-    public SimpleLockFactoryImpl(String prefName, DirectoryProvider provider) {
+    public SimpleLockFactoryImpl(String prefName,
+                                 DirectoryProvider provider,
+                                 Map<String, ReadWriteLock> locks,
+                                 Map<String, Lock> processLocks) {
         this.lockDirectory = provider.getLockDirectory();
-        readWriteLock = initLocalLock(prefName);
-        processLock = initProcessLock(prefName);
+        this.readWriteLock = initLocalLock(prefName, locks);
+        this.processLock = initProcessLock(prefName, processLocks);
     }
 
-    private ReadWriteLock initLocalLock(String name) {
+    private ReadWriteLock initLocalLock(String name, Map<String, ReadWriteLock> locks) {
         if (locks.containsKey(name)) {
             return locks.get(name);
         }
@@ -39,7 +38,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
         return lock;
     }
 
-    private Lock initProcessLock(String name) {
+    private Lock initProcessLock(String name, Map<String, Lock> processLocks) {
         if (processLocks.containsKey(name)) {
             return processLocks.get(name);
         }

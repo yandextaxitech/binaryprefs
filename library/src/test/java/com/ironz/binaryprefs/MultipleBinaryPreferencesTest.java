@@ -2,7 +2,6 @@ package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,7 +9,11 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import static org.junit.Assert.*;
 
@@ -34,40 +37,35 @@ public class MultipleBinaryPreferencesTest {
         srcDir = folder.newFolder("preferences");
         backupDir = folder.newFolder("backup");
         lockDir = folder.newFolder("lock");
-        firstPreferencesInstance = createPreferences("user_preferences");
-        secondPreferencesInstance = createPreferences("user_preferences");
-        thirdPreferencesInstance = createPreferences("user_preferences_2");
+        Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
+        Map<String, Lock> globalLocks = new ConcurrentHashMap<>();
+        Map<String, Map<String, Object>> allCaches = new ConcurrentHashMap<>();
+        firstPreferencesInstance = createPreferences("user_preferences", locks, globalLocks, allCaches);
+        secondPreferencesInstance = createPreferences("user_preferences", locks, globalLocks, allCaches);
+        thirdPreferencesInstance = createPreferences("user_preferences_2", locks, globalLocks, allCaches);
     }
 
-    private Preferences createPreferences(String name) throws IOException {
+    private Preferences createPreferences(String name,
+                                          Map<String, ReadWriteLock> locks,
+                                          Map<String, Lock> globalLocks,
+                                          Map<String, Map<String, Object>> allCaches) throws IOException {
+
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
             public File getStoreDirectory() {
                 return srcDir;
             }
-
             @Override
             public File getBackupDirectory() {
                 return backupDir;
             }
-
             @Override
             public File getLockDirectory() {
                 return lockDir;
             }
         };
         PreferencesCreator creator = new PreferencesCreator();
-        return creator.create(name, directoryProvider);
-    }
-
-    @After
-    public void tearDown() {
-        firstPreferencesInstance.edit()
-                .clear()
-                .apply();
-        secondPreferencesInstance.edit()
-                .clear()
-                .apply();
+        return creator.create(name, directoryProvider, locks, globalLocks, allCaches);
     }
 
     @Test

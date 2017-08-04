@@ -1,9 +1,6 @@
 package com.ironz.binaryprefs.event;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
@@ -16,7 +13,6 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Uses global broadcast receiver mechanism for delivering all key change events.
@@ -35,8 +31,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_VALUE = "preference_value";
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
-    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
-
+    private final Map<String, List<OnSharedPreferenceChangeListener>> allListeners;
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
     private final Handler handler = new Handler();
@@ -60,7 +55,8 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
                                     SerializerFactory serializerFactory,
                                     TaskExecutor taskExecutor,
                                     ValueEncryption valueEncryption,
-                                    DirectoryProvider directoryProvider) {
+                                    DirectoryProvider directoryProvider,
+                                    Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
@@ -70,6 +66,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.updateActionName = createUpdateActionName(directoryProvider);
         this.removeActionName = createRemoveActionName(directoryProvider);
         this.currentListeners = initListeners(prefName);
+        this.allListeners = allListeners;
         this.updateReceiver = createUpdateReceiver();
         this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();

@@ -3,8 +3,10 @@ package com.ironz.binaryprefs.task;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 
 import java.util.Map;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Performs all submitted tasks in one separated thread sequentially.
@@ -12,17 +14,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private static final int THREADS_COUNT = 1;
-    private static final String THREAD_NAME_PREFIX = "binaryprefs-pool-%s-%s";
-
-    private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
-    private static final AtomicInteger threadId = new AtomicInteger();
+    private static final String THREAD_NAME_PREFIX = "binaryprefs-pool-%s";
 
     private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
+    private final Map<String, ExecutorService> executors;
 
-    public ScheduledBackgroundTaskExecutor(final String prefName, final ExceptionHandler exceptionHandler) {
+    public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler, Map<String, ExecutorService> executors) {
         this.exceptionHandler = exceptionHandler;
         this.currentExecutor = createExecutor(prefName);
+        this.executors = executors;
     }
 
     private ExecutorService createExecutor(final String prefName) {
@@ -46,7 +47,7 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private Thread createThread(final Runnable r, final String prefName) {
         Thread thread = new Thread(r);
-        thread.setName(String.format(THREAD_NAME_PREFIX, prefName, threadId.incrementAndGet()));
+        thread.setName(String.format(THREAD_NAME_PREFIX, prefName));
         thread.setPriority(Thread.MAX_PRIORITY);
         return thread;
     }
