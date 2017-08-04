@@ -31,7 +31,6 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private static final String PREFERENCE_VALUE = "preference_value";
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
-    private final Map<String, List<OnSharedPreferenceChangeListener>> allListeners;
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
     private final Handler handler = new Handler();
@@ -65,8 +64,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.valueEncryption = valueEncryption;
         this.updateActionName = createUpdateActionName(directoryProvider);
         this.removeActionName = createRemoveActionName(directoryProvider);
-        this.currentListeners = initListeners(prefName);
-        this.allListeners = allListeners;
+        this.currentListeners = initListeners(prefName, allListeners);
         this.updateReceiver = createUpdateReceiver();
         this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();
@@ -80,7 +78,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         return ACTION_PREFERENCE_REMOVED + directoryProvider.getStoreDirectory().getAbsolutePath();
     }
 
-    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
+    private List<OnSharedPreferenceChangeListener> initListeners(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }
