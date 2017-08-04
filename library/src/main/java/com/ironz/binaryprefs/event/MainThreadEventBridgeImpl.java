@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.events;
+package com.ironz.binaryprefs.event;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
@@ -6,24 +6,21 @@ import android.os.Handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Main thread preference change listener bridge
  */
 public final class MainThreadEventBridgeImpl implements EventBridge {
 
-    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
-
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
     private final Handler handler = new Handler();
 
-    public MainThreadEventBridgeImpl(String prefName) {
-        this.currentListeners = initListeners(prefName);
+    public MainThreadEventBridgeImpl(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
+        this.currentListeners = defineListeners(prefName, allListeners);
     }
 
-    private List<OnSharedPreferenceChangeListener> initListeners(String prefName) {
+    private List<OnSharedPreferenceChangeListener> defineListeners(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }

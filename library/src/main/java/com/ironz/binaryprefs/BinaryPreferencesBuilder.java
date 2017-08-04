@@ -8,9 +8,9 @@ import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
-import com.ironz.binaryprefs.events.BroadcastEventBridgeImpl;
-import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.events.MainThreadEventBridgeImpl;
+import com.ironz.binaryprefs.event.BroadcastEventBridgeImpl;
+import com.ironz.binaryprefs.event.EventBridge;
+import com.ironz.binaryprefs.event.MainThreadEventBridgeImpl;
 import com.ironz.binaryprefs.exception.ExceptionHandler;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
@@ -29,6 +29,11 @@ import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Class for building preferences instance.
@@ -43,6 +48,14 @@ public final class BinaryPreferencesBuilder {
      */
     @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_NAME = "default";
+
+    private final SharedParametersProvider sharedParametersProvider = new SharedParametersProvider();
+
+    private final Map<String, ReadWriteLock> locks = sharedParametersProvider.getLocks();
+    private final Map<String, Lock> processLocks = sharedParametersProvider.getProcessLocks();
+    private final Map<String, ExecutorService> executors = sharedParametersProvider.getExecutors();
+    private final Map<String, Map<String, Object>> caches = sharedParametersProvider.getCaches();
+    private final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = sharedParametersProvider.getAllListeners();
 
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
@@ -216,12 +229,13 @@ public final class BinaryPreferencesBuilder {
     }
 
     private BinaryPreferences createInstance() {
+
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider);
+        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider, locks, processLocks);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name);
-        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler);
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, caches);
+        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
                 context,
@@ -230,8 +244,9 @@ public final class BinaryPreferencesBuilder {
                 serializerFactory,
                 executor,
                 valueEncryption,
-                directoryProvider
-        ) : new MainThreadEventBridgeImpl(name);
+                directoryProvider,
+                allListeners
+        ) : new MainThreadEventBridgeImpl(name, allListeners);
 
         return new BinaryPreferences(
                 fileTransaction,

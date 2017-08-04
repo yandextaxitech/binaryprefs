@@ -1,14 +1,14 @@
 package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.events.EventBridge;
-import com.ironz.binaryprefs.events.OnSharedPreferenceChangeListenerWrapper;
+import com.ironz.binaryprefs.event.EventBridge;
+import com.ironz.binaryprefs.event.OnSharedPreferenceChangeListenerWrapper;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
-import com.ironz.binaryprefs.task.Completable;
+import com.ironz.binaryprefs.task.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
@@ -43,7 +43,7 @@ final class BinaryPreferences implements Preferences {
     private void fetchCache() {
         readLock.lock();
         try {
-            Completable submit = taskExecutor.submit(new Runnable() {
+            FutureBarrier submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
                     if (cacheProvider.keys().length != 0) {

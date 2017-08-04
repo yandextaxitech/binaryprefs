@@ -10,20 +10,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
-    private static final Map<String, Map<String, Object>> caches = new ConcurrentHashMap<>();
-
     private final Map<String, Object> currentCache;
 
-    public ConcurrentCacheProviderImpl(String name) {
-        currentCache = initCaches(name);
+    public ConcurrentCacheProviderImpl(String prefName, Map<String, Map<String, Object>> allCaches) {
+        currentCache = defineCache(prefName, allCaches);
     }
 
-    private Map<String, Object> initCaches(String name) {
-        if (caches.containsKey(name)) {
-            return caches.get(name);
+    private Map<String, Object> defineCache(String prefName, Map<String, Map<String, Object>> allCaches) {
+        if (allCaches.containsKey(prefName)) {
+            return allCaches.get(prefName);
         }
         Map<String, Object> map = new ConcurrentHashMap<>();
-        caches.put(name, map);
+        allCaches.put(prefName, map);
         return map;
     }
 

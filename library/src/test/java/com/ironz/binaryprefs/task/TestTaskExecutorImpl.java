@@ -1,8 +1,6 @@
-package com.ironz.binaryprefs.impl;
+package com.ironz.binaryprefs.task;
 
 import com.ironz.binaryprefs.exception.ExceptionHandler;
-import com.ironz.binaryprefs.task.Completable;
-import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.Map;
 import java.util.concurrent.*;
@@ -30,9 +28,9 @@ public final class TestTaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public Completable submit(Runnable runnable) {
+    public FutureBarrier submit(Runnable runnable) {
         Future<?> submit = executor.submit(runnable);
-        return new Completable(submit, exceptionHandler);
+        return new FutureBarrier(submit, exceptionHandler);
     }
 
     private static final class CurrentThreadExecutorService extends ThreadPoolExecutor {

@@ -4,7 +4,6 @@ import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
 import java.io.File;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -15,55 +14,52 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class SimpleLockFactoryImpl implements LockFactory {
 
     private static final String LOCK_EXTENSION = ".lock";
-    private static final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
 
-    private final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
-
-    private final String name;
     private final File lockDirectory;
 
-    public SimpleLockFactoryImpl(String name, DirectoryProvider provider) {
-        this.name = name;
+    private final ReadWriteLock readWriteLock;
+    private final Lock processLock;
+
+    public SimpleLockFactoryImpl(String prefName,
+                                 DirectoryProvider provider,
+                                 Map<String, ReadWriteLock> locks,
+                                 Map<String, Lock> processLocks) {
         this.lockDirectory = provider.getLockDirectory();
-        init(name);
+        this.readWriteLock = defineLocalLock(prefName, locks);
+        this.processLock = defineProcessLock(prefName, processLocks);
     }
 
-    private void init(String name) {
-        initLocalLocks(name);
-        initProcessLocks(name);
-    }
-
-    private void initLocalLocks(String name) {
+    private ReadWriteLock defineLocalLock(String name, Map<String, ReadWriteLock> locks) {
         if (locks.containsKey(name)) {
-            return;
+            return locks.get(name);
         }
         ReadWriteLock lock = new ReentrantReadWriteLock(true);
         locks.put(name, lock);
+        return lock;
     }
 
-    private void initProcessLocks(String name) {
+    private Lock defineProcessLock(String name, Map<String, Lock> processLocks) {
         if (processLocks.containsKey(name)) {
-            return;
+            return processLocks.get(name);
         }
         File file = new File(lockDirectory, name + LOCK_EXTENSION);
         Lock lock = new ProcessFileLock(file);
         processLocks.put(name, lock);
+        return lock;
     }
 
     @Override
     public Lock getReadLock() {
-        ReadWriteLock readWriteLock = locks.get(name);
         return readWriteLock.readLock();
     }
 
     @Override
     public Lock getWriteLock() {
-        ReadWriteLock readWriteLock = locks.get(name);
         return readWriteLock.writeLock();
     }
 
     @Override
     public Lock getProcessLock() {
-        return processLocks.get(name);
+        return processLock;
     }
 }

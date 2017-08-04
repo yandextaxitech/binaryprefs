@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.events;
+package com.ironz.binaryprefs.event;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
