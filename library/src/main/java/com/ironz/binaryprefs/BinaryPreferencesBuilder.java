@@ -50,6 +50,7 @@ public final class BinaryPreferencesBuilder {
     public static final String DEFAULT_NAME = "default";
 
     private final SharedParametersHolder sharedParametersHolder = new SharedParametersHolder();
+
     private final Map<String, ReadWriteLock> locks = sharedParametersHolder.getLocks();
     private final Map<String, Lock> processLocks = sharedParametersHolder.getProcessLocks();
     private final Map<String, ExecutorService> executors = sharedParametersHolder.getExecutors();
@@ -228,6 +229,7 @@ public final class BinaryPreferencesBuilder {
     }
 
     private BinaryPreferences createInstance() {
+
         DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider, locks, processLocks);

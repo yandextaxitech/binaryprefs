@@ -18,15 +18,13 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
-    private final Map<String, ExecutorService> executors;
 
     public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler, Map<String, ExecutorService> executors) {
         this.exceptionHandler = exceptionHandler;
-        this.currentExecutor = createExecutor(prefName);
-        this.executors = executors;
+        this.currentExecutor = createExecutor(prefName, executors);
     }
 
-    private ExecutorService createExecutor(final String prefName) {
+    private ExecutorService createExecutor(final String prefName, Map<String, ExecutorService> executors) {
         if (executors.containsKey(prefName)) {
             return executors.get(prefName);
         }
