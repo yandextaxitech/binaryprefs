@@ -49,13 +49,13 @@ public final class BinaryPreferencesBuilder {
     @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_NAME = "default";
 
-    private final SharedParametersHolder sharedParametersHolder = new SharedParametersHolder();
+    private final SharedParametersProvider sharedParametersProvider = new SharedParametersProvider();
 
-    private final Map<String, ReadWriteLock> locks = sharedParametersHolder.getLocks();
-    private final Map<String, Lock> processLocks = sharedParametersHolder.getProcessLocks();
-    private final Map<String, ExecutorService> executors = sharedParametersHolder.getExecutors();
-    private final Map<String, Map<String, Object>> caches = sharedParametersHolder.getCaches();
-    private final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = sharedParametersHolder.getAllListeners();
+    private final Map<String, ReadWriteLock> locks = sharedParametersProvider.getLocks();
+    private final Map<String, Lock> processLocks = sharedParametersProvider.getProcessLocks();
+    private final Map<String, ExecutorService> executors = sharedParametersProvider.getExecutors();
+    private final Map<String, Map<String, Object>> caches = sharedParametersProvider.getCaches();
+    private final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = sharedParametersProvider.getAllListeners();
 
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();

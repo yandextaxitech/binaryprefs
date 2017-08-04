@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
-final class SharedParametersHolder {
+final class SharedParametersProvider {
 
     private static final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
     private static final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
