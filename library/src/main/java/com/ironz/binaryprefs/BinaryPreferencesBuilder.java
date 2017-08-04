@@ -246,7 +246,7 @@ public final class BinaryPreferencesBuilder {
                 valueEncryption,
                 directoryProvider,
                 allListeners
-        ) : new MainThreadEventBridgeImpl(name);
+        ) : new MainThreadEventBridgeImpl(name, allListeners);
 
         return new BinaryPreferences(
                 fileTransaction,

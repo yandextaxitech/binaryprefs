@@ -21,10 +21,10 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler, Map<String, ExecutorService> executors) {
         this.exceptionHandler = exceptionHandler;
-        this.currentExecutor = createExecutor(prefName, executors);
+        this.currentExecutor = defineExecutor(prefName, executors);
     }
 
-    private ExecutorService createExecutor(final String prefName, Map<String, ExecutorService> executors) {
+    private ExecutorService defineExecutor(final String prefName, Map<String, ExecutorService> executors) {
         if (executors.containsKey(prefName)) {
             return executors.get(prefName);
         }
