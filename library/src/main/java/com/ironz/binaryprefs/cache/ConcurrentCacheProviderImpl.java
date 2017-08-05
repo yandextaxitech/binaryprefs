@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
+    private static final String[] EMPTY_ARRAY = new String[0];
+
     private final Map<String, Object> currentCache;
 
     public ConcurrentCacheProviderImpl(String prefName, Map<String, Map<String, Object>> allCaches) {
@@ -38,7 +40,7 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     @Override
     public String[] keys() {
         Set<String> keySet = currentCache.keySet();
-        return keySet.toArray(new String[0]);
+        return keySet.toArray(EMPTY_ARRAY);
     }
 
     @Override
