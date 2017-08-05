@@ -94,11 +94,11 @@ final class BinaryPreferences implements Preferences {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Set<String> getStringSet(String key, Set<String> defValue) {
         readLock.lock();
         try {
             if (cacheProvider.contains(key)) {
+                //noinspection unchecked
                 Set<String> strings = (Set<String>) cacheProvider.get(key);
                 return new HashSet<>(strings);
             }
