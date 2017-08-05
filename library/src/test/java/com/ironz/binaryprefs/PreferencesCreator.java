@@ -8,7 +8,7 @@ import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.XorKeyEncryptionImpl;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.SimpleEventBridgeImpl;
-import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.event.ExceptionHandler;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;

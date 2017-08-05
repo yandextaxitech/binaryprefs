@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.task;
 
-import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.event.ExceptionHandler;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +19,9 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
 
-    public ScheduledBackgroundTaskExecutor(String prefName, ExceptionHandler exceptionHandler, Map<String, ExecutorService> executors) {
+    public ScheduledBackgroundTaskExecutor(String prefName,
+                                           ExceptionHandler exceptionHandler,
+                                           Map<String, ExecutorService> executors) {
         this.exceptionHandler = exceptionHandler;
         this.currentExecutor = defineExecutor(prefName, executors);
     }

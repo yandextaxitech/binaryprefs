@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.task;
 
-import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.event.ExceptionHandler;
 
 import java.util.Map;
 import java.util.concurrent.*;

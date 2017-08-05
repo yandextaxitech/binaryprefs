@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.exception;
+package com.ironz.binaryprefs.event;
 
 /**
  * Handles errors for implementing custom behaviour

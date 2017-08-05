@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.task;
 
-import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.event.ExceptionHandler;
 import com.ironz.binaryprefs.exception.FileOperationException;
 
 import java.util.concurrent.Future;

@@ -11,7 +11,7 @@ import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.event.BroadcastEventBridgeImpl;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.MainThreadEventBridgeImpl;
-import com.ironz.binaryprefs.exception.ExceptionHandler;
+import com.ironz.binaryprefs.event.ExceptionHandler;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
