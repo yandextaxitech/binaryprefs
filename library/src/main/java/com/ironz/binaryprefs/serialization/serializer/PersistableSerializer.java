@@ -94,7 +94,17 @@ public final class PersistableSerializer {
                 stringSerializer
         );
         Class<? extends Persistable> clazz = persistableRegistry.get(key);
-        return input.deserialize(bytes, clazz);
+        Persistable instance = newInstance(clazz);
+        input.deserialize(bytes, instance);
+        return instance;
+    }
+
+    private <T extends Persistable> T newInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean isMatches(byte flag) {

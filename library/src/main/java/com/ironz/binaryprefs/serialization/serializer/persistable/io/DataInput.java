@@ -89,12 +89,10 @@ public interface DataInput {
     String readString();
 
     /**
-     * Deserializes byte array and given type into object.
+     * Deserializes byte array into given {@link Persistable} object.
      *
-     * @param <T>   type
-     * @param bytes given byte array created by specific output scheme
-     * @param clazz given class type
-     * @return deserialized object
+     * @param bytes    given byte array created by specific output scheme
+     * @param instance given instance for data define
      */
-    <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz);
+    void deserialize(byte[] bytes, Persistable instance);
 }

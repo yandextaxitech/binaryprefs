@@ -6,7 +6,8 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 public final class PersistableObjectInputImpl implements DataInput {
 
     private static final String BASE_INCORRECT_TYPE_MESSAGE = "cannot be deserialized in '%s' flag type";
-    private static final String BASE_NOT_MIRRORED_MESSAGE = "May be your read/write contract isn't mirror-implemented?";
+    private static final String BASE_NOT_MIRRORED_MESSAGE = "May be your serialization read/write contract isn't mirror-implemented?";
+
     private static final String INCORRECT_BOOLEAN_MESSAGE = "boolean " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_BYTE_MESSAGE = "byte " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_SHORT_MESSAGE = "short " + BASE_INCORRECT_TYPE_MESSAGE;
@@ -56,30 +57,19 @@ public final class PersistableObjectInputImpl implements DataInput {
     }
 
     @Override
-    public <T extends Persistable> T deserialize(byte[] bytes, Class<T> clazz) {
+    public void deserialize(byte[] bytes, Persistable instance) {
 
         buffer = bytes;
 
         checkBytes();
-        checkNull(clazz);
+        checkNull(instance);
 
         offset++;
 
         //noinspection unused
         int versionStub = readInt(); // TODO: 7/11/17 implement v.2 serialization protocol migration
 
-        T instance = newInstance(clazz);
         instance.readExternal(this);
-
-        return instance;
-    }
-
-    private <T extends Persistable> T newInstance(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
