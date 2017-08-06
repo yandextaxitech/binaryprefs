@@ -167,7 +167,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Note about `deepClone` method: you should implement full object hierarchy copying 
-for fast immutable in-memory data fetching. If your data class is immutable and you 
+for fast immutable in-memory data fetching. If your data class immutable and you 
 define all values from constructor you just can return `this` from method.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
