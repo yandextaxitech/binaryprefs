@@ -251,7 +251,7 @@ DumpReceiver.unregister(name);
 15. Background initializer
 16. `byte[]` support
 17. IPC transactions without 1mb limit
-18. Limiting strategies (UNLIMITED, LRU, LIFO)
+18. Limiting strategies (UNLIMITED, LRU, FIFO)
 19. RxJava support
 20. `sun.misc.Unsafe` serialization mode for api 21+
 
