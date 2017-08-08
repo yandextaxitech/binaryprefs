@@ -230,13 +230,13 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
-            FutureBarrier submit = taskExecutor.submit(new Runnable() {
+            FutureBarrier barrier = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
                     commitTransaction();
                 }
             });
-            return submit.completeBlocking();
+            return barrier.completeBlocking();
         } finally {
             writeLock.unlock();
         }

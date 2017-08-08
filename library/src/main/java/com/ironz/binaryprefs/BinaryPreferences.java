@@ -43,13 +43,13 @@ final class BinaryPreferences implements Preferences {
     private void fetchCache() {
         readLock.lock();
         try {
-            FutureBarrier submit = taskExecutor.submit(new Runnable() {
+            FutureBarrier barrier = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
                     fetchInternal();
                 }
             });
-            submit.completeBlockingUnsafe();
+            barrier.completeBlockingUnsafe();
         } finally {
             readLock.unlock();
         }
