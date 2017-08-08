@@ -46,20 +46,24 @@ final class BinaryPreferences implements Preferences {
             FutureBarrier submit = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    if (cacheProvider.keys().length != 0) {
-                        return;
-                    }
-                    for (TransactionElement element : fileTransaction.fetch()) {
-                        String name = element.getName();
-                        byte[] bytes = element.getContent();
-                        Object o = serializerFactory.deserialize(name, bytes);
-                        cacheProvider.put(name, o);
-                    }
+                    fetchInternal();
                 }
             });
             submit.completeBlockingUnsafe();
         } finally {
             readLock.unlock();
+        }
+    }
+
+    private void fetchInternal() {
+        if (cacheProvider.keys().length != 0) {
+            return;
+        }
+        for (TransactionElement element : fileTransaction.fetch()) {
+            String name = element.getName();
+            byte[] bytes = element.getContent();
+            Object o = serializerFactory.deserialize(name, bytes);
+            cacheProvider.put(name, o);
         }
     }
 
