@@ -84,10 +84,11 @@ final class BinaryPreferences implements Preferences {
     public String getString(String key, String defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (String) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (String) o;
         } finally {
             readLock.unlock();
         }
@@ -97,12 +98,13 @@ final class BinaryPreferences implements Preferences {
     public Set<String> getStringSet(String key, Set<String> defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                //noinspection unchecked
-                Set<String> strings = (Set<String>) cacheProvider.get(key);
-                return new HashSet<>(strings);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            //noinspection unchecked
+            Set<String> strings = (Set<String>) o;
+            return new HashSet<>(strings);
         } finally {
             readLock.unlock();
         }
@@ -112,10 +114,11 @@ final class BinaryPreferences implements Preferences {
     public int getInt(String key, int defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (int) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (int) o;
         } finally {
             readLock.unlock();
         }
@@ -125,10 +128,11 @@ final class BinaryPreferences implements Preferences {
     public long getLong(String key, long defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (long) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (long) o;
         } finally {
             readLock.unlock();
         }
@@ -138,10 +142,11 @@ final class BinaryPreferences implements Preferences {
     public float getFloat(String key, float defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (float) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (float) o;
         } finally {
             readLock.unlock();
         }
@@ -151,10 +156,11 @@ final class BinaryPreferences implements Preferences {
     public boolean getBoolean(String key, boolean defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (boolean) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (boolean) o;
         } finally {
             readLock.unlock();
         }
@@ -165,11 +171,11 @@ final class BinaryPreferences implements Preferences {
     public <T extends Persistable> T getPersistable(String key, T defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                T t = (T) cacheProvider.get(key);
-                return (T) t.deepClone();
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (T) ((T) o).deepClone();
         } finally {
             readLock.unlock();
         }
@@ -179,10 +185,11 @@ final class BinaryPreferences implements Preferences {
     public byte getByte(String key, byte defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (byte) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (byte) o;
         } finally {
             readLock.unlock();
         }
@@ -192,10 +199,11 @@ final class BinaryPreferences implements Preferences {
     public short getShort(String key, short defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (short) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (short) o;
         } finally {
             readLock.unlock();
         }
@@ -205,10 +213,11 @@ final class BinaryPreferences implements Preferences {
     public char getChar(String key, char defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (char) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (char) o;
         } finally {
             readLock.unlock();
         }
@@ -218,10 +227,11 @@ final class BinaryPreferences implements Preferences {
     public double getDouble(String key, double defValue) {
         readLock.lock();
         try {
-            if (cacheProvider.contains(key)) {
-                return (double) cacheProvider.get(key);
+            Object o = cacheProvider.get(key);
+            if (o == null) {
+                return defValue;
             }
-            return defValue;
+            return (double) o;
         } finally {
             readLock.unlock();
         }
