@@ -91,20 +91,10 @@ public final class PersistableSerializer {
                 integerSerializer,
                 longSerializer,
                 shortSerializer,
-                stringSerializer
+                stringSerializer,
+                persistableRegistry
         );
-        Class<? extends Persistable> clazz = persistableRegistry.get(key);
-        Persistable instance = newInstance(clazz);
-        input.deserialize(bytes, instance);
-        return instance;
-    }
-
-    private <T extends Persistable> T newInstance(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return input.deserialize(key, bytes);
     }
 
     public boolean isMatches(byte flag) {

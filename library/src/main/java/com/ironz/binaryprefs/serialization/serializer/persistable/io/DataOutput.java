@@ -80,8 +80,7 @@ public interface DataOutput {
      * Serializes all input object data into byte array with specific scheme
      *
      * @param value given object
-     * @param <T>   type
      * @return byte array
      */
-    <T extends Persistable> byte[] serialize(T value);
+    byte[] serialize(Persistable value);
 }

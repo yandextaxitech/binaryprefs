@@ -28,20 +28,21 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      * @param baseDir  all data will be saved inside this directory.
      */
     public AndroidDirectoryProviderImpl(String prefName, File baseDir) {
-        storeDirectory = createStoreDirectory(baseDir, prefName, STORE_DIRECTORY_NAME);
-        backupDirectory = createStoreDirectory(baseDir, prefName, BACKUP_DIRECTORY_NAME);
-        lockDirectory = createStoreDirectory(baseDir, prefName, LOCK_DIRECTORY_NAME);
+        storeDirectory = createAndValidate(baseDir, prefName, STORE_DIRECTORY_NAME);
+        backupDirectory = createAndValidate(baseDir, prefName, BACKUP_DIRECTORY_NAME);
+        lockDirectory = createAndValidate(baseDir, prefName, LOCK_DIRECTORY_NAME);
     }
 
-    private File createStoreDirectory(File baseDir, String prefName, String subDirectory) {
-        File targetDirectory = createTargetDirectory(baseDir, prefName, subDirectory);
+    private File createAndValidate(File baseDir, String prefName, String subDirectory) {
+        File targetDirectory = create(baseDir, prefName, subDirectory);
         if (!targetDirectory.exists() && !targetDirectory.mkdirs()) {
-            throw new FileOperationException(String.format(CANNOT_CREATE_DIR_MESSAGE, targetDirectory.getAbsolutePath()));
+            String absolutePath = targetDirectory.getAbsolutePath();
+            throw new FileOperationException(String.format(CANNOT_CREATE_DIR_MESSAGE, absolutePath));
         }
         return targetDirectory;
     }
 
-    private File createTargetDirectory(File baseDir, String prefName, String subDirectory) {
+    private File create(File baseDir, String prefName, String subDirectory) {
         File prefsDir = new File(baseDir, PREFERENCES_ROOT_DIRECTORY_NAME);
         File prefNameDir = new File(prefsDir, prefName);
         return new File(prefNameDir, subDirectory);

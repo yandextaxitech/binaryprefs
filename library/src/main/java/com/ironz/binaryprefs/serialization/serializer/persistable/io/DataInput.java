@@ -89,10 +89,12 @@ public interface DataInput {
     String readString();
 
     /**
-     * Deserializes byte array into given {@link Persistable} object.
+     * Deserializes byte array into given {@link Persistable} object by given key.
      *
-     * @param bytes    given byte array created by specific output scheme
-     * @param instance given instance for data define
+     * @param key   given preference key for {@link Persistable} object define
+     *              see {@link com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry}.
+     * @param bytes given byte array created by specific output scheme
+     * @return deserialized object
      */
-    void deserialize(byte[] bytes, Persistable instance);
+    Persistable deserialize(String key, byte[] bytes);
 }
