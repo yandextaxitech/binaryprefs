@@ -126,14 +126,15 @@ public final class PersistableObjectOutputImpl implements DataOutput {
         offset += length;
     }
 
-    private void tryGrowArray(int len) {
-        if (offset + len >= buffer.length - 1) {
-            growArray(len);
+    private void tryGrowArray(int length) {
+        boolean isOutOfBounds = offset + length >= buffer.length - 1;
+        if (isOutOfBounds) {
+            growArray(length);
         }
     }
 
-    private void growArray(int len) {
-        int newLength = (buffer.length + len + GROW_ARRAY_CAPACITY) * 2;
+    private void growArray(int length) {
+        int newLength = (buffer.length + length + GROW_ARRAY_CAPACITY) * 2;
         byte[] bytes = new byte[newLength];
         System.arraycopy(buffer, 0, bytes, 0, buffer.length);
         buffer = bytes;
