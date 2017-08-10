@@ -6,8 +6,8 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 public final class PersistableObjectInputImpl implements DataInput {
 
     private static final String BASE_INCORRECT_TYPE_MESSAGE = "cannot be deserialized in '%s' flag type";
-    private static final String BASE_NOT_MIRRORED_MESSAGE = "May be your serialization read/write contract isn't mirror-implemented?";
-
+    private static final String BASE_NOT_MIRRORED_MESSAGE = "May be your read/write contract isn't mirror-implemented or " +
+            "old disk version is not backward compatible with new class version?";
     private static final String INCORRECT_BOOLEAN_MESSAGE = "boolean " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_BYTE_MESSAGE = "byte " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_SHORT_MESSAGE = "short " + BASE_INCORRECT_TYPE_MESSAGE;
@@ -17,9 +17,9 @@ public final class PersistableObjectInputImpl implements DataInput {
     private static final String INCORRECT_FLOAT_MESSAGE = "float " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_DOUBLE_MESSAGE = "double " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_STRING_MESSAGE = "String " + BASE_INCORRECT_TYPE_MESSAGE;
-    private static final String OUT_OF_BOUNDS_MESSAGE = "Can't read out of bounds array (%s bytes > %s bytes). " +
+    private static final String OUT_OF_BOUNDS_MESSAGE = "Can't read out of bounds array (%s bytes > %s bytes) for %s! " +
             BASE_NOT_MIRRORED_MESSAGE;
-    private static final String EMPTY_BYTE_ARRAY_MESSAGE = "Cannot deserialize empty byte array! " +
+    private static final String EMPTY_BYTE_ARRAY_MESSAGE = "Cannot deserialize empty byte array for %s! " +
             BASE_NOT_MIRRORED_MESSAGE;
     private static final String NULL_OBJECT_MESSAGE = "Can't serialize null object";
 
@@ -35,6 +35,7 @@ public final class PersistableObjectInputImpl implements DataInput {
 
     private int offset = 0;
     private byte[] buffer;
+    private Persistable instance;
 
     public PersistableObjectInputImpl(BooleanSerializer booleanSerializer,
                                       ByteSerializer byteSerializer,
@@ -59,10 +60,11 @@ public final class PersistableObjectInputImpl implements DataInput {
     @Override
     public void deserialize(byte[] bytes, Persistable instance) {
 
-        buffer = bytes;
+        this.buffer = bytes;
+        this.instance = instance;
 
         checkBytes();
-        checkNull(instance);
+        checkNull();
 
         offset++;
 
@@ -197,18 +199,20 @@ public final class PersistableObjectInputImpl implements DataInput {
         int requiredBound = offset + requiredLength;
         int length = buffer.length;
         if (requiredBound > length) {
-            throw new ArrayIndexOutOfBoundsException(String.format(OUT_OF_BOUNDS_MESSAGE, requiredBound, length));
+            String instanceClassName = instance.getClass().getName();
+            throw new ArrayIndexOutOfBoundsException(String.format(OUT_OF_BOUNDS_MESSAGE, instanceClassName, requiredBound, length));
         }
     }
 
     private void checkBytes() {
         if (buffer.length < 1) {
-            throw new UnsupportedOperationException(EMPTY_BYTE_ARRAY_MESSAGE);
+            String instanceClassName = instance.getClass().getName();
+            throw new UnsupportedOperationException(String.format(EMPTY_BYTE_ARRAY_MESSAGE, instanceClassName));
         }
     }
 
-    private void checkNull(Object value) {
-        if (value == null) {
+    private void checkNull() {
+        if (instance == null) {
             throw new NullPointerException(NULL_OBJECT_MESSAGE);
         }
     }
