@@ -62,6 +62,7 @@ public final class PersistableObjectInputImpl implements DataInput {
 
     @Override
     public Persistable deserialize(String key, byte[] bytes) {
+        this.offset = 0;
         this.key = key;
         this.bytes = bytes;
         checkBytes();
