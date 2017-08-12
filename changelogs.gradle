@@ -1,0 +1,9 @@
+task printChangelog << {
+
+    def s = /([0-9-a-z-A-Z]{7})(\s)(HEAD@\{\d{1,9}}:)(\s)(commit:)(\s)(\+CHANGELOG:)(\s)(.+)(?s)/
+    def s1 = "([0-9-a-z-A-Z]{7})(\\s)(HEAD@\\{\\d{1,9}}:)(\\s)(commit:)(\\s)(.*)"
+
+    def refLog = "git reflog".execute().text.split("\n")
+            .findAll { it.matches(s1) }
+    println refLog
+}
