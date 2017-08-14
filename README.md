@@ -149,7 +149,7 @@ Details here: [Documentation](https://developer.android.com/reference/android/os
 
 `Persistable` contract been added for fast and flexible saving and it's
 restoring complex objects. It's pretty similar like standard java
-`Externalizable` contract but without few methods which don't need for.
+`Externalizable` but without few methods which don't need for.
 For usage you just need to implement this interface with methods in your
 data-model.
 
