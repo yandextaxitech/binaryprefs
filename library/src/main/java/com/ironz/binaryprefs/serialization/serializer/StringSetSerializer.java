@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.serialization.serializer;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public final class StringSetSerializer {
                 i += integerBytesSize + stringSize;
             }
 
-            return set;
+            return Collections.unmodifiableSet(set);
         }
 
         throw new ClassCastException(String.format("Set<String> cannot be deserialized in '%s' flag type", flag));
