@@ -1,6 +1,5 @@
 package com.ironz.binaryprefs.cache;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,6 +54,6 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
 
     @Override
     public Map<String, Object> getAll() {
-        return Collections.unmodifiableMap(currentCache);
+        return currentCache;
     }
 }
