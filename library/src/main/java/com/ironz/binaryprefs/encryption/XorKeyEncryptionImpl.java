@@ -19,6 +19,30 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
         checkMirror();
     }
 
+    private void checkLength() {
+        if (xor.length < KEY_LENGTH) {
+            throw new EncryptionException(SMALL_XOR_MESSAGE);
+        }
+    }
+
+    private void checkMirror() {
+        if (!isEven()) {
+            return;
+        }
+        int half = xor.length / 2;
+        byte[] firstHalf = Arrays.copyOfRange(xor, 0, half);
+        byte[] secondHalf = Arrays.copyOfRange(xor, half, xor.length);
+        Arrays.sort(firstHalf);
+        Arrays.sort(secondHalf);
+        if (Arrays.equals(firstHalf, secondHalf)) {
+            throw new EncryptionException(MIRRORED_XOR_MESSAGE);
+        }
+    }
+
+    private boolean isEven() {
+        return xor.length % 2 == 0;
+    }
+
     @Override
     public String encrypt(String name) {
         byte[] original = name.getBytes();
@@ -49,29 +73,5 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
             temp ^= b;
         }
         return temp;
-    }
-
-    private void checkMirror() {
-        if (!isEven()) {
-            return;
-        }
-        int half = xor.length / 2;
-        byte[] firstHalf = Arrays.copyOfRange(xor, 0, half);
-        byte[] secondHalf = Arrays.copyOfRange(xor, half, xor.length);
-        Arrays.sort(firstHalf);
-        Arrays.sort(secondHalf);
-        if (Arrays.equals(firstHalf, secondHalf)) {
-            throw new EncryptionException(MIRRORED_XOR_MESSAGE);
-        }
-    }
-
-    private boolean isEven() {
-        return xor.length % 2 == 0;
-    }
-
-    private void checkLength() {
-        if (xor.length < KEY_LENGTH) {
-            throw new EncryptionException(SMALL_XOR_MESSAGE);
-        }
     }
 }
