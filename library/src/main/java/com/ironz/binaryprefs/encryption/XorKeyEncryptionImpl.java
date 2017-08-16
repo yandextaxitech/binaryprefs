@@ -29,9 +29,9 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
         if (!isEven()) {
             return;
         }
-        int half = xor.length / 2;
-        byte[] firstHalf = Arrays.copyOfRange(xor, 0, half);
-        byte[] secondHalf = Arrays.copyOfRange(xor, half, xor.length);
+        int halfSize = xor.length / 2;
+        byte[] firstHalf = Arrays.copyOfRange(xor, 0, halfSize);
+        byte[] secondHalf = Arrays.copyOfRange(xor, halfSize, xor.length);
         Arrays.sort(firstHalf);
         Arrays.sort(secondHalf);
         if (Arrays.equals(firstHalf, secondHalf)) {
