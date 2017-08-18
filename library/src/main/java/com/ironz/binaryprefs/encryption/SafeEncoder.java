@@ -2,6 +2,9 @@ package com.ironz.binaryprefs.encryption;
 
 import java.nio.charset.Charset;
 
+/**
+ * This is custom implementation of Base32 but with lower cased byte table
+ */
 class SafeEncoder {
 
     private static final Charset CHARSET = Charset.forName("UTF-8");
@@ -225,7 +228,7 @@ class SafeEncoder {
     }
 
     private void decode(byte[] in, int available) {
-        int inPos = 0;
+        int localPosition = 0;
         if (eof) {
             return;
         }
@@ -234,7 +237,7 @@ class SafeEncoder {
         }
         int decodeSize = BYTES_PER_ENCODED_BLOCK - 1;
         for (int i = 0; i < available; i++) {
-            byte b = in[inPos++];
+            byte b = in[localPosition++];
             ensureBufferSize(decodeSize);
             if (isInAlphabet(b)) {
                 int result = decode(b);
@@ -289,7 +292,7 @@ class SafeEncoder {
     }
 
     private void encode(byte[] in, int available) {
-        int inPos = 0;
+        int localPosition = 0;
         if (eof) {
             return;
         }
@@ -333,7 +336,7 @@ class SafeEncoder {
             for (int i = 0; i < available; i++) {
                 ensureBufferSize(encodeSize);
                 modulus = (modulus + 1) % BYTES_PER_UNENCODED_BLOCK;
-                int b = in[inPos++];
+                int b = in[localPosition++];
                 if (b < 0) {
                     b += 256;
                 }
