@@ -48,7 +48,6 @@ public class XorKeyEncryptionImplTest {
 
     @Test(expected = EncryptionException.class)
     public void incorrectKeySize() {
-
         new XorKeyEncryptionImpl("".getBytes());
     }
 }
