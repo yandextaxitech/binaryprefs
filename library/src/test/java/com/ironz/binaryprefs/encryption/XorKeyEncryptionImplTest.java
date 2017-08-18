@@ -3,6 +3,7 @@ package com.ironz.binaryprefs.encryption;
 import com.ironz.binaryprefs.exception.EncryptionException;
 import org.junit.Test;
 
+import static com.ironz.binaryprefs.impl.UnicodeCharacters.UTF_CHARACTERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -13,23 +14,21 @@ public class XorKeyEncryptionImplTest {
 
     @Test
     public void encryptDecrypt() {
-        String original = "some string";
 
-        String encrypt = encryption.encrypt(original);
+        String encrypt = encryption.encrypt(UTF_CHARACTERS);
         String decrypt = encryption.decrypt(encrypt);
 
-        assertNotEquals(original, encrypt);
-        assertEquals(original, decrypt);
+        assertNotEquals(UTF_CHARACTERS, encrypt);
+        assertEquals(UTF_CHARACTERS, decrypt);
     }
 
     @Test
     public void anotherEncryption() {
-        String origin = "origin";
-        String encrypted = encryption.encrypt(origin);
+        String encrypted = encryption.encrypt(UTF_CHARACTERS);
 
         String decryptByAnother = badEncryption.decrypt(encrypted);
 
-        assertNotEquals(origin, decryptByAnother);
+        assertNotEquals(UTF_CHARACTERS, decryptByAnother);
     }
 
     @Test

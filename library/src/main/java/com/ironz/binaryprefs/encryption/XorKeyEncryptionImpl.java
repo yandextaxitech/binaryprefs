@@ -12,23 +12,49 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
     private static final int KEY_LENGTH = 16;
 
     private final byte[] xor;
+    private final SafeEncoder safeEncoder;
 
     public XorKeyEncryptionImpl(byte[] xor) {
         this.xor = xor;
+        this.safeEncoder = new SafeEncoder();
         checkLength();
         checkMirror();
+    }
+
+    private void checkLength() {
+        if (xor.length < KEY_LENGTH) {
+            throw new EncryptionException(SMALL_XOR_MESSAGE);
+        }
+    }
+
+    private void checkMirror() {
+        if (!isEven()) {
+            return;
+        }
+        int halfSize = xor.length / 2;
+        byte[] firstHalf = Arrays.copyOfRange(xor, 0, halfSize);
+        byte[] secondHalf = Arrays.copyOfRange(xor, halfSize, xor.length);
+        Arrays.sort(firstHalf);
+        Arrays.sort(secondHalf);
+        if (Arrays.equals(firstHalf, secondHalf)) {
+            throw new EncryptionException(MIRRORED_XOR_MESSAGE);
+        }
+    }
+
+    private boolean isEven() {
+        return xor.length % 2 == 0;
     }
 
     @Override
     public String encrypt(String name) {
         byte[] original = name.getBytes();
         byte[] bytes = xorName(original);
-        return Base64.encode(bytes);
+        return safeEncoder.encodeToString(bytes);
     }
 
     @Override
     public String decrypt(String name) {
-        byte[] decode = Base64.decode(name);
+        byte[] decode = safeEncoder.decode(name);
         byte[] bytes = xorName(decode);
         return new String(bytes);
     }
@@ -49,29 +75,5 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
             temp ^= b;
         }
         return temp;
-    }
-
-    private void checkMirror() {
-        if (!isEven()) {
-            return;
-        }
-        int half = xor.length / 2;
-        byte[] firstHalf = Arrays.copyOfRange(xor, 0, half);
-        byte[] secondHalf = Arrays.copyOfRange(xor, half, xor.length);
-        Arrays.sort(firstHalf);
-        Arrays.sort(secondHalf);
-        if (Arrays.equals(firstHalf, secondHalf)) {
-            throw new EncryptionException(MIRRORED_XOR_MESSAGE);
-        }
-    }
-
-    private boolean isEven() {
-        return xor.length % 2 == 0;
-    }
-
-    private void checkLength() {
-        if (xor.length < KEY_LENGTH) {
-            throw new EncryptionException(SMALL_XOR_MESSAGE);
-        }
     }
 }

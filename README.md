@@ -34,7 +34,8 @@ cache works between processes)
 
 #### Add in project
 
-Add jitpack to repositories closure. For example, you can add it to root build.gradle like this:
+Add jitpack to repositories closure. For example, you can add it to root
+of `build.gradle`:
 
 ```groovy
 
@@ -46,7 +47,7 @@ allprojects {
 }
 ```
 	 
-Add the dependency:
+And add dependency:
 
 ```groovy
 
@@ -63,15 +64,15 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Please, use only one instance of preferences by name, it saves you from
-non-reasoned allocations. You can store one instance of preferences
-in application class or event better use one instance from IoC like
-Dagger or some another DI framework.
+non-reasoned allocations. You can store one preferences instance in
+application class, factory or even better just use one instance from IoC
+like Dagger or use another one DI framework.
 
 All parameters are optional and chain-buildable.
 
 #### Custom preferences name
 
-Builder contains method which defines desirable preferences name:
+Builder contains method which is defines desirable preferences name:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
@@ -96,7 +97,6 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Default is no-op encryption for key/value.
 
 
-
 #### Exception handler
 
 You can listen exceptions which throws during disk IO, serialization,
@@ -113,12 +113,12 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Default is print handler which performs `e.printStacktrace()` if
-exception event comes.
+Default is print handler which performs `e.printStacktrace()` when
+exception event are comes.
 
 #### Custom save directory
 
-You can save preferences inside custom directory:
+You can save preferences into an custom directory:
 
 ```java
 Preferences preferences = new BinaryPreferencesBuilder(context)
@@ -126,7 +126,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Be careful: write into external directory required appropriate
+Be careful: writing into external directory required appropriate
 runtime and manifest permissions.
 
 #### IPC mode
@@ -149,12 +149,12 @@ Details here: [Documentation](https://developer.android.com/reference/android/os
 
 `Persistable` contract been added for fast and flexible saving and it's
 restoring complex objects. It's pretty similar like standard java
-`Externalizable` contract but without few methods which don't need for.
+`Externalizable` but without few methods which don't need for.
 For usage you just need to implement this interface with methods in your
 data-model.
 
-All Persistable data-objects should be registered by key for understanding
-de/serialization contract during cache initialization.
+All top level Persistable data-objects should be registered by key for
+understanding de/serialization contract during cache initialization.
 
 
 #### How to register `Persistable`
