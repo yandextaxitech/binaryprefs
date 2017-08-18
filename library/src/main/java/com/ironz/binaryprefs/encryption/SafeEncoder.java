@@ -20,7 +20,7 @@ class SafeEncoder {
     private static final int MASK_5BITS = 0x1f;
     private static final int BITS_PER_ENCODED_BYTE = 5;
     private static final int BYTES_PER_ENCODED_BLOCK = 8;
-    private static final int BYTES_PER_UNENCODED_BLOCK = 5;
+    private static final int BYTES_PER_UN_ENCODED_BLOCK = 5;
 
     private byte[] buffer;
     private int position;
@@ -335,7 +335,7 @@ class SafeEncoder {
         } else {
             for (int i = 0; i < available; i++) {
                 ensureBufferSize(encodeSize);
-                modulus = (modulus + 1) % BYTES_PER_UNENCODED_BLOCK;
+                modulus = (modulus + 1) % BYTES_PER_UN_ENCODED_BLOCK;
                 int b = in[localPosition++];
                 if (b < 0) {
                     b += 256;
