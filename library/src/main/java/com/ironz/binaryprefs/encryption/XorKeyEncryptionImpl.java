@@ -12,9 +12,11 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
     private static final int KEY_LENGTH = 16;
 
     private final byte[] xor;
+    private final SafeEncoder safeEncoder;
 
     public XorKeyEncryptionImpl(byte[] xor) {
         this.xor = xor;
+        this.safeEncoder = new SafeEncoder();
         checkLength();
         checkMirror();
     }
@@ -47,12 +49,12 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
     public String encrypt(String name) {
         byte[] original = name.getBytes();
         byte[] bytes = xorName(original);
-        return Base64.encode(bytes);
+        return safeEncoder.encodeToString(bytes);
     }
 
     @Override
     public String decrypt(String name) {
-        byte[] decode = Base64.decode(name);
+        byte[] decode = safeEncoder.decode(name);
         byte[] bytes = xorName(decode);
         return new String(bytes);
     }
