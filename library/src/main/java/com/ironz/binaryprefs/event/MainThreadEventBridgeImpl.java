@@ -17,10 +17,10 @@ public final class MainThreadEventBridgeImpl implements EventBridge {
     private final Handler handler = new Handler();
 
     public MainThreadEventBridgeImpl(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
-        this.currentListeners = defineListeners(prefName, allListeners);
+        this.currentListeners = putIfAbsentListeners(prefName, allListeners);
     }
 
-    private List<OnSharedPreferenceChangeListener> defineListeners(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
+    private List<OnSharedPreferenceChangeListener> putIfAbsentListeners(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }

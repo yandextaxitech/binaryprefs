@@ -64,7 +64,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         this.valueEncryption = valueEncryption;
         this.updateActionName = createUpdateActionName(directoryProvider);
         this.removeActionName = createRemoveActionName(directoryProvider);
-        this.currentListeners = defineListeners(prefName, allListeners);
+        this.currentListeners = putIfAbsentListeners(prefName, allListeners);
         this.updateReceiver = createUpdateReceiver();
         this.removeReceiver = createRemoveReceiver();
         this.processId = Process.myPid();
@@ -78,7 +78,7 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
         return ACTION_PREFERENCE_REMOVED + directoryProvider.getStoreDirectory().getAbsolutePath();
     }
 
-    private List<OnSharedPreferenceChangeListener> defineListeners(String prefName, Map<String,
+    private List<OnSharedPreferenceChangeListener> putIfAbsentListeners(String prefName, Map<String,
             List<OnSharedPreferenceChangeListener>> allListeners) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
