@@ -28,9 +28,9 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      * @param baseDir  all data will be saved inside this directory.
      */
     public AndroidDirectoryProviderImpl(String prefName, File baseDir) {
-        storeDirectory = createAndValidate(baseDir, prefName, STORE_DIRECTORY_NAME);
-        backupDirectory = createAndValidate(baseDir, prefName, BACKUP_DIRECTORY_NAME);
-        lockDirectory = createAndValidate(baseDir, prefName, LOCK_DIRECTORY_NAME);
+        this.storeDirectory = createAndValidate(baseDir, prefName, STORE_DIRECTORY_NAME);
+        this.backupDirectory = createAndValidate(baseDir, prefName, BACKUP_DIRECTORY_NAME);
+        this.lockDirectory = createAndValidate(baseDir, prefName, LOCK_DIRECTORY_NAME);
     }
 
     private File createAndValidate(File baseDir, String prefName, String subDirectory) {

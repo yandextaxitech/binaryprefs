@@ -14,7 +14,7 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     private final Map<String, Object> currentCache;
 
     public ConcurrentCacheProviderImpl(String prefName, Map<String, Map<String, Object>> allCaches) {
-        currentCache = defineCache(prefName, allCaches);
+        this.currentCache = defineCache(prefName, allCaches);
     }
 
     private Map<String, Object> defineCache(String prefName, Map<String, Map<String, Object>> allCaches) {

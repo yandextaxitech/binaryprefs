@@ -26,17 +26,17 @@ public final class SerializerFactory {
     private final PersistableSerializer persistableSerializer;
 
     public SerializerFactory(PersistableRegistry persistableRegistry) {
-        booleanSerializer = new BooleanSerializer();
-        byteSerializer = new ByteSerializer();
-        charSerializer = new CharSerializer();
-        doubleSerializer = new DoubleSerializer();
-        floatSerializer = new FloatSerializer();
-        integerSerializer = new IntegerSerializer();
-        longSerializer = new LongSerializer();
-        shortSerializer = new ShortSerializer();
-        stringSerializer = new StringSerializer();
-        stringSetSerializer = new StringSetSerializer();
-        persistableSerializer = new PersistableSerializer(
+        this.booleanSerializer = new BooleanSerializer();
+        this.byteSerializer = new ByteSerializer();
+        this.charSerializer = new CharSerializer();
+        this.doubleSerializer = new DoubleSerializer();
+        this.floatSerializer = new FloatSerializer();
+        this.integerSerializer = new IntegerSerializer();
+        this.longSerializer = new LongSerializer();
+        this.shortSerializer = new ShortSerializer();
+        this.stringSerializer = new StringSerializer();
+        this.stringSetSerializer = new StringSetSerializer();
+        this.persistableSerializer = new PersistableSerializer(
                 booleanSerializer,
                 byteSerializer,
                 charSerializer,
