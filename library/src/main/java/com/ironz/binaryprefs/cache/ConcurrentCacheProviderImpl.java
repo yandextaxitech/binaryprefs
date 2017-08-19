@@ -14,10 +14,10 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     private final Map<String, Object> currentCache;
 
     public ConcurrentCacheProviderImpl(String prefName, Map<String, Map<String, Object>> allCaches) {
-        this.currentCache = defineCache(prefName, allCaches);
+        this.currentCache = putIfAbsentCache(prefName, allCaches);
     }
 
-    private Map<String, Object> defineCache(String prefName, Map<String, Map<String, Object>> allCaches) {
+    private Map<String, Object> putIfAbsentCache(String prefName, Map<String, Map<String, Object>> allCaches) {
         if (allCaches.containsKey(prefName)) {
             return allCaches.get(prefName);
         }

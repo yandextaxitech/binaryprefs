@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.encryption;
 import java.nio.charset.Charset;
 
 /**
- * This is custom implementation of Base32 but with lower cased byte table
+ * Custom implementation of Base32 but with lower cased bytes table
  */
 class SafeEncoder {
 
@@ -168,9 +168,9 @@ class SafeEncoder {
             buffer = new byte[DEFAULT_BUFFER_SIZE];
             position = 0;
         } else {
-            byte[] b = new byte[buffer.length * DEFAULT_BUFFER_RESIZE_FACTOR];
-            System.arraycopy(buffer, 0, b, 0, buffer.length);
-            buffer = b;
+            byte[] bytes = new byte[buffer.length * DEFAULT_BUFFER_RESIZE_FACTOR];
+            System.arraycopy(buffer, 0, bytes, 0, buffer.length);
+            buffer = bytes;
         }
     }
 
@@ -203,6 +203,18 @@ class SafeEncoder {
         return decode(s.getBytes(CHARSET));
     }
 
+    private byte[] encode(byte[] bytes) {
+        reset();
+        if (bytes == null || bytes.length == 0) {
+            return bytes;
+        }
+        encode(bytes, bytes.length);
+        encode(bytes, -1);
+        byte[] result = new byte[position];
+        readResults(result);
+        return result;
+    }
+
     private byte[] decode(byte[] bytes) {
         reset();
         if (bytes == null || bytes.length == 0) {
@@ -213,82 +225,6 @@ class SafeEncoder {
         byte[] result = new byte[position];
         readResults(result);
         return result;
-    }
-
-    private byte[] encode(byte[] bytes) {
-        reset();
-        if (bytes == null || bytes.length == 0) {
-            return bytes;
-        }
-        encode(bytes, bytes.length);
-        encode(bytes, -1);
-        byte[] buf = new byte[position];
-        readResults(buf);
-        return buf;
-    }
-
-    private void decode(byte[] in, int available) {
-        int localPosition = 0;
-        if (eof) {
-            return;
-        }
-        if (available < 0) {
-            eof = true;
-        }
-        int decodeSize = BYTES_PER_ENCODED_BLOCK - 1;
-        for (int i = 0; i < available; i++) {
-            byte b = in[localPosition++];
-            ensureBufferSize(decodeSize);
-            if (isInAlphabet(b)) {
-                int result = decode(b);
-                modulus = (modulus + 1) % BYTES_PER_ENCODED_BLOCK;
-                bitWorkArea = (bitWorkArea << BITS_PER_ENCODED_BYTE) + result;
-                if (modulus == 0) {
-                    buffer[position++] = (byte) ((bitWorkArea >> 32) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 24) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
-                    buffer[position++] = (byte) (bitWorkArea & MASK_8_BITS);
-                }
-            }
-        }
-
-        if (eof && modulus >= 2) {
-            ensureBufferSize(decodeSize);
-
-            switch (modulus) {
-                case 2:
-                    buffer[position++] = (byte) ((bitWorkArea >> 2) & MASK_8_BITS);
-                    break;
-                case 3:
-                    buffer[position++] = (byte) ((bitWorkArea >> 7) & MASK_8_BITS);
-                    break;
-                case 4:
-                    bitWorkArea = bitWorkArea >> 4;
-                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
-                    break;
-                case 5:
-                    bitWorkArea = bitWorkArea >> 1;
-                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
-                    break;
-                case 6:
-                    bitWorkArea = bitWorkArea >> 6;
-                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
-                    break;
-                case 7:
-                    bitWorkArea = bitWorkArea >> 3;
-                    buffer[position++] = (byte) ((bitWorkArea >> 24) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
-                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
-                    break;
-            }
-        }
     }
 
     private void encode(byte[] in, int available) {
@@ -351,6 +287,70 @@ class SafeEncoder {
                     buffer[position++] = ENCODE_TABLE[(int) (bitWorkArea >> 5) & MASK_5BITS];
                     buffer[position++] = ENCODE_TABLE[(int) bitWorkArea & MASK_5BITS];
                 }
+            }
+        }
+    }
+
+    private void decode(byte[] in, int available) {
+        int localPosition = 0;
+        if (eof) {
+            return;
+        }
+        if (available < 0) {
+            eof = true;
+        }
+        int decodeSize = BYTES_PER_ENCODED_BLOCK - 1;
+        for (int i = 0; i < available; i++) {
+            byte b = in[localPosition++];
+            ensureBufferSize(decodeSize);
+            if (isInAlphabet(b)) {
+                int result = decode(b);
+                modulus = (modulus + 1) % BYTES_PER_ENCODED_BLOCK;
+                bitWorkArea = (bitWorkArea << BITS_PER_ENCODED_BYTE) + result;
+                if (modulus == 0) {
+                    buffer[position++] = (byte) ((bitWorkArea >> 32) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 24) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
+                    buffer[position++] = (byte) (bitWorkArea & MASK_8_BITS);
+                }
+            }
+        }
+
+        if (eof && modulus >= 2) {
+            ensureBufferSize(decodeSize);
+
+            switch (modulus) {
+                case 2:
+                    buffer[position++] = (byte) ((bitWorkArea >> 2) & MASK_8_BITS);
+                    break;
+                case 3:
+                    buffer[position++] = (byte) ((bitWorkArea >> 7) & MASK_8_BITS);
+                    break;
+                case 4:
+                    bitWorkArea = bitWorkArea >> 4;
+                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
+                    break;
+                case 5:
+                    bitWorkArea = bitWorkArea >> 1;
+                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
+                    break;
+                case 6:
+                    bitWorkArea = bitWorkArea >> 6;
+                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
+                    break;
+                case 7:
+                    bitWorkArea = bitWorkArea >> 3;
+                    buffer[position++] = (byte) ((bitWorkArea >> 24) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 16) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea >> 8) & MASK_8_BITS);
+                    buffer[position++] = (byte) ((bitWorkArea) & MASK_8_BITS);
+                    break;
             }
         }
     }

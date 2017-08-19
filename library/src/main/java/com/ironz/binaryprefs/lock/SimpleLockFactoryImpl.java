@@ -25,11 +25,11 @@ public final class SimpleLockFactoryImpl implements LockFactory {
                                  Map<String, ReadWriteLock> locks,
                                  Map<String, Lock> processLocks) {
         this.lockDirectory = provider.getLockDirectory();
-        this.readWriteLock = defineLocalLock(prefName, locks);
-        this.processLock = defineProcessLock(prefName, processLocks);
+        this.readWriteLock = putIfAbsentLocalLock(prefName, locks);
+        this.processLock = putIfAbsentProcessLock(prefName, processLocks);
     }
 
-    private ReadWriteLock defineLocalLock(String name, Map<String, ReadWriteLock> locks) {
+    private ReadWriteLock putIfAbsentLocalLock(String name, Map<String, ReadWriteLock> locks) {
         if (locks.containsKey(name)) {
             return locks.get(name);
         }
@@ -38,7 +38,7 @@ public final class SimpleLockFactoryImpl implements LockFactory {
         return lock;
     }
 
-    private Lock defineProcessLock(String name, Map<String, Lock> processLocks) {
+    private Lock putIfAbsentProcessLock(String name, Map<String, Lock> processLocks) {
         if (processLocks.containsKey(name)) {
             return processLocks.get(name);
         }
