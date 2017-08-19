@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.encryption;
 import java.nio.charset.Charset;
 
 /**
- * This is custom implementation of Base32 but with lower cased byte table
+ * Custom implementation of Base32 but with lower cased bytes table
  */
 class SafeEncoder {
 
