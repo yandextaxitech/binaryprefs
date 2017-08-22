@@ -68,6 +68,16 @@ final class BinaryPreferences implements Preferences {
     }
 
     @Override
+    public List<String> keys() {
+        readLock.lock();
+        try {
+            return Arrays.asList(cacheProvider.keys());
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
     public Map<String, Object> getAll() {
         readLock.lock();
         try {
@@ -252,7 +262,53 @@ final class BinaryPreferences implements Preferences {
     }
 
     @Override
+    public void putString(String key, String value) {
+        editInternal()
+                .putString(key, value)
+                .commit();
+    }
+
+    @Override
+    public void putStringSet(String key, Set<String> values) {
+        editInternal()
+                .putStringSet(key, values)
+                .commit();
+    }
+
+    @Override
+    public void putInt(String key, int value) {
+        editInternal()
+                .putInt(key, value)
+                .commit();
+    }
+
+    @Override
+    public void putLong(String key, long value) {
+        editInternal()
+                .putLong(key, value)
+                .commit();
+    }
+
+    @Override
+    public void putFloat(String key, float value) {
+        editInternal()
+                .putFloat(key, value)
+                .commit();
+    }
+
+    @Override
+    public void putBoolean(String key, boolean value) {
+        editInternal()
+                .putBoolean(key, value)
+                .commit();
+    }
+
+    @Override
     public PreferencesEditor edit() {
+        return editInternal();
+    }
+
+    private PreferencesEditor editInternal() {
         readLock.lock();
         try {
             return new BinaryPreferencesEditor(
@@ -263,16 +319,6 @@ final class BinaryPreferences implements Preferences {
                     cacheProvider,
                     writeLock
             );
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    @Override
-    public List<String> keys() {
-        readLock.lock();
-        try {
-            return Arrays.asList(cacheProvider.keys());
         } finally {
             readLock.unlock();
         }

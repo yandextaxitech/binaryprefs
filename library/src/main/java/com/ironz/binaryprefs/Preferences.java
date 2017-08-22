@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs;
 
 import android.content.SharedPreferences;
+import android.preference.PreferenceDataStore;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Extension of {@link SharedPreferences} class for using plain serialization mechanism
  */
-public interface Preferences extends SharedPreferences {
+public interface Preferences extends SharedPreferences, PreferenceDataStore {
 
     @Override
     PreferencesEditor edit();
