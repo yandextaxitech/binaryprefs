@@ -16,7 +16,7 @@ public interface FileTransaction {
     List<TransactionElement> fetchContent();
 
     /**
-     * Retrieves all file adapter element names without creating an {@code byte[]} elements.
+     * Retrieves all file adapter element names without creating an {@code byte[]}.
      *
      * @return unique transaction elements.
      */
