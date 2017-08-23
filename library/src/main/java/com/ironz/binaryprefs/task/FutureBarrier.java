@@ -44,4 +44,16 @@ public final class FutureBarrier {
             throw new FileOperationException(e);
         }
     }
+
+    /**
+     * Complete task with exception handle and returns result or default value for this task.
+     */
+    public Object completeBlockingWihResult(Object defValue) {
+        try {
+            return future.get();
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
 }
