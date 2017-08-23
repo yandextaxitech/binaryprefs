@@ -5,8 +5,8 @@ public final class TransactionElement {
     private static final byte[] EMPTY_CONTENT = {};
 
     public static final int ACTION_UPDATE = 1;
-    public static final int ACTION_REMOVE = 2;
-    private static final int ACTION_FETCH = 3;
+    private static final int ACTION_FETCH = 2;
+    public static final int ACTION_REMOVE = 3;
 
     private final int action;
     private final String name;
