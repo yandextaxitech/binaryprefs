@@ -306,7 +306,7 @@ final class BinaryPreferences implements Preferences {
                     eventsBridge,
                     taskExecutor,
                     serializerFactory,
-                    cacheProvider,
+                    cachePkeysrovider,
                     writeLock
             );
         } finally {

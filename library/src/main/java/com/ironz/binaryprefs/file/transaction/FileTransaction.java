@@ -13,7 +13,7 @@ public interface FileTransaction {
      *
      * @return unique transaction elements.
      */
-    List<TransactionElement> fetchAll();
+    List<TransactionElement> fetchContent();
 
     /**
      * Retrieves one file adapter element and creates {@code byte[]} element by unique name.
