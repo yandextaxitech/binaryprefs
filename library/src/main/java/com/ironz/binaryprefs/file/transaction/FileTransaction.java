@@ -13,7 +13,7 @@ public interface FileTransaction {
      *
      * @return unique transaction elements.
      */
-    List<TransactionElement> fetch();
+    List<TransactionElement> fetchContent();
 
     /**
      * Performs disk write for all transaction values sequentially.
