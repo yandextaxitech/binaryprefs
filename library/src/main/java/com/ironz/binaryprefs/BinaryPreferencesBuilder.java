@@ -30,6 +30,7 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -54,6 +55,7 @@ public final class BinaryPreferencesBuilder {
     private final Map<String, Lock> processLocks = parametersProvider.getProcessLocks();
     private final Map<String, ExecutorService> executors = parametersProvider.getExecutors();
     private final Map<String, Map<String, Object>> caches = parametersProvider.getCaches();
+    private final Map<String, Set<String>> cacheCandidates = parametersProvider.getCacheCandidates();
     private final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = parametersProvider.getAllListeners();
 
     private final Context context;
@@ -233,7 +235,7 @@ public final class BinaryPreferencesBuilder {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider, locks, processLocks);
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, caches);
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, caches, cacheCandidates);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
