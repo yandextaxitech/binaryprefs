@@ -27,11 +27,22 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
     }
 
     @Override
-    public List<TransactionElement> fetchContent() {
+    public List<TransactionElement> fetchAll() {
         Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
-            return fetchContentInternal();
+            return fetchAllInternal();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public TransactionElement fetchOne(String name) {
+        Lock lock = lockFactory.getProcessLock();
+        lock.lock();
+        try {
+            return fetchOneInternal(name);
         } finally {
             lock.unlock();
         }
@@ -59,17 +70,21 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
         }
     }
 
-    private List<TransactionElement> fetchContentInternal() {
+    private List<TransactionElement> fetchAllInternal() {
         String[] names = fileAdapter.names();
         List<TransactionElement> elements = new ArrayList<>(names.length);
         for (String name : names) {
-            byte[] bytes = fileAdapter.fetch(name);
-            String encryptName = keyEncryption.decrypt(name);
-            byte[] decrypt = valueEncryption.decrypt(bytes);
-            TransactionElement element = TransactionElement.createFetchElement(encryptName, decrypt);
+            TransactionElement element = fetchOneInternal(name);
             elements.add(element);
         }
         return elements;
+    }
+
+    private TransactionElement fetchOneInternal(String name) {
+        byte[] bytes = fileAdapter.fetch(name);
+        String encryptName = keyEncryption.decrypt(name);
+        byte[] decrypt = valueEncryption.decrypt(bytes);
+        return TransactionElement.createFetchElement(encryptName, decrypt);
     }
 
     private List<TransactionElement> fetchNamesInternal() {
