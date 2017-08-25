@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.cache;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +13,8 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     private static final String[] EMPTY_ARRAY = new String[0];
 
     private final Map<String, Object> currentCache;
+
+    private final Set<String> candidates = new HashSet<>();
 
     public ConcurrentCacheProviderImpl(String prefName, Map<String, Map<String, Object>> allCaches) {
         this.currentCache = putIfAbsentCache(prefName, allCaches);
@@ -55,5 +58,15 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     @Override
     public Map<String, Object> getAll() {
         return currentCache;
+    }
+
+    @Override
+    public Set<String> candidates() {
+        return candidates;
+    }
+
+    @Override
+    public void putCandidate(String name) {
+        candidates.add(name);
     }
 }
