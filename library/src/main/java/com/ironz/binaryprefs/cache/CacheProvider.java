@@ -53,4 +53,18 @@ public interface CacheProvider {
      * @return target cache key/values
      */
     Map<String, Object> getAll();
+
+    /**
+     * Returns all filesystem object which are exists into FS
+     *
+     * @return set of file names exists
+     */
+    Set<String> candidates();
+
+    /**
+     * Puts candidate name to cache, value not might be null
+     *
+     * @param name target name
+     */
+    void putCandidate(String name);
 }

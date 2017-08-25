@@ -59,7 +59,7 @@ final class BinaryPreferences implements Preferences {
         if (cacheProvider.keys().size() != 0) {
             return;
         }
-        for (TransactionElement element : fileTransaction.fetchContent()) {
+        for (TransactionElement element : fileTransaction.fetchAll()) {
             String name = element.getName();
             byte[] bytes = element.getContent();
             Object o = serializerFactory.deserialize(name, bytes);
