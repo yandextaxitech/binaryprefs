@@ -1,9 +1,9 @@
 package com.ironz.binaryprefs.cache;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Concurrent cache provider which locks on concrete key.
@@ -13,11 +13,13 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     private static final String[] EMPTY_ARRAY = new String[0];
 
     private final Map<String, Object> currentCache;
+    private final Set<String> candidates;
 
-    private final Set<String> candidates = new HashSet<>();
-
-    public ConcurrentCacheProviderImpl(String prefName, Map<String, Map<String, Object>> allCaches) {
+    public ConcurrentCacheProviderImpl(String prefName,
+                                       Map<String, Map<String, Object>> allCaches,
+                                       Map<String, Set<String>> allCandidates) {
         this.currentCache = putIfAbsentCache(prefName, allCaches);
+        this.candidates = putIfAbsentCandidates(prefName, allCandidates);
     }
 
     private Map<String, Object> putIfAbsentCache(String prefName, Map<String, Map<String, Object>> allCaches) {
@@ -27,6 +29,21 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
         Map<String, Object> map = new ConcurrentHashMap<>();
         allCaches.put(prefName, map);
         return map;
+    }
+
+    private Set<String> putIfAbsentCandidates(String prefName, Map<String, Set<String>> allCandidates) {
+        if (allCandidates.containsKey(prefName)) {
+            return allCandidates.get(prefName);
+        }
+        ConcurrentSkipListSet<String> set = new ConcurrentSkipListSet<>();
+        allCandidates.put(prefName, set);
+        return set;
+    }
+
+    @Override
+    public String[] keys() {
+        Set<String> keySet = currentCache.keySet();
+        return keySet.toArray(EMPTY_ARRAY);
     }
 
     @Override
@@ -40,19 +57,13 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     }
 
     @Override
-    public String[] keys() {
-        Set<String> keySet = currentCache.keySet();
-        return keySet.toArray(EMPTY_ARRAY);
-    }
-
-    @Override
     public Object get(String key) {
         return currentCache.get(key);
     }
 
     @Override
-    public void remove(String name) {
-        currentCache.remove(name);
+    public void remove(String key) {
+        currentCache.remove(key);
     }
 
     @Override
@@ -66,7 +77,12 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     }
 
     @Override
-    public void putCandidate(String name) {
-        candidates.add(name);
+    public boolean containsCandidate(String key) {
+        return candidates.contains(key);
+    }
+
+    @Override
+    public void putCandidate(String key) {
+        candidates.add(key);
     }
 }

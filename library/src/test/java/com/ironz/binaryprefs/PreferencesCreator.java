@@ -7,8 +7,8 @@ import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.XorKeyEncryptionImpl;
 import com.ironz.binaryprefs.event.EventBridge;
-import com.ironz.binaryprefs.event.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.event.ExceptionHandler;
+import com.ironz.binaryprefs.event.SimpleEventBridgeImpl;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
@@ -25,6 +25,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -63,15 +64,17 @@ public final class PreferencesCreator {
         Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
         Map<String, Lock> processLocks = new ConcurrentHashMap<>();
         Map<String, Map<String, Object>> allCaches = new ConcurrentHashMap<>();
+        Map<String, Set<String>> allCacheCandidates = new ConcurrentHashMap<>();
 
-        return create(name, directoryProvider, locks, processLocks, allCaches);
+        return create(name, directoryProvider, locks, processLocks, allCaches, allCacheCandidates);
     }
 
     Preferences create(String name,
                        DirectoryProvider directoryProvider,
                        Map<String, ReadWriteLock> locks,
                        Map<String, Lock> processLocks,
-                       Map<String, Map<String, Object>> allCaches) {
+                       Map<String, Map<String, Object>> allCaches,
+                       Map<String, Set<String>> allCacheCandidates) {
 
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
@@ -80,7 +83,7 @@ public final class PreferencesCreator {
         ValueEncryption valueEncryption = new AesValueEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, allCaches);
+        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, allCaches, allCacheCandidates);
         TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);

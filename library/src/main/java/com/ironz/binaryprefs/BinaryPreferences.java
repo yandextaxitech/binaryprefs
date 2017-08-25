@@ -345,4 +345,22 @@ final class BinaryPreferences implements Preferences {
             writeLock.unlock();
         }
     }
+
+    private Object get(String key, Object defValue) {
+        readLock.lock();
+        try {
+            Object cached = cacheProvider.get(key);
+            if (cached != null) {
+                return cached;
+            }
+            if (!cacheProvider.containsCandidate(key)) {
+                return defValue;
+            }
+            TransactionElement element = fileTransaction.fetchOne(key);
+            byte[] bytes = element.getContent();
+            return serializerFactory.deserialize(key, bytes);
+        } finally {
+            readLock.unlock();
+        }
+    }
 }

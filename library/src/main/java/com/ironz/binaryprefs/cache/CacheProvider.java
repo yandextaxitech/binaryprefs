@@ -42,9 +42,9 @@ public interface CacheProvider {
     /**
      * Removes specific value from cache by given key
      *
-     * @param name target key for remove
+     * @param key target key for remove
      */
-    void remove(String name);
+    void remove(String key);
 
     /**
      * Returns all cached key/values.
@@ -62,9 +62,17 @@ public interface CacheProvider {
     Set<String> candidates();
 
     /**
+     * Returns true if {@code value} is exists in cache candidates {@code false} otherwise
+     *
+     * @param key target key
+     * @return exists condition
+     */
+    boolean containsCandidate(String key);
+
+    /**
      * Puts candidate name to cache, value not might be null
      *
-     * @param name target name
+     * @param key target name
      */
-    void putCandidate(String name);
+    void putCandidate(String key);
 }
