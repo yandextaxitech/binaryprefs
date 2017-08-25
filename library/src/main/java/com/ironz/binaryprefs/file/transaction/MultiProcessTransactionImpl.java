@@ -27,7 +27,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
     }
 
     @Override
-    public List<TransactionElement> fetchContent() {
+    public List<TransactionElement> fetchAll() {
         Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
@@ -70,7 +70,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
         }
     }
 
-    private List<TransactionElement> fetchContentInternal() {
+    private List<TransactionElement> fetchAllInternal() {
         String[] names = fileAdapter.names();
         List<TransactionElement> elements = new ArrayList<>(names.length);
         for (String name : names) {
