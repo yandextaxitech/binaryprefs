@@ -34,7 +34,7 @@ cache works between processes)
 
 #### Add in project
 
-Add jitpack to repositories closure. For example, you can add it to root
+Add jitpack to repositories closure. For example, you should add it to root
 of `build.gradle`:
 
 ```groovy
