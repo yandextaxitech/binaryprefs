@@ -41,7 +41,6 @@ of `build.gradle`:
 
 allprojects {
   repositories {
-    ...
     maven { url "https://jitpack.io" }
   }
 }
