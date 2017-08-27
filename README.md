@@ -106,7 +106,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .exceptionHandler(new ExceptionHandler() {
                     @Override
                     public void handle(Exception e) {
-                        //perform metrica report
+                        //perform analytics report
                     }
                 })
                 .build();
