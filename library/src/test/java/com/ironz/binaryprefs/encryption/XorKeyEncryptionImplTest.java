@@ -9,8 +9,8 @@ import static org.junit.Assert.assertNotEquals;
 
 public class XorKeyEncryptionImplTest {
 
-    private final XorKeyEncryptionImpl encryption = new XorKeyEncryptionImpl("LZN8KKF7KH816D0U".getBytes());
-    private final XorKeyEncryptionImpl badEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
+    private final KeyEncryption encryption = new XorKeyEncryptionImpl("LZN8KKF7KH816D0U".getBytes());
+    private final KeyEncryption badEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
 
     @Test
     public void encryptDecrypt() {
