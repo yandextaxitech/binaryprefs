@@ -48,9 +48,6 @@ public class MigrateProcessorTest {
         Map<String, ?> fromAll = fromPreferences.getAll();
 
         assertTrue(fromAll.isEmpty());
-
-        fromPreferences.edit().clear().commit();
-        toPreferences.edit().clear().commit();
     }
 
     @Test
@@ -78,9 +75,6 @@ public class MigrateProcessorTest {
         Map<String, ?> fromAll = fromPreferences.getAll();
 
         assertTrue(fromAll.isEmpty());
-
-        fromPreferences.edit().clear().commit();
-        toPreferences.edit().clear().commit();
     }
 
     @Test
@@ -107,9 +101,6 @@ public class MigrateProcessorTest {
         Map<String, ?> fromAll = fromPreferences.getAll();
 
         assertTrue(fromAll.isEmpty());
-
-        fromPreferences.edit().clear().commit();
-        toPreferences.edit().clear().commit();
     }
 
     @Test
@@ -138,9 +129,6 @@ public class MigrateProcessorTest {
 
         assertTrue(fromAll.isEmpty());
         assertTrue(fromAll2.isEmpty());
-
-        fromPreferences.edit().clear().commit();
-        toPreferences.edit().clear().commit();
     }
 
     @Test
@@ -171,8 +159,5 @@ public class MigrateProcessorTest {
 
         assertTrue(fromAll.isEmpty());
         assertTrue(fromAll2.isEmpty());
-
-        fromPreferences.edit().clear().commit();
-        toPreferences.edit().clear().commit();
     }
 }
