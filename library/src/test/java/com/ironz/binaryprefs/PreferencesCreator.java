@@ -81,7 +81,7 @@ public final class PreferencesCreator {
         KeyEncryption keyEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, allCaches);
-        TaskExecutor executor = new TestTaskExecutorImpl(name, exceptionHandler);
+        TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
