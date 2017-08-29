@@ -247,7 +247,7 @@ DumpReceiver.unregister(name);
 12. ~~File name encrypt~~ completed
 13. ~~Finalize serialization and persistence contract~~ completed
 14. ~~Default preferences migration mechanism~~ complete
-15. In-Memory initialization strategies
+15. In-memory cache initialization strategies
 16. `byte[]` support
 17. IPC transactions without 1mb limit
 18. Limiting strategies (UNLIMITED, LRU, FIFO)
