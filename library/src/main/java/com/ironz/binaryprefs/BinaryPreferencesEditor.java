@@ -2,6 +2,7 @@ package com.ironz.binaryprefs;
 
 import com.ironz.binaryprefs.cache.CacheProvider;
 import com.ironz.binaryprefs.event.EventBridge;
+import com.ironz.binaryprefs.exception.TransactionInvalidatedException;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
@@ -27,6 +28,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final Lock writeLock;
 
     private boolean clear;
+    private boolean invalidated;
 
     BinaryPreferencesEditor(FileTransaction fileTransaction,
                             EventBridge bridge,
@@ -212,6 +214,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
+            invalidate();
             taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -230,6 +233,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             clearCache();
             removeCache();
             storeCache();
+            invalidate();
             FutureBarrier barrier = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -266,6 +270,13 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             Object value = strategy.getValue();
             cacheProvider.put(name, value);
         }
+    }
+
+    private void invalidate() {
+        if (invalidated) {
+            throw new TransactionInvalidatedException();
+        }
+        invalidated = true;
     }
 
     private void commitTransaction() {

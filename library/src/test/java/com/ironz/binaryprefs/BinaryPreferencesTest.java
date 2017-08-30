@@ -1,6 +1,8 @@
 package com.ironz.binaryprefs;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import com.ironz.binaryprefs.exception.TransactionInvalidatedException;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.impl.TestUser;
 import org.junit.Before;
@@ -625,6 +627,29 @@ public final class BinaryPreferencesTest {
 
         assertFalse(commit);
         assertEquals(value, restored);
+    }
+
+    @Test(expected = TransactionInvalidatedException.class)
+    public void applyTwice() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+
+        PreferencesEditor editor = preferences.edit()
+                .putString(key, value);
+        editor.apply();
+        editor.apply();
+    }
+
+    @SuppressLint("ApplySharedPref")
+    @Test(expected = TransactionInvalidatedException.class)
+    public void commitTwice() {
+        String key = String.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
+        String value = "value";
+
+        PreferencesEditor editor = preferences.edit()
+                .putString(key, value);
+        editor.commit();
+        editor.commit();
     }
 
     @Test

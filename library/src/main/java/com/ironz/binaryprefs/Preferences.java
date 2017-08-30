@@ -4,14 +4,45 @@ import android.content.SharedPreferences;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Extension of {@link SharedPreferences} class for using plain serialization mechanism
  */
 public interface Preferences extends SharedPreferences {
 
+    /**
+     * Create a new Editor for these preferences, through which you can make
+     * modifications to the data in the preferences and atomically commit those
+     * changes back to the SharedPreferences object.
+     * <p>
+     * <p>Note that you <em>must</em> call {@link Editor#commit()} to have any
+     * changes you perform in the Editor actually show up in the
+     * SharedPreferences.
+     * <p>
+     * Also note that if you trying to call {@link PreferencesEditor#commit()} or
+     * {@link PreferencesEditor#apply()} methods for one instance of
+     * {@link PreferencesEditor} twice - {@link com.ironz.binaryprefs.exception.TransactionInvalidatedException}
+     * will be thrown.
+     *
+     * @return Returns a new instance of the {@link Editor} interface, allowing
+     * you to modify the values in this SharedPreferences object.
+     */
     @Override
     PreferencesEditor edit();
+
+    /**
+     * Retrieve all values from the preferences.
+     *
+     * @return Returns a map containing a list of pairs key/value representing
+     * the preferences.
+     * @deprecated Please use {@link #keys()} method to iterate all values.
+     * This method dramatically decreases performance because performs recreation
+     * of full of map and all values inside by immutability reasons.
+     */
+    @Override
+    @Deprecated
+    Map<String, ?> getAll();
 
     /**
      * Returns all keys list for values which exists in current preferences set.
