@@ -17,6 +17,8 @@ import java.util.concurrent.locks.Lock;
 
 final class BinaryPreferencesEditor implements PreferencesEditor {
 
+    private static final String TRANSACTED_TWICE_MESSAGE = "Transaction should be applied or committed only once!";
+
     private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
     private final Set<String> removeSet = new HashSet<>(0);
 
@@ -274,7 +276,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private void invalidate() {
         if (invalidated) {
-            throw new TransactionInvalidatedException();
+            throw new TransactionInvalidatedException(TRANSACTED_TWICE_MESSAGE);
         }
         invalidated = true;
     }
