@@ -8,9 +8,7 @@ import com.ironz.binaryprefs.PreferencesEditor;
  */
 public final class TransactionInvalidatedException extends RuntimeException {
 
-    private static final String MESSAGE = "Transaction should be applied or committed only once!";
-
-    public TransactionInvalidatedException() {
-        super(MESSAGE);
+    public TransactionInvalidatedException(String msg) {
+        super(msg);
     }
 }
