@@ -75,10 +75,8 @@ public final class PreferencesCreator {
                        Map<String, Lock> processLocks,
                        Map<String, Map<String, Object>> allCaches,
                        Map<String, Set<String>> allCacheCandidates) {
-
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
-
         LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider, locks, processLocks);
         ValueEncryption valueEncryption = new AesValueEncryptionImpl("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());
