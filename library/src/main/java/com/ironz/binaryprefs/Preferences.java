@@ -45,7 +45,7 @@ public interface Preferences extends SharedPreferences {
     Map<String, ?> getAll();
 
     /**
-     * Returns all keys list for values which exists in current preferences set.
+     * Retrieve all keys list for values which exists in current preferences set.
      *
      * @return key list for current preferences set.
      */
