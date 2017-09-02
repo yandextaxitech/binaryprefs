@@ -263,44 +263,74 @@ final class BinaryPreferences implements Preferences {
 
     @Override
     public void putString(String key, String value) {
-        editInternal()
-                .putString(key, value)
-                .commit();
+        PreferencesEditor editor = editInternal();
+        writeLock.lock();
+        try {
+            editor.putString(key, value)
+                    .commit();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void putStringSet(String key, Set<String> values) {
-        editInternal()
-                .putStringSet(key, values)
-                .commit();
+        PreferencesEditor editor = editInternal();
+        writeLock.lock();
+        try {
+            editor.putStringSet(key, values)
+                    .commit();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void putInt(String key, int value) {
-        editInternal()
-                .putInt(key, value)
-                .commit();
+        PreferencesEditor editor = editInternal();
+        writeLock.lock();
+        try {
+            editor.putInt(key, value)
+                    .commit();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void putLong(String key, long value) {
-        editInternal()
-                .putLong(key, value)
-                .commit();
+        PreferencesEditor editor = editInternal();
+        writeLock.lock();
+        try {
+            editor.putLong(key, value)
+                    .commit();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void putFloat(String key, float value) {
-        editInternal()
-                .putFloat(key, value)
-                .commit();
+        PreferencesEditor editor = editInternal();
+        writeLock.lock();
+        try {
+            editor.putFloat(key, value)
+                    .commit();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public void putBoolean(String key, boolean value) {
-        editInternal()
-                .putBoolean(key, value)
-                .commit();
+        PreferencesEditor editor = editInternal();
+        writeLock.lock();
+        try {
+            editor.putBoolean(key, value)
+                    .commit();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
