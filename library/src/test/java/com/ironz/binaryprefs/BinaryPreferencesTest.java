@@ -12,7 +12,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -59,14 +58,14 @@ public final class BinaryPreferencesTest {
 
     @Test
     public void getKeysEmpty() {
-        List<String> keys = preferences.keys();
+        Set<String> keys = preferences.keys();
 
         assertTrue(keys.isEmpty());
     }
 
     @Test
     public void getKeysDefaultValue() {
-        List<String> keys = preferences.keys();
+        Set<String> keys = preferences.keys();
 
         assertTrue(keys.isEmpty());
     }
@@ -82,7 +81,7 @@ public final class BinaryPreferencesTest {
                 .putBoolean(booleanKey, true)
                 .apply();
 
-        List<String> keys = preferences.keys();
+        Set<String> keys = preferences.keys();
 
         assertTrue(keys.contains(stringKey));
         assertTrue(keys.contains(booleanKey));
@@ -99,7 +98,7 @@ public final class BinaryPreferencesTest {
                 .putBoolean(booleanKey, true)
                 .apply();
 
-        List<String> keys = preferences.keys();
+        Set<String> keys = preferences.keys();
         keys.remove(stringKey);
     }
 
@@ -114,7 +113,7 @@ public final class BinaryPreferencesTest {
                 .putBoolean(booleanKey, true)
                 .apply();
 
-        List<String> keys = preferences.keys();
+        Set<String> keys = preferences.keys();
         keys.clear();
     }
 
@@ -133,7 +132,8 @@ public final class BinaryPreferencesTest {
                 .clear()
                 .apply();
 
-        List<String> keys = preferences.keys();
+        Set<String> keys = preferences.keys();
+
         assertTrue(keys.isEmpty());
     }
 

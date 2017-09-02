@@ -56,7 +56,7 @@ final class BinaryPreferences implements Preferences {
     }
 
     private void fetchInternal() {
-        if (cacheProvider.keys().length != 0) {
+        if (cacheProvider.keys().size() != 0) {
             return;
         }
         for (TransactionElement element : fileTransaction.fetch()) {
@@ -269,10 +269,10 @@ final class BinaryPreferences implements Preferences {
     }
 
     @Override
-    public List<String> keys() {
+    public Set<String> keys() {
         readLock.lock();
         try {
-            return Arrays.asList(cacheProvider.keys());
+            return cacheProvider.keys();
         } finally {
             readLock.unlock();
         }

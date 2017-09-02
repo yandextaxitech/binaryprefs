@@ -3,8 +3,8 @@ package com.ironz.binaryprefs;
 import android.content.SharedPreferences;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Extension of {@link SharedPreferences} class for using plain serialization mechanism
@@ -35,7 +35,7 @@ public interface Preferences extends SharedPreferences {
      * Retrieve all values from the preferences.
      *
      * @return Returns a map containing a list of pairs key/value representing
-     * the preferences.
+     * the preferences
      * @deprecated Please use {@link #keys()} method to iterate all values.
      * This method dramatically decreases performance because performs recreation
      * of full of map and all values inside by immutability reasons.
@@ -45,11 +45,11 @@ public interface Preferences extends SharedPreferences {
     Map<String, ?> getAll();
 
     /**
-     * Retrieve all keys list for values which exists in current preferences set.
+     * Retrieve all keys set for values which exists in current preferences set.
      *
-     * @return key list for current preferences set.
+     * @return a set containing al set of key representing the preferences
      */
-    List<String> keys();
+    Set<String> keys();
 
     /**
      * Retrieve an {@link Persistable} value from the preferences.

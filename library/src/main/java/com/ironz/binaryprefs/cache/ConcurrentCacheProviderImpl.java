@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.cache;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,8 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Concurrent cache provider which locks on concrete key.
  */
 public final class ConcurrentCacheProviderImpl implements CacheProvider {
-
-    private static final String[] EMPTY_ARRAY = new String[0];
 
     private final Map<String, Object> currentCache;
 
@@ -37,9 +36,9 @@ public final class ConcurrentCacheProviderImpl implements CacheProvider {
     }
 
     @Override
-    public String[] keys() {
-        Set<String> keySet = currentCache.keySet();
-        return keySet.toArray(EMPTY_ARRAY);
+    public Set<String> keys() {
+        Set<String> s = currentCache.keySet();
+        return Collections.unmodifiableSet(s);
     }
 
     @Override

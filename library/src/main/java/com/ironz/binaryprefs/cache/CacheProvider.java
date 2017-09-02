@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.cache;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Describes contract which store, fetch and remove cached elements
@@ -28,7 +29,7 @@ public interface CacheProvider {
      *
      * @return keys array
      */
-    String[] keys();
+    Set<String> keys();
 
     /**
      * Returns value by specific key or null if value not exist
