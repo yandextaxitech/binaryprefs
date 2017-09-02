@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class FloatSerializerTest {
+public final class FloatSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 

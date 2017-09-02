@@ -7,7 +7,7 @@ import static com.ironz.binaryprefs.impl.UnicodeCharacters.UTF_CHARACTERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class XorKeyEncryptionImplTest {
+public final class XorKeyEncryptionImplTest {
 
     private final KeyEncryption encryption = new XorKeyEncryptionImpl("LZN8KKF7KH816D0U".getBytes());
     private final KeyEncryption badEncryption = new XorKeyEncryptionImpl("1111111111111110".getBytes());

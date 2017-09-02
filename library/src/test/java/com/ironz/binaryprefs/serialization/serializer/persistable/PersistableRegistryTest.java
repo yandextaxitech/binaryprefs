@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class PersistableRegistryTest {
+public final class PersistableRegistryTest {
 
     private PersistableRegistry registry;
 

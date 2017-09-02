@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import static org.junit.Assert.*;
 
-public class MultipleBinaryPreferencesTest {
+public final class MultipleBinaryPreferencesTest {
 
     private static final String KEY_SUFFIX = "_key";
 

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DoubleSerializerTest {
+public final class DoubleSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 
