@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class AesValueEncryptionImplTest {
+public final class AesValueEncryptionImplTest {
 
     private static final byte[] SECRET_KEY_BYTES = "LZN8KKF7KH816D0U".getBytes();
     private static final byte[] INITIAL_VECTOR = "AG6PJGG7AZJD8QPH".getBytes();

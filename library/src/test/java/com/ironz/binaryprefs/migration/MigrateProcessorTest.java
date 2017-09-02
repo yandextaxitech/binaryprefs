@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @SuppressLint("ApplySharedPref")
-public class MigrateProcessorTest {
+public final class MigrateProcessorTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();

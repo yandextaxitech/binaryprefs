@@ -8,7 +8,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class StringSetSerializerTest {
+public final class StringSetSerializerTest {
 
     private static final byte INCORRECT_FLAG = 0;
 

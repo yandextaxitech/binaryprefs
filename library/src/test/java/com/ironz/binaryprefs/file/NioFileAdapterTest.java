@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class NioFileAdapterTest {
+public final class NioFileAdapterTest {
 
     private static final String FILE_NAME = "file.name";
     private static final String FILE_NAME_1 = "file.name.1";
