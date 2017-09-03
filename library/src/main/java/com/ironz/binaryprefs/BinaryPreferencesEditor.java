@@ -19,8 +19,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private static final String TRANSACTED_TWICE_MESSAGE = "Transaction should be applied or committed only once!";
 
-    private final Map<String, SerializationStrategy> strategyMap = new HashMap<>(0);
-    private final Set<String> removeSet = new HashSet<>(0);
+    private final Map<String, SerializationStrategy> strategyMap = new HashMap<>();
+    private final Set<String> removeSet = new HashSet<>();
 
     private final FileTransaction fileTransaction;
     private final EventBridge bridge;
