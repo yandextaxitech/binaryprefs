@@ -24,14 +24,6 @@ public interface FileTransaction {
     TransactionElement fetchOne(String name);
 
     /**
-     * Retrieves one file adapter element and creates {@code byte[]} element by unique name.
-     *
-     * @param name file name
-     * @return unique transaction element.
-     */
-    TransactionElement fetchOne(String name);
-
-    /**
      * Retrieves all file adapter element names without creating an {@code byte[]}.
      *
      * @return unique transaction elements.

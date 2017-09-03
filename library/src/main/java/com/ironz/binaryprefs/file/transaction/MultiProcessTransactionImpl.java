@@ -53,7 +53,7 @@ public final class MultiProcessTransactionImpl implements FileTransaction {
         Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
-            return fetchContentInternal();
+            return fetchNamesInternal();
         } finally {
             lock.unlock();
         }
