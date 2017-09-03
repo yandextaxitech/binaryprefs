@@ -597,7 +597,6 @@ public final class BinaryPreferencesTest {
         assertEquals(value, restored);
     }
 
-
     @Test(expected = TransactionInvalidatedException.class)
     public void applyTwice() {
         String value = "value";
