@@ -1,7 +1,6 @@
 package com.ironz.binaryprefs.cache;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
