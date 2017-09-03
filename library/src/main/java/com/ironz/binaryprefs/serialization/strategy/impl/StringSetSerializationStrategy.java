@@ -7,12 +7,12 @@ import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class StringSetSerializationStrategyImpl implements SerializationStrategy {
+public final class StringSetSerializationStrategy implements SerializationStrategy {
 
     private final Set<String> value;
     private final StringSetSerializer stringSetSerializer;
 
-    public StringSetSerializationStrategyImpl(Set<String> value, SerializerFactory serializerFactory) {
+    public StringSetSerializationStrategy(Set<String> value, SerializerFactory serializerFactory) {
         this.value = value;
         this.stringSetSerializer = serializerFactory.getStringSetSerializer();
     }

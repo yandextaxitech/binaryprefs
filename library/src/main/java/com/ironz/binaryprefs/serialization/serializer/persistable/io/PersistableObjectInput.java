@@ -4,7 +4,7 @@ import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 
-public final class PersistableObjectInputImpl implements DataInput {
+public final class PersistableObjectInput implements DataInput {
 
     private static final String BASE_INCORRECT_TYPE_MESSAGE = "cannot be deserialized in '%s' flag type";
     private static final String BASE_NOT_MIRRORED_MESSAGE = "May be your read/write contract isn't mirror-implemented or " +
@@ -38,16 +38,16 @@ public final class PersistableObjectInputImpl implements DataInput {
     private byte[] bytes;
     private String key;
 
-    public PersistableObjectInputImpl(BooleanSerializer booleanSerializer,
-                                      ByteSerializer byteSerializer,
-                                      CharSerializer charSerializer,
-                                      DoubleSerializer doubleSerializer,
-                                      FloatSerializer floatSerializer,
-                                      IntegerSerializer integerSerializer,
-                                      LongSerializer longSerializer,
-                                      ShortSerializer shortSerializer,
-                                      StringSerializer stringSerializer,
-                                      PersistableRegistry persistableRegistry) {
+    public PersistableObjectInput(BooleanSerializer booleanSerializer,
+                                  ByteSerializer byteSerializer,
+                                  CharSerializer charSerializer,
+                                  DoubleSerializer doubleSerializer,
+                                  FloatSerializer floatSerializer,
+                                  IntegerSerializer integerSerializer,
+                                  LongSerializer longSerializer,
+                                  ShortSerializer shortSerializer,
+                                  StringSerializer stringSerializer,
+                                  PersistableRegistry persistableRegistry) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
         this.charSerializer = charSerializer;

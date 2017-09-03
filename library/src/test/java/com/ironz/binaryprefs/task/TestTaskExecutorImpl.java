@@ -20,6 +20,12 @@ public final class TestTaskExecutorImpl implements TaskExecutor {
         return new FutureBarrier(submit, exceptionHandler);
     }
 
+    @Override
+    public FutureBarrier submit(Callable<?> callable) {
+        Future<?> submit = executor.submit(callable);
+        return new FutureBarrier(submit, exceptionHandler);
+    }
+
     private ExecutorService currentThreadExecutorService() {
         final ThreadPoolExecutor.CallerRunsPolicy callerRunsPolicy = new ThreadPoolExecutor.CallerRunsPolicy();
         return new ThreadPoolExecutor(0, 1, 0L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), callerRunsPolicy) {

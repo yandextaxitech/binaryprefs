@@ -9,14 +9,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
 /**
  * Concurrent cache provider which locks on concrete key.
  */
-public final class ConcurrentCacheProviderImpl implements CacheProvider {
+public final class ConcurrentCacheProvider implements CacheProvider {
 
     private final Map<String, Object> currentCache;
     private final Set<String> candidates;
 
-    public ConcurrentCacheProviderImpl(String prefName,
-                                       Map<String, Map<String, Object>> allCaches,
-                                       Map<String, Set<String>> allCandidates) {
+    public ConcurrentCacheProvider(String prefName,
+                                   Map<String, Map<String, Object>> allCaches,
+                                   Map<String, Set<String>> allCandidates) {
         this.currentCache = putIfAbsentCache(prefName, allCaches);
         this.candidates = putIfAbsentCandidates(prefName, allCandidates);
     }

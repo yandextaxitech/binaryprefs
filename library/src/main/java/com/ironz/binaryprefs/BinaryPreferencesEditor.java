@@ -53,7 +53,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new StringSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new StringSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -68,7 +68,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new StringSetSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new StringSetSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -80,7 +80,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putInt(String key, int value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new IntegerSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new IntegerSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -92,7 +92,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putLong(String key, long value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new LongSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new LongSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -104,7 +104,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putFloat(String key, float value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new FloatSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new FloatSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -116,7 +116,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putBoolean(String key, boolean value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new BooleanSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new BooleanSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -131,7 +131,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         }
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new PersistableSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new PersistableSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -143,7 +143,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putByte(String key, byte value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new ByteSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new ByteSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -155,7 +155,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putShort(String key, short value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new ShortSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new ShortSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -167,7 +167,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putChar(String key, char value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new CharSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new CharSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {
@@ -179,7 +179,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor putDouble(String key, double value) {
         writeLock.lock();
         try {
-            SerializationStrategy strategy = new DoubleSerializationStrategyImpl(value, serializerFactory);
+            SerializationStrategy strategy = new DoubleSerializationStrategy(value, serializerFactory);
             strategyMap.put(key, strategy);
             return this;
         } finally {

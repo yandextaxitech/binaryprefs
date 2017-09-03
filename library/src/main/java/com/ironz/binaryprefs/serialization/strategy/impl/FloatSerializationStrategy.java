@@ -4,12 +4,12 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.FloatSerializer;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 
-public final class FloatSerializationStrategyImpl implements SerializationStrategy {
+public final class FloatSerializationStrategy implements SerializationStrategy {
 
     private final float value;
     private final FloatSerializer floatSerializer;
 
-    public FloatSerializationStrategyImpl(float value, SerializerFactory serializerFactory) {
+    public FloatSerializationStrategy(float value, SerializerFactory serializerFactory) {
         this.value = value;
         this.floatSerializer = serializerFactory.getFloatSerializer();
     }

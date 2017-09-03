@@ -4,8 +4,8 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataInput;
 import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataOutput;
-import com.ironz.binaryprefs.serialization.serializer.persistable.io.PersistableObjectInputImpl;
-import com.ironz.binaryprefs.serialization.serializer.persistable.io.PersistableObjectOutputImpl;
+import com.ironz.binaryprefs.serialization.serializer.persistable.io.PersistableObjectInput;
+import com.ironz.binaryprefs.serialization.serializer.persistable.io.PersistableObjectOutput;
 
 /**
  * {@code Persistable} to byte array implementation and backwards
@@ -58,7 +58,7 @@ public final class PersistableSerializer {
      * @return specific byte array with scheme.
      */
     public byte[] serialize(Persistable value) {
-        DataOutput output = new PersistableObjectOutputImpl(
+        DataOutput output = new PersistableObjectOutput(
                 booleanSerializer,
                 byteSerializer,
                 charSerializer,
@@ -82,7 +82,7 @@ public final class PersistableSerializer {
      * @return deserialized {@link Persistable}
      */
     public Persistable deserialize(String key, byte[] bytes) {
-        DataInput input = new PersistableObjectInputImpl(
+        DataInput input = new PersistableObjectInput(
                 booleanSerializer,
                 byteSerializer,
                 charSerializer,

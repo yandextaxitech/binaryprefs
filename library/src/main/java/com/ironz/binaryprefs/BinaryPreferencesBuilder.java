@@ -4,22 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
 import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
+import com.ironz.binaryprefs.cache.ConcurrentCacheProvider;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
-import com.ironz.binaryprefs.event.BroadcastEventBridgeImpl;
+import com.ironz.binaryprefs.event.BroadcastEventBridge;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.ExceptionHandler;
-import com.ironz.binaryprefs.event.MainThreadEventBridgeImpl;
+import com.ironz.binaryprefs.event.MainThreadEventBridge;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
-import com.ironz.binaryprefs.file.directory.AndroidDirectoryProviderImpl;
+import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
-import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
+import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
 import com.ironz.binaryprefs.lock.LockFactory;
-import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
+import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.migration.MigrateProcessor;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
@@ -231,14 +231,14 @@ public final class BinaryPreferencesBuilder {
 
     private BinaryPreferences createInstance() {
 
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
+        DirectoryProvider directoryProvider = new AndroidDirectoryProvider(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider, locks, processLocks);
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, caches, cacheCandidates);
+        LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
+        FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, valueEncryption, keyEncryption);
+        CacheProvider cacheProvider = new ConcurrentCacheProvider(name, caches, cacheCandidates);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
+        EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridge(
                 context,
                 name,
                 cacheProvider,
@@ -247,7 +247,7 @@ public final class BinaryPreferencesBuilder {
                 valueEncryption,
                 directoryProvider,
                 allListeners
-        ) : new MainThreadEventBridgeImpl(name, allListeners);
+        ) : new MainThreadEventBridge(name, allListeners);
 
         return new BinaryPreferences(
                 fileTransaction,

@@ -4,12 +4,12 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.LongSerializer;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 
-public final class LongSerializationStrategyImpl implements SerializationStrategy {
+public final class LongSerializationStrategy implements SerializationStrategy {
 
     private final long value;
     private final LongSerializer longSerializer;
 
-    public LongSerializationStrategyImpl(long value, SerializerFactory serializerFactory) {
+    public LongSerializationStrategy(long value, SerializerFactory serializerFactory) {
         this.value = value;
         this.longSerializer = serializerFactory.getLongSerializer();
     }

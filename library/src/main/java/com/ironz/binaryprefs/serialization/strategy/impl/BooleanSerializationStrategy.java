@@ -4,12 +4,12 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.BooleanSerializer;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 
-public final class BooleanSerializationStrategyImpl implements SerializationStrategy {
+public final class BooleanSerializationStrategy implements SerializationStrategy {
 
     private final boolean value;
     private final BooleanSerializer booleanSerializer;
 
-    public BooleanSerializationStrategyImpl(boolean value, SerializerFactory serializerFactory) {
+    public BooleanSerializationStrategy(boolean value, SerializerFactory serializerFactory) {
         this.value = value;
         this.booleanSerializer = serializerFactory.getBooleanSerializer();
     }

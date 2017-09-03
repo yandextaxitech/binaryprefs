@@ -4,12 +4,12 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.CharSerializer;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 
-public final class CharSerializationStrategyImpl implements SerializationStrategy {
+public final class CharSerializationStrategy implements SerializationStrategy {
 
     private final char value;
     private final CharSerializer charSerializer;
 
-    public CharSerializationStrategyImpl(char value, SerializerFactory serializerFactory) {
+    public CharSerializationStrategy(char value, SerializerFactory serializerFactory) {
         this.value = value;
         this.charSerializer = serializerFactory.getCharSerializer();
     }

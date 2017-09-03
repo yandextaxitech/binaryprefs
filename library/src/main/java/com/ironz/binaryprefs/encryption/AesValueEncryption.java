@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * Implementation of {@link ValueEncryption} class which uses AES for <code>byte[]</code> data encryption.
  */
-public final class AesValueEncryptionImpl implements ValueEncryption {
+public final class AesValueEncryption implements ValueEncryption {
 
     private static final String SHORT_KEYS_MESSAGE = "Secret and initial vector must be 16 bytes";
 
@@ -25,7 +25,7 @@ public final class AesValueEncryptionImpl implements ValueEncryption {
      * @param secretKeyBytes 16 bytes secret key
      * @param initialVector  16 bytes initial vector
      */
-    public AesValueEncryptionImpl(byte[] secretKeyBytes, byte[] initialVector) {
+    public AesValueEncryption(byte[] secretKeyBytes, byte[] initialVector) {
         checkLength(secretKeyBytes, initialVector);
         this.secretKeyBytes = secretKeyBytes;
         this.initialVector = initialVector;

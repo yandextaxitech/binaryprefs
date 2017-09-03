@@ -3,7 +3,7 @@ package com.ironz.binaryprefs.serialization.serializer.persistable.io;
 import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 
-public final class PersistableObjectOutputImpl implements DataOutput {
+public final class PersistableObjectOutput implements DataOutput {
 
     //bytes capacity for initial array size, buffer array are resizable to (buffer.length + len + GROW_ARRAY_CAPACITY) * 2 after reaching limit.
     private static final int GROW_ARRAY_CAPACITY = 128;
@@ -22,15 +22,15 @@ public final class PersistableObjectOutputImpl implements DataOutput {
     private int offset = 0;
     private byte[] buffer = new byte[GROW_ARRAY_CAPACITY];
 
-    public PersistableObjectOutputImpl(BooleanSerializer booleanSerializer,
-                                       ByteSerializer byteSerializer,
-                                       CharSerializer charSerializer,
-                                       DoubleSerializer doubleSerializer,
-                                       FloatSerializer floatSerializer,
-                                       IntegerSerializer integerSerializer,
-                                       LongSerializer longSerializer,
-                                       ShortSerializer shortSerializer,
-                                       StringSerializer stringSerializer) {
+    public PersistableObjectOutput(BooleanSerializer booleanSerializer,
+                                   ByteSerializer byteSerializer,
+                                   CharSerializer charSerializer,
+                                   DoubleSerializer doubleSerializer,
+                                   FloatSerializer floatSerializer,
+                                   IntegerSerializer integerSerializer,
+                                   LongSerializer longSerializer,
+                                   ShortSerializer shortSerializer,
+                                   StringSerializer stringSerializer) {
 
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;

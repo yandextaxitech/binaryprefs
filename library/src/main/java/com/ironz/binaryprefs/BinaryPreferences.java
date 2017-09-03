@@ -12,6 +12,7 @@ import com.ironz.binaryprefs.task.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 
 final class BinaryPreferences implements Preferences {
@@ -376,7 +377,7 @@ final class BinaryPreferences implements Preferences {
         }
     }
 
-    private Object get(String key, Object defValue) {
+    private Object get(final String key, Object defValue) {
         readLock.lock();
         try {
             Object cached = cacheProvider.get(key);
@@ -386,9 +387,15 @@ final class BinaryPreferences implements Preferences {
             if (!cacheProvider.containsCandidate(key)) {
                 return defValue;
             }
-            TransactionElement element = fileTransaction.fetchOne(key);
-            byte[] bytes = element.getContent();
-            return serializerFactory.deserialize(key, bytes);
+            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    TransactionElement element = fileTransaction.fetchOne(key);
+                    byte[] bytes = element.getContent();
+                    return serializerFactory.deserialize(key, bytes);
+                }
+            });
+            return barrier.completeBlockingWihResult(defValue);
         } finally {
             readLock.unlock();
         }

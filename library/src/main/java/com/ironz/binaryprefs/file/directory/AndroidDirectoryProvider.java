@@ -7,7 +7,7 @@ import java.io.File;
 /**
  * Provides default android cache directory or external (if possible) cache directory.
  */
-public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
+public final class AndroidDirectoryProvider implements DirectoryProvider {
 
     private static final String CANNOT_CREATE_DIR_MESSAGE = "Can't create preferences directory in %s";
 
@@ -27,7 +27,7 @@ public final class AndroidDirectoryProviderImpl implements DirectoryProvider {
      * @param prefName preferences name
      * @param baseDir  all data will be saved inside this directory.
      */
-    public AndroidDirectoryProviderImpl(String prefName, File baseDir) {
+    public AndroidDirectoryProvider(String prefName, File baseDir) {
         this.storeDirectory = createAndValidate(baseDir, prefName, STORE_DIRECTORY_NAME);
         this.backupDirectory = createAndValidate(baseDir, prefName, BACKUP_DIRECTORY_NAME);
         this.lockDirectory = createAndValidate(baseDir, prefName, LOCK_DIRECTORY_NAME);

@@ -10,7 +10,7 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public final class AndroidDirectoryProviderImplTest {
+public final class AndroidDirectoryProviderTest {
 
     private static final String PREF_NAME = "user_data";
 
@@ -23,7 +23,7 @@ public final class AndroidDirectoryProviderImplTest {
     @Before
     public void setUp() throws Exception {
         baseDir = folder.newFolder("preferences");
-        provider = new AndroidDirectoryProviderImpl(PREF_NAME, baseDir);
+        provider = new AndroidDirectoryProvider(PREF_NAME, baseDir);
     }
 
     @Test
@@ -38,9 +38,9 @@ public final class AndroidDirectoryProviderImplTest {
         String actualPath = lockDirectory.getAbsolutePath();
 
         String expectedPath = baseDir.getAbsolutePath() + File.separator
-                + AndroidDirectoryProviderImpl.PREFERENCES_ROOT_DIRECTORY_NAME + File.separator
+                + AndroidDirectoryProvider.PREFERENCES_ROOT_DIRECTORY_NAME + File.separator
                 + PREF_NAME + File.separator
-                + AndroidDirectoryProviderImpl.LOCK_DIRECTORY_NAME;
+                + AndroidDirectoryProvider.LOCK_DIRECTORY_NAME;
 
         assertEquals(expectedPath, actualPath);
     }
@@ -57,9 +57,9 @@ public final class AndroidDirectoryProviderImplTest {
         String actualPath = storeDirectory.getAbsolutePath();
 
         String expectedPath = baseDir.getAbsolutePath() + File.separator
-                + AndroidDirectoryProviderImpl.PREFERENCES_ROOT_DIRECTORY_NAME + File.separator
+                + AndroidDirectoryProvider.PREFERENCES_ROOT_DIRECTORY_NAME + File.separator
                 + PREF_NAME + File.separator
-                + AndroidDirectoryProviderImpl.STORE_DIRECTORY_NAME;
+                + AndroidDirectoryProvider.STORE_DIRECTORY_NAME;
 
         assertEquals(expectedPath, actualPath);
     }
@@ -76,9 +76,9 @@ public final class AndroidDirectoryProviderImplTest {
         String actualPath = backupDirectory.getAbsolutePath();
 
         String expectedPath = baseDir.getAbsolutePath() + File.separator
-                + AndroidDirectoryProviderImpl.PREFERENCES_ROOT_DIRECTORY_NAME + File.separator
+                + AndroidDirectoryProvider.PREFERENCES_ROOT_DIRECTORY_NAME + File.separator
                 + PREF_NAME + File.separator
-                + AndroidDirectoryProviderImpl.BACKUP_DIRECTORY_NAME;
+                + AndroidDirectoryProvider.BACKUP_DIRECTORY_NAME;
 
         assertEquals(expectedPath, actualPath);
     }

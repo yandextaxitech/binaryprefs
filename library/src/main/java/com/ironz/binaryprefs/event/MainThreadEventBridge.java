@@ -10,13 +10,13 @@ import java.util.Map;
 /**
  * Main thread preference change listener bridge
  */
-public final class MainThreadEventBridgeImpl implements EventBridge {
+public final class MainThreadEventBridge implements EventBridge {
 
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
     private final Handler handler = new Handler();
 
-    public MainThreadEventBridgeImpl(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
+    public MainThreadEventBridge(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         this.currentListeners = putIfAbsentListeners(prefName, allListeners);
     }
 

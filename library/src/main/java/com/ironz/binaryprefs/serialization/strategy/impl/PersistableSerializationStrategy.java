@@ -5,12 +5,12 @@ import com.ironz.binaryprefs.serialization.serializer.PersistableSerializer;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 
-public final class PersistableSerializationStrategyImpl implements SerializationStrategy {
+public final class PersistableSerializationStrategy implements SerializationStrategy {
 
     private final Persistable value;
     private final PersistableSerializer persistableSerializer;
 
-    public PersistableSerializationStrategyImpl(Persistable value, SerializerFactory serializerFactory) {
+    public PersistableSerializationStrategy(Persistable value, SerializerFactory serializerFactory) {
         this.value = value;
         this.persistableSerializer = serializerFactory.getPersistableSerializer();
     }

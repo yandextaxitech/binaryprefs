@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
-public final class MultiProcessTransactionImpl implements FileTransaction {
+public final class MultiProcessTransaction implements FileTransaction {
 
     private final FileAdapter fileAdapter;
     private final LockFactory lockFactory;
     private final ValueEncryption valueEncryption;
     private final KeyEncryption keyEncryption;
 
-    public MultiProcessTransactionImpl(FileAdapter fileAdapter,
-                                       LockFactory lockFactory,
-                                       ValueEncryption valueEncryption,
-                                       KeyEncryption keyEncryption) {
+    public MultiProcessTransaction(FileAdapter fileAdapter,
+                                   LockFactory lockFactory,
+                                   ValueEncryption valueEncryption,
+                                   KeyEncryption keyEncryption) {
         this.fileAdapter = fileAdapter;
         this.lockFactory = lockFactory;
         this.valueEncryption = valueEncryption;

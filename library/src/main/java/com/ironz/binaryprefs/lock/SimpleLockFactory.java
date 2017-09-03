@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Simple lock factory for providing lock by instance and global lock by preference name.
  */
-public final class SimpleLockFactoryImpl implements LockFactory {
+public final class SimpleLockFactory implements LockFactory {
 
     private static final String LOCK_EXTENSION = ".lock";
 
@@ -20,10 +20,10 @@ public final class SimpleLockFactoryImpl implements LockFactory {
     private final ReadWriteLock readWriteLock;
     private final Lock processLock;
 
-    public SimpleLockFactoryImpl(String prefName,
-                                 DirectoryProvider provider,
-                                 Map<String, ReadWriteLock> locks,
-                                 Map<String, Lock> processLocks) {
+    public SimpleLockFactory(String prefName,
+                             DirectoryProvider provider,
+                             Map<String, ReadWriteLock> locks,
+                             Map<String, Lock> processLocks) {
         this.lockDirectory = provider.getLockDirectory();
         this.readWriteLock = putIfAbsentLocalLock(prefName, locks);
         this.processLock = putIfAbsentProcessLock(prefName, processLocks);

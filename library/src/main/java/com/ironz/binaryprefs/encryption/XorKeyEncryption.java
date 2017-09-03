@@ -4,7 +4,7 @@ import com.ironz.binaryprefs.exception.EncryptionException;
 
 import java.util.Arrays;
 
-public final class XorKeyEncryptionImpl implements KeyEncryption {
+public final class XorKeyEncryption implements KeyEncryption {
 
     private static final String SMALL_XOR_MESSAGE = "XOR must be at least 16 bytes";
     private static final String MIRRORED_XOR_MESSAGE = "XOR must not be mirrored";
@@ -14,7 +14,7 @@ public final class XorKeyEncryptionImpl implements KeyEncryption {
     private final byte[] xor;
     private final SafeEncoder safeEncoder;
 
-    public XorKeyEncryptionImpl(byte[] xor) {
+    public XorKeyEncryption(byte[] xor) {
         this.xor = xor;
         this.safeEncoder = new SafeEncoder();
         checkLength();

@@ -20,7 +20,7 @@ import java.util.Map;
  * This bridge optimized even if broadcast comes in local process.
  * Uses UI thread for delivering key changes.
  */
-public final class BroadcastEventBridgeImpl implements EventBridge {
+public final class BroadcastEventBridge implements EventBridge {
 
     private static final String INTENT_PREFIX = "com.ironz.binaryprefs.";
     private static final String ACTION_PREFERENCE_UPDATED = INTENT_PREFIX + "ACTION_PREFERENCE_UPDATED_";
@@ -48,14 +48,14 @@ public final class BroadcastEventBridgeImpl implements EventBridge {
     private final BroadcastReceiver updateReceiver;
     private final BroadcastReceiver removeReceiver;
 
-    public BroadcastEventBridgeImpl(Context context,
-                                    String prefName,
-                                    CacheProvider cacheProvider,
-                                    SerializerFactory serializerFactory,
-                                    TaskExecutor taskExecutor,
-                                    ValueEncryption valueEncryption,
-                                    DirectoryProvider directoryProvider,
-                                    Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners) {
+    public BroadcastEventBridge(Context context,
+                                String prefName,
+                                CacheProvider cacheProvider,
+                                SerializerFactory serializerFactory,
+                                TaskExecutor taskExecutor,
+                                ValueEncryption valueEncryption,
+                                DirectoryProvider directoryProvider,
+                                Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners) {
         this.context = context;
         this.prefName = prefName;
         this.cacheProvider = cacheProvider;
