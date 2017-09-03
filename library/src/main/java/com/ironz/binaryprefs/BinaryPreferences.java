@@ -47,7 +47,7 @@ final class BinaryPreferences implements Preferences {
             FutureBarrier barrier = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    fetchInternal();
+                    fetchCacheInternal();
                 }
             });
             barrier.completeBlockingUnsafe();
@@ -56,7 +56,7 @@ final class BinaryPreferences implements Preferences {
         }
     }
 
-    private void fetchInternal() {
+    private void fetchCacheInternal() {
         if (cacheProvider.keys().size() != 0) {
             return;
         }
