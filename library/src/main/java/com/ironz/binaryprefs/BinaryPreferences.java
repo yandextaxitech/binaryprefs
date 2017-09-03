@@ -392,7 +392,9 @@ final class BinaryPreferences implements Preferences {
                 public Object call() throws Exception {
                     TransactionElement element = fileTransaction.fetchOne(key);
                     byte[] bytes = element.getContent();
-                    return serializerFactory.deserialize(key, bytes);
+                    Object deserialize = serializerFactory.deserialize(key, bytes);
+                    cacheProvider.put(key, deserialize);
+                    return deserialize;
                 }
             });
             return barrier.completeBlockingWihResult(defValue);
