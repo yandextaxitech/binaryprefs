@@ -9,6 +9,7 @@ import com.ironz.binaryprefs.Preferences;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("unused")
 public final class DumpReceiver extends BroadcastReceiver {
 
     private static final String PREF_NAME = "pref_name";
@@ -41,12 +42,10 @@ public final class DumpReceiver extends BroadcastReceiver {
         }
     }
 
-    @SuppressWarnings("unused")
     public static void register(String name, Preferences preferences) {
         BINARY_PREFERENCES_HASH_MAP.put(name, preferences);
     }
 
-    @SuppressWarnings("unused")
     public static void unregister(String name) {
         BINARY_PREFERENCES_HASH_MAP.remove(name);
     }
