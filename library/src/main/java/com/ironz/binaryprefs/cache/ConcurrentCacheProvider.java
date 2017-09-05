@@ -84,4 +84,9 @@ public final class ConcurrentCacheProvider implements CacheProvider {
     public void putCandidate(String key) {
         candidates.add(key);
     }
+
+    @Override
+    public void removeCandidate(String key) {
+        candidates.remove(key);
+    }
 }

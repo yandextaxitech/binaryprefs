@@ -75,4 +75,11 @@ public interface CacheProvider {
      * @param key target name
      */
     void putCandidate(String key);
+
+    /**
+     * Removes specific value from candidates set by given key
+     *
+     * @param key target key for remove
+     */
+    void removeCandidate(String key);
 }
