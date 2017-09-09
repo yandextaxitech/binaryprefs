@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.cache.strategy;
+package com.ironz.binaryprefs.init;
 
 public interface FetchStrategy {
     Object getValue(String key);
