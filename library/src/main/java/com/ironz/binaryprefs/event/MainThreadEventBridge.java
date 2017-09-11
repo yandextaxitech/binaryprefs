@@ -53,7 +53,8 @@ public final class MainThreadEventBridge implements EventBridge {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for (OnSharedPreferenceChangeListener listener : currentListeners) {
+                List<OnSharedPreferenceChangeListener> temp = new ArrayList<>(currentListeners);
+                for (OnSharedPreferenceChangeListener listener : temp) {
                     listener.onSharedPreferenceChanged(null, key);
                 }
             }
