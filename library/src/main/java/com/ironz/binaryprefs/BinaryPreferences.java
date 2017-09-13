@@ -384,7 +384,8 @@ final class BinaryPreferences implements Preferences {
             if (cached != null) {
                 return cached;
             }
-            if (!cacheProvider.containsCandidate(key)) {
+            Set<String> names = fileTransaction.fetchNames();
+            if (!names.contains(key)) {
                 return defValue;
             }
             FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {

@@ -25,7 +25,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -64,24 +63,22 @@ public final class PreferencesCreator {
         Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
         Map<String, Lock> processLocks = new ConcurrentHashMap<>();
         Map<String, Map<String, Object>> allCaches = new ConcurrentHashMap<>();
-        Map<String, Set<String>> allCacheCandidates = new ConcurrentHashMap<>();
 
-        return create(name, directoryProvider, locks, processLocks, allCaches, allCacheCandidates);
+        return create(name, directoryProvider, locks, processLocks, allCaches);
     }
 
     Preferences create(String name,
                        DirectoryProvider directoryProvider,
                        Map<String, ReadWriteLock> locks,
                        Map<String, Lock> processLocks,
-                       Map<String, Map<String, Object>> allCaches,
-                       Map<String, Set<String>> allCacheCandidates) {
+                       Map<String, Map<String, Object>> allCaches) {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
         ValueEncryption valueEncryption = new AesValueEncryption("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches, allCacheCandidates);
+        CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
         TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);

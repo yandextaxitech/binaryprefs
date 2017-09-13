@@ -1,6 +1,7 @@
 package com.ironz.binaryprefs.file.transaction;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Transaction contract which describes one file event mechanism.
@@ -20,7 +21,7 @@ public interface FileTransaction {
      *
      * @return unique transaction elements.
      */
-    List<TransactionElement> fetchNames();
+    Set<String> fetchNames();
 
     /**
      * Retrieves one file adapter element and creates {@code byte[]} element by unique name.

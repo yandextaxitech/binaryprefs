@@ -69,7 +69,7 @@ public final class MultipleBinaryPreferencesTest {
             }
         };
         PreferencesCreator creator = new PreferencesCreator();
-        return creator.create(name, directoryProvider, locks, globalLocks, allCaches, cacheCandidates);
+        return creator.create(name, directoryProvider, locks, globalLocks, allCaches);
     }
 
     @Test

@@ -5,8 +5,7 @@ import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.lock.LockFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 
 public final class MultiProcessTransaction implements FileTransaction {
@@ -38,7 +37,7 @@ public final class MultiProcessTransaction implements FileTransaction {
     }
 
     @Override
-    public List<TransactionElement> fetchNames() {
+    public Set<String> fetchNames() {
         Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
@@ -80,14 +79,10 @@ public final class MultiProcessTransaction implements FileTransaction {
         return elements;
     }
 
-    private List<TransactionElement> fetchNamesInternal() {
+    private HashSet<String> fetchNamesInternal() {
         String[] names = fileAdapter.names();
-        List<TransactionElement> elements = new ArrayList<>(names.length);
-        for (String name : names) {
-            TransactionElement element = TransactionElement.createNameElement(name);
-            elements.add(element);
-        }
-        return elements;
+        List<String> list = Arrays.asList(names);
+        return new HashSet<>(list);
     }
 
     private TransactionElement fetchOneInternal(String name) {

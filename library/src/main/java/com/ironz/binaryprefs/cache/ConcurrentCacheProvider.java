@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Concurrent cache provider which locks on concrete key.
@@ -12,13 +11,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public final class ConcurrentCacheProvider implements CacheProvider {
 
     private final Map<String, Object> currentCache;
-    private final Set<String> candidates;
 
-    public ConcurrentCacheProvider(String prefName,
-                                   Map<String, Map<String, Object>> allCaches,
-                                   Map<String, Set<String>> allCandidates) {
+    public ConcurrentCacheProvider(String prefName, Map<String, Map<String, Object>> allCaches) {
         this.currentCache = putIfAbsentCache(prefName, allCaches);
-        this.candidates = putIfAbsentCandidates(prefName, allCandidates);
     }
 
     private Map<String, Object> putIfAbsentCache(String prefName, Map<String, Map<String, Object>> allCaches) {
@@ -28,15 +23,6 @@ public final class ConcurrentCacheProvider implements CacheProvider {
         Map<String, Object> map = new ConcurrentHashMap<>();
         allCaches.put(prefName, map);
         return map;
-    }
-
-    private Set<String> putIfAbsentCandidates(String prefName, Map<String, Set<String>> allCandidates) {
-        if (allCandidates.containsKey(prefName)) {
-            return allCandidates.get(prefName);
-        }
-        ConcurrentSkipListSet<String> set = new ConcurrentSkipListSet<>();
-        allCandidates.put(prefName, set);
-        return set;
     }
 
     @Override
@@ -68,25 +54,5 @@ public final class ConcurrentCacheProvider implements CacheProvider {
     @Override
     public Map<String, Object> getAll() {
         return currentCache;
-    }
-
-    @Override
-    public Set<String> candidates() {
-        return candidates;
-    }
-
-    @Override
-    public boolean containsCandidate(String key) {
-        return candidates.contains(key);
-    }
-
-    @Override
-    public void putCandidate(String key) {
-        candidates.add(key);
-    }
-
-    @Override
-    public void removeCandidate(String key) {
-        candidates.remove(key);
     }
 }
