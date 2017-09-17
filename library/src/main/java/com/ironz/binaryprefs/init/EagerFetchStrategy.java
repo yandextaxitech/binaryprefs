@@ -59,7 +59,11 @@ public final class EagerFetchStrategy implements FetchStrategy {
     }
 
     @Override
-    public Object getValue(String key) {
-        return cacheProvider.get(key);
+    public Object getValue(String key, Object defValue) {
+        Object o = cacheProvider.get(key);
+        if (o != null) {
+            return o;
+        }
+        return defValue;
     }
 }
