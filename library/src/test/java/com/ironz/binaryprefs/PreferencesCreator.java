@@ -77,7 +77,7 @@ public final class PreferencesCreator {
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
         ValueEncryption valueEncryption = new AesValueEncryption("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
-        FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, valueEncryption, keyEncryption);
+        FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
         TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();

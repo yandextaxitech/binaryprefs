@@ -11,23 +11,22 @@ import java.util.concurrent.locks.Lock;
 public final class MultiProcessTransaction implements FileTransaction {
 
     private final FileAdapter fileAdapter;
-    private final LockFactory lockFactory;
-    private final ValueEncryption valueEncryption;
+    private final Lock lock;
     private final KeyEncryption keyEncryption;
+    private final ValueEncryption valueEncryption;
 
     public MultiProcessTransaction(FileAdapter fileAdapter,
                                    LockFactory lockFactory,
-                                   ValueEncryption valueEncryption,
-                                   KeyEncryption keyEncryption) {
+                                   KeyEncryption keyEncryption,
+                                   ValueEncryption valueEncryption) {
         this.fileAdapter = fileAdapter;
-        this.lockFactory = lockFactory;
+        this.lock = lockFactory.getProcessLock();
         this.valueEncryption = valueEncryption;
         this.keyEncryption = keyEncryption;
     }
 
     @Override
     public List<TransactionElement> fetchAll() {
-        Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
             return fetchAllInternal();
@@ -38,7 +37,6 @@ public final class MultiProcessTransaction implements FileTransaction {
 
     @Override
     public Set<String> fetchNames() {
-        Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
             return fetchNamesInternal();
@@ -49,7 +47,6 @@ public final class MultiProcessTransaction implements FileTransaction {
 
     @Override
     public TransactionElement fetchOne(String name) {
-        Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
             return fetchOneInternal(name);
@@ -60,7 +57,6 @@ public final class MultiProcessTransaction implements FileTransaction {
 
     @Override
     public void commit(List<TransactionElement> elements) {
-        Lock lock = lockFactory.getProcessLock();
         lock.lock();
         try {
             commitInternal(elements);

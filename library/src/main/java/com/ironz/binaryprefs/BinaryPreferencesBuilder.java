@@ -232,7 +232,7 @@ public final class BinaryPreferencesBuilder {
         DirectoryProvider directoryProvider = new AndroidDirectoryProvider(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
-        FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, valueEncryption, keyEncryption);
+        FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, caches);
         TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
