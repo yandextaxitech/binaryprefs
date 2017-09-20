@@ -56,7 +56,7 @@ final class BinaryPreferences implements Preferences {
     }
 
     private void fetchCacheInternal() {
-        if (cacheProvider.keys().size() != 0) {
+        if (!cacheProvider.keys().isEmpty()) {
             return;
         }
         for (TransactionElement element : fileTransaction.fetchAll()) {
