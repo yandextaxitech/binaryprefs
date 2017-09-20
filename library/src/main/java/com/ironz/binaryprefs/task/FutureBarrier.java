@@ -19,22 +19,6 @@ public final class FutureBarrier {
     }
 
     /**
-     * Returns task execution result.
-     * Also this method will call exception handle method if task execution fails.
-     *
-     * @return {@code true} if task completed successfully {@code false} otherwise
-     */
-    public boolean completeBlocking() {
-        try {
-            future.get();
-            return true;
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return false;
-    }
-
-    /**
      * Complete task without exception handle and re-throws exception on higher level.
      */
     public void completeBlockingUnsafe() {
@@ -43,6 +27,22 @@ public final class FutureBarrier {
         } catch (Exception e) {
             throw new FileOperationException(e);
         }
+    }
+
+    /**
+     * Returns task execution result.
+     * Also this method will call exception handle method if task execution fails.
+     *
+     * @return status - {@code true} if task completed successfully {@code false} otherwise
+     */
+    public boolean completeBlockingWithStatus() {
+        try {
+            future.get();
+            return true;
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return false;
     }
 
     /**

@@ -213,16 +213,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public void apply() {
         writeLock.lock();
         try {
-            clearCache();
-            removeCache();
-            storeCache();
-            invalidate();
-            taskExecutor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    commitTransaction();
-                }
-            });
+            performTransaction();
         } finally {
             writeLock.unlock();
         }
@@ -232,20 +223,24 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public boolean commit() {
         writeLock.lock();
         try {
-            clearCache();
-            removeCache();
-            storeCache();
-            invalidate();
-            FutureBarrier barrier = taskExecutor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    commitTransaction();
-                }
-            });
-            return barrier.completeBlocking();
+            FutureBarrier futureBarrier = performTransaction();
+            return futureBarrier.completeBlockingWithStatus();
         } finally {
             writeLock.unlock();
         }
+    }
+
+    private FutureBarrier performTransaction() {
+        clearCache();
+        removeCache();
+        storeCache();
+        invalidate();
+        return taskExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                commitTransaction();
+            }
+        });
     }
 
     private void clearCache() {
