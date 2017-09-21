@@ -31,6 +31,8 @@ public final class BroadcastEventBridge implements EventBridge {
     private static final String PREFERENCE_VALUE = "preference_value";
     private static final String PREFERENCE_PROCESS_ID = "preference_process_id";
 
+    private static final int DEFAULT_PROCESS_ID = 0;
+
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
     private final Handler handler = new Handler();
@@ -115,7 +117,7 @@ public final class BroadcastEventBridge implements EventBridge {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
         }
-        if (processId == intent.getIntExtra(PREFERENCE_PROCESS_ID, 0)) {
+        if (processId == intent.getIntExtra(PREFERENCE_PROCESS_ID, DEFAULT_PROCESS_ID)) {
             return;
         }
 
@@ -148,7 +150,7 @@ public final class BroadcastEventBridge implements EventBridge {
         if (!prefName.equals(intent.getStringExtra(PREFERENCE_NAME))) {
             return;
         }
-        if (processId == intent.getIntExtra(PREFERENCE_PROCESS_ID, 0)) {
+        if (processId == intent.getIntExtra(PREFERENCE_PROCESS_ID, DEFAULT_PROCESS_ID)) {
             return;
         }
 
