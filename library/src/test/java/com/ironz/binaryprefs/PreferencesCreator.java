@@ -8,7 +8,7 @@ import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.encryption.XorKeyEncryption;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.ExceptionHandler;
-import com.ironz.binaryprefs.event.SimpleEventBridgeImpl;
+import com.ironz.binaryprefs.event.SimpleEventBridge;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
@@ -20,7 +20,7 @@ import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
-import com.ironz.binaryprefs.task.TestTaskExecutorImpl;
+import com.ironz.binaryprefs.task.TestTaskExecutor;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -79,11 +79,11 @@ public final class PreferencesCreator {
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
-        TaskExecutor executor = new TestTaskExecutorImpl(exceptionHandler);
+        TaskExecutor executor = new TestTaskExecutor(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = new SimpleEventBridgeImpl(name);
+        EventBridge eventsBridge = new SimpleEventBridge(name);
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,

@@ -10,13 +10,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Simple preference change listener bridge. Uses current thread for delivering all events.
  */
-public final class SimpleEventBridgeImpl implements EventBridge {
+public final class SimpleEventBridge implements EventBridge {
 
     private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
 
     private final List<OnSharedPreferenceChangeListener> listeners;
 
-    public SimpleEventBridgeImpl(String prefName) {
+    public SimpleEventBridge(String prefName) {
         this.listeners = initListeners(prefName);
     }
 

@@ -4,12 +4,12 @@ import com.ironz.binaryprefs.event.ExceptionHandler;
 
 import java.util.concurrent.*;
 
-public final class TestTaskExecutorImpl implements TaskExecutor {
+public final class TestTaskExecutor implements TaskExecutor {
 
     private final ExceptionHandler exceptionHandler;
     private final ExecutorService executor;
 
-    public TestTaskExecutorImpl(ExceptionHandler exceptionHandler) {
+    public TestTaskExecutor(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
         executor = currentThreadExecutorService();
     }
