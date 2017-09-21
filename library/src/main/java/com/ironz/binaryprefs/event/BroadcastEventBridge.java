@@ -107,8 +107,8 @@ public final class BroadcastEventBridge implements EventBridge {
     }
 
     private void subscribeReceivers() {
-        this.context.registerReceiver(updateReceiver, new IntentFilter(updateActionName));
-        this.context.registerReceiver(removeReceiver, new IntentFilter(removeActionName));
+        context.registerReceiver(updateReceiver, new IntentFilter(updateActionName));
+        context.registerReceiver(removeReceiver, new IntentFilter(removeActionName));
     }
 
     private void notifyUpdate(final Intent intent) {
