@@ -31,7 +31,6 @@ public final class PersistableObjectOutput implements DataOutput {
                                    LongSerializer longSerializer,
                                    ShortSerializer shortSerializer,
                                    StringSerializer stringSerializer) {
-
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
         this.charSerializer = charSerializer;
