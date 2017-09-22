@@ -26,6 +26,16 @@ public final class MultiProcessTransaction implements FileTransaction {
     }
 
     @Override
+    public void lock() {
+        lock.lock();
+    }
+
+    @Override
+    public void unlock() {
+        lock.unlock();
+    }
+
+    @Override
     public List<TransactionElement> fetchAll() {
         lock.lock();
         try {

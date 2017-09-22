@@ -9,6 +9,17 @@ import java.util.Set;
  * successful or rolled back to old values.
  */
 public interface FileTransaction {
+
+    /**
+     * Acquires global lock for current transaction. {@link #unlock()} - unlocks the current lock.
+     */
+    void lock();
+
+    /**
+     * Release global lock for current transaction which is acquired by {@link #lock()} method.
+     */
+    void unlock();
+
     /**
      * Retrieves all file adapter elements and creates {@code byte[]} elements by unique name.
      *
