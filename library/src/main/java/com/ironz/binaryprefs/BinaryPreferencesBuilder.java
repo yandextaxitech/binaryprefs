@@ -18,6 +18,8 @@ import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
+import com.ironz.binaryprefs.init.EagerFetchStrategy;
+import com.ironz.binaryprefs.init.FetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.migration.MigrateProcessor;
@@ -234,26 +236,35 @@ public final class BinaryPreferencesBuilder {
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, caches);
-        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
+        TaskExecutor taskExecutor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridge(
                 context,
                 name,
                 cacheProvider,
                 serializerFactory,
-                executor,
+                taskExecutor,
                 valueEncryption,
                 directoryProvider,
                 allListeners
         ) : new MainThreadEventBridge(name, allListeners);
 
+        FetchStrategy fetchStrategy = new EagerFetchStrategy(
+                lockFactory,
+                taskExecutor,
+                cacheProvider,
+                fileTransaction,
+                serializerFactory
+        );
+
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,
                 cacheProvider,
-                executor,
+                taskExecutor,
                 serializerFactory,
-                lockFactory
+                lockFactory,
+                fetchStrategy
         );
     }
 }

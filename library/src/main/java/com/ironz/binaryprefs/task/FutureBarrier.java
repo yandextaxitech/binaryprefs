@@ -30,6 +30,17 @@ public final class FutureBarrier {
     }
 
     /**
+     * Complete task with result returning without exception handle and re-throws exception on higher level.
+     */
+    public Object completeBlockingWithResultUnsafe() {
+        try {
+            return future.get();
+        } catch (Exception e) {
+            throw new FileOperationException(e);
+        }
+    }
+
+    /**
      * Returns task execution result.
      * Also this method will call exception handle method if task execution fails.
      *

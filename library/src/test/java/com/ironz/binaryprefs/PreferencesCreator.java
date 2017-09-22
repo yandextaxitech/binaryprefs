@@ -15,6 +15,8 @@ import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
 import com.ironz.binaryprefs.impl.TestUser;
+import com.ironz.binaryprefs.init.FetchStrategy;
+import com.ironz.binaryprefs.init.LazyFetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
@@ -79,18 +81,26 @@ public final class PreferencesCreator {
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
-        TaskExecutor executor = new TestTaskExecutor(exceptionHandler);
+        TaskExecutor taskExecutor = new TestTaskExecutor(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = new SimpleEventBridge(name);
+        FetchStrategy fetchStrategy = new LazyFetchStrategy(
+                lockFactory,
+                taskExecutor,
+                cacheProvider,
+                fileTransaction,
+                serializerFactory
+        );
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,
                 cacheProvider,
-                executor,
+                taskExecutor,
                 serializerFactory,
-                lockFactory
+                lockFactory,
+                fetchStrategy
         );
     }
 }
