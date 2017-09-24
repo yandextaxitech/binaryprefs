@@ -3,8 +3,8 @@ package com.ironz.binaryprefs.cache.candidates;
 import java.util.Set;
 
 /**
- * Describes contract which store, fetch and remove cache candidates
- * (key names which is candidates for file fetching)
+ * Describes contract which store, fetch and remove cache candidates.
+ * Cache candidates - this is a key names which is candidates for file fetching.
  */
 public interface CacheCandidateProvider {
     /**
