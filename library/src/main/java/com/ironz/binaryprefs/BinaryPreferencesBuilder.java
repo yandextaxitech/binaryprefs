@@ -278,6 +278,7 @@ public final class BinaryPreferencesBuilder {
         ) : new EagerFetchStrategy(
                 lockFactory,
                 taskExecutor,
+                cacheCandidateProvider,
                 cacheProvider,
                 fileTransaction,
                 serializerFactory

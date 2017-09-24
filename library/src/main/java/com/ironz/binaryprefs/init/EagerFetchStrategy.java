@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.init;
 
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
@@ -11,23 +12,27 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 public final class EagerFetchStrategy implements FetchStrategy {
 
     private final Lock readLock;
     private final TaskExecutor taskExecutor;
+    private final CacheCandidateProvider cacheCandidateProvider;
     private final CacheProvider cacheProvider;
     private final FileTransaction fileTransaction;
     private final SerializerFactory serializerFactory;
 
     public EagerFetchStrategy(LockFactory lockFactory,
                               TaskExecutor taskExecutor,
+                              CacheCandidateProvider cacheCandidateProvider,
                               CacheProvider cacheProvider,
                               FileTransaction fileTransaction,
                               SerializerFactory serializerFactory) {
         this.readLock = lockFactory.getReadLock();
         this.taskExecutor = taskExecutor;
+        this.cacheCandidateProvider = cacheCandidateProvider;
         this.cacheProvider = cacheProvider;
         this.fileTransaction = fileTransaction;
         this.serializerFactory = serializerFactory;
@@ -52,7 +57,7 @@ public final class EagerFetchStrategy implements FetchStrategy {
     private void fetchCacheInternal() {
         fileTransaction.lock();
         try {
-            if (cacheProvider.keys().size() != 0) {
+            if (shouldFetch()) {
                 return;
             }
             for (TransactionElement element : fileTransaction.fetchAll()) {
@@ -64,6 +69,12 @@ public final class EagerFetchStrategy implements FetchStrategy {
         } finally {
             fileTransaction.unlock();
         }
+    }
+
+    private boolean shouldFetch() {
+        Set<String> candidates = cacheCandidateProvider.keys();
+        Set<String> cacheKeys = cacheProvider.keys();
+        return !cacheKeys.containsAll(candidates);
     }
 
     @Override

@@ -48,20 +48,17 @@ public final class LazyFetchStrategy implements FetchStrategy {
 
     @Override
     public Object getValue(String key, Object defValue) {
-        fileTransaction.lock();
         readLock.lock();
         try {
             Object o = getInternal(key, defValue);
             return serializerFactory.redefineMutable(o);
         } finally {
             readLock.unlock();
-            fileTransaction.unlock();
         }
     }
 
     @Override
     public Map<String, Object> getAll() {
-        fileTransaction.lock();
         readLock.lock();
         try {
             Set<String> names = candidateProvider.keys();
@@ -73,7 +70,6 @@ public final class LazyFetchStrategy implements FetchStrategy {
             }
             return Collections.unmodifiableMap(clone);
         } finally {
-            fileTransaction.unlock();
             readLock.unlock();
         }
     }
@@ -94,13 +90,18 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (cached != null) {
             return cached;
         }
-        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return fetchObject(key);
-            }
-        });
-        return barrier.completeBlockingWithResultUnsafe();
+        fileTransaction.lock();
+        try {
+            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    return fetchObject(key);
+                }
+            });
+            return barrier.completeBlockingWithResultUnsafe();
+        } finally {
+            fileTransaction.unlock();
+        }
     }
 
     private Object getInternal(final String key, Object defValue) {
@@ -112,13 +113,18 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (!names.contains(key)) {
             return defValue;
         }
-        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return fetchObject(key);
-            }
-        });
-        return barrier.completeBlockingWihResult(defValue);
+        fileTransaction.lock();
+        try {
+            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    return fetchObject(key);
+                }
+            });
+            return barrier.completeBlockingWihResult(defValue);
+        } finally {
+            fileTransaction.unlock();
+        }
     }
 
     private Object fetchObject(String key) {
