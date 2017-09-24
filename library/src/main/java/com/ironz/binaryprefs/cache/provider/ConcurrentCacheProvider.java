@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.cache;
+package com.ironz.binaryprefs.cache.provider;
 
 import java.util.Collections;
 import java.util.Map;

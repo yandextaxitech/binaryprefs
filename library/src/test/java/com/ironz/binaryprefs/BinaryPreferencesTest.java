@@ -202,16 +202,23 @@ public final class BinaryPreferencesTest {
         String stringValue = "value";
         String booleanKey = boolean.class.getSimpleName().toLowerCase() + KEY_SUFFIX;
 
+        assertTrue(preferences.getAll().isEmpty());
+
         preferences.edit()
                 .putString(stringKey, stringValue)
                 .putBoolean(booleanKey, true)
                 .apply();
+
+        assertFalse(preferences.getAll().isEmpty());
 
         preferences.edit()
                 .clear()
                 .apply();
 
         Map<String, ?> all = preferences.getAll();
+
+        System.out.println(all.toString());
+
         assertTrue(all.isEmpty());
     }
 

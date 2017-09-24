@@ -5,7 +5,10 @@ import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.lock.LockFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 public final class MultiProcessTransaction implements FileTransaction {
@@ -37,42 +40,22 @@ public final class MultiProcessTransaction implements FileTransaction {
 
     @Override
     public List<TransactionElement> fetchAll() {
-        lock.lock();
-        try {
-            return fetchAllInternal();
-        } finally {
-            lock.unlock();
-        }
+        return fetchAllInternal();
     }
 
     @Override
     public Set<String> fetchNames() {
-        lock.lock();
-        try {
-            return fetchNamesInternal();
-        } finally {
-            lock.unlock();
-        }
+        return fetchNamesInternal();
     }
 
     @Override
     public TransactionElement fetchOne(String name) {
-        lock.lock();
-        try {
-            return fetchOneInternal(name);
-        } finally {
-            lock.unlock();
-        }
+        return fetchOneInternal(name);
     }
 
     @Override
     public void commit(List<TransactionElement> elements) {
-        lock.lock();
-        try {
-            commitInternal(elements);
-        } finally {
-            lock.unlock();
-        }
+        commitInternal(elements);
     }
 
     private List<TransactionElement> fetchAllInternal() {
@@ -85,28 +68,32 @@ public final class MultiProcessTransaction implements FileTransaction {
         return elements;
     }
 
-    private HashSet<String> fetchNamesInternal() {
+    private Set<String> fetchNamesInternal() {
         String[] names = fileAdapter.names();
-        List<String> list = Arrays.asList(names);
-        return new HashSet<>(list);
+        Set<String> temp = new HashSet<>();
+        for (String name : names) {
+            String decrypt = keyEncryption.decrypt(name);
+            temp.add(decrypt);
+        }
+        return temp;
     }
 
     private TransactionElement fetchOneInternal(String name) {
-        byte[] bytes = fileAdapter.fetch(name);
-        String encryptName = keyEncryption.decrypt(name);
-        byte[] decrypt = valueEncryption.decrypt(bytes);
-        return TransactionElement.createFetchElement(encryptName, decrypt);
+        String encryptName = keyEncryption.encrypt(name);
+        byte[] content = fileAdapter.fetch(encryptName);
+        byte[] decryptValue = valueEncryption.decrypt(content);
+        return TransactionElement.createFetchElement(name, decryptValue);
     }
 
     private void commitInternal(List<TransactionElement> elements) {
         for (TransactionElement element : elements) {
             int action = element.getAction();
             String name = element.getName();
+            byte[] value = element.getContent();
             String encryptedName = keyEncryption.encrypt(name);
-            byte[] content = element.getContent();
-            byte[] encrypt = valueEncryption.encrypt(content);
+            byte[] encryptedValue = valueEncryption.encrypt(value);
             if (action == TransactionElement.ACTION_UPDATE) {
-                fileAdapter.save(encryptedName, encrypt);
+                fileAdapter.save(encryptedName, encryptedValue);
             }
             if (action == TransactionElement.ACTION_REMOVE) {
                 fileAdapter.remove(encryptedName);

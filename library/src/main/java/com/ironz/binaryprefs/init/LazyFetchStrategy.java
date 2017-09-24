@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.init;
 
-import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -51,6 +51,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
         readLock.lock();
         try {
             Set<String> names = fileTransaction.fetchNames();
+            System.out.println(names);
             HashMap<String, Object> clone = new HashMap<>(names.size());
             for (String name : names) {
                 Object o = getInternal(name);
@@ -79,18 +80,13 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (cached != null) {
             return cached;
         }
-        fileTransaction.unlock();
-        try {
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return fetchObject(key);
-                }
-            });
-            return barrier.completeBlockingWithResultUnsafe();
-        } finally {
-            fileTransaction.unlock();
-        }
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return fetchObject(key);
+            }
+        });
+        return barrier.completeBlockingWithResultUnsafe();
     }
 
     private Object getInternal(final String key, Object defValue) {
@@ -102,25 +98,25 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (!names.contains(key)) {
             return defValue;
         }
-        fileTransaction.unlock();
-        try {
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return fetchObject(key);
-                }
-            });
-            return barrier.completeBlockingWihResult(defValue);
-        } finally {
-            fileTransaction.unlock();
-        }
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return fetchObject(key);
+            }
+        });
+        return barrier.completeBlockingWihResult(defValue);
     }
 
     private Object fetchObject(String key) {
-        TransactionElement element = fileTransaction.fetchOne(key);
-        byte[] bytes = element.getContent();
-        Object deserialize = serializerFactory.deserialize(key, bytes);
-        cacheProvider.put(key, deserialize);
-        return deserialize;
+        fileTransaction.unlock();
+        try {
+            TransactionElement element = fileTransaction.fetchOne(key);
+            byte[] bytes = element.getContent();
+            Object deserialize = serializerFactory.deserialize(key, bytes);
+            cacheProvider.put(key, deserialize);
+            return deserialize;
+        } finally {
+            fileTransaction.unlock();
+        }
     }
 }

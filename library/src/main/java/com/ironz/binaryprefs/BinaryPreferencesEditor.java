@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs;
 
-import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.exception.TransactionInvalidatedException;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
@@ -223,8 +223,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public boolean commit() {
         writeLock.lock();
         try {
-            FutureBarrier futureBarrier = performTransaction();
-            return futureBarrier.completeBlockingWithStatus();
+            FutureBarrier barrier = performTransaction();
+            return barrier.completeBlockingWithStatus();
         } finally {
             writeLock.unlock();
         }

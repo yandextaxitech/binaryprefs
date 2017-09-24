@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs;
 
-import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.OnSharedPreferenceChangeListenerWrapper;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;

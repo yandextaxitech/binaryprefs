@@ -4,7 +4,7 @@ import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
-import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.serialization.SerializerFactory;

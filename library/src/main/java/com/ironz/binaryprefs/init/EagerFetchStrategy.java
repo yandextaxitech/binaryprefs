@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs.init;
 
-import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
@@ -50,14 +50,19 @@ public final class EagerFetchStrategy implements FetchStrategy {
     }
 
     private void fetchCacheInternal() {
-        if (cacheProvider.keys().size() != 0) {
-            return;
-        }
-        for (TransactionElement element : fileTransaction.fetchAll()) {
-            String name = element.getName();
-            byte[] bytes = element.getContent();
-            Object o = serializerFactory.deserialize(name, bytes);
-            cacheProvider.put(name, o);
+        fileTransaction.lock();
+        try {
+            if (cacheProvider.keys().size() != 0) {
+                return;
+            }
+            for (TransactionElement element : fileTransaction.fetchAll()) {
+                String name = element.getName();
+                byte[] bytes = element.getContent();
+                Object o = serializerFactory.deserialize(name, bytes);
+                cacheProvider.put(name, o);
+            }
+        } finally {
+            fileTransaction.unlock();
         }
     }
 

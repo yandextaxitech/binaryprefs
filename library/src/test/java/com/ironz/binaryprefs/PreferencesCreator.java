@@ -1,7 +1,7 @@
 package com.ironz.binaryprefs;
 
-import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.cache.ConcurrentCacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.ConcurrentCacheProvider;
 import com.ironz.binaryprefs.encryption.AesValueEncryption;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.encryption.ValueEncryption;

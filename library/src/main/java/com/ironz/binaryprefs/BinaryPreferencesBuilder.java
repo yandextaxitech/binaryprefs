@@ -3,8 +3,8 @@ package com.ironz.binaryprefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
-import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.cache.ConcurrentCacheProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.ConcurrentCacheProvider;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.event.BroadcastEventBridge;
@@ -18,8 +18,8 @@ import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
-import com.ironz.binaryprefs.init.EagerFetchStrategy;
 import com.ironz.binaryprefs.init.FetchStrategy;
+import com.ironz.binaryprefs.init.LazyFetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.migration.MigrateProcessor;
@@ -249,7 +249,7 @@ public final class BinaryPreferencesBuilder {
                 allListeners
         ) : new MainThreadEventBridge(name, allListeners);
 
-        FetchStrategy fetchStrategy = new EagerFetchStrategy(
+        FetchStrategy fetchStrategy = new LazyFetchStrategy(
                 lockFactory,
                 taskExecutor,
                 cacheProvider,
