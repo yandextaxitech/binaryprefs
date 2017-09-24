@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.exception.TransactionInvalidatedException;
@@ -27,6 +28,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
     private final CacheProvider cacheProvider;
+    private final CacheCandidateProvider candidateProvider;
     private final Lock writeLock;
 
     private boolean clear;
@@ -37,12 +39,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
                             TaskExecutor taskExecutor,
                             SerializerFactory serializerFactory,
                             CacheProvider cacheProvider,
+                            CacheCandidateProvider candidateProvider,
                             Lock writeLock) {
         this.fileTransaction = fileTransaction;
         this.bridge = bridge;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
         this.cacheProvider = cacheProvider;
+        this.candidateProvider = candidateProvider;
         this.writeLock = writeLock;
     }
 
@@ -248,6 +252,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             return;
         }
         for (String name : cacheProvider.keys()) {
+            candidateProvider.remove(name);
             cacheProvider.remove(name);
         }
     }
@@ -257,6 +262,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             return;
         }
         for (String name : removeSet) {
+            candidateProvider.remove(name);
             cacheProvider.remove(name);
         }
     }
@@ -265,6 +271,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         for (String name : strategyMap.keySet()) {
             SerializationStrategy strategy = strategyMap.get(name);
             Object value = strategy.getValue();
+            candidateProvider.put(name);
             cacheProvider.put(name, value);
         }
     }

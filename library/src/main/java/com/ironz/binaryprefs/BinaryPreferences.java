@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.OnSharedPreferenceChangeListenerWrapper;
@@ -18,6 +19,7 @@ final class BinaryPreferences implements Preferences {
 
     private final FileTransaction fileTransaction;
     private final EventBridge eventsBridge;
+    private final CacheCandidateProvider cacheCandidateProvider;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
@@ -27,19 +29,21 @@ final class BinaryPreferences implements Preferences {
 
     BinaryPreferences(FileTransaction fileTransaction,
                       EventBridge eventsBridge,
+                      CacheCandidateProvider cacheCandidateProvider,
                       CacheProvider cacheProvider,
                       TaskExecutor taskExecutor,
                       SerializerFactory serializerFactory,
                       LockFactory lockFactory,
                       FetchStrategy fetchStrategy) {
         this.fileTransaction = fileTransaction;
-        this.fetchStrategy = fetchStrategy;
         this.eventsBridge = eventsBridge;
+        this.cacheCandidateProvider = cacheCandidateProvider;
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
         this.readLock = lockFactory.getReadLock();
         this.writeLock = lockFactory.getWriteLock();
+        this.fetchStrategy = fetchStrategy;
     }
 
     @Override
@@ -195,6 +199,7 @@ final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
+                    cacheCandidateProvider,
                     writeLock
             );
         } finally {

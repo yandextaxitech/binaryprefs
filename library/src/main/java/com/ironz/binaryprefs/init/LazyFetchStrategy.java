@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.init;
 
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
@@ -19,39 +20,51 @@ public final class LazyFetchStrategy implements FetchStrategy {
 
     private final Lock readLock;
     private final TaskExecutor taskExecutor;
+    private final CacheCandidateProvider candidateProvider;
     private final CacheProvider cacheProvider;
     private final FileTransaction fileTransaction;
     private final SerializerFactory serializerFactory;
 
     public LazyFetchStrategy(LockFactory lockFactory,
                              TaskExecutor taskExecutor,
+                             CacheCandidateProvider candidateProvider,
                              CacheProvider cacheProvider,
                              FileTransaction fileTransaction,
                              SerializerFactory serializerFactory) {
         this.readLock = lockFactory.getReadLock();
         this.taskExecutor = taskExecutor;
+        this.candidateProvider = candidateProvider;
         this.cacheProvider = cacheProvider;
         this.fileTransaction = fileTransaction;
         this.serializerFactory = serializerFactory;
+        init();
+    }
+
+    private void init() {
+        for (String name : fileTransaction.fetchNames()) {
+            candidateProvider.put(name);
+        }
     }
 
     @Override
     public Object getValue(String key, Object defValue) {
+        fileTransaction.lock();
         readLock.lock();
         try {
             Object o = getInternal(key, defValue);
             return serializerFactory.redefineMutable(o);
         } finally {
             readLock.unlock();
+            fileTransaction.unlock();
         }
     }
 
     @Override
     public Map<String, Object> getAll() {
+        fileTransaction.lock();
         readLock.lock();
         try {
-            Set<String> names = fileTransaction.fetchNames();
-            System.out.println(names);
+            Set<String> names = candidateProvider.keys();
             HashMap<String, Object> clone = new HashMap<>(names.size());
             for (String name : names) {
                 Object o = getInternal(name);
@@ -60,6 +73,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
             }
             return Collections.unmodifiableMap(clone);
         } finally {
+            fileTransaction.unlock();
             readLock.unlock();
         }
     }
@@ -68,7 +82,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
     public boolean contains(String key) {
         readLock.lock();
         try {
-            Set<String> names = fileTransaction.fetchNames();
+            Set<String> names = candidateProvider.keys();
             return names.contains(key) && cacheProvider.contains(key);
         } finally {
             readLock.unlock();
@@ -94,7 +108,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (cached != null) {
             return cached;
         }
-        Set<String> names = fileTransaction.fetchNames();
+        Set<String> names = candidateProvider.keys();
         if (!names.contains(key)) {
             return defValue;
         }
@@ -108,15 +122,10 @@ public final class LazyFetchStrategy implements FetchStrategy {
     }
 
     private Object fetchObject(String key) {
-        fileTransaction.unlock();
-        try {
-            TransactionElement element = fileTransaction.fetchOne(key);
-            byte[] bytes = element.getContent();
-            Object deserialize = serializerFactory.deserialize(key, bytes);
-            cacheProvider.put(key, deserialize);
-            return deserialize;
-        } finally {
-            fileTransaction.unlock();
-        }
+        TransactionElement element = fileTransaction.fetchOne(key);
+        byte[] bytes = element.getContent();
+        Object deserialize = serializerFactory.deserialize(key, bytes);
+        cacheProvider.put(key, deserialize);
+        return deserialize;
     }
 }

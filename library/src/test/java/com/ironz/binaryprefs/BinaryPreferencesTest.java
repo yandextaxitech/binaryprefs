@@ -217,8 +217,6 @@ public final class BinaryPreferencesTest {
 
         Map<String, ?> all = preferences.getAll();
 
-        System.out.println(all.toString());
-
         assertTrue(all.isEmpty());
     }
 

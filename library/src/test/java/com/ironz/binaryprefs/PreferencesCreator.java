@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs;
 
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
+import com.ironz.binaryprefs.cache.candidates.ConcurrentCacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.cache.provider.ConcurrentCacheProvider;
 import com.ironz.binaryprefs.encryption.AesValueEncryption;
@@ -27,6 +29,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -64,15 +67,17 @@ public final class PreferencesCreator {
 
         Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
         Map<String, Lock> processLocks = new ConcurrentHashMap<>();
+        Map<String, Set<String>> allCacheCandidates = new ConcurrentHashMap<>();
         Map<String, Map<String, Object>> allCaches = new ConcurrentHashMap<>();
 
-        return create(name, directoryProvider, locks, processLocks, allCaches);
+        return create(name, directoryProvider, locks, processLocks, allCacheCandidates, allCaches);
     }
 
     Preferences create(String name,
                        DirectoryProvider directoryProvider,
                        Map<String, ReadWriteLock> locks,
                        Map<String, Lock> processLocks,
+                       Map<String, Set<String>> allCacheCandidates,
                        Map<String, Map<String, Object>> allCaches) {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
@@ -80,6 +85,7 @@ public final class PreferencesCreator {
         ValueEncryption valueEncryption = new AesValueEncryption("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
+        CacheCandidateProvider candidateProvider = new ConcurrentCacheCandidateProvider(name, allCacheCandidates);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
         TaskExecutor taskExecutor = new TestTaskExecutor(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
@@ -89,6 +95,7 @@ public final class PreferencesCreator {
         FetchStrategy fetchStrategy = new LazyFetchStrategy(
                 lockFactory,
                 taskExecutor,
+                candidateProvider,
                 cacheProvider,
                 fileTransaction,
                 serializerFactory
@@ -96,6 +103,7 @@ public final class PreferencesCreator {
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,
+                candidateProvider,
                 cacheProvider,
                 taskExecutor,
                 serializerFactory,
