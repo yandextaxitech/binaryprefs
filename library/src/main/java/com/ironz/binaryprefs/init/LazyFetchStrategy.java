@@ -37,10 +37,10 @@ public final class LazyFetchStrategy implements FetchStrategy {
         this.cacheProvider = cacheProvider;
         this.fileTransaction = fileTransaction;
         this.serializerFactory = serializerFactory;
-        init();
+        fetchCacheCandidates();
     }
 
-    private void init() {
+    private void fetchCacheCandidates() {
         for (String name : fileTransaction.fetchNames()) {
             candidateProvider.put(name);
         }
