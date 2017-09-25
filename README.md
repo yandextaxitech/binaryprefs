@@ -115,6 +115,21 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Default is print handler which performs `e.printStacktrace()` when
 exception event are comes.
 
+#### Enable eager in-memory cache mode
+
+Default in-memory cache mode is lazy, which is fills up cache only after
+fetching element through `get*` methods. You can enable eager cache for
+startup cache fetching:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .lazyMemoryCache(false)
+                .build();
+```
+
+Please note if you hae a lot of stored data you can regress of startup
+time performance. Use this feature with caution.
+
 #### Custom save directory
 
 You can save preferences into an custom directory:
