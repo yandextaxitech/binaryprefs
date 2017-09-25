@@ -5,9 +5,8 @@ public final class TransactionElement {
     private static final byte[] EMPTY_CONTENT = {};
 
     private static final int ACTION_FETCH = 1;
-    private static final int ACTION_NAME = 2;
-    public static final int ACTION_UPDATE = 3;
-    public static final int ACTION_REMOVE = 4;
+    public static final int ACTION_UPDATE = 2;
+    public static final int ACTION_REMOVE = 3;
 
     private final int action;
     private final String name;
@@ -15,10 +14,6 @@ public final class TransactionElement {
 
     static TransactionElement createFetchElement(String name, byte[] content) {
         return new TransactionElement(ACTION_FETCH, name, content);
-    }
-
-    static TransactionElement createNameElement(String name) {
-        return new TransactionElement(ACTION_NAME, name, EMPTY_CONTENT);
     }
 
     public static TransactionElement createUpdateElement(String name, byte[] content) {
