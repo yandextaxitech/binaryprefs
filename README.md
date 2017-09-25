@@ -127,7 +127,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Please note if you hae a lot of stored data you can regress of startup
+Please note if you have a lot of stored data you can regress your startup
 time performance. Use this feature with caution.
 
 #### Custom save directory
