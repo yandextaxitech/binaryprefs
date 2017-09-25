@@ -1,9 +1,13 @@
 package com.ironz.binaryprefs.event;
 
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Process;
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
@@ -39,6 +43,7 @@ public final class BroadcastEventBridge implements EventBridge {
 
     private final Context context;
     private final String prefName;
+    private final CacheCandidateProvider cacheCandidateProvider;
     private final CacheProvider cacheProvider;
     private final SerializerFactory serializerFactory;
     private final TaskExecutor taskExecutor;
@@ -52,14 +57,16 @@ public final class BroadcastEventBridge implements EventBridge {
 
     public BroadcastEventBridge(Context context,
                                 String prefName,
+                                CacheCandidateProvider cacheCandidateProvider,
                                 CacheProvider cacheProvider,
                                 SerializerFactory serializerFactory,
                                 TaskExecutor taskExecutor,
                                 ValueEncryption valueEncryption,
                                 DirectoryProvider directoryProvider,
-                                Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners) {
+                                Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         this.context = context;
         this.prefName = prefName;
+        this.cacheCandidateProvider = cacheCandidateProvider;
         this.cacheProvider = cacheProvider;
         this.serializerFactory = serializerFactory;
         this.taskExecutor = taskExecutor;
@@ -205,11 +212,13 @@ public final class BroadcastEventBridge implements EventBridge {
     }
 
     private void update(String key, Object value) {
+        cacheCandidateProvider.put(key);
         cacheProvider.put(key, value);
         notifyListenersHandler(key);
     }
 
     private void remove(String key) {
+        cacheCandidateProvider.remove(key);
         cacheProvider.remove(key);
         notifyListenersHandler(key);
     }

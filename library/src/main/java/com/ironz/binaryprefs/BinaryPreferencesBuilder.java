@@ -260,6 +260,7 @@ public final class BinaryPreferencesBuilder {
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridge(
                 context,
                 name,
+                cacheCandidateProvider,
                 cacheProvider,
                 serializerFactory,
                 taskExecutor,
