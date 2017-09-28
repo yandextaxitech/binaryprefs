@@ -41,8 +41,13 @@ public final class LazyFetchStrategy implements FetchStrategy {
     }
 
     private void fetchCacheCandidates() {
-        for (String name : fileTransaction.fetchNames()) {
-            candidateProvider.put(name);
+        readLock.lock();
+        try {
+            for (String name : fileTransaction.fetchNames()) {
+                candidateProvider.put(name);
+            }
+        } finally {
+            readLock.unlock();
         }
     }
 
