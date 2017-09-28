@@ -30,6 +30,18 @@ public final class FutureBarrier {
     }
 
     /**
+     * Complete task with exception handle and returns result or default value for this task.
+     */
+    public Object completeBlockingWihResult(Object defValue) {
+        try {
+            return future.get();
+        } catch (Exception e) {
+            exceptionHandler.handle(e);
+        }
+        return defValue;
+    }
+
+    /**
      * Complete task with result returning without exception handle and re-throws exception on higher level.
      */
     public Object completeBlockingWithResultUnsafe() {
@@ -54,17 +66,5 @@ public final class FutureBarrier {
             exceptionHandler.handle(e);
         }
         return false;
-    }
-
-    /**
-     * Complete task with exception handle and returns result or default value for this task.
-     */
-    public Object completeBlockingWihResult(Object defValue) {
-        try {
-            return future.get();
-        } catch (Exception e) {
-            exceptionHandler.handle(e);
-        }
-        return defValue;
     }
 }
