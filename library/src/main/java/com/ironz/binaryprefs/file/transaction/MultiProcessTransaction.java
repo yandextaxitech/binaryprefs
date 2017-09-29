@@ -89,10 +89,10 @@ public final class MultiProcessTransaction implements FileTransaction {
         for (TransactionElement element : elements) {
             int action = element.getAction();
             String name = element.getName();
-            byte[] value = element.getContent();
             String encryptedName = keyEncryption.encrypt(name);
-            byte[] encryptedValue = valueEncryption.encrypt(value);
             if (action == TransactionElement.ACTION_UPDATE) {
+                byte[] value = element.getContent();
+                byte[] encryptedValue = valueEncryption.encrypt(value);
                 fileAdapter.save(encryptedName, encryptedValue);
             }
             if (action == TransactionElement.ACTION_REMOVE) {

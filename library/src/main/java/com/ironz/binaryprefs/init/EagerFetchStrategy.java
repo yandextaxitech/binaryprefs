@@ -19,20 +19,20 @@ public final class EagerFetchStrategy implements FetchStrategy {
 
     private final Lock readLock;
     private final TaskExecutor taskExecutor;
-    private final CacheCandidateProvider cacheCandidateProvider;
+    private final CacheCandidateProvider candidateProvider;
     private final CacheProvider cacheProvider;
     private final FileTransaction fileTransaction;
     private final SerializerFactory serializerFactory;
 
     public EagerFetchStrategy(LockFactory lockFactory,
                               TaskExecutor taskExecutor,
-                              CacheCandidateProvider cacheCandidateProvider,
+                              CacheCandidateProvider candidateProvider,
                               CacheProvider cacheProvider,
                               FileTransaction fileTransaction,
                               SerializerFactory serializerFactory) {
         this.readLock = lockFactory.getReadLock();
         this.taskExecutor = taskExecutor;
-        this.cacheCandidateProvider = cacheCandidateProvider;
+        this.candidateProvider = candidateProvider;
         this.cacheProvider = cacheProvider;
         this.fileTransaction = fileTransaction;
         this.serializerFactory = serializerFactory;
@@ -40,6 +40,7 @@ public final class EagerFetchStrategy implements FetchStrategy {
     }
 
     private void fetchCache() {
+        fileTransaction.lock();
         readLock.lock();
         try {
             FutureBarrier barrier = taskExecutor.submit(new Runnable() {
@@ -50,29 +51,26 @@ public final class EagerFetchStrategy implements FetchStrategy {
             });
             barrier.completeBlockingUnsafe();
         } finally {
+            fileTransaction.unlock();
             readLock.unlock();
         }
     }
 
     private void fetchCacheInternal() {
-        fileTransaction.lock();
-        try {
-            if (shouldFetch()) {
-                return;
-            }
-            for (TransactionElement element : fileTransaction.fetchAll()) {
-                String name = element.getName();
-                byte[] bytes = element.getContent();
-                Object o = serializerFactory.deserialize(name, bytes);
-                cacheProvider.put(name, o);
-            }
-        } finally {
-            fileTransaction.unlock();
+        if (!shouldFetch()) {
+            return;
+        }
+        for (TransactionElement element : fileTransaction.fetchAll()) {
+            String name = element.getName();
+            byte[] bytes = element.getContent();
+            Object o = serializerFactory.deserialize(name, bytes);
+            cacheProvider.put(name, o);
+            candidateProvider.put(name);
         }
     }
 
     private boolean shouldFetch() {
-        Set<String> candidates = cacheCandidateProvider.keys();
+        Set<String> candidates = candidateProvider.keys();
         Set<String> cacheKeys = cacheProvider.keys();
         return !cacheKeys.containsAll(candidates);
     }

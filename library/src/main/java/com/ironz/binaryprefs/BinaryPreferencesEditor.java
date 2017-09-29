@@ -31,7 +31,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private final CacheCandidateProvider candidateProvider;
     private final Lock writeLock;
 
-    private boolean clear;
     private boolean invalidated;
 
     BinaryPreferencesEditor(FileTransaction fileTransaction,
@@ -206,7 +205,8 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public PreferencesEditor clear() {
         writeLock.lock();
         try {
-            clear = true;
+            Set<String> all = candidateProvider.keys();
+            removeSet.addAll(all);
             return this;
         } finally {
             writeLock.unlock();
@@ -235,7 +235,6 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private FutureBarrier performTransaction() {
-        clearCache();
         removeCache();
         storeCache();
         invalidate();
@@ -247,20 +246,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         });
     }
 
-    private void clearCache() {
-        if (!clear) {
-            return;
-        }
-        for (String name : cacheProvider.keys()) {
-            candidateProvider.remove(name);
-            cacheProvider.remove(name);
-        }
-    }
-
     private void removeCache() {
-        if (clear) {
-            return;
-        }
         for (String name : removeSet) {
             candidateProvider.remove(name);
             cacheProvider.remove(name);
@@ -290,30 +276,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     private List<TransactionElement> createTransaction() {
-        List<TransactionElement> elements = new ArrayList<>();
-        elements.addAll(clearPersistence());
+        List<TransactionElement> elements = new LinkedList<>();
         elements.addAll(removePersistence());
         elements.addAll(storePersistence());
         return elements;
     }
 
-    private List<TransactionElement> clearPersistence() {
-        if (!clear) {
-            return Collections.emptyList();
-        }
-        List<TransactionElement> elements = new ArrayList<>();
-        for (String name : cacheProvider.keys()) {
-            TransactionElement e = TransactionElement.createRemovalElement(name);
-            elements.add(e);
-        }
-        return elements;
-    }
-
     private List<TransactionElement> removePersistence() {
-        if (clear) {
-            return Collections.emptyList();
-        }
-        List<TransactionElement> elements = new ArrayList<>();
+        List<TransactionElement> elements = new LinkedList<>();
         for (String name : removeSet) {
             TransactionElement e = TransactionElement.createRemovalElement(name);
             elements.add(e);
@@ -323,7 +293,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
 
     private List<TransactionElement> storePersistence() {
         Set<String> strings = strategyMap.keySet();
-        List<TransactionElement> elements = new ArrayList<>(strings.size());
+        List<TransactionElement> elements = new LinkedList<>();
         for (String name : strings) {
             SerializationStrategy strategy = strategyMap.get(name);
             byte[] bytes = strategy.serialize();
