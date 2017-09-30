@@ -23,7 +23,7 @@ android {
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError true
     }
 
     testOptions.unitTests.all {
@@ -62,6 +62,7 @@ artifactory {
             username = project.findProperty("artifactory_user") ?: ""
             password = project.findProperty("artifactory_password") ?: ""
         }
+        //noinspection GroovyAssignabilityCheck
         defaults {
             publishConfigs('archives')
             publishPom = true
