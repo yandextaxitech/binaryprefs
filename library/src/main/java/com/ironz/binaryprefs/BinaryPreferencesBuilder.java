@@ -47,6 +47,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 public final class BinaryPreferencesBuilder {
 
     private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
+    private static final String IPC_MODE_WITH_LAZY_MESSAGE = "IPC mode cannot be used with lazy in-memory cache strategy!";
 
     /**
      * Default name of preferences which name has not been defined.
@@ -241,6 +242,9 @@ public final class BinaryPreferencesBuilder {
     public Preferences build() {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
+        }
+        if (lazyMemoryCache && supportInterProcess) {
+            throw new UnsupportedOperationException(IPC_MODE_WITH_LAZY_MESSAGE);
         }
         BinaryPreferences preferences = createInstance();
         migrateProcessor.migrateTo(preferences);
