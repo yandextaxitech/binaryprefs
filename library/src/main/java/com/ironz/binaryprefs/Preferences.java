@@ -37,8 +37,8 @@ public interface Preferences extends SharedPreferences {
      * @return Returns a map containing a list of pairs key/value representing
      * the preferences
      * @deprecated Please use {@link #keys()} method to iterate all values.
-     * This method dramatically decreases performance because performs recreation
-     * of full of map and all values inside by immutability reasons.
+     * This method dramatically decreases performance because performs full map
+     * recreation and all values inside by immutability reasons.
      */
     @Override
     @Deprecated
@@ -47,7 +47,7 @@ public interface Preferences extends SharedPreferences {
     /**
      * Retrieve all keys set for values which exists in current preferences set.
      *
-     * @return a set containing al set of key representing the preferences
+     * @return a set containing all set of key representing the preferences
      */
     Set<String> keys();
 

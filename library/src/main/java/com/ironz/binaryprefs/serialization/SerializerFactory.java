@@ -5,6 +5,9 @@ import com.ironz.binaryprefs.serialization.serializer.*;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Contains all serializers which possible for data transformation.
  * This is non-public api class.
@@ -93,9 +96,14 @@ public final class SerializerFactory {
         throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
     }
 
-    public Object redefinePersistable(Object o) {
+    public Object redefineMutable(Object o) {
         if (o instanceof Persistable) {
             return ((Persistable) o).deepClone();
+        }
+        if (o instanceof Set) {
+            //noinspection unchecked
+            Set<String> strings = (Set<String>) o;
+            return new HashSet<>(strings);
         }
         return o;
     }

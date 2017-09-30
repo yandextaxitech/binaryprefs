@@ -1,15 +1,30 @@
 package com.ironz.binaryprefs.task;
 
+import java.util.concurrent.Callable;
+
 /**
  * Abstraction for task running. You should guarantee sequential task execution.
  */
 public interface TaskExecutor {
     /**
-     * After submitting executor adds this task in queue and runs later.
-     * Tasks guaranteed to execute sequentially.
+     * Submits runnable into task executor.
+     * After submitting executor adds this task in
+     * queue and runs later, tasks guaranteed
+     * to be executed sequentially.
      *
      * @param runnable instance for task execution
      * @return future barrier for task blocking
      */
     FutureBarrier submit(Runnable runnable);
+
+    /**
+     * Submits callable into task executor.
+     * After submitting executor adds this task in
+     * queue and runs later, tasks guaranteed
+     * to be executed sequentially.
+     *
+     * @param callable instance for task execution
+     * @return future barrier for task blocking
+     */
+    FutureBarrier submit(Callable<?> callable);
 }

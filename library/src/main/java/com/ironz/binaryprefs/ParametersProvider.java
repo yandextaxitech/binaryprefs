@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.Lock;
@@ -14,6 +15,7 @@ final class ParametersProvider {
     private static final Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
     private static final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
     private static final Map<String, Map<String, Object>> caches = new ConcurrentHashMap<>();
+    private static final Map<String, Set<String>> cacheCandidates = new ConcurrentHashMap<>();
     private static final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
     private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
 
@@ -35,5 +37,9 @@ final class ParametersProvider {
 
     Map<String, ExecutorService> getExecutors() {
         return executors;
+    }
+
+    Map<String, Set<String>> getCacheCandidates() {
+        return cacheCandidates;
     }
 }

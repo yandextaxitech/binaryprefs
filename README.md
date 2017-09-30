@@ -34,7 +34,7 @@ cache works between processes)
 
 #### Add in project
 
-Add jitpack to repositories closure. For example, you can add it to root
+Add jitpack to repositories closure. For example, you should add it to root
 of `build.gradle`:
 
 ```groovy
@@ -114,6 +114,21 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 
 Default is print handler which performs `e.printStacktrace()` when
 exception event are comes.
+
+#### Enable eager in-memory cache mode
+
+Default in-memory cache mode is lazy, which is fills up cache only after
+fetching element through `get*` methods. You can enable eager cache for
+startup cache fetching:
+
+```java
+Preferences preferences = new BinaryPreferencesBuilder(context)
+                .lazyMemoryCache(false)
+                .build();
+```
+
+Please note if you have a lot of stored data you can regress your startup
+time performance. Use this feature with caution.
 
 #### Custom save directory
 

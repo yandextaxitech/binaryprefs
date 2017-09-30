@@ -3,23 +3,28 @@ package com.ironz.binaryprefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
-import com.ironz.binaryprefs.cache.CacheProvider;
-import com.ironz.binaryprefs.cache.ConcurrentCacheProviderImpl;
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
+import com.ironz.binaryprefs.cache.candidates.ConcurrentCacheCandidateProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
+import com.ironz.binaryprefs.cache.provider.ConcurrentCacheProvider;
 import com.ironz.binaryprefs.encryption.KeyEncryption;
 import com.ironz.binaryprefs.encryption.ValueEncryption;
-import com.ironz.binaryprefs.event.BroadcastEventBridgeImpl;
+import com.ironz.binaryprefs.event.BroadcastEventBridge;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.ExceptionHandler;
-import com.ironz.binaryprefs.event.MainThreadEventBridgeImpl;
+import com.ironz.binaryprefs.event.MainThreadEventBridge;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
-import com.ironz.binaryprefs.file.directory.AndroidDirectoryProviderImpl;
+import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
-import com.ironz.binaryprefs.file.transaction.MultiProcessTransactionImpl;
+import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
+import com.ironz.binaryprefs.init.EagerFetchStrategy;
+import com.ironz.binaryprefs.init.FetchStrategy;
+import com.ironz.binaryprefs.init.LazyFetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
-import com.ironz.binaryprefs.lock.SimpleLockFactoryImpl;
+import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.migration.MigrateProcessor;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
@@ -30,6 +35,7 @@ import com.ironz.binaryprefs.task.TaskExecutor;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -41,6 +47,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 public final class BinaryPreferencesBuilder {
 
     private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
+    private static final String IPC_MODE_WITH_LAZY_MESSAGE = "IPC mode cannot be used with lazy in-memory cache strategy!";
 
     /**
      * Default name of preferences which name has not been defined.
@@ -54,6 +61,7 @@ public final class BinaryPreferencesBuilder {
     private final Map<String, Lock> processLocks = parametersProvider.getProcessLocks();
     private final Map<String, ExecutorService> executors = parametersProvider.getExecutors();
     private final Map<String, Map<String, Object>> caches = parametersProvider.getCaches();
+    private final Map<String, Set<String>> cacheCandidates = parametersProvider.getCacheCandidates();
     private final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = parametersProvider.getAllListeners();
 
     private final Context context;
@@ -63,6 +71,7 @@ public final class BinaryPreferencesBuilder {
     private File baseDir;
     private String name = DEFAULT_NAME;
     private boolean supportInterProcess = false;
+    private boolean lazyMemoryCache = true;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
@@ -135,6 +144,18 @@ public final class BinaryPreferencesBuilder {
      */
     public BinaryPreferencesBuilder supportInterProcess(boolean value) {
         this.supportInterProcess = value;
+        return this;
+    }
+
+    /**
+     * Defines usage of lazy in-memory cache fetching mechanism for improving initialization speed.
+     * Default value is {@code true}.
+     *
+     * @param value {@code true} if would use lazy, {@code false} otherwise
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder lazyMemoryCache(boolean value) {
+        this.lazyMemoryCache = value;
         return this;
     }
 
@@ -222,6 +243,9 @@ public final class BinaryPreferencesBuilder {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
+        if (lazyMemoryCache && supportInterProcess) {
+            throw new UnsupportedOperationException(IPC_MODE_WITH_LAZY_MESSAGE);
+        }
         BinaryPreferences preferences = createInstance();
         migrateProcessor.migrateTo(preferences);
         return preferences;
@@ -229,31 +253,51 @@ public final class BinaryPreferencesBuilder {
 
     private BinaryPreferences createInstance() {
 
-        DirectoryProvider directoryProvider = new AndroidDirectoryProviderImpl(name, baseDir);
+        DirectoryProvider directoryProvider = new AndroidDirectoryProvider(name, baseDir);
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
-        LockFactory lockFactory = new SimpleLockFactoryImpl(name, directoryProvider, locks, processLocks);
-        FileTransaction fileTransaction = new MultiProcessTransactionImpl(fileAdapter, lockFactory, valueEncryption, keyEncryption);
-        CacheProvider cacheProvider = new ConcurrentCacheProviderImpl(name, caches);
-        TaskExecutor executor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
+        LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
+        FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
+        CacheCandidateProvider cacheCandidateProvider = new ConcurrentCacheCandidateProvider(name, cacheCandidates);
+        CacheProvider cacheProvider = new ConcurrentCacheProvider(name, caches);
+        TaskExecutor taskExecutor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
-        EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridgeImpl(
+        EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridge(
                 context,
                 name,
+                cacheCandidateProvider,
                 cacheProvider,
                 serializerFactory,
-                executor,
+                taskExecutor,
                 valueEncryption,
                 directoryProvider,
                 allListeners
-        ) : new MainThreadEventBridgeImpl(name, allListeners);
+        ) : new MainThreadEventBridge(name, allListeners);
+
+        FetchStrategy fetchStrategy = lazyMemoryCache ? new LazyFetchStrategy(
+                lockFactory,
+                taskExecutor,
+                cacheCandidateProvider,
+                cacheProvider,
+                fileTransaction,
+                serializerFactory
+        ) : new EagerFetchStrategy(
+                lockFactory,
+                taskExecutor,
+                cacheCandidateProvider,
+                cacheProvider,
+                fileTransaction,
+                serializerFactory
+        );
 
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,
+                cacheCandidateProvider,
                 cacheProvider,
-                executor,
+                taskExecutor,
                 serializerFactory,
-                lockFactory
+                lockFactory,
+                fetchStrategy
         );
     }
 }

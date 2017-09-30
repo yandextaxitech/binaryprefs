@@ -9,7 +9,9 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -40,15 +42,17 @@ public final class MultipleBinaryPreferencesTest {
         Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
         Map<String, Lock> globalLocks = new ConcurrentHashMap<>();
         Map<String, Map<String, Object>> allCaches = new ConcurrentHashMap<>();
-        firstPreferencesInstance = createPreferences("user_preferences", locks, globalLocks, allCaches);
-        secondPreferencesInstance = createPreferences("user_preferences", locks, globalLocks, allCaches);
-        thirdPreferencesInstance = createPreferences("user_preferences_2", locks, globalLocks, allCaches);
+        Map<String, Set<String>> cacheCandidates = new HashMap<>();
+        firstPreferencesInstance = createPreferences("user_preferences", locks, globalLocks, allCaches, cacheCandidates);
+        secondPreferencesInstance = createPreferences("user_preferences", locks, globalLocks, allCaches, cacheCandidates);
+        thirdPreferencesInstance = createPreferences("user_preferences_2", locks, globalLocks, allCaches, cacheCandidates);
     }
 
     private Preferences createPreferences(String name,
                                           Map<String, ReadWriteLock> locks,
                                           Map<String, Lock> globalLocks,
-                                          Map<String, Map<String, Object>> allCaches) throws IOException {
+                                          Map<String, Map<String, Object>> allCaches,
+                                          Map<String, Set<String>> cacheCandidates) throws IOException {
 
         DirectoryProvider directoryProvider = new DirectoryProvider() {
             @Override
@@ -65,7 +69,7 @@ public final class MultipleBinaryPreferencesTest {
             }
         };
         PreferencesCreator creator = new PreferencesCreator();
-        return creator.create(name, directoryProvider, locks, globalLocks, allCaches);
+        return creator.create(name, directoryProvider, locks, globalLocks, cacheCandidates, allCaches);
     }
 
     @Test

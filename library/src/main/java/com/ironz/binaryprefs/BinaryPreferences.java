@@ -1,258 +1,124 @@
 package com.ironz.binaryprefs;
 
-import com.ironz.binaryprefs.cache.CacheProvider;
+import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
+import com.ironz.binaryprefs.cache.provider.CacheProvider;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.OnSharedPreferenceChangeListenerWrapper;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
-import com.ironz.binaryprefs.file.transaction.TransactionElement;
+import com.ironz.binaryprefs.init.FetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
-import com.ironz.binaryprefs.task.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 final class BinaryPreferences implements Preferences {
 
     private final FileTransaction fileTransaction;
     private final EventBridge eventsBridge;
+    private final CacheCandidateProvider cacheCandidateProvider;
     private final CacheProvider cacheProvider;
     private final TaskExecutor taskExecutor;
     private final SerializerFactory serializerFactory;
     private final Lock readLock;
     private final Lock writeLock;
+    private final FetchStrategy fetchStrategy;
 
     BinaryPreferences(FileTransaction fileTransaction,
                       EventBridge eventsBridge,
+                      CacheCandidateProvider cacheCandidateProvider,
                       CacheProvider cacheProvider,
                       TaskExecutor taskExecutor,
                       SerializerFactory serializerFactory,
-                      LockFactory lockFactory) {
+                      LockFactory lockFactory,
+                      FetchStrategy fetchStrategy) {
         this.fileTransaction = fileTransaction;
         this.eventsBridge = eventsBridge;
+        this.cacheCandidateProvider = cacheCandidateProvider;
         this.cacheProvider = cacheProvider;
         this.taskExecutor = taskExecutor;
         this.serializerFactory = serializerFactory;
         this.readLock = lockFactory.getReadLock();
         this.writeLock = lockFactory.getWriteLock();
-        fetchCache();
-    }
-
-    private void fetchCache() {
-        readLock.lock();
-        try {
-            FutureBarrier barrier = taskExecutor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    fetchInternal();
-                }
-            });
-            barrier.completeBlockingUnsafe();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    private void fetchInternal() {
-        if (cacheProvider.keys().size() != 0) {
-            return;
-        }
-        for (TransactionElement element : fileTransaction.fetch()) {
-            String name = element.getName();
-            byte[] bytes = element.getContent();
-            Object o = serializerFactory.deserialize(name, bytes);
-            cacheProvider.put(name, o);
-        }
+        this.fetchStrategy = fetchStrategy;
     }
 
     @Override
     public Map<String, Object> getAll() {
-        readLock.lock();
-        try {
-            Map<String, Object> all = cacheProvider.getAll();
-            Map<String, Object> clone = new HashMap<>(all.size());
-            for (String key : all.keySet()) {
-                Object value = all.get(key);
-                Object redefinedValue = serializerFactory.redefinePersistable(value);
-                clone.put(key, redefinedValue);
-            }
-            return Collections.unmodifiableMap(clone);
-        } finally {
-            readLock.unlock();
-        }
+        return fetchStrategy.getAll();
     }
 
     @Override
     public String getString(String key, String defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (String) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (String) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public Set<String> getStringSet(String key, Set<String> defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            //noinspection unchecked
-            Set<String> strings = (Set<String>) o;
-            return new HashSet<>(strings);
-        } finally {
-            readLock.unlock();
-        }
+        //noinspection unchecked
+        return (Set<String>) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public int getInt(String key, int defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (int) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (int) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public long getLong(String key, long defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (long) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (long) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public float getFloat(String key, float defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (float) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (float) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public boolean getBoolean(String key, boolean defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (boolean) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (boolean) fetchStrategy.getValue(key, defValue);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T extends Persistable> T getPersistable(String key, T defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (T) ((T) o).deepClone();
-        } finally {
-            readLock.unlock();
-        }
+        return (T) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public byte getByte(String key, byte defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (byte) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (byte) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public short getShort(String key, short defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (short) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (short) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public char getChar(String key, char defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (char) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (char) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public double getDouble(String key, double defValue) {
-        readLock.lock();
-        try {
-            Object o = cacheProvider.get(key);
-            if (o == null) {
-                return defValue;
-            }
-            return (double) o;
-        } finally {
-            readLock.unlock();
-        }
+        return (double) fetchStrategy.getValue(key, defValue);
     }
 
     @Override
     public boolean contains(String key) {
-        readLock.lock();
-        try {
-            return cacheProvider.contains(key);
-        } finally {
-            readLock.unlock();
-        }
+        return fetchStrategy.contains(key);
     }
 
     @Override
     public PreferencesEditor edit() {
+        return editInternal();
+    }
+
+    private PreferencesEditor editInternal() {
         readLock.lock();
         try {
             return new BinaryPreferencesEditor(
@@ -261,6 +127,7 @@ final class BinaryPreferences implements Preferences {
                     taskExecutor,
                     serializerFactory,
                     cacheProvider,
+                    cacheCandidateProvider,
                     writeLock
             );
         } finally {
