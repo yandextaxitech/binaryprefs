@@ -40,7 +40,7 @@ public final class ByteSerializer {
     }
 
     /**
-     * Deserialize {@code String} by {@link #serialize(byte)}  convention
+     * Deserialize {@code byte} by {@link #serialize(byte)}  convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset
