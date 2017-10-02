@@ -22,7 +22,7 @@ Written from scratch.
 * Persists only binary data. Not XML or JSON
 * Out of box data encryption support
 * Fully backward compatible with default `SharedPreferences` interface
-* Store all primitives include `double`, `char`, `short`, `byte` and `byte[]`
+* Store all primitives include `double`, `char`, `short` and `byte`
 * Store complex data objects backward-compatible (see `Persistable` class
 documentation)
 * Fully optimized IPC support (preferences change listeners and in-memory
@@ -114,21 +114,6 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 
 Default is print handler which performs `e.printStacktrace()` when
 exception event are comes.
-
-#### Enable eager in-memory cache mode
-
-Default in-memory cache mode is lazy, which is fills up cache only after
-fetching element through `get*` methods. You can enable eager cache for
-startup cache fetching:
-
-```java
-Preferences preferences = new BinaryPreferencesBuilder(context)
-                .lazyMemoryCache(false)
-                .build();
-```
-
-Please note if you have a lot of stored data you can regress your startup
-time performance. Use this feature with caution.
 
 #### Custom save directory
 
