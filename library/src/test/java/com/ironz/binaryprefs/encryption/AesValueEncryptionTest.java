@@ -42,6 +42,7 @@ public final class AesValueEncryptionTest {
 
     @Test(expected = EncryptionException.class)
     public void incorrectKeySize() {
-        new AesValueEncryption(new byte[0], new byte[0]);
+        byte[] secretKeyBytes = {};
+        new AesValueEncryption(secretKeyBytes, secretKeyBytes);
     }
 }
