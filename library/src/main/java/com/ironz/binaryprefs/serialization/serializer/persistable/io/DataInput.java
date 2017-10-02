@@ -24,6 +24,16 @@ public interface DataInput {
     byte readByte();
 
     /**
+     * Reads and returns input byte array.
+     * The byte array is treated as a signed value in
+     * the range <code>-128</code> through <code>127</code>,
+     * inclusive.
+     *
+     * @return byte array read.
+     */
+    byte[] readByteArray();
+
+    /**
      * Reads two input bytes and returns
      * a <code>short</code> value. Let <code>a</code>
      * be the first byte read and <code>b</code>

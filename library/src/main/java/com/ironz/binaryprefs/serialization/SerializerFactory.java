@@ -18,6 +18,7 @@ public final class SerializerFactory {
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
+    private final ByteArraySerializer byteArraySerializer;
     private final CharSerializer charSerializer;
     private final DoubleSerializer doubleSerializer;
     private final FloatSerializer floatSerializer;
@@ -26,7 +27,6 @@ public final class SerializerFactory {
     private final ShortSerializer shortSerializer;
     private final StringSerializer stringSerializer;
     private final StringSetSerializer stringSetSerializer;
-    private final ByteArraySerializer byteArraySerializer;
     private final PersistableSerializer persistableSerializer;
 
     public SerializerFactory(PersistableRegistry persistableRegistry) {
@@ -44,6 +44,7 @@ public final class SerializerFactory {
         this.persistableSerializer = new PersistableSerializer(
                 booleanSerializer,
                 byteSerializer,
+                byteArraySerializer,
                 charSerializer,
                 doubleSerializer,
                 floatSerializer,

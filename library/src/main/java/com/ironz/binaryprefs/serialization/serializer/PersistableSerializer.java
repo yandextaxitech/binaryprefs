@@ -19,6 +19,7 @@ public final class PersistableSerializer {
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
+    private final ByteArraySerializer byteArraySerializer;
     private final CharSerializer charSerializer;
     private final DoubleSerializer doubleSerializer;
     private final FloatSerializer floatSerializer;
@@ -30,6 +31,7 @@ public final class PersistableSerializer {
 
     public PersistableSerializer(BooleanSerializer booleanSerializer,
                                  ByteSerializer byteSerializer,
+                                 ByteArraySerializer byteArraySerializer,
                                  CharSerializer charSerializer,
                                  DoubleSerializer doubleSerializer,
                                  FloatSerializer floatSerializer,
@@ -40,6 +42,7 @@ public final class PersistableSerializer {
                                  PersistableRegistry persistableRegistry) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
+        this.byteArraySerializer = byteArraySerializer;
         this.charSerializer = charSerializer;
         this.doubleSerializer = doubleSerializer;
         this.floatSerializer = floatSerializer;
@@ -61,6 +64,7 @@ public final class PersistableSerializer {
         DataOutput output = new PersistableObjectOutput(
                 booleanSerializer,
                 byteSerializer,
+                byteArraySerializer,
                 charSerializer,
                 doubleSerializer,
                 floatSerializer,
@@ -85,6 +89,7 @@ public final class PersistableSerializer {
         DataInput input = new PersistableObjectInput(
                 booleanSerializer,
                 byteSerializer,
+                byteArraySerializer,
                 charSerializer,
                 doubleSerializer,
                 floatSerializer,

@@ -11,6 +11,7 @@ public final class PersistableObjectOutput implements DataOutput {
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
+    private final ByteArraySerializer byteArraySerializer;
     private final CharSerializer charSerializer;
     private final DoubleSerializer doubleSerializer;
     private final FloatSerializer floatSerializer;
@@ -24,6 +25,7 @@ public final class PersistableObjectOutput implements DataOutput {
 
     public PersistableObjectOutput(BooleanSerializer booleanSerializer,
                                    ByteSerializer byteSerializer,
+                                   ByteArraySerializer byteArraySerializer,
                                    CharSerializer charSerializer,
                                    DoubleSerializer doubleSerializer,
                                    FloatSerializer floatSerializer,
@@ -33,6 +35,7 @@ public final class PersistableObjectOutput implements DataOutput {
                                    StringSerializer stringSerializer) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
+        this.byteArraySerializer = byteArraySerializer;
         this.charSerializer = charSerializer;
         this.doubleSerializer = doubleSerializer;
         this.floatSerializer = floatSerializer;
@@ -65,20 +68,32 @@ public final class PersistableObjectOutput implements DataOutput {
     }
 
     @Override
-    public void writeByte(int value) {
-        byte[] serialize = byteSerializer.serialize((byte) value);
+    public void writeByte(byte value) {
+        byte[] serialize = byteSerializer.serialize(value);
         write(serialize);
     }
 
     @Override
-    public void writeShort(int value) {
-        byte[] serialize = shortSerializer.serialize((short) value);
+    public void writeByteArray(byte[] value) {
+        if (value == null) {
+            writeInt(-1);
+            return;
+        }
+        byte[] serialize = byteArraySerializer.serialize(value);
+        int length = serialize.length - byteArraySerializer.bytesLength();
+        writeInt(length);
         write(serialize);
     }
 
     @Override
-    public void writeChar(int value) {
-        byte[] serialize = charSerializer.serialize((char) value);
+    public void writeShort(short value) {
+        byte[] serialize = shortSerializer.serialize(value);
+        write(serialize);
+    }
+
+    @Override
+    public void writeChar(char value) {
+        byte[] serialize = charSerializer.serialize(value);
         write(serialize);
     }
 
