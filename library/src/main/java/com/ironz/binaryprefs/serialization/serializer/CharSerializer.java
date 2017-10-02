@@ -31,7 +31,7 @@ public final class CharSerializer {
     }
 
     /**
-     * Deserialize char by {@link #serialize(char)} convention
+     * Deserialize {@code char} by {@link #serialize(char)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized char
@@ -41,7 +41,7 @@ public final class CharSerializer {
     }
 
     /**
-     * Deserialize char by {@link #serialize(char)} convention
+     * Deserialize {@code char} by {@link #serialize(char)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset

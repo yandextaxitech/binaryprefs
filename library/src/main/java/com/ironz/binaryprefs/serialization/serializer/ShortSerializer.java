@@ -31,7 +31,7 @@ public final class ShortSerializer {
     }
 
     /**
-     * Deserialize short by {@link #serialize(short)}  convention
+     * Deserialize {@code short} by {@link #serialize(short)}  convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized short
@@ -41,7 +41,7 @@ public final class ShortSerializer {
     }
 
     /**
-     * Deserialize short by {@link #serialize(short)}  convention
+     * Deserialize {@code short} by {@link #serialize(short)}  convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset

@@ -69,7 +69,7 @@ public final class StringSetSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(Set)} convention
+     * Deserialize {@code Set<String>} by {@link #serialize(Set)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized String Set

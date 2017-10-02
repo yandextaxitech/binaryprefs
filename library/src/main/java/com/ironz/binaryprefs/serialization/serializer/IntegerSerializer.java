@@ -34,7 +34,7 @@ public final class IntegerSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(int)} convention
+     * Deserialize {@code int} by {@link #serialize(int)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized int
@@ -44,7 +44,7 @@ public final class IntegerSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(int)} convention
+     * Deserialize {@code int} by {@link #serialize(int)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset

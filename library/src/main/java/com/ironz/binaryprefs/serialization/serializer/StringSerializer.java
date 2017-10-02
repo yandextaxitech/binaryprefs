@@ -35,7 +35,7 @@ public final class StringSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(String)} convention
+     * Deserialize {@link String} by {@link #serialize(String)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized String
@@ -45,7 +45,7 @@ public final class StringSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(String)} convention
+     * Deserialize {@link String} by {@link #serialize(String)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset

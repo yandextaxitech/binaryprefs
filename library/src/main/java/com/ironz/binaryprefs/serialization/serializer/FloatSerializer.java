@@ -34,7 +34,7 @@ public final class FloatSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(float)} convention
+     * Deserialize {@code float} by {@link #serialize(float)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized float
@@ -44,7 +44,7 @@ public final class FloatSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(float)} convention
+     * Deserialize {@code float} by {@link #serialize(float)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset
