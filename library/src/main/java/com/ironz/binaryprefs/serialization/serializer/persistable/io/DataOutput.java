@@ -17,7 +17,15 @@ public interface DataOutput {
      *
      * @param v the <code>byte</code> value to be written.
      */
-    void writeByte(int v);
+    void writeByte(byte v);
+
+    /**
+     * Writes to the output stream the eight low-
+     * order bits array of the argument <code>v</code>.
+     *
+     * @param v the <code>byte[]</code> value to be written.
+     */
+    void writeByteArray(byte[] v);
 
     /**
      * Writes two bytes to the output
@@ -25,7 +33,7 @@ public interface DataOutput {
      *
      * @param v the <code>short</code> value to be written.
      */
-    void writeShort(int v);
+    void writeShort(short v);
 
     /**
      * Writes a <code>char</code> value, which
@@ -34,7 +42,7 @@ public interface DataOutput {
      *
      * @param v the <code>char</code> value to be written.
      */
-    void writeChar(int v);
+    void writeChar(char v);
 
     /**
      * Writes an <code>int</code> value, which is

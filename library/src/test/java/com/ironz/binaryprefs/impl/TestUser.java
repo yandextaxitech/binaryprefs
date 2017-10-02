@@ -5,6 +5,7 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataInput;
 import com.ironz.binaryprefs.serialization.serializer.persistable.io.DataOutput;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class TestUser implements Persistable {
@@ -17,11 +18,13 @@ public final class TestUser implements Persistable {
     private boolean married;
     private long postal;
     private byte child;
+    private byte[] fingerprint;
     private float weight;
     private float height;
 
     private final List<TestAddress> addresses = new ArrayList<>();
 
+    @SuppressWarnings("WeakerAccess")
     public TestUser() {
     }
 
@@ -61,6 +64,10 @@ public final class TestUser implements Persistable {
         this.addresses.add(address);
     }
 
+    private void setFingerprint(byte[] fingerprint) {
+        this.fingerprint = fingerprint;
+    }
+
     public String getName() {
         return name;
     }
@@ -73,6 +80,7 @@ public final class TestUser implements Persistable {
         out.writeBoolean(married);
         out.writeLong(postal);
         out.writeByte(child);
+        out.writeByteArray(fingerprint);
         out.writeFloat(weight);
         out.writeFloat(height);
 
@@ -91,6 +99,7 @@ public final class TestUser implements Persistable {
         married = in.readBoolean();
         postal = in.readLong();
         child = in.readByte();
+        fingerprint = in.readByteArray();
         weight = in.readFloat();
         height = in.readFloat();
 
@@ -111,6 +120,7 @@ public final class TestUser implements Persistable {
         value.setMarried(married);
         value.setPostal(postal);
         value.setChild(child);
+        value.setFingerprint(fingerprint);
         value.setWeight(weight);
         value.setHeight(height);
         for (TestAddress address : addresses) {
@@ -135,6 +145,7 @@ public final class TestUser implements Persistable {
         if (Float.compare(testUser.weight, weight) != 0) return false;
         if (Float.compare(testUser.height, height) != 0) return false;
         if (name != null ? !name.equals(testUser.name) : testUser.name != null) return false;
+        if (!Arrays.equals(fingerprint, testUser.fingerprint)) return false;
         return addresses != null ? addresses.equals(testUser.addresses) : testUser.addresses == null;
     }
 
@@ -146,6 +157,7 @@ public final class TestUser implements Persistable {
         result = 31 * result + (married ? 1 : 0);
         result = 31 * result + (int) (postal ^ (postal >>> 32));
         result = 31 * result + (int) child;
+        result = 31 * result + Arrays.hashCode(fingerprint);
         result = 31 * result + (weight != +0.0f ? Float.floatToIntBits(weight) : 0);
         result = 31 * result + (height != +0.0f ? Float.floatToIntBits(height) : 0);
         result = 31 * result + (addresses != null ? addresses.hashCode() : 0);
@@ -161,6 +173,7 @@ public final class TestUser implements Persistable {
                 ", married=" + married + '\n' +
                 ", postal=" + postal + '\n' +
                 ", child=" + child + '\n' +
+                ", fingerprint=" + Arrays.toString(fingerprint) +
                 ", weight=" + weight + '\n' +
                 ", height=" + height + '\n' +
                 ", addresses=" + addresses + '\n' +
@@ -175,6 +188,7 @@ public final class TestUser implements Persistable {
         value.setMarried(true);
         value.setPostal(1234567890L);
         value.setChild((byte) 19);
+        value.setFingerprint(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
         value.setWeight(74.2f);
         value.setHeight(1.78f);
         value.addAddress(new TestAddress("USA", "New York", "1th", 25, 53.123, 35.098));

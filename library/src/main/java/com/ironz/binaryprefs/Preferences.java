@@ -95,4 +95,13 @@ public interface Preferences extends SharedPreferences {
      * @return Returns the preference value if it exists, or defValue.
      */
     double getDouble(String key, double defValue);
+
+    /**
+     * Retrieve an @{code byte[]} value from the preferences.
+     *
+     * @param key      The name of the preference to retrieve.
+     * @param defValue Value to return if this preference does not exist.
+     * @return Returns the preference value if it exists, or defValue.
+     */
+    byte[] getByteArray(String key, byte[] defValue);
 }

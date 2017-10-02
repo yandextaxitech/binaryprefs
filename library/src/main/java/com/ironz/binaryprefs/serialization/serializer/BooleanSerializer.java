@@ -30,7 +30,7 @@ public final class BooleanSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(boolean)} convention
+     * Deserialize {@code boolean} by {@link #serialize(boolean)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized boolean
@@ -40,7 +40,7 @@ public final class BooleanSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(boolean)} convention
+     * Deserialize {@code String} by {@link #serialize(boolean)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset byte array offset

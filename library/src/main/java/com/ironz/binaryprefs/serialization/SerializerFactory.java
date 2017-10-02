@@ -18,6 +18,7 @@ public final class SerializerFactory {
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
+    private final ByteArraySerializer byteArraySerializer;
     private final CharSerializer charSerializer;
     private final DoubleSerializer doubleSerializer;
     private final FloatSerializer floatSerializer;
@@ -39,9 +40,11 @@ public final class SerializerFactory {
         this.shortSerializer = new ShortSerializer();
         this.stringSerializer = new StringSerializer();
         this.stringSetSerializer = new StringSetSerializer();
+        this.byteArraySerializer = new ByteArraySerializer();
         this.persistableSerializer = new PersistableSerializer(
                 booleanSerializer,
                 byteSerializer,
+                byteArraySerializer,
                 charSerializer,
                 doubleSerializer,
                 floatSerializer,
@@ -89,6 +92,9 @@ public final class SerializerFactory {
         }
         if (byteSerializer.isMatches(flag)) {
             return byteSerializer.deserialize(bytes);
+        }
+        if (byteArraySerializer.isMatches(flag)) {
+            return byteArraySerializer.deserialize(bytes);
         }
         if (charSerializer.isMatches(flag)) {
             return charSerializer.deserialize(bytes);
@@ -150,5 +156,9 @@ public final class SerializerFactory {
 
     public PersistableSerializer getPersistableSerializer() {
         return persistableSerializer;
+    }
+
+    public ByteArraySerializer getByteArraySerializer() {
+        return byteArraySerializer;
     }
 }

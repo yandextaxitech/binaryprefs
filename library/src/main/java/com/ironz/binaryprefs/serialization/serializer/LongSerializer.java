@@ -37,7 +37,7 @@ public final class LongSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(long)} convention
+     * Deserialize {@code long} by {@link #serialize(long)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized long
@@ -47,7 +47,7 @@ public final class LongSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(long)} convention
+     * Deserialize {@code long} by {@link #serialize(long)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset

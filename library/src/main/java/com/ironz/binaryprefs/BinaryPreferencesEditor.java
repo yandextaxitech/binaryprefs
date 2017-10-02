@@ -191,6 +191,18 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     }
 
     @Override
+    public PreferencesEditor putByteArray(String key, byte[] value) {
+        writeLock.lock();
+        try {
+            SerializationStrategy strategy = new ByteArraySerializationStrategy(value, serializerFactory);
+            strategyMap.put(key, strategy);
+            return this;
+        } finally {
+            writeLock.lock();
+        }
+    }
+
+    @Override
     public PreferencesEditor remove(String key) {
         writeLock.lock();
         try {

@@ -11,6 +11,7 @@ public final class PersistableObjectInput implements DataInput {
             "old disk version is not backward compatible with new class version?";
     private static final String INCORRECT_BOOLEAN_MESSAGE = "boolean " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_BYTE_MESSAGE = "byte " + BASE_INCORRECT_TYPE_MESSAGE;
+    private static final String INCORRECT_BYTE_ARRAY_MESSAGE = "byte array " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_SHORT_MESSAGE = "short " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_CHAR_MESSAGE = "char " + BASE_INCORRECT_TYPE_MESSAGE;
     private static final String INCORRECT_INT_MESSAGE = "int " + BASE_INCORRECT_TYPE_MESSAGE;
@@ -25,6 +26,7 @@ public final class PersistableObjectInput implements DataInput {
 
     private final BooleanSerializer booleanSerializer;
     private final ByteSerializer byteSerializer;
+    private final ByteArraySerializer byteArraySerializer;
     private final CharSerializer charSerializer;
     private final DoubleSerializer doubleSerializer;
     private final FloatSerializer floatSerializer;
@@ -40,6 +42,7 @@ public final class PersistableObjectInput implements DataInput {
 
     public PersistableObjectInput(BooleanSerializer booleanSerializer,
                                   ByteSerializer byteSerializer,
+                                  ByteArraySerializer byteArraySerializer,
                                   CharSerializer charSerializer,
                                   DoubleSerializer doubleSerializer,
                                   FloatSerializer floatSerializer,
@@ -50,6 +53,7 @@ public final class PersistableObjectInput implements DataInput {
                                   PersistableRegistry persistableRegistry) {
         this.booleanSerializer = booleanSerializer;
         this.byteSerializer = byteSerializer;
+        this.byteArraySerializer = byteArraySerializer;
         this.charSerializer = charSerializer;
         this.doubleSerializer = doubleSerializer;
         this.floatSerializer = floatSerializer;
@@ -121,6 +125,23 @@ public final class PersistableObjectInput implements DataInput {
         byte b = byteSerializer.deserialize(bytes, offset);
         offset += length;
         return b;
+    }
+
+    @Override
+    public byte[] readByteArray() {
+        int bytesArraySize = readInt();
+        if (bytesArraySize == -1) {
+            return null;
+        }
+        int length = byteArraySerializer.bytesLength() + bytesArraySize;
+        checkBounds(length);
+        byte flag = bytes[offset];
+        if (!byteArraySerializer.isMatches(flag)) {
+            throw new ClassCastException(String.format(INCORRECT_BYTE_ARRAY_MESSAGE, flag));
+        }
+        byte[] a = byteArraySerializer.deserialize(bytes, offset, bytesArraySize);
+        offset += length;
+        return a;
     }
 
     @Override

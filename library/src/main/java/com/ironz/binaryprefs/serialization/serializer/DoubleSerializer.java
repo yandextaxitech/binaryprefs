@@ -39,7 +39,7 @@ public final class DoubleSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(double)} convention
+     * Deserialize {@code double} by {@link #serialize(double)} convention
      *
      * @param bytes target byte array for deserialization
      * @return deserialized double
@@ -49,7 +49,7 @@ public final class DoubleSerializer {
     }
 
     /**
-     * Deserialize byte by {@link #serialize(double)} convention
+     * Deserialize {@code double} by {@link #serialize(double)} convention
      *
      * @param bytes  target byte array for deserialization
      * @param offset bytes array offset

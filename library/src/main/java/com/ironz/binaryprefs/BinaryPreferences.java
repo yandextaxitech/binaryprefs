@@ -109,6 +109,11 @@ final class BinaryPreferences implements Preferences {
     }
 
     @Override
+    public byte[] getByteArray(String key, byte[] defValue) {
+        return (byte[]) fetchStrategy.getValue(key, defValue);
+    }
+
+    @Override
     public boolean contains(String key) {
         return fetchStrategy.contains(key);
     }
