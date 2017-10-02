@@ -92,6 +92,9 @@ public final class SerializerFactory {
         if (byteSerializer.isMatches(flag)) {
             return byteSerializer.deserialize(bytes);
         }
+        if (byteArraySerializer.isMatches(flag)) {
+            return byteArraySerializer.deserialize(bytes);
+        }
         if (charSerializer.isMatches(flag)) {
             return charSerializer.deserialize(bytes);
         }
