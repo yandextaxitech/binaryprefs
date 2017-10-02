@@ -93,4 +93,15 @@ public interface PreferencesEditor extends SharedPreferences.Editor {
      * chain put calls together.
      */
     PreferencesEditor putDouble(String key, double value);
+
+    /**
+     * Set an @{code byte} value in the preferences editor, to be written back once
+     * {@link #commit} or {@link #apply} are called.
+     *
+     * @param key   The name of the preference to modify.
+     * @param value The new value for the preference.
+     * @return Returns a reference to the same Editor object, so you can
+     * chain put calls together.
+     */
+    PreferencesEditor putByteArray(String key, byte[] value);
 }

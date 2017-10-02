@@ -26,6 +26,7 @@ public final class SerializerFactory {
     private final ShortSerializer shortSerializer;
     private final StringSerializer stringSerializer;
     private final StringSetSerializer stringSetSerializer;
+    private final ByteArraySerializer byteArraySerializer;
     private final PersistableSerializer persistableSerializer;
 
     public SerializerFactory(PersistableRegistry persistableRegistry) {
@@ -39,6 +40,7 @@ public final class SerializerFactory {
         this.shortSerializer = new ShortSerializer();
         this.stringSerializer = new StringSerializer();
         this.stringSetSerializer = new StringSetSerializer();
+        this.byteArraySerializer = new ByteArraySerializer();
         this.persistableSerializer = new PersistableSerializer(
                 booleanSerializer,
                 byteSerializer,
@@ -150,5 +152,9 @@ public final class SerializerFactory {
 
     public PersistableSerializer getPersistableSerializer() {
         return persistableSerializer;
+    }
+
+    public ByteArraySerializer getByteArraySerializer() {
+        return byteArraySerializer;
     }
 }

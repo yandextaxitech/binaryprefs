@@ -444,6 +444,28 @@ public final class BinaryPreferencesTest {
     }
 
     @Test
+    public void byteArrayValue() {
+        byte[] value = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        byte[] defaultValue = {};
+
+        preferences.edit()
+                .putByteArray(key, value)
+                .apply();
+        byte[] restored = preferences.getByteArray(key, defaultValue);
+
+        assertArrayEquals(value, restored);
+    }
+
+    @Test
+    public void byteArrayDefaultValue() {
+        byte[] defaultValue = {};
+
+        byte[] restored = preferences.getByteArray(key, defaultValue);
+
+        assertArrayEquals(defaultValue, restored);
+    }
+
+    @Test
     public void shortValue() {
         short value = Short.MAX_VALUE;
         short defaultValue = 0;
