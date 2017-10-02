@@ -22,7 +22,7 @@ Written from scratch.
 * Persists only binary data. Not XML or JSON
 * Out of box data encryption support
 * Fully backward compatible with default `SharedPreferences` interface
-* Store all primitives include `double`, `char`, `byte` and `short`
+* Store all primitives include `double`, `char`, `short`, `byte` and `byte[]`
 * Store complex data objects backward-compatible (see `Persistable` class
 documentation)
 * Fully optimized IPC support (preferences change listeners and in-memory
