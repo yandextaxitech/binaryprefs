@@ -38,7 +38,6 @@ Add jitpack to repositories closure. For example, you should add it to root
 of `build.gradle`:
 
 ```groovy
-
 allprojects {
   repositories {
     maven { url "https://jitpack.io" }
@@ -49,7 +48,6 @@ allprojects {
 And add dependency:
 
 ```groovy
-
 dependencies {
    compile "com.github.iamironz:binaryprefs:$version"
 }
