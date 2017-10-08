@@ -25,7 +25,7 @@ Written from scratch.
 * Store all primitives include `double`, `char`, `short` and `byte`
 * Store complex data objects backward-compatible (see `Persistable` class
 documentation)
-* Fully optimized IPC support (preferences change listeners and in-memory
+* IPC support (preferences change listeners and in-memory
 cache works between processes)
 * Handle various exception events
 
