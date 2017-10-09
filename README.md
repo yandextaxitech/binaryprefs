@@ -91,7 +91,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-Default is no-op encryption for key/value.
+Default is no-op encryption for key and value.
 
 
 #### Exception handler
