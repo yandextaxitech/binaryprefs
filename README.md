@@ -45,7 +45,7 @@ allprojects {
 }
 ```
 	 
-And add dependency:
+Add dependency:
 
 ```groovy
 dependencies {
