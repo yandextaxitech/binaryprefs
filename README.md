@@ -65,7 +65,7 @@ non-reasoned allocations. You can store one preferences instance in
 application class, factory or even better just use one instance from IoC
 like Dagger or use another DI framework.
 
-All parameters are optional and chain-buildable.
+All parameters optional and chain-buildable.
 
 #### Custom preferences name
 
@@ -111,7 +111,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Default is print handler which performs `e.printStacktrace()` when
-exception event are comes.
+exception event comes.
 
 #### Custom save directory
 
