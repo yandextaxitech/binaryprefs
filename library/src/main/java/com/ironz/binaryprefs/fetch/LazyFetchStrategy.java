@@ -66,18 +66,21 @@ public final class LazyFetchStrategy implements FetchStrategy {
     public Map<String, Object> getAll() {
         readLock.lock();
         try {
-            Set<String> names = candidateProvider.keys();
+            Set<String> candidates = candidateProvider.keys();
             Set<String> keys = cacheProvider.keys();
-            if (keys.containsAll(names)) {
+            if (keys.containsAll(candidates)) {
                 Map<String, Object> all = cacheProvider.getAll();
                 return Collections.unmodifiableMap(all);
             }
             fileTransaction.lock();
-            HashMap<String, Object> clone = new HashMap<>(names.size());
-            for (String name : names) {
-                Object o = getInternal(name);
+            HashMap<String, Object> clone = new HashMap<>(candidates.size());
+            for (String candidate : candidates) {
+                if (keys.contains(candidate)) {
+                    continue;
+                }
+                Object o = getInternal(candidate);
                 Object redefinedValue = serializerFactory.redefineMutable(o);
-                clone.put(name, redefinedValue);
+                clone.put(candidate, redefinedValue);
             }
             return Collections.unmodifiableMap(clone);
         } finally {
