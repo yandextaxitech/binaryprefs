@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.init;
+package com.ironz.binaryprefs.fetch;
 
 import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;

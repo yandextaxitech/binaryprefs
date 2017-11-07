@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.init;
+package com.ironz.binaryprefs.fetch;
 
 import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
@@ -67,6 +67,12 @@ public final class LazyFetchStrategy implements FetchStrategy {
         readLock.lock();
         try {
             Set<String> names = candidateProvider.keys();
+            Set<String> keys = cacheProvider.keys();
+            if (keys.containsAll(names)) {
+                Map<String, Object> all = cacheProvider.getAll();
+                return Collections.unmodifiableMap(all);
+            }
+            fileTransaction.lock();
             HashMap<String, Object> clone = new HashMap<>(names.size());
             for (String name : names) {
                 Object o = getInternal(name);
@@ -75,6 +81,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
             }
             return Collections.unmodifiableMap(clone);
         } finally {
+            fileTransaction.unlock();
             readLock.unlock();
         }
     }
@@ -95,18 +102,13 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (cached != null) {
             return cached;
         }
-        fileTransaction.lock();
-        try {
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return fetchObject(key);
-                }
-            });
-            return barrier.completeBlockingWithResultUnsafe();
-        } finally {
-            fileTransaction.unlock();
-        }
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return fetchObject(key);
+            }
+        });
+        return barrier.completeBlockingWithResultUnsafe();
     }
 
     private Object getInternal(final String key, Object defValue) {

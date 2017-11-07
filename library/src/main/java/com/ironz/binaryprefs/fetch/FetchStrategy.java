@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.init;
+package com.ironz.binaryprefs.fetch;
 
 import java.util.Map;
 
