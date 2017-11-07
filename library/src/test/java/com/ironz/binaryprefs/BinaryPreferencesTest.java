@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("deprecation")
 public final class BinaryPreferencesTest {
 
     private static final String KEY_SUFFIX = "_key";
