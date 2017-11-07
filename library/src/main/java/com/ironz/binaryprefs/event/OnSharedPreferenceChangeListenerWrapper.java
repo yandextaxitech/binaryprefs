@@ -7,6 +7,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
  * Wrapped {@link OnSharedPreferenceChangeListener} class which holds current preferences instance for delivering
  * correct {@link com.ironz.binaryprefs.Preferences} instance to 2'st argument in
  * {@link OnSharedPreferenceChangeListener#onSharedPreferenceChanged(SharedPreferences, String)} method.
+ * Please do not use this class inside your codebase because main propose for this implementation is holding
+ * strong reference to preferences instance.
  */
 public final class OnSharedPreferenceChangeListenerWrapper implements OnSharedPreferenceChangeListener {
 
