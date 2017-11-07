@@ -93,8 +93,8 @@ public final class LazyFetchStrategy implements FetchStrategy {
     public boolean contains(String key) {
         readLock.lock();
         try {
-            Set<String> names = candidateProvider.keys();
-            return names.contains(key) && cacheProvider.contains(key);
+            Set<String> candidates = candidateProvider.keys();
+            return candidates.contains(key);
         } finally {
             readLock.unlock();
         }
