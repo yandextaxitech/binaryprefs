@@ -17,6 +17,7 @@ import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.fetch.EagerFetchStrategy;
 import com.ironz.binaryprefs.fetch.FetchStrategy;
 import com.ironz.binaryprefs.fetch.LazyFetchStrategy;
+import com.ironz.binaryprefs.fetch.NoOpFetchStrategy;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
@@ -70,7 +71,7 @@ public final class BinaryPreferencesBuilder {
     private File baseDir;
     private String name = DEFAULT_NAME;
     private boolean supportInterProcess = false;
-    private boolean lazyMemoryCache = true;
+    private MemoryCacheMode memoryCacheMode = MemoryCacheMode.LAZY;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
@@ -147,14 +148,33 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
+     * Defines target mode for various in-memory cache fill scenario
+     */
+    public enum MemoryCacheMode {
+        /**
+         * Fill cache value only after request, e.g. just in time
+         */
+        LAZY,
+        /**
+         * Fill cache immediately after preferences initialization
+         */
+        EAGER,
+        /**
+         * Never fill an cache values. Please use this method with caution because
+         * it will create global lock for each request
+         */
+        NO_OP
+    }
+
+    /**
      * Defines usage of lazy in-memory cache fetching mechanism for improving initialization speed.
      * Default value is {@code true}.
      *
-     * @param value {@code true} if would use lazy, {@code false} otherwise
+     * @param mode required memory cache mode
      * @return current builder instance
      */
-    public BinaryPreferencesBuilder lazyMemoryCache(boolean value) {
-        this.lazyMemoryCache = value;
+    public BinaryPreferencesBuilder lazyMemoryCache(MemoryCacheMode mode) {
+        this.memoryCacheMode = mode;
         return this;
     }
 
@@ -269,21 +289,28 @@ public final class BinaryPreferencesBuilder {
                 allListeners
         ) : new MainThreadEventBridge(name, allListeners);
 
-        FetchStrategy fetchStrategy = lazyMemoryCache ? new LazyFetchStrategy(
-                lockFactory,
-                taskExecutor,
-                cacheCandidateProvider,
-                cacheProvider,
-                fileTransaction,
-                serializerFactory
-        ) : new EagerFetchStrategy(
-                lockFactory,
-                taskExecutor,
-                cacheCandidateProvider,
-                cacheProvider,
-                fileTransaction,
-                serializerFactory
-        );
+        FetchStrategy fetchStrategy;
+        if (memoryCacheMode == MemoryCacheMode.LAZY) {
+            fetchStrategy = new LazyFetchStrategy(
+                    lockFactory,
+                    taskExecutor,
+                    cacheCandidateProvider,
+                    cacheProvider,
+                    fileTransaction,
+                    serializerFactory
+            );
+        } else if (memoryCacheMode == MemoryCacheMode.EAGER) {
+            fetchStrategy = new EagerFetchStrategy(
+                    lockFactory,
+                    taskExecutor,
+                    cacheCandidateProvider,
+                    cacheProvider,
+                    fileTransaction,
+                    serializerFactory
+            );
+        } else {
+            fetchStrategy = new NoOpFetchStrategy(lockFactory, taskExecutor, fileTransaction, serializerFactory);
+        }
 
         return new BinaryPreferences(
                 fileTransaction,

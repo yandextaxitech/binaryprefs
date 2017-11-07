@@ -11,14 +11,14 @@ import com.ironz.binaryprefs.encryption.XorKeyEncryption;
 import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.ExceptionHandler;
 import com.ironz.binaryprefs.event.SimpleEventBridge;
+import com.ironz.binaryprefs.fetch.FetchStrategy;
+import com.ironz.binaryprefs.fetch.NoOpFetchStrategy;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
 import com.ironz.binaryprefs.impl.TestUser;
-import com.ironz.binaryprefs.fetch.FetchStrategy;
-import com.ironz.binaryprefs.fetch.LazyFetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
@@ -80,7 +80,12 @@ public final class PreferencesCreator {
                        Map<String, Set<String>> allCacheCandidates,
                        Map<String, Map<String, Object>> allCaches) {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
-        ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+        ExceptionHandler exceptionHandler = new ExceptionHandler() {
+            @Override
+            public void handle(Exception e) {
+                e.printStackTrace();
+            }
+        };
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
         ValueEncryption valueEncryption = new AesValueEncryption("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
@@ -92,14 +97,7 @@ public final class PreferencesCreator {
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = new SimpleEventBridge(name);
-        FetchStrategy fetchStrategy = new LazyFetchStrategy(
-                lockFactory,
-                taskExecutor,
-                candidateProvider,
-                cacheProvider,
-                fileTransaction,
-                serializerFactory
-        );
+        FetchStrategy fetchStrategy = new NoOpFetchStrategy(lockFactory, taskExecutor, fileTransaction, serializerFactory);
         return new BinaryPreferences(
                 fileTransaction,
                 eventsBridge,

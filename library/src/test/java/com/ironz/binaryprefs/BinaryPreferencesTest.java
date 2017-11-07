@@ -381,7 +381,7 @@ public final class BinaryPreferencesTest {
         preferences.edit()
                 .putPersistable(key, value)
                 .apply();
-        TestUser restored = preferences.getPersistable(key, new TestUser());
+        TestUser restored = preferences.getPersistable(TestUser.KEY, new TestUser());
 
         assertEquals(value, restored);
     }
