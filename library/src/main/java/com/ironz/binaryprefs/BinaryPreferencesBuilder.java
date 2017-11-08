@@ -160,20 +160,20 @@ public final class BinaryPreferencesBuilder {
          */
         EAGER,
         /**
-         * Never fill an cache values. Please use this method with caution because
-         * it will create global lock for each request
+         * Never fill an cache values. Please use this method with
+         * caution because this acquires global lock for each operation
          */
         NO_OP
     }
 
     /**
-     * Defines usage of lazy in-memory cache fetching mechanism for improving initialization speed.
+     * Defines in-memory cache fetching strategy for
      * Default value is {@code true}.
      *
      * @param mode required memory cache mode
      * @return current builder instance
      */
-    public BinaryPreferencesBuilder lazyMemoryCache(MemoryCacheMode mode) {
+    public BinaryPreferencesBuilder memoryCacheMode(MemoryCacheMode mode) {
         this.memoryCacheMode = mode;
         return this;
     }

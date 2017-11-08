@@ -85,42 +85,53 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (!names.contains(key)) {
             return defValue;
         }
-        fileTransaction.lock();
-        try {
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                fileTransaction.lock();
+                try {
                     return fetchObject(key);
+                } finally {
+                    fileTransaction.unlock();
                 }
-            });
-            return barrier.completeBlockingWihResult(defValue);
-        } finally {
-            fileTransaction.unlock();
-        }
+            }
+        });
+        return barrier.completeBlockingWihResult(defValue);
     }
 
     private Map<String, Object> getAllInternal() {
         readLock.lock();
         try {
-            Set<String> candidates = candidateProvider.keys();
-            Set<String> keys = cacheProvider.keys();
+            final Set<String> candidates = candidateProvider.keys();
+            final Set<String> keys = cacheProvider.keys();
             if (keys.containsAll(candidates)) {
                 Map<String, Object> all = cacheProvider.getAll();
                 return Collections.unmodifiableMap(all);
             }
-            fileTransaction.lock();
-            HashMap<String, Object> clone = new HashMap<>(candidates.size());
-            for (String candidate : candidates) {
-                if (keys.contains(candidate)) {
-                    continue;
+
+            FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
+                @Override
+                public Map<String, Object> call() throws Exception {
+                    fileTransaction.lock();
+                    try {
+                        HashMap<String, Object> clone = new HashMap<>(candidates.size());
+                        for (String candidate : candidates) {
+                            if (keys.contains(candidate)) {
+                                continue;
+                            }
+                            Object o = getInternal(candidate);
+                            Object redefinedValue = serializerFactory.redefineMutable(o);
+                            clone.put(candidate, redefinedValue);
+                        }
+                        return Collections.unmodifiableMap(clone);
+                    } finally {
+                        fileTransaction.unlock();
+                    }
                 }
-                Object o = getInternal(candidate);
-                Object redefinedValue = serializerFactory.redefineMutable(o);
-                clone.put(candidate, redefinedValue);
-            }
-            return Collections.unmodifiableMap(clone);
+            });
+            //noinspection unchecked
+            return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
         } finally {
-            fileTransaction.unlock();
             readLock.unlock();
         }
     }
@@ -130,13 +141,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (cached != null) {
             return cached;
         }
-        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return fetchObject(key);
-            }
-        });
-        return barrier.completeBlockingWithResultUnsafe();
+        return fetchObject(key);
     }
 
     private Object fetchObject(String key) {
