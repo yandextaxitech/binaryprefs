@@ -65,8 +65,8 @@ public final class NoOpFetchStrategy implements FetchStrategy {
 
     private Map<String, Object> getAllInternal() {
         readLock.lock();
+        fileTransaction.lock();
         try {
-            fileTransaction.lock();
             Set<String> names = fileTransaction.fetchNames();
             HashMap<String, Object> clone = new HashMap<>(names.size());
             for (String candidate : names) {
