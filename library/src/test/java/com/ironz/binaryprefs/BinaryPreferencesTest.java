@@ -379,7 +379,7 @@ public final class BinaryPreferencesTest {
         TestUser value = TestUser.create();
 
         preferences.edit()
-                .putPersistable(key, value)
+                .putPersistable(TestUser.KEY, value)
                 .apply();
         TestUser restored = preferences.getPersistable(TestUser.KEY, new TestUser());
 

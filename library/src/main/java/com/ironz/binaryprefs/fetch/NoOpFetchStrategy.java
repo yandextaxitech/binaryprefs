@@ -7,7 +7,10 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.task.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 
@@ -50,10 +53,7 @@ public final class NoOpFetchStrategy implements FetchStrategy {
             FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    System.out.println("fetch: ");
-                    Object o = fetchObject(key);
-                    System.out.println("object: " + o);
-                    return o;
+                    return fetchObject(key);
                 }
             });
             return barrier.completeBlockingWihResult(defValue);
@@ -93,7 +93,6 @@ public final class NoOpFetchStrategy implements FetchStrategy {
     private Object fetchObject(String key) {
         TransactionElement element = fileTransaction.fetchOne(key);
         byte[] bytes = element.getContent();
-        System.out.println("bytes: " + Arrays.toString(bytes));
         return serializerFactory.deserialize(key, bytes);
     }
 
