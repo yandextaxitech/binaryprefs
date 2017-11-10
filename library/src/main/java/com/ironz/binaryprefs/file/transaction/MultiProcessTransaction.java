@@ -62,7 +62,8 @@ public final class MultiProcessTransaction implements FileTransaction {
         String[] names = fileAdapter.names();
         List<TransactionElement> elements = new ArrayList<>(names.length);
         for (String name : names) {
-            TransactionElement element = fetchOneInternal(name);
+            String decryptedName = keyEncryption.decrypt(name);
+            TransactionElement element = fetchOneInternal(decryptedName);
             elements.add(element);
         }
         return elements;
@@ -78,11 +79,11 @@ public final class MultiProcessTransaction implements FileTransaction {
         return temp;
     }
 
-    private TransactionElement fetchOneInternal(String name) {
-        String encryptName = keyEncryption.encrypt(name);
+    private TransactionElement fetchOneInternal(String decryptedName) {
+        String encryptName = keyEncryption.encrypt(decryptedName);
         byte[] content = fileAdapter.fetch(encryptName);
         byte[] decryptValue = valueEncryption.decrypt(content);
-        return TransactionElement.createFetchElement(name, decryptValue);
+        return TransactionElement.createFetchElement(decryptedName, decryptValue);
     }
 
     private void commitInternal(List<TransactionElement> elements) {

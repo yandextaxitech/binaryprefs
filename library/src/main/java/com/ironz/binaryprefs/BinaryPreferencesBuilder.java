@@ -17,7 +17,6 @@ import com.ironz.binaryprefs.exception.PreferencesInitializationException;
 import com.ironz.binaryprefs.fetch.EagerFetchStrategy;
 import com.ironz.binaryprefs.fetch.FetchStrategy;
 import com.ironz.binaryprefs.fetch.LazyFetchStrategy;
-import com.ironz.binaryprefs.fetch.NoOpFetchStrategy;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
@@ -158,12 +157,7 @@ public final class BinaryPreferencesBuilder {
         /**
          * Fill cache immediately after preferences initialization
          */
-        EAGER,
-        /**
-         * Never fill an cache values. Please use this method with
-         * caution because this acquires global lock for each operation
-         */
-        NO_OP
+        EAGER
     }
 
     /**
@@ -289,28 +283,21 @@ public final class BinaryPreferencesBuilder {
                 allListeners
         ) : new MainThreadEventBridge(name, allListeners);
 
-        FetchStrategy fetchStrategy;
-        if (memoryCacheMode == MemoryCacheMode.LAZY) {
-            fetchStrategy = new LazyFetchStrategy(
-                    lockFactory,
-                    taskExecutor,
-                    cacheCandidateProvider,
-                    cacheProvider,
-                    fileTransaction,
-                    serializerFactory
-            );
-        } else if (memoryCacheMode == MemoryCacheMode.EAGER) {
-            fetchStrategy = new EagerFetchStrategy(
-                    lockFactory,
-                    taskExecutor,
-                    cacheCandidateProvider,
-                    cacheProvider,
-                    fileTransaction,
-                    serializerFactory
-            );
-        } else {
-            fetchStrategy = new NoOpFetchStrategy(lockFactory, taskExecutor, fileTransaction, serializerFactory);
-        }
+        FetchStrategy fetchStrategy = memoryCacheMode == MemoryCacheMode.LAZY ? new LazyFetchStrategy(
+                lockFactory,
+                taskExecutor,
+                cacheCandidateProvider,
+                cacheProvider,
+                fileTransaction,
+                serializerFactory
+        ) : new EagerFetchStrategy(
+                lockFactory,
+                taskExecutor,
+                cacheCandidateProvider,
+                cacheProvider,
+                fileTransaction,
+                serializerFactory
+        );
 
         return new BinaryPreferences(
                 fileTransaction,
