@@ -114,7 +114,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
                 public Map<String, Object> call() throws Exception {
                     fileTransaction.lock();
                     try {
-                        HashMap<String, Object> clone = new HashMap<>(candidates.size());
+                        Map<String, Object> clone = new HashMap<>(candidates.size());
                         for (String candidate : candidates) {
                             if (keys.contains(candidate)) {
                                 continue;

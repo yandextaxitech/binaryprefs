@@ -46,36 +46,54 @@ public final class NoOpFetchStrategy implements FetchStrategy {
         return containsInternal(key);
     }
 
-    private Object getInternal(final String key, Object defValue) {
+    private Object getInternal(final String key, final Object defValue) {
         readLock.lock();
-        fileTransaction.lock();
         try {
             FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    return fetchObject(key);
+                    fileTransaction.lock();
+                    try {
+                        Set<String> names = fileTransaction.fetchNames();
+                        if (names.contains(key)) {
+                            return fetchObject(key);
+                        }
+                    } finally {
+                        fileTransaction.unlock();
+                    }
+                    return defValue;
                 }
             });
             return barrier.completeBlockingWihResult(defValue);
         } finally {
             readLock.unlock();
-            fileTransaction.unlock();
         }
     }
 
     private Map<String, Object> getAllInternal() {
         readLock.lock();
-        fileTransaction.lock();
         try {
-            Set<String> names = fileTransaction.fetchNames();
-            HashMap<String, Object> clone = new HashMap<>(names.size());
-            for (String candidate : names) {
-                Object o = getInternal(candidate);
-                clone.put(candidate, o);
-            }
-            return Collections.unmodifiableMap(clone);
+            FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
+                @Override
+                public Map<String, Object> call() throws Exception {
+                    fileTransaction.lock();
+                    try {
+                        Set<String> names = fileTransaction.fetchNames();
+                        Map<String, Object> clone = new HashMap<>(names.size());
+                        for (String name : names) {
+                            Object o = getInternal(name);
+                            Object redefinedValue = serializerFactory.redefineMutable(o);
+                            clone.put(name, redefinedValue);
+                        }
+                        return Collections.unmodifiableMap(clone);
+                    } finally {
+                        fileTransaction.unlock();
+                    }
+                }
+            });
+            //noinspection unchecked
+            return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
         } finally {
-            fileTransaction.unlock();
             readLock.unlock();
         }
     }

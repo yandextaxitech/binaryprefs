@@ -40,7 +40,6 @@ public final class EagerFetchStrategy implements FetchStrategy {
     }
 
     private void fetchCache() {
-        fileTransaction.lock();
         readLock.lock();
         try {
             FutureBarrier barrier = taskExecutor.submit(new Runnable() {
@@ -51,21 +50,25 @@ public final class EagerFetchStrategy implements FetchStrategy {
             });
             barrier.completeBlockingUnsafe();
         } finally {
-            fileTransaction.unlock();
             readLock.unlock();
         }
     }
 
     private void fetchCacheInternal() {
-        if (!shouldFetch()) {
-            return;
-        }
-        for (TransactionElement element : fileTransaction.fetchAll()) {
-            String name = element.getName();
-            byte[] bytes = element.getContent();
-            Object o = serializerFactory.deserialize(name, bytes);
-            cacheProvider.put(name, o);
-            candidateProvider.put(name);
+        fileTransaction.lock();
+        try {
+            if (!shouldFetch()) {
+                return;
+            }
+            for (TransactionElement element : fileTransaction.fetchAll()) {
+                String name = element.getName();
+                byte[] bytes = element.getContent();
+                Object o = serializerFactory.deserialize(name, bytes);
+                cacheProvider.put(name, o);
+                candidateProvider.put(name);
+            }
+        } finally {
+            fileTransaction.unlock();
         }
     }
 
