@@ -283,7 +283,7 @@ public final class BinaryPreferencesBuilder {
                 allListeners
         ) : new MainThreadEventBridge(name, allListeners);
 
-        FetchStrategy fetchStrategy = memoryCacheMode == MemoryCacheMode.LAZY ? new LazyFetchStrategy(
+        FetchStrategy strategy = memoryCacheMode == MemoryCacheMode.LAZY ? new LazyFetchStrategy(
                 lockFactory,
                 taskExecutor,
                 cacheCandidateProvider,
@@ -307,7 +307,7 @@ public final class BinaryPreferencesBuilder {
                 taskExecutor,
                 serializerFactory,
                 lockFactory,
-                fetchStrategy
+                strategy
         );
     }
 }
