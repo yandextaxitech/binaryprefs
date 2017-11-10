@@ -73,9 +73,9 @@ public final class EagerFetchStrategy implements FetchStrategy {
     }
 
     private boolean shouldFetch() {
-        Set<String> candidates = candidateProvider.keys();
+        Set<String> names = fileTransaction.fetchNames();
         Set<String> cacheKeys = cacheProvider.keys();
-        return !cacheKeys.containsAll(candidates);
+        return !cacheKeys.containsAll(names);
     }
 
     @Override
