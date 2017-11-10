@@ -3,7 +3,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: "com.jfrog.artifactory"
 
 group = "com.ironz.binaryprefs"
-version = "1.0.0-BETA3.10"
+version = "1.0.0-BETA3.12"
 
 android {
 
