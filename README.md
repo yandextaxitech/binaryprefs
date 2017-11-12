@@ -106,8 +106,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                     public void handle(Exception e) {
                         //perform analytics report
                     }
-                })
-                .build();
+                }).build();
 ```
 
 Default is print handler which performs `e.printStacktrace()` when
