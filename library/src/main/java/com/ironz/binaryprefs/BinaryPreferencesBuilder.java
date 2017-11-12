@@ -14,15 +14,15 @@ import com.ironz.binaryprefs.event.EventBridge;
 import com.ironz.binaryprefs.event.ExceptionHandler;
 import com.ironz.binaryprefs.event.MainThreadEventBridge;
 import com.ironz.binaryprefs.exception.PreferencesInitializationException;
+import com.ironz.binaryprefs.fetch.EagerFetchStrategy;
+import com.ironz.binaryprefs.fetch.FetchStrategy;
+import com.ironz.binaryprefs.fetch.LazyFetchStrategy;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.MultiProcessTransaction;
-import com.ironz.binaryprefs.init.EagerFetchStrategy;
-import com.ironz.binaryprefs.init.FetchStrategy;
-import com.ironz.binaryprefs.init.LazyFetchStrategy;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.lock.SimpleLockFactory;
 import com.ironz.binaryprefs.migration.MigrateProcessor;
@@ -47,7 +47,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 public final class BinaryPreferencesBuilder {
 
     private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
-    private static final String IPC_MODE_WITH_LAZY_MESSAGE = "IPC mode can't be used with lazy in-memory cache strategy!";
 
     /**
      * Default name of preferences which name has not been defined.
@@ -71,7 +70,7 @@ public final class BinaryPreferencesBuilder {
     private File baseDir;
     private String name = DEFAULT_NAME;
     private boolean supportInterProcess = false;
-    private boolean lazyMemoryCache = true;
+    private MemoryCacheMode memoryCacheMode = MemoryCacheMode.LAZY;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
@@ -148,14 +147,28 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
-     * Defines usage of lazy in-memory cache fetching mechanism for improving initialization speed.
+     * Defines target mode for various in-memory cache fill scenario
+     */
+    public enum MemoryCacheMode {
+        /**
+         * Fill cache value only after request, e.g. just in time
+         */
+        LAZY,
+        /**
+         * Fill cache immediately after preferences initialization
+         */
+        EAGER
+    }
+
+    /**
+     * Defines in-memory cache fetching strategy.
      * Default value is {@code true}.
      *
-     * @param value {@code true} if would use lazy, {@code false} otherwise
+     * @param mode required memory cache mode
      * @return current builder instance
      */
-    public BinaryPreferencesBuilder lazyMemoryCache(boolean value) {
-        this.lazyMemoryCache = value;
+    public BinaryPreferencesBuilder memoryCacheMode(MemoryCacheMode mode) {
+        this.memoryCacheMode = mode;
         return this;
     }
 
@@ -243,9 +256,6 @@ public final class BinaryPreferencesBuilder {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
-        if (lazyMemoryCache && supportInterProcess) {
-            throw new UnsupportedOperationException(IPC_MODE_WITH_LAZY_MESSAGE);
-        }
         BinaryPreferences preferences = createInstance();
         migrateProcessor.migrateTo(preferences);
         return preferences;
@@ -273,7 +283,7 @@ public final class BinaryPreferencesBuilder {
                 allListeners
         ) : new MainThreadEventBridge(name, allListeners);
 
-        FetchStrategy fetchStrategy = lazyMemoryCache ? new LazyFetchStrategy(
+        FetchStrategy strategy = memoryCacheMode == MemoryCacheMode.LAZY ? new LazyFetchStrategy(
                 lockFactory,
                 taskExecutor,
                 cacheCandidateProvider,
@@ -297,7 +307,7 @@ public final class BinaryPreferencesBuilder {
                 taskExecutor,
                 serializerFactory,
                 lockFactory,
-                fetchStrategy
+                strategy
         );
     }
 }

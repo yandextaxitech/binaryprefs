@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("deprecation")
 public final class BinaryPreferencesTest {
 
     private static final String KEY_SUFFIX = "_key";
@@ -378,9 +379,9 @@ public final class BinaryPreferencesTest {
         TestUser value = TestUser.create();
 
         preferences.edit()
-                .putPersistable(key, value)
+                .putPersistable(TestUser.KEY, value)
                 .apply();
-        TestUser restored = preferences.getPersistable(key, new TestUser());
+        TestUser restored = preferences.getPersistable(TestUser.KEY, new TestUser());
 
         assertEquals(value, restored);
     }

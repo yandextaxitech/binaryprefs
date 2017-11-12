@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.init;
+package com.ironz.binaryprefs.fetch;
 
 import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
@@ -53,59 +53,26 @@ public final class LazyFetchStrategy implements FetchStrategy {
 
     @Override
     public Object getValue(String key, Object defValue) {
+        return getValueInternal(key, defValue);
+    }
+
+    @Override
+    public Map<String, Object> getAll() {
+        return getAllInternal();
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return containsInternal(key);
+    }
+
+    private Object getValueInternal(String key, Object defValue) {
         readLock.lock();
         try {
             Object o = getInternal(key, defValue);
             return serializerFactory.redefineMutable(o);
         } finally {
             readLock.unlock();
-        }
-    }
-
-    @Override
-    public Map<String, Object> getAll() {
-        readLock.lock();
-        try {
-            Set<String> names = candidateProvider.keys();
-            HashMap<String, Object> clone = new HashMap<>(names.size());
-            for (String name : names) {
-                Object o = getInternal(name);
-                Object redefinedValue = serializerFactory.redefineMutable(o);
-                clone.put(name, redefinedValue);
-            }
-            return Collections.unmodifiableMap(clone);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    @Override
-    public boolean contains(String key) {
-        readLock.lock();
-        try {
-            Set<String> names = candidateProvider.keys();
-            return names.contains(key) && cacheProvider.contains(key);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    private Object getInternal(final String key) {
-        Object cached = cacheProvider.get(key);
-        if (cached != null) {
-            return cached;
-        }
-        fileTransaction.lock();
-        try {
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return fetchObject(key);
-                }
-            });
-            return barrier.completeBlockingWithResultUnsafe();
-        } finally {
-            fileTransaction.unlock();
         }
     }
 
@@ -118,18 +85,71 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (!names.contains(key)) {
             return defValue;
         }
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                fileTransaction.lock();
+                try {
+                    return fetchObject(key);
+                } finally {
+                    fileTransaction.unlock();
+                }
+            }
+        });
+        return barrier.completeBlockingWihResult(defValue);
+    }
+
+    private Map<String, Object> getAllInternal() {
+        readLock.lock();
+        try {
+            final Set<String> candidates = candidateProvider.keys();
+            final Set<String> keys = cacheProvider.keys();
+            if (keys.containsAll(candidates)) {
+                Map<String, Object> all = cacheProvider.getAll();
+                return Collections.unmodifiableMap(all);
+            }
+
+            return readAllLocked(candidates, keys);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    private Map<String, Object> readAllLocked(final Set<String> candidates, final Set<String> keys) {
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return performReadAll(candidates, keys);
+            }
+        });
+        //noinspection unchecked
+        return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
+    }
+
+    private Map<String, Object> performReadAll(Set<String> candidates, Set<String> keys) {
         fileTransaction.lock();
         try {
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return fetchObject(key);
+            Map<String, Object> clone = new HashMap<>(candidates.size());
+            for (String candidate : candidates) {
+                if (keys.contains(candidate)) {
+                    continue;
                 }
-            });
-            return barrier.completeBlockingWihResult(defValue);
+                Object o = getInternal(candidate);
+                Object redefinedValue = serializerFactory.redefineMutable(o);
+                clone.put(candidate, redefinedValue);
+            }
+            return Collections.unmodifiableMap(clone);
         } finally {
             fileTransaction.unlock();
         }
+    }
+
+    private Object getInternal(final String key) {
+        Object cached = cacheProvider.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        return fetchObject(key);
     }
 
     private Object fetchObject(String key) {
@@ -138,5 +158,15 @@ public final class LazyFetchStrategy implements FetchStrategy {
         Object deserialize = serializerFactory.deserialize(key, bytes);
         cacheProvider.put(key, deserialize);
         return deserialize;
+    }
+
+    private boolean containsInternal(String key) {
+        readLock.lock();
+        try {
+            Set<String> candidates = candidateProvider.keys();
+            return candidates.contains(key);
+        } finally {
+            readLock.unlock();
+        }
     }
 }

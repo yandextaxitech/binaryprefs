@@ -1,4 +1,4 @@
-package com.ironz.binaryprefs.init;
+package com.ironz.binaryprefs.fetch;
 
 import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
@@ -40,7 +40,6 @@ public final class EagerFetchStrategy implements FetchStrategy {
     }
 
     private void fetchCache() {
-        fileTransaction.lock();
         readLock.lock();
         try {
             FutureBarrier barrier = taskExecutor.submit(new Runnable() {
@@ -51,28 +50,32 @@ public final class EagerFetchStrategy implements FetchStrategy {
             });
             barrier.completeBlockingUnsafe();
         } finally {
-            fileTransaction.unlock();
             readLock.unlock();
         }
     }
 
     private void fetchCacheInternal() {
-        if (!shouldFetch()) {
-            return;
-        }
-        for (TransactionElement element : fileTransaction.fetchAll()) {
-            String name = element.getName();
-            byte[] bytes = element.getContent();
-            Object o = serializerFactory.deserialize(name, bytes);
-            cacheProvider.put(name, o);
-            candidateProvider.put(name);
+        fileTransaction.lock();
+        try {
+            if (!shouldFetch()) {
+                return;
+            }
+            for (TransactionElement element : fileTransaction.fetchAll()) {
+                String name = element.getName();
+                byte[] bytes = element.getContent();
+                Object o = serializerFactory.deserialize(name, bytes);
+                cacheProvider.put(name, o);
+                candidateProvider.put(name);
+            }
+        } finally {
+            fileTransaction.unlock();
         }
     }
 
     private boolean shouldFetch() {
-        Set<String> candidates = candidateProvider.keys();
+        Set<String> names = fileTransaction.fetchNames();
         Set<String> cacheKeys = cacheProvider.keys();
-        return !cacheKeys.containsAll(candidates);
+        return !cacheKeys.containsAll(names);
     }
 
     @Override
