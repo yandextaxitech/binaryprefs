@@ -161,7 +161,7 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
-     * Defines in-memory cache fetching strategy for
+     * Defines in-memory cache fetching strategy.
      * Default value is {@code true}.
      *
      * @param mode required memory cache mode
