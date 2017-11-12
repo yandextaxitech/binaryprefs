@@ -109,30 +109,38 @@ public final class LazyFetchStrategy implements FetchStrategy {
                 return Collections.unmodifiableMap(all);
             }
 
-            FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
-                @Override
-                public Map<String, Object> call() throws Exception {
-                    fileTransaction.lock();
-                    try {
-                        Map<String, Object> clone = new HashMap<>(candidates.size());
-                        for (String candidate : candidates) {
-                            if (keys.contains(candidate)) {
-                                continue;
-                            }
-                            Object o = getInternal(candidate);
-                            Object redefinedValue = serializerFactory.redefineMutable(o);
-                            clone.put(candidate, redefinedValue);
-                        }
-                        return Collections.unmodifiableMap(clone);
-                    } finally {
-                        fileTransaction.unlock();
-                    }
-                }
-            });
-            //noinspection unchecked
-            return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
+            return readAllLocked(candidates, keys);
         } finally {
             readLock.unlock();
+        }
+    }
+
+    private Map<String, Object> readAllLocked(final Set<String> candidates, final Set<String> keys) {
+        FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return performReadAll(candidates, keys);
+            }
+        });
+        //noinspection unchecked
+        return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
+    }
+
+    private Map<String, Object> performReadAll(Set<String> candidates, Set<String> keys) {
+        fileTransaction.lock();
+        try {
+            Map<String, Object> clone = new HashMap<>(candidates.size());
+            for (String candidate : candidates) {
+                if (keys.contains(candidate)) {
+                    continue;
+                }
+                Object o = getInternal(candidate);
+                Object redefinedValue = serializerFactory.redefineMutable(o);
+                clone.put(candidate, redefinedValue);
+            }
+            return Collections.unmodifiableMap(clone);
+        } finally {
+            fileTransaction.unlock();
         }
     }
 
