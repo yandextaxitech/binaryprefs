@@ -186,7 +186,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-You can append one or more preferences for migration and it's will be merged into
+You can append one or more preferences for migration and all will be merged into
 this one implementation.
 After successful migration all data in migrated preferences will be removed. 
 Please note that all existing values in this implementation will be rewritten 
