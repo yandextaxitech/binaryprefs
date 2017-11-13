@@ -103,7 +103,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
             if (cachedKeys.containsAll(candidates)) {
                 return Collections.unmodifiableMap(allCache);
             }
-            Map<String, Object> fetched = fetchNonCached(candidates, cachedKeys);
+            Map<String, Object> fetched = fetchDeltaTask(candidates, cachedKeys);
             Map<String, Object> merged = mergeCache(fetched, allCache);
             return Collections.unmodifiableMap(merged);
         } finally {
@@ -119,28 +119,27 @@ public final class LazyFetchStrategy implements FetchStrategy {
         return map;
     }
 
-    private Map<String, Object> fetchNonCached(final Set<String> candidates, final Set<String> keys) {
+    private Map<String, Object> fetchDeltaTask(final Set<String> candidates, final Set<String> cachedKeys) {
         FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return fetchNonCachedLocked(candidates, keys);
+                return fetchDeltaLocked(candidates, cachedKeys);
             }
         });
         //noinspection unchecked
         return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
     }
 
-    private Map<String, Object> fetchNonCachedLocked(Set<String> candidates, Set<String> keys) {
+    private Map<String, Object> fetchDeltaLocked(Set<String> candidates, Set<String> cachedKeys) {
         fileTransaction.lock();
         try {
-            Map<String, Object> map = new HashMap<>(candidates.size());
+            Map<String, Object> map = new HashMap<>();
             for (String candidate : candidates) {
-                if (keys.contains(candidate)) {
+                if (cachedKeys.contains(candidate)) {
                     continue;
                 }
-                Object o = fetchOneCachedOrDisk(candidate);
-                Object redefinedValue = serializerFactory.redefineMutable(o);
-                map.put(candidate, redefinedValue);
+                Object o = fetchOneFromDisk(candidate);
+                map.put(candidate, o);
             }
             return map;
         } finally {
@@ -155,14 +154,6 @@ public final class LazyFetchStrategy implements FetchStrategy {
         } finally {
             fileTransaction.unlock();
         }
-    }
-
-    private Object fetchOneCachedOrDisk(String key) {
-        Object cached = cacheProvider.get(key);
-        if (cached != null) {
-            return cached;
-        }
-        return fetchOneFromDisk(key);
     }
 
     private Object fetchOneFromDisk(String key) {
