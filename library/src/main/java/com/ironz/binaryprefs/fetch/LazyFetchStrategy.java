@@ -88,12 +88,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
         FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                fileTransaction.lock();
-                try {
-                    return fetchObject(key);
-                } finally {
-                    fileTransaction.unlock();
-                }
+                return fetchOneFromDiskLocked(key);
             }
         });
         return barrier.completeBlockingWihResult(defValue);
@@ -103,56 +98,74 @@ public final class LazyFetchStrategy implements FetchStrategy {
         readLock.lock();
         try {
             final Set<String> candidates = candidateProvider.keys();
-            final Set<String> keys = cacheProvider.keys();
-            if (keys.containsAll(candidates)) {
-                Map<String, Object> all = cacheProvider.getAll();
-                return Collections.unmodifiableMap(all);
+            final Set<String> cachedKeys = cacheProvider.keys();
+            Map<String, Object> allCache = cacheProvider.getAll();
+            if (cachedKeys.containsAll(candidates)) {
+                return Collections.unmodifiableMap(allCache);
             }
-
-            return readAllLocked(candidates, keys);
+            Map<String, Object> fetched = fetchNonCached(candidates, cachedKeys);
+            Map<String, Object> merged = mergeCache(fetched, allCache);
+            return Collections.unmodifiableMap(merged);
         } finally {
             readLock.unlock();
         }
     }
 
-    private Map<String, Object> readAllLocked(final Set<String> candidates, final Set<String> keys) {
+    private Map<String, Object> mergeCache(Map<String, Object> fetched, Map<String, Object> allCache) {
+        int totalCacheSize = fetched.size() + allCache.size();
+        HashMap<String, Object> map = new HashMap<>(totalCacheSize);
+        map.putAll(fetched);
+        map.putAll(allCache);
+        return map;
+    }
+
+    private Map<String, Object> fetchNonCached(final Set<String> candidates, final Set<String> keys) {
         FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return performReadAll(candidates, keys);
+                return fetchNonCachedLocked(candidates, keys);
             }
         });
         //noinspection unchecked
         return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
     }
 
-    private Map<String, Object> performReadAll(Set<String> candidates, Set<String> keys) {
+    private Map<String, Object> fetchNonCachedLocked(Set<String> candidates, Set<String> keys) {
         fileTransaction.lock();
         try {
-            Map<String, Object> clone = new HashMap<>(candidates.size());
+            Map<String, Object> map = new HashMap<>(candidates.size());
             for (String candidate : candidates) {
                 if (keys.contains(candidate)) {
                     continue;
                 }
-                Object o = getInternal(candidate);
+                Object o = fetchOneCachedOrDisk(candidate);
                 Object redefinedValue = serializerFactory.redefineMutable(o);
-                clone.put(candidate, redefinedValue);
+                map.put(candidate, redefinedValue);
             }
-            return Collections.unmodifiableMap(clone);
+            return map;
         } finally {
             fileTransaction.unlock();
         }
     }
 
-    private Object getInternal(final String key) {
+    private Object fetchOneFromDiskLocked(String key) {
+        fileTransaction.lock();
+        try {
+            return fetchOneFromDisk(key);
+        } finally {
+            fileTransaction.unlock();
+        }
+    }
+
+    private Object fetchOneCachedOrDisk(String key) {
         Object cached = cacheProvider.get(key);
         if (cached != null) {
             return cached;
         }
-        return fetchObject(key);
+        return fetchOneFromDisk(key);
     }
 
-    private Object fetchObject(String key) {
+    private Object fetchOneFromDisk(String key) {
         TransactionElement element = fileTransaction.fetchOne(key);
         byte[] bytes = element.getContent();
         Object deserialize = serializerFactory.deserialize(key, bytes);
