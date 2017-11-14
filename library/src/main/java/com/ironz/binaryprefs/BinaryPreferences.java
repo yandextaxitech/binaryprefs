@@ -154,7 +154,7 @@ final class BinaryPreferences implements Preferences {
     public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
-            OnSharedPreferenceChangeListenerWrapper wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
+            OnSharedPreferenceChangeListener wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
             eventsBridge.registerOnSharedPreferenceChangeListener(wrapper);
         } finally {
             writeLock.unlock();
@@ -165,7 +165,7 @@ final class BinaryPreferences implements Preferences {
     public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
         writeLock.lock();
         try {
-            OnSharedPreferenceChangeListenerWrapper wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
+            OnSharedPreferenceChangeListener wrapper = new OnSharedPreferenceChangeListenerWrapper(this, listener);
             eventsBridge.unregisterOnSharedPreferenceChangeListener(wrapper);
         } finally {
             writeLock.unlock();
