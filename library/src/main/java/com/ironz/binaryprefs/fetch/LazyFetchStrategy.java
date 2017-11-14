@@ -81,8 +81,8 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (cached != null) {
             return cached;
         }
-        Set<String> names = candidateProvider.keys();
-        if (!names.contains(key)) {
+        Set<String> candidates = candidateProvider.keys();
+        if (!candidates.contains(key)) {
             return defValue;
         }
         FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
