@@ -97,8 +97,8 @@ public final class LazyFetchStrategy implements FetchStrategy {
     private Map<String, Object> getAllInternal() {
         readLock.lock();
         try {
-            final Set<String> candidates = candidateProvider.keys();
-            final Set<String> cachedKeys = cacheProvider.keys();
+            Set<String> candidates = candidateProvider.keys();
+            Set<String> cachedKeys = cacheProvider.keys();
             Map<String, Object> allCache = cacheProvider.getAll();
             if (cachedKeys.containsAll(candidates)) {
                 return Collections.unmodifiableMap(allCache);
