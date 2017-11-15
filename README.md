@@ -106,8 +106,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                     public void handle(Exception e) {
                         //perform analytics report
                     }
-                })
-                .build();
+                }).build();
 ```
 
 Default is print handler which performs `e.printStacktrace()` when
@@ -172,6 +171,10 @@ can return `this` from method.
 
 Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
+P.S.: 
+If you have group of preferences which always stores under one transaction and you want
+to reduce disk IO just use Persistable for storing this bulk as close as possible.
+
 #### Migration from another implementations
 
 Builder have simple api for existing preferences migration:
@@ -183,7 +186,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
                 .build();
 ```
 
-You can append one or more preferences for migration and it's will be merged into
+You can append one or more preferences for migration and all will be merged into
 this one implementation.
 After successful migration all data in migrated preferences will be removed. 
 Please note that all existing values in this implementation will be rewritten 
