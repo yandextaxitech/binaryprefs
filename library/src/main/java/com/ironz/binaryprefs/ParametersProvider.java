@@ -1,6 +1,6 @@
 package com.ironz.binaryprefs;
 
-import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ final class ParametersProvider {
     private static final Map<String, Lock> processLocks = new ConcurrentHashMap<>();
     private static final Map<String, Map<String, Object>> caches = new ConcurrentHashMap<>();
     private static final Map<String, Set<String>> cacheCandidates = new ConcurrentHashMap<>();
-    private static final Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
+    private static final Map<String, List<OnSharedPreferenceChangeListener>> allListeners = new ConcurrentHashMap<>();
     private static final Map<String, ExecutorService> executors = new ConcurrentHashMap<>();
 
     Map<String, ReadWriteLock> getLocks() {
@@ -31,7 +31,7 @@ final class ParametersProvider {
         return caches;
     }
 
-    Map<String, List<SharedPreferences.OnSharedPreferenceChangeListener>> getAllListeners() {
+    Map<String, List<OnSharedPreferenceChangeListener>> getAllListeners() {
         return allListeners;
     }
 

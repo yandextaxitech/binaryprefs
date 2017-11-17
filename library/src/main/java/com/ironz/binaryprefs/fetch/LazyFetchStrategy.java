@@ -113,7 +113,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
 
     private Map<String, Object> mergeCache(Map<String, Object> fetched, Map<String, Object> allCache) {
         int totalCacheSize = fetched.size() + allCache.size();
-        HashMap<String, Object> map = new HashMap<>(totalCacheSize);
+        Map<String, Object> map = new HashMap<>(totalCacheSize);
         map.putAll(fetched);
         map.putAll(allCache);
         return map;
