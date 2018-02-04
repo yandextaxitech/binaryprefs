@@ -1,9 +1,13 @@
 package com.ironz.binaryprefs.serialization.serializer;
 
+import java.nio.charset.Charset;
+
 /**
  * {@code String} to byte array implementation and backwards
  */
 public final class StringSerializer {
+
+    private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
      * Uses for detecting byte array type of {@link String}
@@ -27,7 +31,7 @@ public final class StringSerializer {
      * @return specific byte array with scheme.
      */
     public byte[] serialize(String s) {
-        byte[] stringBytes = s.getBytes();
+        byte[] stringBytes = s.getBytes(CHARSET);
         byte[] b = new byte[stringBytes.length + FLAG_OFFSET];
         b[0] = FLAG;
         System.arraycopy(stringBytes, 0, b, FLAG_OFFSET, stringBytes.length);
@@ -53,7 +57,7 @@ public final class StringSerializer {
      * @return deserialized String
      */
     public String deserialize(byte[] bytes, int offset, int length) {
-        return new String(bytes, FLAG_OFFSET + offset, length);
+        return new String(bytes, FLAG_OFFSET + offset, length, CHARSET);
     }
 
     public boolean isMatches(byte flag) {

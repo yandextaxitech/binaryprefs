@@ -2,9 +2,12 @@ package com.ironz.binaryprefs.encryption;
 
 import com.ironz.binaryprefs.exception.EncryptionException;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public final class XorKeyEncryption implements KeyEncryption {
+
+    private static final Charset CHARSET = Charset.forName("UTF-8");
 
     private static final String SMALL_XOR_MESSAGE = "XOR must be at least 16 bytes";
     private static final String MIRRORED_XOR_MESSAGE = "XOR must not be mirrored";
@@ -47,7 +50,7 @@ public final class XorKeyEncryption implements KeyEncryption {
 
     @Override
     public String encrypt(String name) {
-        byte[] original = name.getBytes();
+        byte[] original = name.getBytes(CHARSET);
         byte[] bytes = xorName(original);
         return safeEncoder.encodeToString(bytes);
     }
@@ -56,7 +59,7 @@ public final class XorKeyEncryption implements KeyEncryption {
     public String decrypt(String name) {
         byte[] decode = safeEncoder.decode(name);
         byte[] bytes = xorName(decode);
-        return new String(bytes);
+        return new String(bytes, CHARSET);
     }
 
     private byte[] xorName(byte[] original) {
