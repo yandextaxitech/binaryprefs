@@ -49,7 +49,7 @@ Add dependency:
 
 ```groovy
 dependencies {
-   compile "com.github.iamironz:binaryprefs:$version"
+   compile "com.github.yandextaxitech:binaryprefs:$version"
 }
 ```
 
@@ -169,7 +169,7 @@ object mutability instead in-memory cache mutability.
 But if your data class immutable and you define all values from constructor you just 
 can return `this` from method.
 
-Sample for explanation: [TestUser.java](https://github.com/iamironz/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
+Sample for explanation: [TestUser.java](https://github.com/yandextaxitech/binaryprefs/blob/master/library/src/test/java/com/ironz/binaryprefs/impl/TestUser.java#L68-L121)
 
 P.S.: 
 If you have group of preferences which always stores under one transaction and you want
