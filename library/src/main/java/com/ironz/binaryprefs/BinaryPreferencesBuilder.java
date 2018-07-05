@@ -3,6 +3,7 @@ package com.ironz.binaryprefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
+
 import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.candidates.ConcurrentCacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
@@ -46,14 +47,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 @SuppressWarnings("unused")
 public final class BinaryPreferencesBuilder {
 
-    private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
-
     /**
      * Default name of preferences which name has not been defined.
      */
     @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_NAME = "default";
-
+    private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
     private final ParametersProvider parametersProvider = new ParametersProvider();
 
     private final Map<String, ReadWriteLock> locks = parametersProvider.getLocks();
@@ -70,6 +69,7 @@ public final class BinaryPreferencesBuilder {
     private File baseDir;
     private String name = DEFAULT_NAME;
     private boolean supportInterProcess = false;
+    private boolean allowBuildOnBackgroundThread = false;
     private MemoryCacheMode memoryCacheMode = MemoryCacheMode.LAZY;
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
@@ -144,20 +144,6 @@ public final class BinaryPreferencesBuilder {
     public BinaryPreferencesBuilder supportInterProcess(boolean value) {
         this.supportInterProcess = value;
         return this;
-    }
-
-    /**
-     * Defines target mode for various in-memory cache fill scenario
-     */
-    public enum MemoryCacheMode {
-        /**
-         * Fill cache value only after request, e.g. just in time
-         */
-        LAZY,
-        /**
-         * Fill cache immediately after preferences initialization
-         */
-        EAGER
     }
 
     /**
@@ -246,6 +232,20 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
+     * Allows to build instance of {@link BinaryPreferences} on background thread.
+     * <p>
+     * <b>WARNING:</b> instantiating preferences concurrently can
+     * lead to in-memory cache race conditions.
+     * Be sure that migration performs not in the parallel.
+     *
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder allowBuildOnBackgroundThread() {
+        allowBuildOnBackgroundThread = true;
+        return this;
+    }
+
+    /**
      * Builds preferences instance with predefined or default parameters.
      * This method will fails if invocation performed not in the main thread.
      *
@@ -253,7 +253,7 @@ public final class BinaryPreferencesBuilder {
      * @see PreferencesInitializationException
      */
     public Preferences build() {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
+        if (!allowBuildOnBackgroundThread && Looper.myLooper() != Looper.getMainLooper()) {
             throw new PreferencesInitializationException(INCORRECT_THREAD_INIT_MESSAGE);
         }
         BinaryPreferences preferences = createInstance();
@@ -309,5 +309,19 @@ public final class BinaryPreferencesBuilder {
                 lockFactory,
                 strategy
         );
+    }
+
+    /**
+     * Defines target mode for various in-memory cache fill scenario
+     */
+    public enum MemoryCacheMode {
+        /**
+         * Fill cache value only after request, e.g. just in time
+         */
+        LAZY,
+        /**
+         * Fill cache immediately after preferences initialization
+         */
+        EAGER
     }
 }

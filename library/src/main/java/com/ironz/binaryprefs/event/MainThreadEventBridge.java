@@ -2,6 +2,7 @@ package com.ironz.binaryprefs.event;
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
+import android.os.Looper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public final class MainThreadEventBridge implements EventBridge {
 
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
-    private final Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     public MainThreadEventBridge(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         this.currentListeners = putIfAbsentListeners(prefName, allListeners);
