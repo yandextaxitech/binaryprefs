@@ -4,6 +4,7 @@ import com.ironz.binaryprefs.exception.FileOperationException;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -16,7 +17,7 @@ import java.nio.channels.FileChannel;
  * If adapter detects backup file it will be replaced
  * to original file. See {@link #fetchBackupOrOriginal(String)}.
  */
-public final class NioFileAdapter implements FileAdapter {
+public class NioFileAdapter implements FileAdapter {
 
     private static final String ZERO_BYTES_MESSAGE = "%s key's value is zero bytes for saving";
 
@@ -56,10 +57,18 @@ public final class NioFileAdapter implements FileAdapter {
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
         File file = new File(baseDir, name);
         if (backupFile.exists()) {
-            delete(file);
-            swap(backupFile, file);
+            restoreBackup(file, backupFile);
         }
         return fetchInternal(file);
+    }
+
+    private void restoreBackup(File file, File backupFile) {
+        if (backupFile.length() == 0) {
+            delete(file);
+            delete(backupFile);
+        } else {
+            swap(backupFile, file);
+        }
     }
 
     private byte[] fetchInternal(File file) {
@@ -99,12 +108,14 @@ public final class NioFileAdapter implements FileAdapter {
         }
         File file = new File(baseDir, name);
         File backupFile = new File(backupDir, name + BACKUP_EXTENSION);
+
+        ensureExists(file);
         swap(file, backupFile);
         saveInternal(file, bytes);
         delete(backupFile);
     }
 
-    private void saveInternal(File file, byte[] bytes) {
+    void saveInternal(File file, byte[] bytes) {
         FileChannel channel = null;
         RandomAccessFile randomAccessFile = null;
         try {
@@ -126,6 +137,17 @@ public final class NioFileAdapter implements FileAdapter {
                     channel.close();
                 }
             } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void ensureExists(File file) {
+        if (!file.exists()) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new FileOperationException(e);
             }
         }
     }
