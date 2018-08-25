@@ -15,7 +15,7 @@ public interface TaskExecutor {
      * @param runnable instance for task execution
      * @return future barrier for task blocking
      */
-    FutureBarrier submit(Runnable runnable);
+    FutureBarrier<?> submit(Runnable runnable);
 
     /**
      * Submits callable into task executor.
@@ -26,5 +26,5 @@ public interface TaskExecutor {
      * @param callable instance for task execution
      * @return future barrier for task blocking
      */
-    FutureBarrier submit(Callable<?> callable);
+    <T> FutureBarrier<T> submit(Callable<T> callable);
 }

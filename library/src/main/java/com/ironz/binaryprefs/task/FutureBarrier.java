@@ -8,12 +8,12 @@ import java.util.concurrent.Future;
 /**
  * Meta object which holds current task state and allows blocking await.
  */
-public final class FutureBarrier {
+public final class FutureBarrier<T> {
 
-    private final Future<?> future;
+    private final Future<T> future;
     private final ExceptionHandler exceptionHandler;
 
-    FutureBarrier(Future<?> future, ExceptionHandler exceptionHandler) {
+    FutureBarrier(Future<T> future, ExceptionHandler exceptionHandler) {
         this.future = future;
         this.exceptionHandler = exceptionHandler;
     }
@@ -32,7 +32,7 @@ public final class FutureBarrier {
     /**
      * Complete task with exception handle and returns result or default value for this task.
      */
-    public Object completeBlockingWihResult(Object defValue) {
+    public T completeBlockingWihResult(T defValue) {
         try {
             return future.get();
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public final class FutureBarrier {
     /**
      * Complete task with result returning without exception handle and re-throws exception on higher level.
      */
-    public Object completeBlockingWithResultUnsafe() {
+    public T completeBlockingWithResultUnsafe() {
         try {
             return future.get();
         } catch (Exception e) {

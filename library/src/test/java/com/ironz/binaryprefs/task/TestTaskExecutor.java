@@ -15,15 +15,15 @@ public final class TestTaskExecutor implements TaskExecutor {
     }
 
     @Override
-    public FutureBarrier submit(Runnable runnable) {
+    public FutureBarrier<?> submit(Runnable runnable) {
         Future<?> submit = executor.submit(runnable);
-        return new FutureBarrier(submit, exceptionHandler);
+        return new FutureBarrier<>(submit, exceptionHandler);
     }
 
     @Override
-    public FutureBarrier submit(Callable<?> callable) {
-        Future<?> submit = executor.submit(callable);
-        return new FutureBarrier(submit, exceptionHandler);
+    public <T> FutureBarrier<T> submit(Callable<T> callable) {
+        Future<T> submit = executor.submit(callable);
+        return new FutureBarrier<>(submit, exceptionHandler);
     }
 
     private ExecutorService currentThreadExecutorService() {

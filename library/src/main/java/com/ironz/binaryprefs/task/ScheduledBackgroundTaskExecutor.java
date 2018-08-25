@@ -50,14 +50,14 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     }
 
     @Override
-    public FutureBarrier submit(final Runnable runnable) {
+    public FutureBarrier<?> submit(final Runnable runnable) {
         Future<?> submit = currentExecutor.submit(runnable);
-        return new FutureBarrier(submit, exceptionHandler);
+        return new FutureBarrier<>(submit, exceptionHandler);
     }
 
     @Override
-    public FutureBarrier submit(Callable<?> callable) {
-        Future<?> submit = currentExecutor.submit(callable);
-        return new FutureBarrier(submit, exceptionHandler);
+    public <T> FutureBarrier<T> submit(Callable<T> callable) {
+        Future<T> submit = currentExecutor.submit(callable);
+        return new FutureBarrier<>(submit, exceptionHandler);
     }
 }

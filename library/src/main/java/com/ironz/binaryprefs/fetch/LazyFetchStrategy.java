@@ -85,7 +85,7 @@ public final class LazyFetchStrategy implements FetchStrategy {
         if (!candidates.contains(key)) {
             return defValue;
         }
-        FutureBarrier barrier = taskExecutor.submit(new Callable<Object>() {
+        FutureBarrier<Object> barrier = taskExecutor.submit(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
                 return fetchOneFromDiskLocked(key);
@@ -120,14 +120,13 @@ public final class LazyFetchStrategy implements FetchStrategy {
     }
 
     private Map<String, Object> fetchDeltaTask(final Set<String> candidates, final Set<String> cachedKeys) {
-        FutureBarrier barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
+        FutureBarrier<Map<String, Object>> barrier = taskExecutor.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
                 return fetchDeltaLocked(candidates, cachedKeys);
             }
         });
-        //noinspection unchecked
-        return (Map<String, Object>) barrier.completeBlockingWithResultUnsafe();
+        return barrier.completeBlockingWithResultUnsafe();
     }
 
     private Map<String, Object> fetchDeltaLocked(Set<String> candidates, Set<String> cachedKeys) {
