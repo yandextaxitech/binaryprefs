@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Process;
 import com.ironz.binaryprefs.cache.candidates.CacheCandidateProvider;
 import com.ironz.binaryprefs.cache.provider.CacheProvider;
@@ -39,7 +40,7 @@ public final class BroadcastEventBridge implements EventBridge {
 
     private final List<OnSharedPreferenceChangeListener> currentListeners;
 
-    private final Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final Context context;
     private final String prefName;
