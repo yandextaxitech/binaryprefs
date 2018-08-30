@@ -110,7 +110,7 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 ```
 
 Default is print handler which performs `e.printStacktrace()` when
-exception event comes.
+exception event occurs.
 
 #### Custom save directory
 
