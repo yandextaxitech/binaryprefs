@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 /**
  * Custom implementation of Base32 but with lower cased bytes table
  */
-class SafeEncoder {
+public class SafeEncoder {
 
     private static final Charset CHARSET = Charset.forName("UTF-8");
     private static final byte[] ENCODE_TABLE = {
@@ -195,11 +195,11 @@ class SafeEncoder {
         eof = false;
     }
 
-    String encodeToString(byte[] bytes) {
+    public String encodeToString(byte[] bytes) {
         return new String(encode(bytes), CHARSET);
     }
 
-    byte[] decode(String s) {
+    public byte[] decode(String s) {
         return decode(s.getBytes(CHARSET));
     }
 
