@@ -47,7 +47,7 @@ bintray {
         websiteUrl = "https://github.com/iamironz/binaryprefs"
         vcsUrl = "https://github.com/iamironz/binaryprefs"
         githubRepo = "https://github.com/iamironz/binaryprefs"
-        githubReleaseNotesFile = "https://github.com/iamironz/binaryprefs/blob/master/CHANGELOG.md"
+        githubReleaseNotesFile = "https://github.com/yandextaxitech/binaryprefs/blob/master/CHANGELOG.md"
         publicDownloadNumbers = true
         licenses = ["Apache-2.0"]
         publish = true
