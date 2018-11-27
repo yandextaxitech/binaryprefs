@@ -99,7 +99,7 @@ public final class SerializerFactory {
         if (charSerializer.isMatches(flag)) {
             return charSerializer.deserialize(bytes);
         }
-        throw new UnsupportedClassVersionError(String.format("Flag verification failed. Incorrect flag '%s'", flag));
+        throw new UnsupportedOperationException(String.format("Flag verification failed. Incorrect flag '%s'", flag));
     }
 
     public Object redefineMutable(Object o) {

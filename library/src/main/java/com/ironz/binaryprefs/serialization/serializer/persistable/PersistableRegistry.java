@@ -21,7 +21,7 @@ public final class PersistableRegistry {
 
     public Class<? extends Persistable> get(String key) {
         if (!map.containsKey(key)) {
-            throw new UnsupportedClassVersionError(String.format(CANNOT_FIND_MESSAGE, key));
+            throw new UnsupportedOperationException(String.format(CANNOT_FIND_MESSAGE, key));
         }
         return map.get(key);
     }
