@@ -1,3 +1,9 @@
+#### 1.0.1:
+
+
+1. Fixed lock/unlock semantics which can causes ANR
+
+
 #### 1.0.0:
 
 1. Added fetch strategies as public api. Now you can choose what kind
