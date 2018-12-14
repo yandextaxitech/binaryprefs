@@ -186,7 +186,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             strategyMap.put(key, strategy);
             return this;
         } finally {
-            writeLock.lock();
+            writeLock.unlock();
         }
     }
 
@@ -198,7 +198,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
             strategyMap.put(key, strategy);
             return this;
         } finally {
-            writeLock.lock();
+            writeLock.unlock();
         }
     }
 
