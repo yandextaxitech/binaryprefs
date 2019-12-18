@@ -79,15 +79,35 @@ public final class PreferencesCreator {
                        Map<String, Lock> processLocks,
                        Map<String, Set<String>> allCacheCandidates,
                        Map<String, Map<String, Object>> allCaches) {
+
+        final ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
+        final TaskExecutor taskExecutor = new TestTaskExecutor(exceptionHandler);
+
+        return create(
+                name,
+                directoryProvider,
+                locks,
+                processLocks,
+                allCacheCandidates,
+                allCaches,
+                taskExecutor
+        );
+    }
+
+    Preferences create(String name,
+                       DirectoryProvider directoryProvider,
+                       Map<String, ReadWriteLock> locks,
+                       Map<String, Lock> processLocks,
+                       Map<String, Set<String>> allCacheCandidates,
+                       Map<String, Map<String, Object>> allCaches,
+                       TaskExecutor taskExecutor) {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
-        ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
         ValueEncryption valueEncryption = new AesValueEncryption("1111111111111111".getBytes(), "0000000000000000".getBytes());
         KeyEncryption keyEncryption = new XorKeyEncryption("1111111111111110".getBytes());
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheCandidateProvider candidateProvider = new ConcurrentCacheCandidateProvider(name, allCacheCandidates);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
-        TaskExecutor taskExecutor = new TestTaskExecutor(exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);

@@ -23,7 +23,7 @@ public final class FutureBarrier<T> {
      */
     public void completeBlockingUnsafe() {
         try {
-            future.get();
+            Uninterruptibles.getUninterruptibly(future);
         } catch (Exception e) {
             throw new FileOperationException(e);
         }
@@ -34,7 +34,7 @@ public final class FutureBarrier<T> {
      */
     public T completeBlockingWihResult(T defValue) {
         try {
-            return future.get();
+            return Uninterruptibles.getUninterruptibly(future);
         } catch (Exception e) {
             exceptionHandler.handle(e);
         }
@@ -46,7 +46,7 @@ public final class FutureBarrier<T> {
      */
     public T completeBlockingWithResultUnsafe() {
         try {
-            return future.get();
+            return Uninterruptibles.getUninterruptibly(future);
         } catch (Exception e) {
             throw new FileOperationException(e);
         }
@@ -60,7 +60,7 @@ public final class FutureBarrier<T> {
      */
     public boolean completeBlockingWithStatus() {
         try {
-            future.get();
+            Uninterruptibles.getUninterruptibly(future);
             return true;
         } catch (Exception e) {
             exceptionHandler.handle(e);
