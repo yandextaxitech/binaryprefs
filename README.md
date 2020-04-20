@@ -80,6 +80,30 @@ Preferences preferences = new BinaryPreferencesBuilder(context)
 Default is "default" name.
 
 
+#### Kotlin usage.
+You can add the following extensions for use Binary Pref in Kotlin DSL:
+```kotlin 
+fun Preferences.commit(block: PreferencesEditor.() -> Unit) {
+    val editor = this.edit()
+    block(editor)
+    editor.commit()
+}
+
+fun Preferences.apply(block: PreferencesEditor.() -> Unit) {
+    val editor = this.edit()
+    block(editor)
+    editor.apply()
+}
+```
+
+##### Sample of kotlin code with extensions:
+```kotlin
+pref.commit {
+    putString(KEY_STRING, "<String value>")
+    putInt(KEY_INT, 0)
+}
+```
+
 #### Encryption
 
 You can define your own key/value vice versa encryption or use default:
