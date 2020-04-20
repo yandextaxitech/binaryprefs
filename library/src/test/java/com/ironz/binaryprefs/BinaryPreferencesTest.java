@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -455,6 +456,24 @@ public final class BinaryPreferencesTest {
         byte[] restored = preferences.getByteArray(key, defaultValue);
 
         assertArrayEquals(value, restored);
+    }
+
+    @Test
+    public void byteArrayValue_cachedValueIsCopied() {
+        byte[] expected = new byte[]{1, 2, 3, 4, 5, 6, 7};
+
+        byte[] value = Arrays.copyOf(expected, expected.length);
+        byte[] defaultValue = {};
+
+        preferences.edit()
+            .putByteArray(key, value)
+            .apply();
+
+        value[0] = 13;
+
+        byte[] restored = preferences.getByteArray(key, defaultValue);
+
+        assertArrayEquals(expected, restored);
     }
 
     @Test
