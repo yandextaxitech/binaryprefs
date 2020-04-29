@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/yandextaxitech/binaryprefs.svg?branch=master)](https://travis-ci.org/yandextaxitech/binaryprefs)
-[![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
+[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 <a href="http://www.methodscount.com/?lib=com.github.yandextaxitech%3Abinaryprefs%3A1.0.0"><img src="https://img.shields.io/badge/Methods count-636-e91e63.svg"/></a>
 <a href="http://www.methodscount.com/?lib=com.github.yandextaxitech%3Abinaryprefs%3A1.0.0"><img src="https://img.shields.io/badge/Size-80 KB-e91e63.svg"/></a>
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Binary%20Preferences-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5931)
