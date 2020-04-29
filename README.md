@@ -260,8 +260,7 @@ DumpReceiver.unregister(name);
 1. ~~Disk I/O encrypt.~~ completed
 2. ~~IPC~~ completed
 3. ~~Externalizable.~~ completed as `Persistable`
-4. ~~Preferences tooling (key set reading).~~ completed:
-`adb shell am broadcast -a com.ironz.binaryprefs.ACTION_DUMP_PREFERENCE --es "pref_name" "your_pref_name" (optional: --es "pref_key" "your_pref_key")`
+4. ~~Preferences tooling (key set reading).~~ implemented
 5. ~~Custom serializers.~~ completed
 6. ~~Synchronous commits.~~ completed
 7. ~~Store all primitives (like byte, short, char, double).~~ completed
@@ -274,10 +273,10 @@ DumpReceiver.unregister(name);
 14. ~~Default preferences migration mechanism~~ complete
 15. ~~In-memory cache initialization strategies~~
 16. ~~`byte[]` support~~
-17. IPC transactions without 1mb limit
-18. Limiting strategies (UNLIMITED, LRU, FIFO)
-19. RxJava support
-20. ~~`sun.misc.Unsafe` serialization mode for api 21+~~ - not actual because private api usage will be limited at runtime.
+17. ~~IPC transactions without 1mb limit~~ temporary impossible due to major ashmem changes between Android runtime versions
+18. ~~RxJava support~~ Please, use: https://github.com/f2prateek/rx-preferences
+19. ~~`sun.misc.Unsafe` serialization mode for api 21+~~ - not actual due to private api usage is limited at runtime.
+20. Limiting strategies (UNLIMITED, LRU, FIFO)
 
 
 ## License
