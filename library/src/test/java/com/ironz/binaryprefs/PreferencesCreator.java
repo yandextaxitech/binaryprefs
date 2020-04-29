@@ -25,6 +25,9 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.TaskExecutor;
 import com.ironz.binaryprefs.task.TestTaskExecutor;
+import com.ironz.binaryprefs.task.barrierprovider.FutureBarrierProvider;
+import com.ironz.binaryprefs.task.barrierprovider.impl.InterruptableFutureBarrierProvider;
+
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -64,13 +67,16 @@ public final class PreferencesCreator {
     }
 
     Preferences create(String name, DirectoryProvider directoryProvider) {
+        FutureBarrierProvider barrierProvider = new InterruptableFutureBarrierProvider();
+        return create(name, directoryProvider, barrierProvider);
+    }
 
+    Preferences create(String name, DirectoryProvider directoryProvider, FutureBarrierProvider barrierProvider) {
         Map<String, ReadWriteLock> locks = new ConcurrentHashMap<>();
         Map<String, Lock> processLocks = new ConcurrentHashMap<>();
         Map<String, Set<String>> allCacheCandidates = new ConcurrentHashMap<>();
         Map<String, Map<String, Object>> allCaches = new ConcurrentHashMap<>();
-
-        return create(name, directoryProvider, locks, processLocks, allCacheCandidates, allCaches);
+        return create(name, directoryProvider, locks, processLocks, allCacheCandidates, allCaches, barrierProvider);
     }
 
     Preferences create(String name,
@@ -79,6 +85,17 @@ public final class PreferencesCreator {
                        Map<String, Lock> processLocks,
                        Map<String, Set<String>> allCacheCandidates,
                        Map<String, Map<String, Object>> allCaches) {
+        FutureBarrierProvider barrierProvider = new InterruptableFutureBarrierProvider();
+        return create(name, directoryProvider, locks, processLocks, allCacheCandidates, allCaches, barrierProvider);
+    }
+
+    private Preferences create(String name,
+                               DirectoryProvider directoryProvider,
+                               Map<String, ReadWriteLock> locks,
+                               Map<String, Lock> processLocks,
+                               Map<String, Set<String>> allCacheCandidates,
+                               Map<String, Map<String, Object>> allCaches,
+                               FutureBarrierProvider barrierProvider) {
         FileAdapter fileAdapter = new NioFileAdapter(directoryProvider);
         ExceptionHandler exceptionHandler = ExceptionHandler.IGNORE;
         LockFactory lockFactory = new SimpleLockFactory(name, directoryProvider, locks, processLocks);
@@ -87,7 +104,7 @@ public final class PreferencesCreator {
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheCandidateProvider candidateProvider = new ConcurrentCacheCandidateProvider(name, allCacheCandidates);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, allCaches);
-        TaskExecutor taskExecutor = new TestTaskExecutor(exceptionHandler);
+        TaskExecutor taskExecutor = new TestTaskExecutor(barrierProvider, exceptionHandler);
         PersistableRegistry persistableRegistry = new PersistableRegistry();
         persistableRegistry.register(TestUser.KEY, TestUser.class);
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);

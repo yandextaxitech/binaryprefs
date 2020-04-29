@@ -1,5 +1,7 @@
 package com.ironz.binaryprefs.task;
 
+import com.ironz.binaryprefs.task.barrier.FutureBarrier;
+
 import java.util.concurrent.Callable;
 
 /**

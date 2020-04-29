@@ -6,8 +6,8 @@ import com.ironz.binaryprefs.file.transaction.FileTransaction;
 import com.ironz.binaryprefs.file.transaction.TransactionElement;
 import com.ironz.binaryprefs.lock.LockFactory;
 import com.ironz.binaryprefs.serialization.SerializerFactory;
-import com.ironz.binaryprefs.task.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
+import com.ironz.binaryprefs.task.barrier.FutureBarrier;
 
 import java.util.Collections;
 import java.util.HashMap;

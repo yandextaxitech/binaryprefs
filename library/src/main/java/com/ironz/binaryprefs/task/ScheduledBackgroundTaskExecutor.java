@@ -1,9 +1,15 @@
 package com.ironz.binaryprefs.task;
 
 import com.ironz.binaryprefs.event.ExceptionHandler;
+import com.ironz.binaryprefs.task.barrier.FutureBarrier;
+import com.ironz.binaryprefs.task.barrierprovider.FutureBarrierProvider;
 
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Performs all submitted tasks in one separated thread sequentially.
@@ -15,12 +21,15 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
 
     private final ExceptionHandler exceptionHandler;
     private final ExecutorService currentExecutor;
+    private final FutureBarrierProvider barrierProvider;
 
     public ScheduledBackgroundTaskExecutor(String prefName,
                                            ExceptionHandler exceptionHandler,
-                                           Map<String, ExecutorService> executors) {
+                                           Map<String, ExecutorService> executors,
+                                           FutureBarrierProvider barrierProvider) {
         this.exceptionHandler = exceptionHandler;
         this.currentExecutor = putIfAbsentExecutor(prefName, executors);
+        this.barrierProvider = barrierProvider;
     }
 
     private ExecutorService putIfAbsentExecutor(final String prefName, Map<String, ExecutorService> executors) {
@@ -52,12 +61,12 @@ public final class ScheduledBackgroundTaskExecutor implements TaskExecutor {
     @Override
     public FutureBarrier<?> submit(final Runnable runnable) {
         Future<?> submit = currentExecutor.submit(runnable);
-        return new FutureBarrier<>(submit, exceptionHandler);
+        return barrierProvider.get(submit, exceptionHandler);
     }
 
     @Override
     public <T> FutureBarrier<T> submit(Callable<T> callable) {
         Future<T> submit = currentExecutor.submit(callable);
-        return new FutureBarrier<>(submit, exceptionHandler);
+        return barrierProvider.get(submit, exceptionHandler);
     }
 }

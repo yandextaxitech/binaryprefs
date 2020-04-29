@@ -32,6 +32,9 @@ import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.serializer.persistable.PersistableRegistry;
 import com.ironz.binaryprefs.task.ScheduledBackgroundTaskExecutor;
 import com.ironz.binaryprefs.task.TaskExecutor;
+import com.ironz.binaryprefs.task.barrierprovider.FutureBarrierProvider;
+import com.ironz.binaryprefs.task.barrierprovider.impl.InterruptableFutureBarrierProvider;
+import com.ironz.binaryprefs.task.barrierprovider.impl.UnInterruptableFutureBarrierProvider;
 
 import java.io.File;
 import java.util.List;
@@ -74,6 +77,7 @@ public final class BinaryPreferencesBuilder {
     private KeyEncryption keyEncryption = KeyEncryption.NO_OP;
     private ValueEncryption valueEncryption = ValueEncryption.NO_OP;
     private ExceptionHandler exceptionHandler = ExceptionHandler.PRINT;
+    private TaskExecutorMode taskExecutorMode = TaskExecutorMode.NON_INTERRUPTIBLE;
 
     /**
      * Creates builder with base parameters.
@@ -269,7 +273,12 @@ public final class BinaryPreferencesBuilder {
         FileTransaction fileTransaction = new MultiProcessTransaction(fileAdapter, lockFactory, keyEncryption, valueEncryption);
         CacheCandidateProvider cacheCandidateProvider = new ConcurrentCacheCandidateProvider(name, cacheCandidates);
         CacheProvider cacheProvider = new ConcurrentCacheProvider(name, caches);
-        TaskExecutor taskExecutor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors);
+
+        FutureBarrierProvider futureBarrierProvider = taskExecutorMode == TaskExecutorMode.INTERRUPTIBLE
+                ? new InterruptableFutureBarrierProvider()
+                : new UnInterruptableFutureBarrierProvider();
+        TaskExecutor taskExecutor = new ScheduledBackgroundTaskExecutor(name, exceptionHandler, executors, futureBarrierProvider);
+
         SerializerFactory serializerFactory = new SerializerFactory(persistableRegistry);
         EventBridge eventsBridge = supportInterProcess ? new BroadcastEventBridge(
                 context,
@@ -324,4 +333,13 @@ public final class BinaryPreferencesBuilder {
          */
         EAGER
     }
+
+    /**
+     * Defines mode for proper handling while thread is interrupted (now default is {@link TaskExecutorMode#NON_INTERRUPTIBLE}), before this settings was {@link TaskExecutorMode#INTERRUPTIBLE}
+     */
+    public enum TaskExecutorMode {
+        INTERRUPTIBLE,
+        NON_INTERRUPTIBLE
+    }
+
 }
