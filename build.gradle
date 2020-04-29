@@ -2,19 +2,24 @@ apply from: 'changelogs.gradle'
 
 buildscript {
     repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
         jcenter()
+        google()
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5'
+        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.9.8'
     }
 }
 
 allprojects {
     repositories {
+        mavenCentral()
         jcenter()
+        google()
         mavenLocal()
     }
 }
