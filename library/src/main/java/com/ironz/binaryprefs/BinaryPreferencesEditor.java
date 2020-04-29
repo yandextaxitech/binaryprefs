@@ -10,7 +10,7 @@ import com.ironz.binaryprefs.serialization.SerializerFactory;
 import com.ironz.binaryprefs.serialization.serializer.persistable.Persistable;
 import com.ironz.binaryprefs.serialization.strategy.SerializationStrategy;
 import com.ironz.binaryprefs.serialization.strategy.impl.*;
-import com.ironz.binaryprefs.task.FutureBarrier;
+import com.ironz.binaryprefs.task.barrier.FutureBarrier;
 import com.ironz.binaryprefs.task.TaskExecutor;
 
 import java.util.*;
