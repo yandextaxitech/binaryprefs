@@ -334,6 +334,9 @@ public final class BinaryPreferencesBuilder {
         EAGER
     }
 
+    /**
+     * Defines mode for proper handling while thread is interrupted (now default is {@link TaskExecutorMode#NON_INTERRUPTIBLE}), before this settings was {@link TaskExecutorMode#INTERRUPTIBLE}
+     */
     public enum TaskExecutorMode {
         INTERRUPTIBLE,
         NON_INTERRUPTIBLE
