@@ -89,8 +89,7 @@ public final class BroadcastEventBridge implements EventBridge {
         return ACTION_PREFERENCE_REMOVED + directoryProvider.getStoreDirectory().getAbsolutePath();
     }
 
-    private List<OnSharedPreferenceChangeListener> putIfAbsentListeners(String prefName, Map<String,
-            List<OnSharedPreferenceChangeListener>> allListeners) {
+    private List<OnSharedPreferenceChangeListener> putIfAbsentListeners(String prefName, Map<String, List<OnSharedPreferenceChangeListener>> allListeners) {
         if (allListeners.containsKey(prefName)) {
             return allListeners.get(prefName);
         }

@@ -20,6 +20,8 @@ import com.ironz.binaryprefs.fetch.FetchStrategy;
 import com.ironz.binaryprefs.fetch.LazyFetchStrategy;
 import com.ironz.binaryprefs.file.adapter.FileAdapter;
 import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
+import com.ironz.binaryprefs.file.check.AndroidExternalStorageChecker;
+import com.ironz.binaryprefs.file.check.StorageChecker;
 import com.ironz.binaryprefs.file.directory.AndroidDirectoryProvider;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import com.ironz.binaryprefs.file.transaction.FileTransaction;
@@ -55,7 +57,11 @@ public final class BinaryPreferencesBuilder {
      */
     @SuppressWarnings("WeakerAccess")
     public static final String DEFAULT_NAME = "default";
+
     private static final String INCORRECT_THREAD_INIT_MESSAGE = "Preferences should be instantiated in the main thread.";
+    private static final String EXTERNAL_STORAGE_IS_NOT_WRITABLE_MESSAGE = "External storage is not writable!";
+    private static final String EXTERNAL_STORAGE_IS_NOT_AVAILABLE_MESSAGE = "External storage is not available!";
+
     private final ParametersProvider parametersProvider = new ParametersProvider();
 
     private final Map<String, ReadWriteLock> locks = parametersProvider.getLocks();
@@ -68,6 +74,7 @@ public final class BinaryPreferencesBuilder {
     private final Context context;
     private final PersistableRegistry persistableRegistry = new PersistableRegistry();
     private final MigrateProcessor migrateProcessor = new MigrateProcessor();
+    private final StorageChecker storageChecker = new AndroidExternalStorageChecker();
 
     private File baseDir;
     private String name = DEFAULT_NAME;
@@ -109,15 +116,21 @@ public final class BinaryPreferencesBuilder {
      * Defines usage of external directory for preferences saving.
      * Default value is {@code false}.
      *
-     * @param value all data will be saved inside external cache directory
+     * @param enable all data will be saved inside external cache directory
      *              if <code>true</code> value is passed
      *              ({@link Context#getExternalFilesDir(String)}),
      *              if <code>false</code> - will use standard app cache directory
      *              ({@link Context#getFilesDir()}).
      * @return current builder instance
      */
-    public BinaryPreferencesBuilder externalStorage(boolean value) {
-        this.baseDir = value ? context.getExternalFilesDir(null) : context.getFilesDir();
+    public BinaryPreferencesBuilder externalStorage(boolean enable) {
+        if (enable && !storageChecker.isStorageWritable()) {
+            throw new PreferencesInitializationException(EXTERNAL_STORAGE_IS_NOT_WRITABLE_MESSAGE);
+        }
+        if (enable && !storageChecker.isStorageAvailable()) {
+            throw new PreferencesInitializationException(EXTERNAL_STORAGE_IS_NOT_AVAILABLE_MESSAGE);
+        }
+        this.baseDir = enable ? context.getExternalFilesDir(null) : context.getFilesDir();
         return this;
     }
 
