@@ -63,11 +63,8 @@ public final class NioFileAdapter implements FileAdapter {
     }
 
     private byte[] fetchInternal(File file) {
-        FileChannel channel = null;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, R_MODE);
-            channel = randomAccessFile.getChannel();
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, R_MODE);
+             FileChannel channel = randomAccessFile.getChannel()) {
             int size = (int) randomAccessFile.length();
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
             byte[] bytes = new byte[size];
@@ -75,16 +72,6 @@ public final class NioFileAdapter implements FileAdapter {
             return bytes;
         } catch (Exception e) {
             throw new FileOperationException(e);
-        } finally {
-            try {
-                if (randomAccessFile != null) {
-                    randomAccessFile.close();
-                }
-                if (channel != null) {
-                    channel.close();
-                }
-            } catch (Exception ignored) {
-            }
         }
     }
 

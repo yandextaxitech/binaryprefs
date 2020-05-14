@@ -42,7 +42,7 @@ public final class EagerFetchStrategy implements FetchStrategy {
     private void fetchCache() {
         readLock.lock();
         try {
-            FutureBarrier barrier = taskExecutor.submit(new Runnable() {
+            FutureBarrier<?> barrier = taskExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
                     fetchCacheInternal();
@@ -101,6 +101,7 @@ public final class EagerFetchStrategy implements FetchStrategy {
             for (String key : all.keySet()) {
                 Object value = all.get(key);
                 Object redefinedValue = serializerFactory.redefineMutable(value);
+                //noinspection ConstantConditions
                 clone.put(key, redefinedValue);
             }
             return Collections.unmodifiableMap(clone);

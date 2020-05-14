@@ -239,14 +239,14 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     public boolean commit() {
         writeLock.lock();
         try {
-            FutureBarrier barrier = performTransaction();
+            FutureBarrier<?> barrier = performTransaction();
             return barrier.completeBlockingWithStatus();
         } finally {
             writeLock.unlock();
         }
     }
 
-    private FutureBarrier performTransaction() {
+    private FutureBarrier<?> performTransaction() {
         removeCache();
         storeCache();
         invalidate();
@@ -268,6 +268,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
     private void storeCache() {
         for (String name : strategyMap.keySet()) {
             SerializationStrategy strategy = strategyMap.get(name);
+            //noinspection ConstantConditions
             Object value = strategy.getValue();
             candidateProvider.put(name);
             cacheProvider.put(name, value);
@@ -308,6 +309,7 @@ final class BinaryPreferencesEditor implements PreferencesEditor {
         List<TransactionElement> elements = new LinkedList<>();
         for (String name : strings) {
             SerializationStrategy strategy = strategyMap.get(name);
+            //noinspection ConstantConditions
             byte[] bytes = strategy.serialize();
             TransactionElement e = TransactionElement.createUpdateElement(name, bytes);
             elements.add(e);

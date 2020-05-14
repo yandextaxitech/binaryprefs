@@ -3,6 +3,8 @@ package com.ironz.binaryprefs.event;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
+import java.util.Objects;
+
 /**
  * Wrapped {@link OnSharedPreferenceChangeListener} class which holds current preferences instance for delivering
  * correct {@link com.ironz.binaryprefs.Preferences} instance to 2'st argument in
@@ -32,8 +34,8 @@ public final class OnSharedPreferenceChangeListenerWrapper implements OnSharedPr
 
         OnSharedPreferenceChangeListenerWrapper that = (OnSharedPreferenceChangeListenerWrapper) o;
 
-        if (listener != null ? !listener.equals(that.listener) : that.listener != null) return false;
-        return currentPreferences != null ? currentPreferences.equals(that.currentPreferences) : that.currentPreferences == null;
+        if (!Objects.equals(listener, that.listener)) return false;
+        return Objects.equals(currentPreferences, that.currentPreferences);
     }
 
     @Override
