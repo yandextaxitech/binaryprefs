@@ -199,6 +199,16 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
+     * @param executorMode required execution mode.
+     *                     Default value is {@link TaskExecutorMode#NON_INTERRUPTIBLE}
+     * @return current builder instance
+     */
+    public BinaryPreferencesBuilder executorMode(TaskExecutorMode executorMode) {
+        this.taskExecutorMode = executorMode;
+        return this;
+    }
+
+    /**
      * Registers {@link Persistable} data-object for de/serialization process.
      * All {@link Persistable} data-objects should be registered for understanding
      * de/serialization contract during cache initialization.
@@ -335,7 +345,7 @@ public final class BinaryPreferencesBuilder {
     }
 
     /**
-     * Defines mode for proper handling while thread is interrupted (now default is {@link TaskExecutorMode#NON_INTERRUPTIBLE}), before this settings was {@link TaskExecutorMode#INTERRUPTIBLE}
+     * Defines mode for proper handling while thread is interrupted, before this settings was {@link TaskExecutorMode#INTERRUPTIBLE}
      */
     public enum TaskExecutorMode {
         INTERRUPTIBLE,
