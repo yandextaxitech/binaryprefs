@@ -1,5 +1,6 @@
 package com.ironz.binaryprefs.serialization.serializer;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.Set;
  * {@code Set<String>} to byte array implementation and backwards
  */
 public final class StringSetSerializer {
+
+    private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
      * Uses for detecting byte array type of {@link Set} of {@link String}
@@ -32,7 +35,7 @@ public final class StringSetSerializer {
         int totalArraySize = 1;
 
         for (String s : set) {
-            byte[] stringBytes = s.getBytes();
+            byte[] stringBytes = s.getBytes(CHARSET);
             byte[] stringSizeBytes = intToBytes(stringBytes.length);
 
             byte[] merged = new byte[stringBytes.length + stringSizeBytes.length];
@@ -96,7 +99,7 @@ public final class StringSetSerializer {
                     stringBytes[k] = bytes[stringOffset];
                 }
 
-                set.add(new String(stringBytes));
+                set.add(new String(stringBytes, CHARSET));
 
                 i += integerBytesSize + stringSize;
             }
