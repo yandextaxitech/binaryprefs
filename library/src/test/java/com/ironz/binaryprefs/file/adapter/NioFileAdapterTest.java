@@ -1,8 +1,6 @@
-package com.ironz.binaryprefs.file;
+package com.ironz.binaryprefs.file.adapter;
 
 import com.ironz.binaryprefs.exception.FileOperationException;
-import com.ironz.binaryprefs.file.adapter.FileAdapter;
-import com.ironz.binaryprefs.file.adapter.NioFileAdapter;
 import com.ironz.binaryprefs.file.directory.DirectoryProvider;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,6 +24,7 @@ public final class NioFileAdapterTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private FileAdapter fileAdapter;
+    private FileAdapter failingAdapter;
 
     @Before
     public void setUp() throws Exception {
@@ -49,6 +48,14 @@ public final class NioFileAdapterTest {
             }
         };
         fileAdapter = new NioFileAdapter(directoryProvider);
+        failingAdapter = new NioFileAdapter(directoryProvider) {
+            @Override
+            void saveInternal(File file, byte[] bytes) {
+                byte[] successBytes = Arrays.copyOf(bytes, 1);
+                super.saveInternal(file, successBytes);
+                throw new IllegalStateException();
+            }
+        };
     }
 
     @Test
@@ -114,4 +121,26 @@ public final class NioFileAdapterTest {
         assertNotNull(fileAdapter.fetch(FILE_NAME));
         fileAdapter.fetch(FILE_NAME_1);
     }
+
+    @Test(expected = FileOperationException.class)
+    public void fetchNoFile() {
+        fileAdapter.fetch(FILE_NAME);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void failOnSave() {
+        failingAdapter.save(FILE_NAME, bytes);
+    }
+
+    @Test(expected = FileOperationException.class)
+    public void recoverAfterFail() {
+        try {
+            failingAdapter.save(FILE_NAME, bytes);
+            throw new AssertionError();
+        } catch (IllegalStateException ignored) {
+        }
+
+        fileAdapter.fetch(FILE_NAME);
+    }
+
 }
